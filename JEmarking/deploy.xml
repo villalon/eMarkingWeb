@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     27-03-2014                                                        
+
+     eMarking desktop    
+     This ant file helps on deploying eMarking desktop onto a Moodle server
+                   
+     Jorge Villalon (villalon@gmail.com)                                                                
+     ====================================================================== -->
+<project name="jEmarking" default="deploy-local">
+    <description>
+            Deploys a zip file containing the jar and libraries to the moodle installation
+    </description>
+	
+	<property name="moodle.dir"     value="/Users/jorgevillalon/Sites/webcursos"/>
+
+    <!-- ================================= 
+          target: deploy-local              
+         ================================= -->
+    <target name="deploy-local">
+    	
+    	<delete file="${moodle.dir}/mod/emarking/emarkingdesktop.zip"/>
+    	
+    	<zip destfile="${moodle.dir}/mod/emarking/emarkingdesktop.zip">
+    	    		<zipfileset dir="emarkingdesktop"
+    	    			includes="**"
+    	    		/>
+    	</zip>
+    	
+    	</target>
+	
+</project>
