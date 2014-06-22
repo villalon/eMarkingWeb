@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     11-09-2013                                                        
+
+     eMarking    
+     This ant file helps on deploying eMarking onto a Moodle server
+                   
+     Jorge Villalon (villalon@gmail.com)                                                                
+     ====================================================================== -->
+<project name="eMarkingWeb" default="deploy-local">
+    <description>
+            Deploy the Concept Map web based editor as a zip file to a Moodle server.
+    </description>
+	
+	<property name="moodle.dir"     value="/Users/jorgevillalon/Sites/webcursos"/>
+
+    <!-- ================================= 
+          target: deploy-local              
+         ================================= -->
+    <target name="deploy-local">
+    	
+    	<delete dir="${moodle.dir}/mod/emarking/emarkingweb/"/>
+    	
+    	<copy todir="${moodle.dir}/mod/emarking/">
+    		<fileset dir="war/">
+    			<exclude name="**/EMarkingWeb.html"/>
+    			<exclude name="**/EmarkingPopup.html"/>
+    			<exclude name="**/WEB-INF/"/>
+    			<exclude name="**/build.number"/>
+    			<exclude name="**/cl.uai.EMarkingWeb.JUnit/"/>
+    			<exclude name="**/favicon.ico"/>
+    			<exclude name="**/*.log"/>
+    		</fileset>
+    	</copy>
+    	
+    	</target>
+	
+    <!-- ================================= 
+          target: deploy-local              
+         ================================= -->
+    <target name="deploy-local-experimental">
+    	
+    	<delete dir="${moodle.dir}/mod/emarking/exp/emarkingweb/"/>
+    	
+    	<copy todir="${moodle.dir}/mod/emarking/exp/">
+    		<fileset dir="war/">
+    			<exclude name="**/EMarkingWeb.html"/>
+    			<exclude name="**/EmarkingPopup.html"/>
+    			<exclude name="**/WEB-INF/"/>
+    			<exclude name="**/build.number"/>
+    			<exclude name="**/cl.uai.EMarkingWeb.JUnit/"/>
+    			<exclude name="**/favicon.ico"/>
+    			<exclude name="**/*.log"/>
+    		</fileset>
+    	</copy>
+    	
+    	</target>
+	
+    <!-- ================================= 
+          target: deploy-remote              
+         ================================= -->
+    <target name="deploy-remote">
+    	<zip destfile="emarking.zip">
+    	    		<zipfileset dir="${moodle.dir}"
+    	    			includes="/mod/emarking/**"
+    	    		/>
+    	</zip>
+    	
+    	<scp file="emarking.zip" todir="ubuntu@www.villalon.cl:/home/ubuntu/" trust="yes" keyfile="C:\Users\jorge\Dropbox\Casa\AWS\jorgevillalon.pem"/>
+	</target>
+</project>
