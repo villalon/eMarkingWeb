@@ -256,17 +256,21 @@ public class MarkingToolBar extends EMarkingComposite {
 
 		buttonsPanel = new HorizontalPanel();
 		buttonsPanel.addStyleName(Resources.INSTANCE.css().buttonspanel());
+		
 		buttonsPanel.add(markingButtons);
-		buttonsPanel.add(chkContinue);
-		buttonsPanel.add(saveChangesButton);
-		buttonsPanel.add(finishMarkingButton);
 		buttonsPanel.setCellHorizontalAlignment(markingButtons, HasHorizontalAlignment.ALIGN_LEFT);
+		
+		buttonsPanel.add(chkContinue);
 		buttonsPanel.setCellHorizontalAlignment(chkContinue, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellHorizontalAlignment(finishMarkingButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellHorizontalAlignment(saveChangesButton, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellVerticalAlignment(chkContinue, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellWidth(chkContinue, "150px");
+		
+		buttonsPanel.add(saveChangesButton);
+		buttonsPanel.setCellHorizontalAlignment(saveChangesButton, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(saveChangesButton, "1px");
+
+		buttonsPanel.add(finishMarkingButton);
+		buttonsPanel.setCellHorizontalAlignment(finishMarkingButton, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(finishMarkingButton, "1px");
 		
 		mainPanel.add(buttonsPanel);
@@ -284,7 +288,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		infoLabelPanel.setVisible(true);
 		markingButtons.setVisible(true);
 		saveChangesButton.setVisible(true);
-		finishMarkingButton.setVisible(true);
+		finishMarkingButton.setVisible(false);
 		chkContinue.setVisible(true);
 		
 		buttonsPanel.setVisible(!MarkingInterface.readonly);
@@ -302,6 +306,11 @@ public class MarkingToolBar extends EMarkingComposite {
 			studentSelector.setText(MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()));
 		}
 		this.activityName.setText(sdata.getActivityname());
+		
+		if(MarkingInterface.supervisor) {
+			finishMarkingButton.setVisible(true);
+		}
+		
 		this.submissionGrade.loadSubmissionData();
 		
 		markingButtons.loadCustomMarksButtons(sdata.getCustommarks());

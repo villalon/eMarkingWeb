@@ -38,6 +38,7 @@
 .jumptonext label {
 	display: inline;
 	margin-left: 3px;
+	margin-right: 7px;
 }
 
 .pagespanel {
@@ -445,7 +446,8 @@ to {
 .finishmarkingbutton {
 	font-size: 10pt;
 	width: 120px;
-	margin-left: 10px;
+	margin-left: 3px;
+	margin-right: 7px;
 }
 
 .rubricbutton,.rubricbuttoncustom {
