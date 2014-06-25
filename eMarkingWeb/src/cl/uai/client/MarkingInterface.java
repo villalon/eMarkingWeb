@@ -590,6 +590,8 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 				
 				toolbar.getMarkingButtons().updateStats();
+				
+				EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().loadSumissionData();
 
 				RootPanel.get().getElement().getStyle().setCursor(Cursor.AUTO);
 			}

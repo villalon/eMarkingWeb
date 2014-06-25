@@ -173,6 +173,8 @@ public class RubricPanel extends EMarkingComposite {
 				cheader.setRegradeData(mark.getRegradeid(), mark.getRegradeaccepted());
 			}
 		}
+		
+		EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().loadSumissionData();
 	}
 
 	@Override

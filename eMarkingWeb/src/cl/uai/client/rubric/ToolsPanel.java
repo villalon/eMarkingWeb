@@ -76,6 +76,10 @@ public class ToolsPanel extends Composite {
 		this.initWidget(scroll);
 	}
 	
+	public void loadSumissionData() {
+		marksSummary.loadSubmissionData();
+	}
+	
 	@Override
 	protected void onLoad() {
 		super.onLoad();

@@ -37,6 +37,8 @@ public class MarksSummaryInterface extends Composite {
 	}
 	
 	public void loadSubmissionData() {
+		mainPanel.clear();
+
 		float totalscore = 0;
 		float totalmaxscore = 0;
 		int rows = 0;
