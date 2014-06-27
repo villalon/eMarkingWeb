@@ -94,8 +94,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 				top,
 				pageno,
 				MarkingInterface.markerid,
-				(right-left) + 1,
-				(bottom-top) + 1,
+				right-left,bottom-top, 
 				this.currentPath.getElement().getAttribute("d"),
 				unixtime);
 

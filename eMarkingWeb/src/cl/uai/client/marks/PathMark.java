@@ -62,11 +62,8 @@ public class PathMark extends Mark{
 	@Override
 	protected void setMarkHTML() {
 		
-		int svgheight = this.height<15?15:this.height;
-		int svgwidth = this.width;
-		
 		String html = 
-				"<svg  height=\""+svgheight+"\" width=\""+ svgwidth +"\"  style=\"overflow:visible;\"><path stroke=\"red\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
+				"<svg style=\"overflow:visible;\"><path stroke=\"red\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
 		this.setHTML(html);
 	}
 	
