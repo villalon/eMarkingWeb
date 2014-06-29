@@ -67,7 +67,6 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	private AbsolutePanel absolutePanel = null;
 	private Canvas canvas = null;
 	private DrawingArea drawingArea = null;
-	private int criterionId=0;
 
 	/** Drag and Drop controller **/
 	private PickupDragController dragController = null;
@@ -89,12 +88,11 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	/**
 	 * 
 	 */
-	public MarkingPage(int pagenum, String image, int width, int height, int criterion) {
+	public MarkingPage(int pagenum, String image, int width, int height) {
 		this.pageNumber = pagenum;
 		this.pageImage = new Image(image);
 		this.pageImage.setWidth(width + "px");
 		this.pageImage.setHeight(height + "px");
-		this.criterionId = criterion;
 
 		logger.fine("Adding page " + pagenum + " Url:" + image);
 		
@@ -367,10 +365,6 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			}
 		}
 		return mark;
-	}
-
-	public int getCriterionId() {
-		return criterionId;
 	}
 
 	@Override

@@ -204,12 +204,11 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					// Get the image width and height
 					int width = Integer.parseInt(tabinfo.get("width"));
 					int height = Integer.parseInt(tabinfo.get("height"));
-					int criterion = Integer.parseInt(tabinfo.get("criterion"));
 					boolean showmarker = Integer.parseInt(tabinfo.get("showmarker")) == 1;
 
 					float ratio = (float) width / (float) height;
 					int newheight = (int) (800 / ratio);
-					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), 800, newheight, criterion);
+					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), 800, newheight);
 					if(!showmarker) {
 						page.setVisible(false);
 					}
