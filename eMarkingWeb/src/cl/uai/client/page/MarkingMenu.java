@@ -10,6 +10,7 @@ import cl.uai.client.data.Criterion;
 import cl.uai.client.data.Level;
 
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
@@ -49,11 +50,19 @@ public class MarkingMenu extends PopupPanel {
 						hide();
 					}
 				};
-				criterion1.addItem(lvl.getDescription().substring(0, Math.min(20, lvl.getDescription().length()))
-						, cmd);				
+				String menutext = lvl.getDescription();
+				if(menutext.length() > 20) {
+					menutext = lvl.getDescription().substring(0, Math.min(20, lvl.getDescription().length())) + "...";
+				}
+				MenuItem item = criterion1.addItem(menutext, cmd);
+				item.setTitle(lvl.getDescription());
 			}
-			menu.addItem(criterion.getDescription().substring(0, Math.min(20, criterion.getDescription().length()))
-					, criterion1);
+			String menutext = criterion.getDescription();
+			if(menutext.length() > 20) {
+				menutext = criterion.getDescription().substring(0, Math.min(20, criterion.getDescription().length())) + "...";
+			}
+			MenuItem item = menu.addItem(menutext, criterion1);
+			item.setTitle(criterion.getDescription());
 		}
 		
 		this.add(menu);
