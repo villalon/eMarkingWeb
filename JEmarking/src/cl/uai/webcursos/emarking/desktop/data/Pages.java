@@ -154,7 +154,7 @@ public class Pages extends Hashtable<Integer, Page> {
 		int row = current.getRow();
 		
 		if(newpagenumber > moodle.getMaxExamPage()) {
-			throw new Exception("Invalid page number, exceeds maximum");
+			logger.error("Invalid page number, exceeds maximum");
 		}
 		
 		String oldfilename = current.getFilename();
