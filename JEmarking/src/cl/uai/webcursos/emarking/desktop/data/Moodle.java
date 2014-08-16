@@ -60,7 +60,7 @@ import cl.uai.webcursos.emarking.desktop.QRextractor;
  *
  */
 public class Moodle {
-
+	
 	/** For logging **/
 	private static Logger logger = Logger.getLogger(Moodle.class);
 

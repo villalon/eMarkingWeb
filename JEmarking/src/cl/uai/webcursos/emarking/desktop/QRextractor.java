@@ -48,6 +48,28 @@ import org.ghost4j.document.DocumentException;
  */
 public class QRextractor implements Runnable {
 
+	/**
+	 * @return the fileType
+	 */
+	public FileType getFileType() {
+		return fileType;
+	}
+
+	/**
+	 * @param fileType the fileType to set
+	 */
+	public void setFileType(FileType fileType) {
+		this.fileType = fileType;
+	}
+
+	public enum FileType {
+		ZIP,
+		PDF
+	}
+
+	private FileType fileType;
+
+
 	private static Logger logger = Logger.getLogger(QRextractor.class);
 
 	private File tempdir = null;
@@ -200,6 +222,7 @@ public class QRextractor implements Runnable {
 		logger.debug("Threads: " + this.threads);
 		logger.debug("Doubleside: " + this.doubleside);
 		logger.debug("Step: " + this.step);
+		logger.debug("File type: " + this.fileType);
 
 		long time = System.currentTimeMillis();
 		int currentpage = 0;
@@ -299,11 +322,11 @@ public class QRextractor implements Runnable {
 				}
 
 				for(int j=0; j<threads; j++) {
-					
+
 					// Checks if a cancel button was pressed while processing, in which case we stop
 					if(Thread.currentThread().isInterrupted())
 						break;
-					
+
 					ImageDecoder decoder = decoders[j];
 					if(decoder == null)
 						continue;
@@ -391,55 +414,77 @@ public class QRextractor implements Runnable {
 
 	private List<BufferedImage> getImages(int first, int last, String pdffile) throws Exception {
 
-		File inputfile = new File(pdffile);
-		File tmpfile = new File("input.pdf");
-		if(tmpfile.exists())
-			tmpfile.delete();
+		// If we are processing a PDF file we use ghostscript to read it
+		if(this.fileType == FileType.PDF) {
+			File inputfile = new File(pdffile);
+			File tmpfile = new File("input.pdf");
+			if(tmpfile.exists())
+				tmpfile.delete();
 
-		try {
-			FileUtils.copyFile(inputfile, tmpfile);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			throw new Exception("Impossible to copy file");
-		}
-
-		Ghostscript gs = Ghostscript.getInstance();
-
-		//prepare Ghostscript interpreter parameters
-		//refer to Ghostscript documentation for parameter usage
-		String[] gsArgs = new String[9];
-		gsArgs[0] = "-dSAFER";
-		gsArgs[1] = "-dBATCH";
-		gsArgs[2] = "-dNOPAUSE";
-		gsArgs[3] = "-sDEVICE=pnggray";
-		gsArgs[4] = "-r" + resolution;
-		gsArgs[5] = "-dFirstPage=" + first;
-		gsArgs[6] = "-dLastPage=" + last;
-		gsArgs[7] = "-sOutputFile=tmpfigure%d.png";
-		gsArgs[8] = pdffile;
-
-		//execute and exit interpreter
-		try {
-			gs.initialize(gsArgs);
-			gs.exit();
-		} catch (GhostscriptException e) {
-			System.out.println("ERROR: " + e.getMessage());
-			throw new Exception("Impossible to extract images");
-		}
-
-		List<BufferedImage> images = new ArrayList<BufferedImage>();
-
-		for(int i=1;i<=last-first+1;i++) {
 			try {
-				File f = new File("tmpfigure"+ i +".png");
-				images.add(ImageIO.read(f));
-				f.delete();
-			} catch (IOException e) {
-				e.printStackTrace();
+				FileUtils.copyFile(inputfile, tmpfile);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				throw new Exception("Impossible to copy file");
 			}
-		}
 
-		return images;
+			Ghostscript gs = Ghostscript.getInstance();
+
+			//prepare Ghostscript interpreter parameters
+			//refer to Ghostscript documentation for parameter usage
+			String[] gsArgs = new String[9];
+			gsArgs[0] = "-dSAFER";
+			gsArgs[1] = "-dBATCH";
+			gsArgs[2] = "-dNOPAUSE";
+			gsArgs[3] = "-sDEVICE=pnggray";
+			gsArgs[4] = "-r" + resolution;
+			gsArgs[5] = "-dFirstPage=" + first;
+			gsArgs[6] = "-dLastPage=" + last;
+			gsArgs[7] = "-sOutputFile=tmpfigure%d.png";
+			gsArgs[8] = pdffile;
+
+			//execute and exit interpreter
+			try {
+				gs.initialize(gsArgs);
+				gs.exit();
+			} catch (GhostscriptException e) {
+				logger.error("ERROR: " + e.getMessage());
+				throw new Exception("Impossible to extract images");
+			}
+
+			List<BufferedImage> images = new ArrayList<BufferedImage>();
+
+			for(int i=1;i<=last-first+1;i++) {
+				try {
+					File f = new File("tmpfigure"+ i +".png");
+					images.add(ImageIO.read(f));
+					f.delete();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return images;
+		} else if(this.fileType == FileType.ZIP) {
+
+			List<BufferedImage> images = new ArrayList<BufferedImage>();
+
+			for(int i=first;i<=last;i++) {
+				String filename = this.tempdir.getAbsolutePath() + "/Prueba_"+ i +".png";
+				try {
+					File f = new File(filename);
+					images.add(ImageIO.read(f));
+					f.delete();
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.error("Could not read file " + filename);
+				}
+			}
+
+			return images;
+		} else {
+			throw new Exception("Invalid file type");
+		}
 	}
 
 	public String getPdffile() {
@@ -458,7 +503,7 @@ public class QRextractor implements Runnable {
 		this.threads = _threads;
 		this.setStep();
 	}
-	
+
 	private void setStep() {
 		this.step = this.doubleside ? this.threads * 4 : this.threads * 2;		
 	}

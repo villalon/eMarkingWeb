@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.event.EventListenerList;
@@ -100,7 +101,7 @@ public class ZipFile implements Runnable  {
 	{
 		byte[] buffer = new byte[1024];
 		List<File> zips = new ArrayList<File>();
-		
+
 		try{
 			int currentfile = 1;
 
@@ -131,10 +132,10 @@ public class ZipFile implements Runnable  {
 
 						zos.closeEntry();
 						zos.close();
-						
+
 						zipfilename = zipFile + currentfile + ".zip";
 						logger.debug("New file created " + zipfilename);
-						
+
 						fos = new FileOutputStream(zipfilename);
 						zos = new ZipOutputStream(fos);
 
@@ -163,15 +164,15 @@ public class ZipFile implements Runnable  {
 			zos.closeEntry();
 			//remember close it
 			zos.close();
-			
+
 
 		}catch(IOException ex){
 			ex.printStackTrace();   
 		}
-		
+
 		return zips;
 	}
-	
+
 	private void generateFileList(File node){
 
 		//add file only
@@ -190,11 +191,11 @@ public class ZipFile implements Runnable  {
 		}
 
 	}
-	
+
 	public List<File> getZipFiles() {
 		return this.zipfiles;
 	}
-	
+
 	private String generateZipEntry(String file)
 	{
 		return file.substring(SOURCE_FOLDER.length()+1, file.length());
@@ -204,7 +205,7 @@ public class ZipFile implements Runnable  {
 	public void run() {
 		this.generateFileList(new File(moodle.getQr().getTempdirStringPath()));
 		logger.debug("Files to include in zip:" + this.fileList.size());
-		
+
 		MoodleWorkerEvent e = new MoodleWorkerEvent(this, 0, this.fileList.size(), "");
 		fireProgressStarted(e);
 
@@ -216,9 +217,66 @@ public class ZipFile implements Runnable  {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
-		
+
 		logger.debug("Zip process finished");
 		e = new MoodleWorkerEvent(this, this.fileList.size(), this.fileList.size(), "");
 		fireProgressFinished(e);			
 	}
+
+	/**
+	 * Unzip it
+	 * @param zipFile input zip file
+	 * @param output zip file output folder
+	 */
+	public int unZipIt(String zipFile) {
+
+		byte[] buffer = new byte[1024];
+		int totalFiles = 0;
+		try{
+
+			//create output directory if not exists
+			File folder = moodle.getQr().getTempdir();
+			if(!folder.exists()){
+				folder.mkdir();
+			}
+
+			//get the zip file content
+			ZipInputStream zis = 
+					new ZipInputStream(new FileInputStream(zipFile));
+			//get the zipped file list entry
+			ZipEntry ze = zis.getNextEntry();
+
+			while(ze!=null){
+
+				String fileName = ze.getName();
+				File newFile = new File(moodle.getQr().getTempdir() + File.separator + fileName);
+
+				//create all non exists folders
+				//else you will hit FileNotFoundException for compressed folder
+				new File(newFile.getParent()).mkdirs();
+
+				FileOutputStream fos = new FileOutputStream(newFile);             
+
+				int len;
+				while ((len = zis.read(buffer)) > 0) {
+					fos.write(buffer, 0, len);
+				}
+
+				fos.close();   
+				ze = zis.getNextEntry();
+				totalFiles++;
+			}
+
+			zis.closeEntry();
+			zis.close();
+
+			logger.info("Done");
+			
+			return totalFiles;
+
+		} catch(IOException ex){
+			ex.printStackTrace(); 
+		}
+		return totalFiles;
+	}    
 }

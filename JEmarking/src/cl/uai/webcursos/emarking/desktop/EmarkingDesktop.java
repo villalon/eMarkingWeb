@@ -59,6 +59,7 @@ import cl.uai.webcursos.emarking.desktop.data.Moodle;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorker;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorkerEvent;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorkerListener;
+import cl.uai.webcursos.emarking.desktop.QRextractor.FileType;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorker.Action;
 import cl.uai.webcursos.emarking.desktop.data.Page;
 import cl.uai.webcursos.emarking.desktop.utils.ZipFile;
@@ -149,9 +150,9 @@ public class EmarkingDesktop {
 		moodle.getQr().addPageProcessedListener(new PageProcessedListener() {			
 			@Override
 			public void processed(QRExtractorEvent e) {
-				
+
 				QrDecodingResult qrResult = e.getQrresult();
-				
+
 				// Update progress bar
 				int arg0 = progress.getProgressBar().getValue();
 				arg0++;
@@ -355,7 +356,7 @@ public class EmarkingDesktop {
 		});
 		btnNextProblem.setIcon(new ImageIcon(EmarkingDesktop.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_178_step_forward.png")));
 		toolBar.add(btnNextProblem);
-		
+
 		btnSelectAllProblems = new JButton();
 		btnSelectAllProblems.setToolTipText(lang.getString("selectallproblems"));
 		btnSelectAllProblems.setEnabled(false);
@@ -383,13 +384,13 @@ public class EmarkingDesktop {
 
 		splitPane.setRightComponent(scrollPaneTable);
 		splitPane.setLeftComponent(imagePanel);
-		
+
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
-		
+
 		menuFile = new JMenu(lang.getString("file"));
 		menuBar.add(menuFile);
-		
+
 		menuFileOpen = new JMenuItem(lang.getString("loadpdf"));
 		menuFileOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -398,7 +399,7 @@ public class EmarkingDesktop {
 		});
 		menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
 		menuFile.add(menuFileOpen);
-		
+
 		menuSave = new JMenuItem(lang.getString("save"));
 		menuSave.setEnabled(false);
 		menuSave.addActionListener(new ActionListener() {
@@ -406,12 +407,12 @@ public class EmarkingDesktop {
 				actionSave();
 			}
 		});
-		
+
 		separator_2 = new JSeparator();
 		menuFile.add(separator_2);
 		menuSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menuFile.add(menuSave);
-		
+
 		menuUpload = new JMenuItem(lang.getString("upload"));
 		menuUpload.setEnabled(false);
 		menuUpload.addActionListener(new ActionListener() {
@@ -421,11 +422,11 @@ public class EmarkingDesktop {
 		});
 		menuUpload.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
 		menuFile.add(menuUpload);
-		
+
 		menuEdit = new JMenu(lang.getString("edit"));
 		menuEdit.setEnabled(false);
 		menuBar.add(menuEdit);
-		
+
 		menuFix = new JMenuItem(lang.getString("fix"));
 		menuFix.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -434,7 +435,7 @@ public class EmarkingDesktop {
 		});
 		menuFix.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
 		menuEdit.add(menuFix);
-		
+
 		menuFixPrevious = new JMenuItem(lang.getString("fixfromprevious"));
 		menuFixPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -443,7 +444,7 @@ public class EmarkingDesktop {
 		});
 		menuFixPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 		menuEdit.add(menuFixPrevious);
-		
+
 		menuFixFollowing = new JMenuItem(lang.getString("fixfromfollowing"));
 		menuFixFollowing.addActionListener(new ActionListener() {
 			@Override
@@ -453,7 +454,7 @@ public class EmarkingDesktop {
 		});
 		menuFixFollowing.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.CTRL_MASK));
 		menuEdit.add(menuFixFollowing);
-		
+
 		menuRotate = new JMenuItem(lang.getString("rotateimage180"));
 		menuRotate.addActionListener(new ActionListener() {
 			@Override
@@ -461,12 +462,12 @@ public class EmarkingDesktop {
 				actionRotateImage180();
 			}
 		});
-		
+
 		separator_1 = new JSeparator();
 		menuEdit.add(separator_1);
 		menuRotate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
 		menuEdit.add(menuRotate);
-		
+
 		menuRotateAndFixPrevious = new JMenuItem(lang.getString("rotateandfixfromprevious"));
 		menuRotateAndFixPrevious.addActionListener(new ActionListener() {
 			@Override
@@ -474,7 +475,7 @@ public class EmarkingDesktop {
 				actionRotateAndFixFromPrevious();
 			}
 		});
-		
+
 		menuSwap = new JMenuItem(lang.getString("swap"));
 		menuSwap.addActionListener(new ActionListener() {
 			@Override
@@ -484,12 +485,12 @@ public class EmarkingDesktop {
 		});
 		menuSwap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
 		menuEdit.add(menuSwap);
-		
+
 		separator = new JSeparator();
 		menuEdit.add(separator);
 		menuRotateAndFixPrevious.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK));
 		menuEdit.add(menuRotateAndFixPrevious);
-		
+
 		menuRotateAndFixFollowing = new JMenuItem(lang.getString("rotateandfixfromfollowing"));
 		menuRotateAndFixFollowing.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -498,11 +499,11 @@ public class EmarkingDesktop {
 		});
 		menuRotateAndFixFollowing.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_MASK));
 		menuEdit.add(menuRotateAndFixFollowing);
-		
+
 		menuNavigate = new JMenu(lang.getString("navigate"));
 		menuNavigate.setEnabled(false);
 		menuBar.add(menuNavigate);
-		
+
 		menuNextProblem = new JMenuItem(lang.getString("nextproblem"));
 		menuNextProblem.addActionListener(new ActionListener() {
 			@Override
@@ -512,7 +513,7 @@ public class EmarkingDesktop {
 		});
 		menuNextProblem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0));
 		menuNavigate.add(menuNextProblem);
-		
+
 		menuSelectAll = new JMenuItem(lang.getString("selectallproblems"));
 		menuSelectAll.addActionListener(new ActionListener() {
 			@Override
@@ -522,7 +523,7 @@ public class EmarkingDesktop {
 		});
 		menuSelectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
 		menuNavigate.add(menuSelectAll);
-		
+
 		Dimension d = new Dimension(32, 32);
 		btnLoadPdf.setMinimumSize(d);
 		btnNextProblem.setMinimumSize(d);
@@ -544,7 +545,7 @@ public class EmarkingDesktop {
 			bar.setValue(newPosition);
 		}		
 	}
-	
+
 	private void initializeTable() {
 		table = new PagesTable(moodle);
 		scrollPaneTable.setViewportView(table);
@@ -664,11 +665,11 @@ public class EmarkingDesktop {
 			JOptionPane.showMessageDialog(frame, lang.getString("done"));
 		}
 	}
-	
+
 	public JFrame getFrame() {
 		return this.frame;
 	}
-	
+
 	private void loadSelectedRowPreview(int row) {
 		if(moodle.getPages().get(row) == null) {
 			logger.error("Invalid row for preview:" + row);
@@ -700,17 +701,32 @@ public class EmarkingDesktop {
 		if(dialog.isCancelled())
 			return;
 		moodle.getQr().setDoubleside(dialog.getDoubleSideSelected());
+		moodle.clearPages();
 		File pdfFile = new File(dialog.getFilename().getText());
-		PDFDocument pdfdoc = new PDFDocument();
 		int pages = 0;
-		try {
-			pdfdoc.load(pdfFile);
-			pages = pdfdoc.getPageCount();
-		} catch (IOException | DocumentException ex) {
+
+		if(pdfFile.getPath().endsWith(".pdf")) {			
+			PDFDocument pdfdoc = new PDFDocument();
+			try {
+				pdfdoc.load(pdfFile);
+				pages = pdfdoc.getPageCount();
+				moodle.getQr().setFileType(FileType.PDF);
+			} catch (IOException | DocumentException ex) {
+				JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
+				ex.printStackTrace();
+				return;
+			}
+		} else if(pdfFile.getPath().endsWith(".zip")) {
+			ZipFile zpf = new ZipFile(moodle);
+			pages = zpf.unZipIt(pdfFile.getAbsolutePath());
+			moodle.getQr().setFileType(FileType.ZIP);
 			JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
-			ex.printStackTrace();
-			return;
+			if(pages == 0) {
+				JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
+				return;			
+			}
 		}
+
 		toolBar.setEnabled(false);
 
 		progress.getProgressBar().setMaximum(pages);
@@ -720,17 +736,16 @@ public class EmarkingDesktop {
 		moodle.getQr().setTotalpages(pages);
 		progress.setLocationRelativeTo(frame);
 		progress.setWorker(moodle.getQr());
-		moodle.clearPages();
 		initializeTable();
 		progress.startProcessing();		
 	}
-	
+
 	private void actionSave() {
 		ZipFile appZip = new ZipFile(moodle);
 		progress.setLocationRelativeTo(frame);
 		progress.setWorker(appZip);
 		appZip.addProgressListener(new MoodleWorkerListener() {
-			
+
 			@Override
 			public void processStarted(MoodleWorkerEvent e) {
 				progress.getProgressBar().setMinimum(0);
@@ -751,11 +766,11 @@ public class EmarkingDesktop {
 				zipFiles = appZip.getZipFiles();
 			}
 		});
-		
+
 		progress.startProcessing();
 		saveZipFiles(zipFiles);		
 	}
-	
+
 	private void actionUpload() {
 		try {
 			final UploadAnswersDialog dialog = new UploadAnswersDialog(moodle);
@@ -769,7 +784,7 @@ public class EmarkingDesktop {
 			ZipFile appZip = new ZipFile(moodle);
 			appZip.setDatalimit(2);
 			appZip.addProgressListener(new MoodleWorkerListener() {
-				
+
 				@Override
 				public void processStarted(MoodleWorkerEvent e) {
 				}
@@ -787,7 +802,7 @@ public class EmarkingDesktop {
 			progress.setWorker(appZip);
 			progress.setLocationRelativeTo(frame);
 			progress.startProcessing();
-			
+
 			Activity activity = null;
 			String newactivityname = lang.getString("defaultactivityname");
 			boolean merge = true;
@@ -847,7 +862,7 @@ public class EmarkingDesktop {
 			e1.printStackTrace();
 		}		
 	}
-	
+
 	private void actionNextProblem() {
 		int start = 0;
 		if(table.getSelectedRow() >= 0)
@@ -866,7 +881,7 @@ public class EmarkingDesktop {
 			JOptionPane.showMessageDialog(frame, lang.getString("nomoreproblems"));
 		}		
 	}
-	
+
 	private void actionSelectAllProblems() {
 		boolean problemdetected = false;
 		ListSelectionModel model = table.getSelectionModel();
@@ -883,7 +898,7 @@ public class EmarkingDesktop {
 			JOptionPane.showMessageDialog(frame, lang.getString("nomoreproblems"));
 		}		
 	}
-	
+
 	private void actionFix() {
 		for(int row : table.getSelectedRows()) {
 			try {
@@ -896,7 +911,7 @@ public class EmarkingDesktop {
 			}
 		}		
 	}
-	
+
 	private void actionFixFromPrevious() {
 		try {
 			executeCommand(Action.FIX_FROM_PREVIOUS);
@@ -905,7 +920,7 @@ public class EmarkingDesktop {
 			JOptionPane.showMessageDialog(frame, ex.getMessage());
 		}		
 	}
-	
+
 	private void actionFixFromFollowing() {
 
 		try {
@@ -915,7 +930,7 @@ public class EmarkingDesktop {
 			JOptionPane.showMessageDialog(frame, ex.getMessage());
 		}		
 	}
-	
+
 	private void actionRotateImage180() {
 		try {
 			executeCommand(Action.ROTATE180);
@@ -924,7 +939,7 @@ public class EmarkingDesktop {
 			JOptionPane.showMessageDialog(frame, e1.getMessage());
 		}		
 	}
-	
+
 	private void actionSwap() {
 		try {
 			executeCommand(Action.SWAPFRONTBACK);
@@ -933,7 +948,7 @@ public class EmarkingDesktop {
 			e1.printStackTrace();
 		}		
 	}
-	
+
 	private void actionRotateAndFixFromPrevious() {
 		try {
 			executeCommand(Action.ROTATE180ANDFIX);
@@ -942,7 +957,7 @@ public class EmarkingDesktop {
 			e1.printStackTrace();
 		}		
 	}
-	
+
 	private void actionRotateAndFixFromFollowing() {
 		try {
 			executeCommand(Action.ROTATE180ANDFIXFROMFOLLOWING);

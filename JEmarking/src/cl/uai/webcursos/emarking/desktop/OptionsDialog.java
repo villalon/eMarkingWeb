@@ -27,7 +27,6 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JCheckBox;
 import javax.swing.ImageIcon;
 
@@ -58,6 +57,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.LineBorder;
 
 public class OptionsDialog extends JDialog {
 
@@ -67,8 +68,6 @@ public class OptionsDialog extends JDialog {
 	private static final long serialVersionUID = 3424578643623876331L;
 	
 	private static Logger logger = Logger.getLogger(OptionsDialog.class);
-	
-	private final JPanel contentPanel = new JPanel();
 	private JCheckBox chckbxDoubleSide;
 	private boolean cancelled = false;
 	private final JTextField username;
@@ -81,6 +80,8 @@ public class OptionsDialog extends JDialog {
 	private JComboBox<String> maxZipSize;
 	private JComboBox<Integer> maxThreads;
 	private JComboBox<Integer> resolution;
+	private JPanel panel;
+	private JButton btnOpenPdfFile;
 
 	/**
 	 * @return the cancelled
@@ -103,166 +104,10 @@ public class OptionsDialog extends JDialog {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(OptionsDialog.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_439_wrench.png")));
 		setTitle(EmarkingDesktop.lang.getString("emarkingoptions"));
 		setModal(true);
-		setBounds(100, 100, 666, 397);
+		setBounds(100, 100, 706, 357);
 		this.moodle = _moodle;
 		this.moodle.loadProperties();
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		
-		chckbxDoubleSide = new JCheckBox(EmarkingDesktop.lang.getString("doubleside"));
-		chckbxDoubleSide.setBounds(146, 95, 117, 23);
-		chckbxDoubleSide.setToolTipText(EmarkingDesktop.lang.getString("doublesidetooltip"));
-		
-		username = new JTextField();
-		username.setBounds(146, 258, 329, 20);
-		username.setColumns(10);
-		
-		JLabel lblUsername = new JLabel(EmarkingDesktop.lang.getString("username"));
-		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblUsername.setBounds(10, 261, 130, 14);
-		
-		JLabel lblPassword = new JLabel(EmarkingDesktop.lang.getString("password"));
-		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblPassword.setBounds(10, 297, 130, 14);
-		
-		password = new JPasswordField();
-		password.setBounds(146, 294, 329, 20);
-		
-		JLabel lblScanned = new JLabel(EmarkingDesktop.lang.getString("scanned"));
-		lblScanned.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblScanned.setBounds(10, 98, 130, 14);
-		
-		JLabel lblMoodleUrl = new JLabel(EmarkingDesktop.lang.getString("moodleurl"));
-		lblMoodleUrl.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblMoodleUrl.setBounds(10, 134, 130, 14);
-		
-		moodleurl = new JTextField();
-		moodleurl.setBounds(146, 131, 329, 20);
-		moodleurl.setColumns(10);
-		moodleurl.getDocument().addDocumentListener(new DocumentListener() {
-			
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				warn();
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				warn();
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				warn();
-			}
-			
-			private void warn() {
-				UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
-				if(!validator.isValid(moodleurl.getText())) {
-					moodleurl.setForeground(Color.RED);
-				} else {
-					moodleurl.setForeground(Color.BLACK);
-				}
-			}
-		});
-		
-		contentPanel.setLayout(null);
-		contentPanel.add(lblMoodleUrl);
-		contentPanel.add(moodleurl);
-		contentPanel.add(lblScanned);
-		contentPanel.add(chckbxDoubleSide);
-		contentPanel.add(lblPassword);
-		contentPanel.add(password);
-		contentPanel.add(lblUsername);
-		contentPanel.add(username);
-		
-		JLabel lblPdfFile = new JLabel(EmarkingDesktop.lang.getString("pdffile"));
-		lblPdfFile.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblPdfFile.setBounds(10, 62, 130, 14);
-		contentPanel.add(lblPdfFile);
-		
-		filename = new JTextField();
-		filename.setBounds(146, 59, 329, 20);
-		contentPanel.add(filename);
-		filename.setColumns(10);
-		filename.getDocument().addDocumentListener(new DocumentListener() {
-			
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				warn();
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				warn();
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				warn();
-			}
-			
-			private void warn() {
-				File f = new File(filename.getText());
-				if(!f.exists() || f.isDirectory() || !f.getPath().endsWith(".pdf")) {
-					filename.setForeground(Color.RED);
-				} else {
-					filename.setForeground(Color.BLACK);
-				}
-			}
-		});
-		
-		JButton btnOpenPdfFile = new JButton(EmarkingDesktop.lang.getString("openfile"));
-		btnOpenPdfFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setDialogTitle(EmarkingDesktop.lang.getString("openfiletitle"));
-				chooser.setDialogType(JFileChooser.OPEN_DIALOG);
-				chooser.setFileFilter(new FileFilter() {					
-					@Override
-					public String getDescription() {
-						return "*.pdf";
-					}					
-					@Override
-					public boolean accept(File arg0) {
-						if(arg0.getName().endsWith(".pdf") || arg0.isDirectory())
-							return true;
-						return false;
-					}
-				});
-				int retval = chooser.showOpenDialog(contentPanel);
-				if(retval == JFileChooser.APPROVE_OPTION) {
-					filename.setText(chooser.getSelectedFile().getAbsolutePath());
-				} else {
-					return;
-				}
-			}
-		});
-		btnOpenPdfFile.setBounds(487, 57, 172, 27);
-		contentPanel.add(btnOpenPdfFile);
-		
-		btnTestConnection = new JButton(EmarkingDesktop.lang.getString("connect"));
-		btnTestConnection.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				logger.debug("Testing Moodle connection");
-				btnTestConnection.setEnabled(false);
-				moodle.setUrl(moodleurl.getText());
-				moodle.setUsername(username.getText());
-				String _password = new String(password.getPassword());
-				moodle.setPassword(_password);
-				if(moodle.connect()) {
-					btnTestConnection.setIcon(new ImageIcon(EmarkingDesktop.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_206_ok_2.png")));
-					btnTestConnection.setText(EmarkingDesktop.lang.getString("connectionsuccessfull"));
-					okButton.setEnabled(true);
-				} else {
-					JOptionPane.showMessageDialog(contentPanel, EmarkingDesktop.lang.getString("connectionfailed"));					
-					btnTestConnection.setEnabled(true);
-				}
-			}
-		});
-		btnTestConnection.setBounds(487, 292, 172, 27);
-		contentPanel.add(btnTestConnection);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -278,7 +123,7 @@ public class OptionsDialog extends JDialog {
 								throw new Exception(EmarkingDesktop.lang.getString("invalidmoodleurl")+ " " + moodleurl.getText());
 							}
 							File f = new File(filename.getText());
-							if(!f.exists() || f.isDirectory() || !f.getPath().endsWith(".pdf")) {
+							if(!f.exists() || f.isDirectory() || (!f.getPath().endsWith(".pdf") && !f.getPath().endsWith(".zip"))) {
 								throw new Exception(EmarkingDesktop.lang.getString("invalidpdffile") + " " + filename.getText());								
 							}
 							moodle.setLastfile(filename.getText());
@@ -291,7 +136,7 @@ public class OptionsDialog extends JDialog {
 							setVisible(false);
 						} catch (Exception ex) {
 							ex.printStackTrace();
-							JOptionPane.showMessageDialog(contentPanel, EmarkingDesktop.lang.getString("invaliddatainform"));
+							JOptionPane.showMessageDialog(panel, EmarkingDesktop.lang.getString("invaliddatainform"));
 						}
 					}
 				});
@@ -312,48 +157,251 @@ public class OptionsDialog extends JDialog {
 			}
 		}
 		
-		JLabel lblSomething = new JLabel(EmarkingDesktop.lang.getString("separatezipfiles"));
-		lblSomething.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSomething.setBounds(10, 165, 130, 14);
-		contentPanel.add(lblSomething);
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
-		JLabel lblThreads = new JLabel(EmarkingDesktop.lang.getString("maxthreads"));
-		lblThreads.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblThreads.setBounds(10, 195, 130, 14);
-		contentPanel.add(lblThreads);
+		panel = new JPanel();
+		tabbedPane.addTab(EmarkingDesktop.lang.getString("general"), null, panel, null);
+		panel.setLayout(null);
 		
-		maxZipSize = new JComboBox<String>();
-		maxZipSize.setModel(new DefaultComboBoxModel<String>(new String[] {"<dynamic>", "2Mb", "4Mb", "8Mb", "16Mb", "32Mb", "64Mb", "128Mb", "256Mb", "512Mb", "1024Mb"}));
-		maxZipSize.setSelectedIndex(6);
-		maxZipSize.setBounds(146, 160, 169, 27);
-		contentPanel.add(maxZipSize);
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		panel_2.setBounds(10, 11, 665, 131);
+		panel.add(panel_2);
+		panel_2.setLayout(null);
 		
-		maxThreads = new JComboBox<Integer>();
-		maxThreads.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {2, 4, 8, 16}));
-		maxThreads.setSelectedIndex(1);
-		maxThreads.setBounds(146, 190, 169, 27);
-		contentPanel.add(maxThreads);
+		JLabel lblPassword = new JLabel(EmarkingDesktop.lang.getString("password"));
+		lblPassword.setBounds(10, 99, 109, 14);
+		panel_2.add(lblPassword);
+		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		JLabel label = new JLabel(EmarkingDesktop.lang.getString("resolution"));
-		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		label.setBounds(10, 226, 130, 14);
-		contentPanel.add(label);
+		password = new JPasswordField();
+		password.setBounds(129, 96, 329, 20);
+		panel_2.add(password);
+		this.password.setText(this.moodle.getPassword());
 		
-		resolution = new JComboBox<Integer>();
-		resolution.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {75, 100, 150, 300, 400, 500, 600}));
-		resolution.setSelectedIndex(2);
-		resolution.setBounds(146, 221, 169, 27);
-		contentPanel.add(resolution);
+		btnTestConnection = new JButton(EmarkingDesktop.lang.getString("connect"));
+		btnTestConnection.setEnabled(false);
+		btnTestConnection.setBounds(468, 93, 172, 27);
+		panel_2.add(btnTestConnection);
+		
+		username = new JTextField();
+		username.setBounds(129, 65, 329, 20);
+		panel_2.add(username);
+		username.setColumns(10);
+		this.username.setText(this.moodle.getUsername());
+		
+		moodleurl = new JTextField();
+		moodleurl.setBounds(129, 34, 329, 20);
+		panel_2.add(moodleurl);
+		moodleurl.setColumns(10);
+		moodleurl.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				warn();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				warn();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				warn();
+			}
+			
+			private void warn() {
+				UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+				if(!validator.isValid(moodleurl.getText()) || !moodleurl.getText().endsWith("/")) {
+					moodleurl.setForeground(Color.RED);
+					btnTestConnection.setEnabled(false);
+				} else {
+					moodleurl.setForeground(Color.BLACK);
+					btnTestConnection.setEnabled(true);
+				}
+			}
+		});
 		
 		// Initializing values from moodle configuration
 		this.moodleurl.setText(this.moodle.getUrl());
-		this.username.setText(this.moodle.getUsername());
-		this.filename.setText(this.moodle.getLastfile());
+		
+		JLabel lblMoodleUrl = new JLabel(EmarkingDesktop.lang.getString("moodleurl"));
+		lblMoodleUrl.setBounds(10, 37, 109, 14);
+		panel_2.add(lblMoodleUrl);
+		lblMoodleUrl.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblUsername = new JLabel(EmarkingDesktop.lang.getString("username"));
+		lblUsername.setBounds(10, 68, 109, 14);
+		panel_2.add(lblUsername);
+		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblMoodleSettings = new JLabel(EmarkingDesktop.lang.getString("moodlesettings"));
+		lblMoodleSettings.setBounds(10, 11, 230, 14);
+		panel_2.add(lblMoodleSettings);
+		btnTestConnection.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnTestConnection.setEnabled(false);
+				logger.debug("Testing Moodle connection");
+				moodle.setUrl(moodleurl.getText());
+				moodle.setUsername(username.getText());
+				String _password = new String(password.getPassword());
+				moodle.setPassword(_password);
+				if(moodle.connect()) {
+					btnTestConnection.setIcon(new ImageIcon(EmarkingDesktop.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_206_ok_2.png")));
+					btnTestConnection.setText(EmarkingDesktop.lang.getString("connectionsuccessfull"));
+					filename.setEnabled(true);
+					chckbxDoubleSide.setEnabled(true);
+					btnOpenPdfFile.setEnabled(true);
+					btnTestConnection.setEnabled(false);
+					username.setEnabled(false);
+					moodleurl.setEnabled(false);
+					password.setEnabled(false);
+					validateFileForProcessing(true);
+				} else {
+					JOptionPane.showMessageDialog(panel, EmarkingDesktop.lang.getString("connectionfailed"));					
+					btnTestConnection.setEnabled(true);
+				}
+			}
+		});
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		panel_3.setBounds(10, 159, 665, 90);
+		panel.add(panel_3);
+		panel_3.setLayout(null);
+		
+		JLabel lblPdfFile = new JLabel(EmarkingDesktop.lang.getString("pdffile"));
+		lblPdfFile.setBounds(0, 39, 119, 14);
+		panel_3.add(lblPdfFile);
+		lblPdfFile.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblScanned = new JLabel(EmarkingDesktop.lang.getString("scanned"));
+		lblScanned.setBounds(0, 64, 119, 14);
+		panel_3.add(lblScanned);
+		lblScanned.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		chckbxDoubleSide = new JCheckBox(EmarkingDesktop.lang.getString("doubleside"));
+		chckbxDoubleSide.setEnabled(false);
+		chckbxDoubleSide.setBounds(125, 60, 117, 23);
+		panel_3.add(chckbxDoubleSide);
+		chckbxDoubleSide.setToolTipText(EmarkingDesktop.lang.getString("doublesidetooltip"));
 		this.chckbxDoubleSide.setSelected(this.moodle.isDoubleside());
-		this.password.setText(this.moodle.getPassword());
-		this.maxZipSize.setSelectedItem(this.moodle.getMaxZipSizeString());
-		this.maxThreads.setSelectedItem(this.moodle.getQr().getMaxThreads());
+		
+		filename = new JTextField();
+		filename.setEnabled(false);
+		filename.setBounds(129, 36, 329, 20);
+		panel_3.add(filename);
+		filename.setColumns(10);
+		filename.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				warn();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				warn();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				warn();
+			}
+			
+			private void warn() {
+				validateFileForProcessing(!btnTestConnection.isEnabled());
+			}
+		});
+		this.filename.setText(this.moodle.getLastfile());
+		
+		btnOpenPdfFile = new JButton(EmarkingDesktop.lang.getString("openfile"));
+		btnOpenPdfFile.setEnabled(false);
+		btnOpenPdfFile.setBounds(468, 33, 172, 27);
+		panel_3.add(btnOpenPdfFile);
+		
+		JLabel lblPdfFileSettings = new JLabel(EmarkingDesktop.lang.getString("filesettings"));
+		lblPdfFileSettings.setBounds(10, 11, 230, 14);
+		panel_3.add(lblPdfFileSettings);
+		btnOpenPdfFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				okButton.setEnabled(false);
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle(EmarkingDesktop.lang.getString("openfiletitle"));
+				chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				chooser.setFileFilter(new FileFilter() {					
+					@Override
+					public String getDescription() {
+						return "*.pdf, *.zip";
+					}
+					@Override
+					public boolean accept(File arg0) {
+						if(arg0.getName().endsWith(".zip") || arg0.getName().endsWith(".pdf") || arg0.isDirectory())
+							return true;
+						return false;
+					}
+				});
+				int retval = chooser.showOpenDialog(panel);
+				if(retval == JFileChooser.APPROVE_OPTION) {
+					filename.setText(chooser.getSelectedFile().getAbsolutePath());
+					okButton.setEnabled(true);
+				} else {
+					return;
+				}
+			}
+		});
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab(EmarkingDesktop.lang.getString("advanced"), null, panel_1, null);
+		panel_1.setLayout(null);
+		
+		JPanel panel_4 = new JPanel();
+		panel_4.setLayout(null);
+		panel_4.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		panel_4.setBounds(10, 11, 665, 131);
+		panel_1.add(panel_4);
+		
+		JLabel lblAdvancedOptions = new JLabel(EmarkingDesktop.lang.getString("advancedoptions"));
+		lblAdvancedOptions.setBounds(10, 11, 233, 14);
+		panel_4.add(lblAdvancedOptions);
+		
+		JLabel lblThreads = new JLabel(EmarkingDesktop.lang.getString("maxthreads"));
+		lblThreads.setBounds(10, 38, 130, 14);
+		panel_4.add(lblThreads);
+		lblThreads.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel lblSomething = new JLabel(EmarkingDesktop.lang.getString("separatezipfiles"));
+		lblSomething.setBounds(10, 73, 130, 14);
+		panel_4.add(lblSomething);
+		lblSomething.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		JLabel label = new JLabel(EmarkingDesktop.lang.getString("resolution"));
+		label.setBounds(10, 105, 130, 14);
+		panel_4.add(label);
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		resolution = new JComboBox<Integer>();
+		resolution.setBounds(150, 99, 169, 27);
+		panel_4.add(resolution);
+		resolution.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {75, 100, 150, 300, 400, 500, 600}));
+		resolution.setSelectedIndex(2);
 		this.resolution.setSelectedItem(this.moodle.getQr().getResolution());		
+		
+		maxZipSize = new JComboBox<String>();
+		maxZipSize.setBounds(150, 67, 169, 27);
+		panel_4.add(maxZipSize);
+		maxZipSize.setModel(new DefaultComboBoxModel<String>(new String[] {"<dynamic>", "2Mb", "4Mb", "8Mb", "16Mb", "32Mb", "64Mb", "128Mb", "256Mb", "512Mb", "1024Mb"}));
+		maxZipSize.setSelectedIndex(6);
+		this.maxZipSize.setSelectedItem(this.moodle.getMaxZipSizeString());
+		
+		maxThreads = new JComboBox<Integer>();
+		maxThreads.setBounds(150, 32, 169, 27);
+		panel_4.add(maxThreads);
+		maxThreads.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {2, 4, 8, 16}));
+		maxThreads.setSelectedIndex(1);
+		this.maxThreads.setSelectedItem(this.moodle.getQr().getMaxThreads());
 	}
 	
 	public boolean getDoubleSideSelected() {
@@ -385,5 +433,16 @@ public class OptionsDialog extends JDialog {
 	}
 	public JComboBox<Integer> getResolution() {
 		return resolution;
+	}
+	private void validateFileForProcessing(boolean activateOkButton) {
+		File f = new File(filename.getText());
+		if(!f.exists() || f.isDirectory() || (!f.getPath().endsWith(".pdf") && !f.getPath().endsWith(".zip"))) {
+			filename.setForeground(Color.RED);
+			okButton.setEnabled(false);
+		} else {
+			filename.setForeground(Color.BLACK);
+			if(activateOkButton)
+				okButton.setEnabled(true);
+		}		
 	}
 }
