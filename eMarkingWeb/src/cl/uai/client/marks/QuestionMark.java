@@ -24,14 +24,15 @@ import java.util.Map;
 
 import cl.uai.client.resources.Resources;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+
 /**
  * 
  * @author Jorge Villalón <villalon@gmail.com>
  *
  */
-public class CustomMark extends Mark {
-	
-	private String title;
+public class QuestionMark extends Mark {
 	
 	/**
 	 * Creates a CheckMark object at a specific position in a page
@@ -39,24 +40,24 @@ public class CustomMark extends Mark {
 	 * @param posy Y coordinate in the page
 	 * @param pageno the page number (1 to N)
 	 */
-	public CustomMark(
-			String title,
+	public QuestionMark(
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
-			long timecreated) {
+			long timecreated
+			) {
 		super(posx, posy, pageno, markerid, timecreated);
 		
-		this.format = 1000;
-		this.title = title;
+		this.format = 6;
 
 		this.addStyleName(Resources.INSTANCE.css().checkmark());
 	}
 
 	@Override
 	protected void setMarkHTML() {
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+this.getTitle()+"</div>";
+		Icon icon = new Icon(IconType.QUESTION_SIGN);
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+icon.toString()+"</div>";
 		this.setHTML(html);		
 	}
 	
@@ -68,11 +69,8 @@ public class CustomMark extends Mark {
 	 * @param mark the Hash
 	 * @return a CheckMark object
 	 */
-	public static CustomMark createFromMap(Map<String, String> markMap) {
-		String title = markMap.get("rawtext").split(":")[0];
-		
-		CustomMark commentobj = new CustomMark(
-				title,
+	public static QuestionMark createFromMap(Map<String, String> markMap) {
+		QuestionMark commentobj = new QuestionMark(				 
 				Integer.parseInt(markMap.get("posx")), 
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
@@ -84,9 +82,5 @@ public class CustomMark extends Mark {
 		commentobj.setMarkername(markMap.get("markername"));
 
 		return commentobj;
-	}
-	
-	public String getTitle() {
-		return this.title;
-	}
+	}	
 }

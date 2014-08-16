@@ -868,11 +868,8 @@ public class MarkingInterface extends EMarkingComposite {
 				mark.setRegradecomment(comment);
 				mark.setRegrademotive(motive);
 
-				// Adds the mark to the marking interface
-				markingPagesInterface.addMarkWidget(mark, -1, page);
-				
-				// If it is a comment And to the rubric interface
-				toolbar.getMarkingButtons().updateStats();
+				// Add the mark to the rubric so it updates the information in the rubric panel
+				EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(mark);
 				
 				// Updates toolbar
 				setTimemodified(timemodified);
@@ -913,6 +910,7 @@ public class MarkingInterface extends EMarkingComposite {
 		}
 		Window.Location.replace(madeURL);
 	}
+	
 	/**
 	 * A new grade was assigned through marking
 	 * 
@@ -926,6 +924,7 @@ public class MarkingInterface extends EMarkingComposite {
 		focusPanel.getElement().focus();
 		EMarkingWeb.notifyDelphi();
 	}
+	
 	/**
 	 * A new grade was assigned through marking
 	 * 

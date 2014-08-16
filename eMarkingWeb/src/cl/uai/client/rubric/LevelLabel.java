@@ -22,6 +22,7 @@ package cl.uai.client.rubric;
 
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Level;
+import cl.uai.client.data.SubmissionGradeData;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
@@ -40,6 +41,7 @@ public class LevelLabel extends HTML {
 	private Level lvl;
 	private boolean regradeRequested = false;
 	private String regradeComment = null;
+	private int regradeMotive = 0;
 	
 	/**
 	 * Creates a rubric level label
@@ -65,6 +67,10 @@ public class LevelLabel extends HTML {
 		this.regradeComment = regradeComment;
 	}
 
+	public void setRegradeMotive(int motive) {
+		this.regradeMotive = motive;
+	}
+	
 	public void updateHtml() {
 		if(lvl != null) {
 			String bonusHtml = "";
@@ -77,6 +83,7 @@ public class LevelLabel extends HTML {
 			if(this.regradeRequested) {
 				regradeCommentHtml += "<hr>" +
 						"<span style=\"font-weight: bold;\">" + MarkingInterface.messages.RegradeComment() + "</span><hr>" +
+						SubmissionGradeData.getRegradeMotiveText(regradeMotive) + "<br/>" +
 						this.regradeComment;
 			}
 

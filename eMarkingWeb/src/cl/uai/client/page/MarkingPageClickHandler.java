@@ -28,6 +28,7 @@ import cl.uai.client.marks.CheckMark;
 import cl.uai.client.marks.CommentMark;
 import cl.uai.client.marks.CrossMark;
 import cl.uai.client.marks.CustomMark;
+import cl.uai.client.marks.QuestionMark;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -132,6 +133,16 @@ public class MarkingPageClickHandler implements ClickHandler {
 					MarkingInterface.markerid,
 					unixtime);
 			EMarkingWeb.markingInterface.addMark(cmark, parentPage);
+			break;
+			// A check mark
+		case BUTTON_QUESTION:
+			QuestionMark qmark = new QuestionMark(
+					newposx, 
+					newposy, 
+					pageno,
+					MarkingInterface.markerid,
+					unixtime);
+			EMarkingWeb.markingInterface.addMark(qmark, parentPage);
 			break;
 		case BUTTON_CUSTOM:
 			CustomMark custommark = new CustomMark(

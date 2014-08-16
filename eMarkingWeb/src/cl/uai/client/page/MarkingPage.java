@@ -37,6 +37,7 @@ import cl.uai.client.marks.CrossMark;
 import cl.uai.client.marks.CustomMark;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.PathMark;
+import cl.uai.client.marks.QuestionMark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
@@ -162,13 +163,13 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			
 			int format = mark.getFormat();
 			
-			if(format == 7) {
+			if(format == 1000) {
 				String label = mark.getRawtext();
 				Integer idx = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getCustomButtonIndex().get(label);
-				if(idx == null || idx < 4) {
+				if(idx == null || idx < 6) {
 					continue;
 				} else {
-					format = idx+1;
+					format = idx+1000;
 				}
 			}
 			
@@ -238,7 +239,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 					case 5:
 						addMarkWidget(PathMark.createFromMap(mark));
 						break;
-					case 7:
+					case 6:
+						addMarkWidget(QuestionMark.createFromMap(mark));
+						break;
+					case 1000:
 						addMarkWidget(CustomMark.createFromMap(mark));
 						break;
 					default:

@@ -107,4 +107,5 @@ public interface EmarkingMessages extends Messages {
 	public String Score();
 	public String Edit();
 	public String Delete();
+	public String QuestionTitle();
 }

@@ -157,6 +157,11 @@ public class RubricPanel extends EMarkingComposite {
 		if(lblLabel == null) {
 			logger.severe(MarkingInterface.messages.ErrorInvalidLevelId());
 		} else {
+			if(mark.getRegradeid() > 0) {
+				lblLabel.setRegradeMotive(mark.getRegrademotive());
+				lblLabel.setRegradeComment(mark.getRegradecomment());
+				lblLabel.setRegradeRequested(true);
+			}
 			lblLabel.updateHtml();
 			lblLabel.addStyleName(Resources.INSTANCE.css().rubricLevelSelected());
 			HorizontalPanel hpanel = rubricRows.get(mark.getCriterionId());
@@ -169,6 +174,9 @@ public class RubricPanel extends EMarkingComposite {
 				cheader.setCommentId(mark.getId());
 				cheader.setBonus(criterion.getBonus());
 				cheader.setCommentPage(mark.getPageno());
+				if(mark.getRegradeid() > 0) {
+					cheader.setRegradeData(mark.getRegradeid(), mark.getRegradeaccepted());
+				}
 				cheader.setMarkerVisible(!popupInterface);
 				cheader.setRegradeData(mark.getRegradeid(), mark.getRegradeaccepted());
 			}

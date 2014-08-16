@@ -80,6 +80,7 @@ public class MarkingButtons extends EMarkingComposite {
 		BUTTON_TICK,
 		BUTTON_CROSS,
 		BUTTON_PEN,
+		BUTTON_QUESTION,
 		BUTTON_CUSTOM,
 	}
 
@@ -92,6 +93,7 @@ public class MarkingButtons extends EMarkingComposite {
 		IconType.OK,
 		IconType.REMOVE,
 		IconType.PENCIL,
+		IconType.QUESTION_SIGN,
 	};
 	
 	/**
@@ -102,7 +104,8 @@ public class MarkingButtons extends EMarkingComposite {
 		1,
 		3,
 		4,
-		5
+		5,
+		6
 	};
 
 	/**
@@ -114,6 +117,7 @@ public class MarkingButtons extends EMarkingComposite {
 		MarkingInterface.messages.CheckTitle(),
 		MarkingInterface.messages.CrossTitle(),
 		MarkingInterface.messages.PenTitle(),
+		MarkingInterface.messages.QuestionTitle(),
 	};
 
 	/**
@@ -125,6 +129,7 @@ public class MarkingButtons extends EMarkingComposite {
 	 * If the button is shown
 	 */
 	private static boolean[] buttonsShow = {
+		true,
 		true,
 		true,
 		true,
@@ -245,6 +250,11 @@ public class MarkingButtons extends EMarkingComposite {
 		for(int format : stats.keySet()) {
 			int value = stats.get(format);
 
+			if(buttonsStats.get(format) == null) {
+				logger.severe("Format " + format + " could not be found");
+				continue;
+			}
+			
 			buttonsStats.get(format).setText(Integer.toString(value));
 
 			if(value > 0) {
@@ -280,15 +290,14 @@ public class MarkingButtons extends EMarkingComposite {
 			return;
 		}
 		
-		int basebuttons = buttons.size();
 		for(int j=0;j<partsButtonLabels.length;j++) {
 			if(partsButtonLabels[j].trim().length()>0) {
 				addToggleButton(
 						partsButtonLabels[j], 
 						partsButtonTitles[j], 
 						Resources.INSTANCE.css().rubricbuttoncustom(),
-						basebuttons + j);
-				customButtonIndex.put(partsButtonLabels[j], basebuttons + j);
+						1000 + j);
+				customButtonIndex.put(partsButtonLabels[j], 1000 + j);
 			}
 		}
 	}
@@ -306,9 +315,9 @@ public class MarkingButtons extends EMarkingComposite {
 	 * @param label
 	 * @param title
 	 * @param cssStyle
-	 * @param format
+	 * @param buttonIndex
 	 */
-	private void addToggleButton(String label, String title, String cssStyle, int format) {
+	private void addToggleButton(String label, String title, String cssStyle, int buttonIndex) {
 		ToggleButton button = new ToggleButton();
 		button.addStyleName(cssStyle);
 		button.setHTML(label);			
@@ -316,7 +325,11 @@ public class MarkingButtons extends EMarkingComposite {
 		button.setTitle(title);
 		buttons.add(button);
 
-		Label lblstat = buttonsStats.get(format);
+		Label lblstat = buttonsStats.get(buttonIndex);
+		if(lblstat == null) {
+			lblstat = new Label();
+			buttonsStats.put(buttonIndex, lblstat);
+		}
 		
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);

@@ -378,23 +378,26 @@ public class SubmissionGradeData {
 	public void setRubricname(String rubricname) {
 		this.rubricname = rubricname;
 	}
+	
 	public String getCustommarks() {
 		return custommarks;
 	}
+	
 	public void setCustommarks(String custommarks) {
 		this.custommarks = custommarks;
 	}
+	
 	public static String getRegradeMotiveText(int motiveid) {
 		switch(motiveid) {
 		case 1:
-			return "Puntaje mal asignado";
+			return MarkingInterface.messages.MissassignedScore();
 		case 2:
-			return "Retroalimentaión poco clara";
+			return MarkingInterface.messages.UnclearFeedback();
 		case 3:
-			return "Problema con el enunciado";
+			return MarkingInterface.messages.StatementProblem();
 		case 10:
 		default:
-			return "Otro";
+			return MarkingInterface.messages.Other();
 		}
 	}
 }
