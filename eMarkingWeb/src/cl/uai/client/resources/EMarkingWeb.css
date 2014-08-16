@@ -452,10 +452,11 @@ to {
 
 .rubricbutton,.rubricbuttoncustom {
 	width: 21px;
+	font-weight: bolder;
 }
 
 .rubricbuttoncustom {
-	font-size: 8pt;
+	font-size: 16pt;
 }
 
 .rubricbuttonjewel {

@@ -167,9 +167,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 				String label = mark.getRawtext();
 				Integer idx = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getCustomButtonIndex().get(label);
 				if(idx == null || idx < 6) {
+					logger.severe("Custom mark " + label + " index not found");
 					continue;
 				} else {
-					format = idx+1000;
+					format = idx;
 				}
 			}
 			

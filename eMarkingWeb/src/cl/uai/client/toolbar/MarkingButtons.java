@@ -266,7 +266,9 @@ public class MarkingButtons extends EMarkingComposite {
 	}
 
 	public void loadCustomMarksButtons(String customMarks) {
-		if(customMarks == null || customMarks.trim().length() == 0 || buttons.size() >= Buttons.values().length)
+		if(customMarks == null 
+				|| customMarks.trim().length() == 0 
+				|| buttons.size() >= Buttons.values().length)
 			return;
 		
 		String[] lines = customMarks.replaceAll("\r\n", "\n").split("\n");
@@ -292,12 +294,22 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		for(int j=0;j<partsButtonLabels.length;j++) {
 			if(partsButtonLabels[j].trim().length()>0) {
+				
+				int currentButtonIndex = buttons.size() + 1;
+				
+				Label lblstat = buttonsStats.get(customButtonIndex);
+				if(lblstat == null) {
+					lblstat = new Label();
+					lblstat.addStyleName(Resources.INSTANCE.css().rubricbuttonjewel());
+					buttonsStats.put(currentButtonIndex, lblstat);
+				}
+
 				addToggleButton(
 						partsButtonLabels[j], 
 						partsButtonTitles[j], 
 						Resources.INSTANCE.css().rubricbuttoncustom(),
-						1000 + j);
-				customButtonIndex.put(partsButtonLabels[j], 1000 + j);
+						currentButtonIndex);
+				customButtonIndex.put(partsButtonLabels[j]+": "+partsButtonTitles[j], currentButtonIndex);
 			}
 		}
 	}
@@ -326,10 +338,6 @@ public class MarkingButtons extends EMarkingComposite {
 		buttons.add(button);
 
 		Label lblstat = buttonsStats.get(buttonIndex);
-		if(lblstat == null) {
-			lblstat = new Label();
-			buttonsStats.put(buttonIndex, lblstat);
-		}
 		
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);
