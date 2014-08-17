@@ -176,6 +176,11 @@ public class OptionsDialog extends JDialog {
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		password = new JPasswordField();
+		password.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				testConnection();
+			}
+		});
 		password.setBounds(129, 96, 329, 20);
 		panel_2.add(password);
 		this.password.setText(this.moodle.getPassword());
@@ -242,27 +247,7 @@ public class OptionsDialog extends JDialog {
 		panel_2.add(lblMoodleSettings);
 		btnTestConnection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				btnTestConnection.setEnabled(false);
-				logger.debug("Testing Moodle connection");
-				moodle.setUrl(moodleurl.getText());
-				moodle.setUsername(username.getText());
-				String _password = new String(password.getPassword());
-				moodle.setPassword(_password);
-				if(moodle.connect()) {
-					btnTestConnection.setIcon(new ImageIcon(EmarkingDesktop.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_206_ok_2.png")));
-					btnTestConnection.setText(EmarkingDesktop.lang.getString("connectionsuccessfull"));
-					filename.setEnabled(true);
-					chckbxDoubleSide.setEnabled(true);
-					btnOpenPdfFile.setEnabled(true);
-					btnTestConnection.setEnabled(false);
-					username.setEnabled(false);
-					moodleurl.setEnabled(false);
-					password.setEnabled(false);
-					validateFileForProcessing(true);
-				} else {
-					JOptionPane.showMessageDialog(panel, EmarkingDesktop.lang.getString("connectionfailed"));					
-					btnTestConnection.setEnabled(true);
-				}
+				testConnection();
 			}
 		});
 		
@@ -443,6 +428,29 @@ public class OptionsDialog extends JDialog {
 			filename.setForeground(Color.BLACK);
 			if(activateOkButton)
 				okButton.setEnabled(true);
+		}		
+	}
+	private void testConnection() {
+		btnTestConnection.setEnabled(false);
+		logger.debug("Testing Moodle connection");
+		moodle.setUrl(moodleurl.getText());
+		moodle.setUsername(username.getText());
+		String _password = new String(password.getPassword());
+		moodle.setPassword(_password);
+		if(moodle.connect()) {
+			btnTestConnection.setIcon(new ImageIcon(EmarkingDesktop.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_206_ok_2.png")));
+			btnTestConnection.setText(EmarkingDesktop.lang.getString("connectionsuccessfull"));
+			filename.setEnabled(true);
+			chckbxDoubleSide.setEnabled(true);
+			btnOpenPdfFile.setEnabled(true);
+			btnTestConnection.setEnabled(false);
+			username.setEnabled(false);
+			moodleurl.setEnabled(false);
+			password.setEnabled(false);
+			validateFileForProcessing(true);
+		} else {
+			JOptionPane.showMessageDialog(panel, EmarkingDesktop.lang.getString("connectionfailed"));					
+			btnTestConnection.setEnabled(true);
 		}		
 	}
 }

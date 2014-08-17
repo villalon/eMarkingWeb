@@ -23,10 +23,10 @@ public class PagesTable extends JTable {
 	private final static Object[][] emptydata = {};
 	
 	private final static String[] columnNames = {
-			EmarkingDesktop.lang.getString("page"),
+			"#",
 			EmarkingDesktop.lang.getString("student"),
 			EmarkingDesktop.lang.getString("course"),
-			EmarkingDesktop.lang.getString("exampage")
+			EmarkingDesktop.lang.getString("page")
 	};
 	
 	/**

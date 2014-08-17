@@ -86,7 +86,7 @@ public class MoodleWorker implements Runnable {
 	@Override
 	public void run() {
 		Map<Integer, Boolean> rowsprocessed = new Hashtable<Integer, Boolean>();
-		
+
 		MoodleWorkerEvent e = new MoodleWorkerEvent(this, 0, this.rows.length, null);
 		fireRowProcessingStarted(e);
 

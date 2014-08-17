@@ -96,16 +96,6 @@ public class Moodle {
 	/** Util for ... TODO: explain **/
 	private String lastfile;
 
-	private int maxExamPage = 0;
-
-	public int getMaxExamPage() {
-		return maxExamPage;
-	}
-
-	public void setMaxExamPage(int maxExamPage) {
-		this.maxExamPage = maxExamPage;
-	}
-
 	/**
 	 * @return the QR extractor
 	 */
@@ -119,7 +109,7 @@ public class Moodle {
 	public Pages getPages() {
 		return studentPages;
 	}
-
+	
 	public Moodle() {
 		this.qrExtractor = new QRextractor();
 		this.clearPages();
@@ -127,7 +117,9 @@ public class Moodle {
 
 	public void clearPages() {
 		this.qrExtractor.setTempdir();
-		this.studentPages = new Pages(this);		
+		this.studentPages = new Pages(this);
+		this.students = new Hashtable<Integer, Student>();
+		this.courses = new Hashtable<Integer, Course>();
 	}
 
 	public QRextractor getQrExtractor() {
@@ -183,8 +175,10 @@ public class Moodle {
 					st.setIdnumber(idnumber);
 					st.setFullname(studentname);
 
-					if(!students.containsKey(id))
+					if(!students.containsKey(id)) {
+						st.setRownumber(students.keySet().size());
 						students.put(id, st);
+					}
 
 					logger.debug("id:" + id + " student:" + studentname + " idnumber:" + idnumber);
 				} catch (Exception e) {
@@ -623,4 +617,11 @@ public class Moodle {
 		return output;
 	}
 
+	public Student getStudentByRowNumber(int row) {
+		for(Student st : this.students.values()) {
+			if(st.getRownumber() == row)
+				return st;
+		}
+		return null;
+	}
 }

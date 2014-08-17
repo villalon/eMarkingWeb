@@ -25,6 +25,8 @@ public class Student {
 	private int id;
 	private String fullname;
 	private String idnumber;
+	private int rownumber;
+	private int pages = 0;
 	
 	/**
 	 * @return the id
@@ -66,5 +68,35 @@ public class Student {
 	@Override
 	public String toString() {
 		return getFullname();
+	}
+	/**
+	 * @return the rownumber
+	 */
+	public int getRownumber() {
+		return rownumber;
+	}
+	/**
+	 * @param rownumber the rownumber to set
+	 */
+	public void setRownumber(int rownumber) {
+		this.rownumber = rownumber;
+	}
+	public void addPage(Page p) {
+		this.setPages(this.getPages() + 1);
+	}
+	/**
+	 * @return the pages
+	 */
+	public int getPages() {
+		return pages;
+	}
+	/**
+	 * @param pages the pages to set
+	 */
+	public void setPages(int pages) {
+		this.pages = pages;
+	}
+	public void removePage(Page current) {
+		this.setPages(this.getPages() - 1);
 	}
 }

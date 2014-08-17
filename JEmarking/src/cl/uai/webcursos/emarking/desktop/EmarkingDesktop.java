@@ -83,6 +83,9 @@ import javax.swing.KeyStroke;
 import java.awt.event.InputEvent;
 
 import javax.swing.JSeparator;
+import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
 
 /**
  * Main class for the program's execution. Contains the main
@@ -95,7 +98,7 @@ public class EmarkingDesktop {
 
 	private static Logger logger = Logger.getLogger(EmarkingDesktop.class);
 	private JFrame frame;
-	private PagesTable table;
+	private PagesTable pagesTable;
 	private JPopupMenu contextMenu;
 	private Moodle moodle;
 	private EmarkingProgress progress;
@@ -108,7 +111,7 @@ public class EmarkingDesktop {
 	private JButton btnUpload;
 	private JSplitPane splitPane;
 	private JPanel imagePanel;
-	private JScrollPane scrollPaneTable;
+	private JScrollPane scrollPanePagesTable;
 	private JButton btnNextProblem;
 	private List<File> zipFiles;
 	private JButton btnSelectAllProblems;
@@ -132,6 +135,11 @@ public class EmarkingDesktop {
 	private JSeparator separator_1;
 	private JSeparator separator_2;
 	private JMenuItem menuRotateAndFixFollowing;
+	private JLabel lblStatusBarRight;
+	private JLabel lblStatusBar;
+	private JTabbedPane tabbedPane;
+	private JScrollPane scrollPaneStudentsTable;
+	private StudentsTable studentsTable;
 
 	/**
 	 * Create the application.
@@ -162,7 +170,8 @@ public class EmarkingDesktop {
 						qrResult.getCourseid()+" Page:" + qrResult.getExampage());
 
 				// Validate data				
-				if(!moodle.getCourses().containsKey(qrResult.getCourseid()) && qrResult.getCourseid() > 0) {
+				if(!moodle.getCourses().containsKey(qrResult.getCourseid()) 
+						&& qrResult.getCourseid() > 0) {
 					logger.debug("Course " + qrResult.getCourseid() + " not found!");
 					try {
 						moodle.retrieveCourseFromId(qrResult.getCourseid());
@@ -172,7 +181,9 @@ public class EmarkingDesktop {
 					}
 				}
 
-				if(!moodle.getStudents().containsKey(qrResult.getUserid()) && qrResult.getUserid() > 0 && qrResult.getCourseid() > 0) {
+				if(!moodle.getStudents().containsKey(qrResult.getUserid())
+						&& qrResult.getUserid() > 0 
+						&& qrResult.getCourseid() > 0) {
 					logger.debug("Student " + qrResult.getUserid() + " not found");
 					try {
 						moodle.retrieveStudents(qrResult.getCourseid());
@@ -183,28 +194,30 @@ public class EmarkingDesktop {
 
 				Page p = new Page(moodle);
 				p.setFilename(e.isBackPage() ? qrResult.getBackfilename() : qrResult.getFilename());
-				p.setRow(table.getModel().getRowCount());
+				p.setRow(pagesTable.getModel().getRowCount());
 				p.setProblem(e.getQrresult().getOutput());
 				p.setCourse(moodle.getCourses().containsKey(qrResult.getCourseid()) ? moodle.getCourses().get(qrResult.getCourseid()) : null);
 				p.setStudent(moodle.getStudents().containsKey(qrResult.getUserid()) ? moodle.getStudents().get(qrResult.getUserid()) : null);
 				p.setPagenumber(qrResult.getExampage());
 				p.setRotated(qrResult.isRotated());
-				if(qrResult.getExampage() > moodle.getMaxExamPage())
-					moodle.setMaxExamPage(qrResult.getExampage());
+				if(p.getStudent() != null) {
+					p.getStudent().addPage(p);
+					studentsTable.updateData(p.getStudent());
+				}
 				moodle.getPages().put(p.getRow(), p);
-				table.getPagesTableModel().addRow((Object[][]) null);
-				table.updateData(
+				pagesTable.getPagesTableModel().addRow((Object[][]) null);
+				pagesTable.updateData(
 						moodle.getPages().getRowData(p.getRow()),
 						p.getRow(),
 						false);
-				if(table.getRowCount()==1)
-					table.selectAll();
+				if(pagesTable.getRowCount()==1)
+					pagesTable.selectAll();
 				progress.getLblProgress().setText(lang.getString("processingpage") + " " + p.getRow());
 			}
 			@Override
 			public void finished(QRExtractorEvent e) {
 				progress.setVisible(false);
-				if(table.getRowCount() > 0) {
+				if(pagesTable.getRowCount() > 0) {
 					btnSave.setEnabled(true);
 					btnUpload.setEnabled(true);
 					btnNextProblem.setEnabled(true);
@@ -212,6 +225,7 @@ public class EmarkingDesktop {
 					menuNavigate.setEnabled(true);
 					menuUpload.setEnabled(true);
 					menuSave.setEnabled(true);
+					lblStatusBar.setText(moodle.getPages().getSummary());
 				}
 				logger.debug("QR extraction finished!");
 			}
@@ -376,14 +390,26 @@ public class EmarkingDesktop {
 		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
 
 		imagePanel = new JPanel();
-
-		scrollPaneTable = new JScrollPane();
-		scrollPaneTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		initializeTable();
-		scrollPaneTable.add(table);
-
-		splitPane.setRightComponent(scrollPaneTable);
 		splitPane.setLeftComponent(imagePanel);
+
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		splitPane.setRightComponent(tabbedPane);
+
+		scrollPanePagesTable = new JScrollPane();
+		tabbedPane.addTab(lang.getString("pages"), null, scrollPanePagesTable, null);
+		scrollPanePagesTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+		scrollPaneStudentsTable = new JScrollPane();
+		scrollPaneStudentsTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		tabbedPane.addTab(lang.getString("students"), null, scrollPaneStudentsTable, null);
+
+		initializeTable();
+	
+		scrollPanePagesTable.add(pagesTable);
+		scrollPanePagesTable.setViewportView(pagesTable);
+
+		studentsTable = new StudentsTable(moodle);
+		scrollPaneStudentsTable.setViewportView(studentsTable);
 
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -535,21 +561,32 @@ public class EmarkingDesktop {
 		btnSave.setPreferredSize(d);
 		btnSelectAllProblems.setPreferredSize(d);
 		btnUpload.setPreferredSize(d);
+
+		JPanel panelStatusBar = new JPanel();
+		panelStatusBar.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		frame.getContentPane().add(panelStatusBar, BorderLayout.SOUTH);
+		panelStatusBar.setLayout(new BorderLayout(0, 0));
+
+		lblStatusBar = new JLabel("");
+		panelStatusBar.add(lblStatusBar, BorderLayout.WEST);
+
+		lblStatusBarRight = new JLabel("Otro status");
+		panelStatusBar.add(lblStatusBarRight, BorderLayout.EAST);
 	}
 
 	private void scrollToRow(int row) {
-		JScrollBar bar = scrollPaneTable.getVerticalScrollBar();
-		if(table.getRowCount() > 0) {
+		JScrollBar bar = scrollPanePagesTable.getVerticalScrollBar();
+		if(pagesTable.getRowCount() > 0) {
 			int newIndex = Math.max(0, row-2);
-			int newPosition = (int) (((float) bar.getMaximum() / (float) table.getRowCount()) * (float) newIndex);
+			int newPosition = (int) (((float) bar.getMaximum() / (float) pagesTable.getRowCount()) * (float) newIndex);
 			bar.setValue(newPosition);
 		}		
 	}
 
 	private void initializeTable() {
-		table = new PagesTable(moodle);
-		scrollPaneTable.setViewportView(table);
-		table.addMouseListener(new MouseListener() {
+		pagesTable = new PagesTable(moodle);
+		scrollPanePagesTable.setViewportView(pagesTable);
+		pagesTable.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -565,7 +602,7 @@ public class EmarkingDesktop {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-				if(moodle.getQr().isDoubleside() && table.getSelectedRow() % 2 != 0) {
+				if(moodle.getQr().isDoubleside() && pagesTable.getSelectedRow() % 2 != 0) {
 					JOptionPane.showMessageDialog(frame, lang.getString("onlyevenrowsdoubleside"));
 					return;
 				}
@@ -578,8 +615,8 @@ public class EmarkingDesktop {
 				// Double click
 				if(e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
 					try {
-						if(moodle.getPages().fixPageData(table.getSelectedRow(), frame)) {
-							updateTableData(table.getSelectedRow());
+						if(moodle.getPages().fixPageData(pagesTable.getSelectedRow(), frame)) {
+							updateTableData(pagesTable.getSelectedRow());
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -588,27 +625,34 @@ public class EmarkingDesktop {
 				}
 			}
 		});
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		pagesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				if(table.getSelectedRow() >= 0) {
-					loadSelectedRowPreview(table.getSelectedRow());
+				if(pagesTable.getSelectedRow() >= 0) {
+					loadSelectedRowPreview(pagesTable.getSelectedRow());
 					menuEdit.setEnabled(true);
 				} else {
 					menuEdit.setEnabled(false);					
 				}
 			}
-		});		
+		});
+		studentsTable = new StudentsTable(moodle);
+		scrollPaneStudentsTable.setViewportView(studentsTable);
 	}
 
 	public void updateTableData(int row) {
 		Object[] data = moodle.getPages().getRowData(row);
-		table.updateData(data, row, moodle.getQr().isDoubleside());
+		pagesTable.updateData(data, row, moodle.getQr().isDoubleside());
+		Page p = moodle.getPages().get(row);
+		if(p != null && p.getStudent() != null) {
+			studentsTable.updateData(p.getStudent());
+		}
+		lblStatusBar.setText(moodle.getPages().getSummary());
 	}
 
 	private void executeCommand(Action command) {
 		MoodleWorker worker = new MoodleWorker(moodle, 
-				table.getSelectedRows(), 
+				pagesTable.getSelectedRows(), 
 				command);
 		worker.addRowProcessedListener(new MoodleWorkerListener() {
 			@Override
@@ -702,6 +746,7 @@ public class EmarkingDesktop {
 			return;
 		moodle.getQr().setDoubleside(dialog.getDoubleSideSelected());
 		moodle.clearPages();
+		lblStatusBarRight.setText(moodle.getQr().getTempdirStringPath());
 		File pdfFile = new File(dialog.getFilename().getText());
 		int pages = 0;
 
@@ -720,7 +765,6 @@ public class EmarkingDesktop {
 			ZipFile zpf = new ZipFile(moodle);
 			pages = zpf.unZipIt(pdfFile.getAbsolutePath());
 			moodle.getQr().setFileType(FileType.ZIP);
-			JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
 			if(pages == 0) {
 				JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
 				return;			
@@ -865,13 +909,13 @@ public class EmarkingDesktop {
 
 	private void actionNextProblem() {
 		int start = 0;
-		if(table.getSelectedRow() >= 0)
-			start = table.getSelectedRow();
+		if(pagesTable.getSelectedRow() >= 0)
+			start = pagesTable.getSelectedRow();
 		boolean problemdetected = false;
-		for(int i=start+1; i<table.getRowCount(); i++) {
+		for(int i=start+1; i<pagesTable.getRowCount(); i++) {
 			Page page = moodle.getPages().get(i);
 			if(page.isProblematic()) {
-				table.setRowSelectionInterval(i, i);
+				pagesTable.setRowSelectionInterval(i, i);
 				problemdetected = true;
 				scrollToRow(i);
 				break;
@@ -884,9 +928,9 @@ public class EmarkingDesktop {
 
 	private void actionSelectAllProblems() {
 		boolean problemdetected = false;
-		ListSelectionModel model = table.getSelectionModel();
+		ListSelectionModel model = pagesTable.getSelectionModel();
 		model.clearSelection();
-		for(int i=0; i<table.getRowCount(); i++) {
+		for(int i=0; i<pagesTable.getRowCount(); i++) {
 			Page page = moodle.getPages().get(i);
 			if(page.isProblematic()) {
 				model.addSelectionInterval(i, i);
@@ -900,7 +944,7 @@ public class EmarkingDesktop {
 	}
 
 	private void actionFix() {
-		for(int row : table.getSelectedRows()) {
+		for(int row : pagesTable.getSelectedRows()) {
 			try {
 				if(moodle.getPages().fixPageData(row, frame)) {
 					updateTableData(row);
