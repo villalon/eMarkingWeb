@@ -22,6 +22,12 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import org.apache.jasper.compiler.Node.GetProperty;
+
+import com.google.gwt.dom.client.Style;
+
+import cl.uai.client.EMarkingWeb;
+import cl.uai.client.resources.EmarkingCss;
 import cl.uai.client.resources.Resources;
 
 /**
@@ -46,8 +52,9 @@ public class PathMark extends Mark{
 			int width,
 			int height,
 			String data,
-			long timecreated) {
-		super(posx, posy, pageno, markerid, timecreated);
+			long timecreated, 
+			String colour) {
+		super(posx, posy, pageno, markerid, timecreated,colour);
 		this.format = 5;
 		this.setRawtext(data);
 		this.width = width;
@@ -61,9 +68,8 @@ public class PathMark extends Mark{
 
 	@Override
 	protected void setMarkHTML() {
-		
 		String html = 
-				"<svg style=\"overflow:visible;\"><path stroke=\"red\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
+				"<svg style=\"overflow:visible;\"><path class=\""+ colour + "\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
 		this.setHTML(html);
 	}
 	
@@ -89,7 +95,8 @@ public class PathMark extends Mark{
 				Integer.parseInt(markMap.get("width")), 
 				Integer.parseInt(markMap.get("height")), 
 				pathData,
-				Long.parseLong(markMap.get("timecreated"))
+				Long.parseLong(markMap.get("timecreated")),
+				String.valueOf(markMap.get("colour"))
 				);
 
 		pathobj.setId(Integer.parseInt(markMap.get("id"))); 

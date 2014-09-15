@@ -9,6 +9,7 @@ import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.PathMark;
 import cl.uai.client.toolbar.MarkingButtons;
 
+import com.gargoylesoftware.htmlunit.WebConsole.Logger;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -18,6 +19,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 	public Path currentPath;
 	public int lastX;
 	public int lastY;
+	public int selectedCriterion;
 	private DrawingArea drawingArea = null;
 	private AbsolutePanel absolutePanel = null;
 	public MarkingPageDrawHandler(AbsolutePanel panel,DrawingArea drawingArea, MarkingPage _parent) {
@@ -72,6 +74,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 		int left = 11000;
 		int right = -1;
 		int bottom = -1;
+		selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
 		
 		int x = this.currentPath.getX();
 		int y = this.currentPath.getY();
@@ -89,6 +92,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 		this.currentPath.setY(pathY-top);
 		long unixtime = System.currentTimeMillis() / 1000L;
 		int pageno = this.parentPage.getPageNumber();
+		
 		PathMark mark = new PathMark(
 				left,
 				top,
@@ -96,7 +100,8 @@ public class MarkingPageDrawHandler implements DrawHandler {
 				MarkingInterface.markerid,
 				right-left,bottom-top, 
 				this.currentPath.getElement().getAttribute("d"),
-				unixtime);
+				unixtime,
+				"criterion"+selectedCriterion);
 
 		EMarkingWeb.markingInterface.addMark(mark, this.parentPage);
 		//currentPath.setY(event.getClientY()-absolutePanel.getAbsoluteTop()+20);

@@ -83,7 +83,8 @@ public class MarkingPageDropController extends SimpleDropController {
 					posy, 
 					pageno,
 					MarkingInterface.markerid,
-					unixtime);
+					unixtime,
+					"");
 			mark.setRawtext(lbl.getText());
 			EMarkingWeb.markingInterface.addMark(mark, parentPage);
 		}

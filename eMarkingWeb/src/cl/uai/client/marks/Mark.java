@@ -125,12 +125,12 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 	protected String markername = "";
 	/** The mark format, as there is no OO in the DB. 1 is Mark **/
 	protected int format = 1;
-
-	
 	
 	protected String previousText="";
 
 	private long timecreated;
+
+	protected String colour;
 
 	/**
 	 * @return the pageno
@@ -149,13 +149,16 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 			int posy,
 			int pageno,
 			int markerId,
-			long timecreated
+			long timecreated,
+			String colour
 			) {
         this.markerid = markerId;
 		this.posx = posx;
 		this.posy = posy;
 		this.pageno = pageno;
 		this.timecreated = timecreated;
+		
+		this.colour = colour;
 
 		this.addStyleName(Resources.INSTANCE.css().mark());
 
@@ -428,5 +431,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				event.getNativeEvent().getClientX(), 
 				event.getNativeEvent().getClientY());
 		editMenu.show();
+	}
+	public String getColour() {
+		return colour;
 	}
 }

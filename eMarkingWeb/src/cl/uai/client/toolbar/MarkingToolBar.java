@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -97,6 +98,7 @@ public class MarkingToolBar extends EMarkingComposite {
 	private Label courseName = null;
 	private Label activityName = null;
 	private Label lastSave = null;
+	
 	
 	/**
 	 * Creates the interface

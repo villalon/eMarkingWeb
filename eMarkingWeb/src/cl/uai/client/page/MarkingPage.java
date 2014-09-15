@@ -219,7 +219,13 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 
 				// Initialize hashmap and add comments
 				marks = new HashMap<Integer, Mark>();
+				
+				
 				for(Map<String, String> mark : pageMarks) {
+					
+					if(EMarkingWeb.markingInterface.getLinkRubric() == 0)
+						mark.put("colour", "criterion0");			
+					
 					int format = Integer.parseInt(mark.get("format"));
 					try {
 					switch(format) {

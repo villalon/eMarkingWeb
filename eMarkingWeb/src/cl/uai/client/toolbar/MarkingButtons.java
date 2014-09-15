@@ -29,16 +29,23 @@ import java.util.logging.Logger;
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.Criterion;
 import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dom.client.OptionElement;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 
 /**
@@ -66,6 +73,8 @@ public class MarkingButtons extends EMarkingComposite {
 
 	/** Selected index **/
 	private int selectedIndex = 0;
+	
+	private ListBox criterionList = null;
 
 	private EmarkingToolBarValueChangeHandler handler = new EmarkingToolBarValueChangeHandler();
 	/**
@@ -174,6 +183,29 @@ public class MarkingButtons extends EMarkingComposite {
 
 		this.initWidget(mainPanel);
 	}
+	public void AddCriterionList(){
+		
+	}
+	
+	public Criterion getSelectedCriterion(){
+		
+		int id = Integer.parseInt(criterionList.getValue(criterionList.getSelectedIndex()));
+		if(id==0){
+			return null;
+		}
+		
+		return MarkingInterface.submissionData.getRubricfillings().get(id);
+	}
+	
+	
+	public int getIndexSelectedCriterion(){
+		
+		int index = 0;
+		if(EMarkingWeb.markingInterface.getLinkRubric() == 1)
+			index = criterionList.getSelectedIndex();
+		
+		return index;
+	}
 
 	/**
 	 * Handles when a button was clicked, selecting it and deselecting others in the toolbar
@@ -253,7 +285,50 @@ public class MarkingButtons extends EMarkingComposite {
 				buttonsStats.get(format).setVisible(false);
 			}
 		}
+		
+		
+		
 	}
+	public void setCriterionList(){
+		
+		criterionList = new ListBox();  
+		mainPanel.add(criterionList);
+		mainPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
+		criterionList.addItem("Selecciona un Criterio","0");
+
+		for(int criterionId : MarkingInterface.submissionData.getRubricfillings().keySet()) {
+			Criterion c = MarkingInterface.submissionData.getRubricfillings().get(criterionId);
+			criterionList.addItem(c.getDescription(), Integer.toString(criterionId));
+		}
+		
+		//asignarle color
+		SelectElement selectElement = SelectElement.as(criterionList.getElement());
+		com.google.gwt.dom.client.NodeList<OptionElement> options = selectElement.getOptions();
+		
+		for (int i = 0; i < options.getLength(); i++) {	
+			 options.getItem(i).setAttribute("index", Integer.toString(i));;
+		     options.getItem(i).setClassName("criterion"+i);
+		}
+		
+		criterionList.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
+				for (int i = 0; i < buttons.size(); i++) {
+					String style = buttons.get(i).getStyleName();
+					String regex = "\\s*criterion[0-9]{1,3}";
+					style = style.replaceAll(regex, "");
+					buttons.get(i).setStyleName(style + " criterion" + c);
+				}
+				//EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getButtons().size()
+							}
+		});
+		
+	}
+	
+	
+	
 
 	public void loadCustomMarksButtons(String customMarks) {
 		if(customMarks == null || customMarks.trim().length() == 0 || buttons.size() >= Buttons.values().length)
@@ -316,8 +391,9 @@ public class MarkingButtons extends EMarkingComposite {
 		button.setTitle(title);
 		buttons.add(button);
 
+		//label that indicates how many marks are in the test
 		Label lblstat = buttonsStats.get(format);
-		
+
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);
 		vpanel.add(lblstat, 19, 2);
@@ -336,6 +412,12 @@ public class MarkingButtons extends EMarkingComposite {
 
 	public void setButtonPressed(int index, boolean fromEvent) {
 		pushButton(index, fromEvent);
+	}
+
+	public void changeColor(int id) {
+		// TODO Auto-generated method stub
+		criterionList.setSelectedIndex(id);
+		
 	}
 }
 
