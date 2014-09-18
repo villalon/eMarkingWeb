@@ -22,7 +22,6 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-
 import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
@@ -46,8 +45,9 @@ public class CommentMark extends Mark {
 			int posy,
 			int pageno,
 			int markerid,
-			long timecreated) {
-		super(posx, posy, pageno, markerid, timecreated);
+			long timecreated,
+			String colour) {
+		super(posx, posy, pageno, markerid, timecreated, colour);
 		
 		this.format = 1;
 
@@ -56,8 +56,9 @@ public class CommentMark extends Mark {
 
 	@Override
 	protected void setMarkHTML() {
+		
 		Icon icon = new Icon(IconType.COMMENT);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+icon.toString()+"</div>";
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+icon.toString()+"</div>";
 		this.setHTML(html);		
 	}
 	
@@ -75,7 +76,8 @@ public class CommentMark extends Mark {
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
-				Long.parseLong(markMap.get("timecreated")));
+				Long.parseLong(markMap.get("timecreated")),
+				String.valueOf(markMap.get("colour")));
 
 		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
 		commentobj.setRawtext(markMap.get("rawtext"));

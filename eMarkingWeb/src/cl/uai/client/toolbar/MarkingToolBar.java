@@ -98,6 +98,7 @@ public class MarkingToolBar extends EMarkingComposite {
 	private Label activityName = null;
 	private Label lastSave = null;
 	
+	
 	/**
 	 * Creates the interface
 	 */

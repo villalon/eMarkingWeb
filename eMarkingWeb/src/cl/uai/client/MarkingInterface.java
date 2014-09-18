@@ -182,6 +182,12 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Suggester for previous comments **/
 	public MultiWordSuggestOracle previousCommentsOracle = new MultiWordSuggestOracle() ;
 
+	public int linkrubric = 0;
+	
+	public int getLinkRubric() {
+		return linkrubric;
+	}
+
 	/**
 	 * 
 	 */
@@ -305,6 +311,13 @@ public class MarkingInterface extends EMarkingComposite {
 		Mark.loadingIcon.removeFromParent();
 		page.getAbsolutePanel().add(Mark.loadingIcon, mark.getPosx(), mark.getPosy());
 		Mark.loadingIcon.setVisible(true);
+		
+		//por defecto el criterionid = 0 y la clase para el color es criterion0
+		int cid = 0;
+		if(EMarkingWeb.markingInterface.linkrubric == 1){
+			Criterion c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+			cid = c.getId();
+		}
 
 		// Invokes the ajax Moodle interface to save the mark
 		AjaxRequest.ajaxRequest("action=addcomment" +
@@ -314,7 +327,9 @@ public class MarkingInterface extends EMarkingComposite {
 				"&width=" + mark.getWidth() +
 				"&height=" + mark.getHeight() +
 				"&format=" + mark.getFormat() +
-				"&pageno=" + mark.getPageno()
+				"&pageno=" + mark.getPageno() +
+				"&criterionid="+cid + 
+				"&colour="+mark.getColour()
 				, new AsyncCallback<AjaxData>() {
 
 			@Override
@@ -470,6 +485,7 @@ public class MarkingInterface extends EMarkingComposite {
 								int regrademotive = Integer.parseInt(values.get("regrademotive"));
 								String regradecomment = values.get("regradecomment");
 								String regrademarkercomment = values.get("regrademarkercomment");
+								String colour = values.get("colour");
 
 								// If there was a previous mark with the same level, remove it
 								if(previd > 0) {
@@ -485,7 +501,8 @@ public class MarkingInterface extends EMarkingComposite {
 										pageno,
 										MarkingInterface.markerid, 
 										dialog.getLevelId(),
-										unixtime); 
+										unixtime,
+										colour); 
 								mark.setId(newid);
 								mark.setRawtext(comment);
 								mark.setMarkername(markername);
@@ -501,6 +518,8 @@ public class MarkingInterface extends EMarkingComposite {
 								markingPagesInterface.addMarkWidget(mark, previd, page);
 								rubricInterface.getRubricPanel().addMarkToRubric(mark);
 								toolbar.getMarkingButtons().updateStats();
+								toolbar.getMarkingButtons().changeColor(criterion.getId());
+								
 								EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
 								getPreviousComments().addMarkAsCommentToInterface(mark);							
 
@@ -658,6 +677,11 @@ public class MarkingInterface extends EMarkingComposite {
 				toolbar.getStudentSelector();
 			}
 		});
+		/** Codigo Implantado tesis **/
+		if(linkrubric == 1){
+			toolbar.getMarkingButtons().setCriterionList();
+		}
+		/** FIN **/
 		
 		markingPagesInterface.loadInterface();
 	}
@@ -808,7 +832,9 @@ public class MarkingInterface extends EMarkingComposite {
 						// Every two minutes
 						heartBeatTimer.scheduleRepeating(2 * 60 * 1000);
 					}
-					
+										
+					linkrubric = Integer.parseInt(value.get("linkrubric"));
+
 					// Load submission data
 					loadSubmissionData();
 					
@@ -870,6 +896,8 @@ public class MarkingInterface extends EMarkingComposite {
 
 				// Add the mark to the rubric so it updates the information in the rubric panel
 				EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(mark);
+				
+
 				
 				// Updates toolbar
 				setTimemodified(timemodified);

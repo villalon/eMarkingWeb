@@ -45,8 +45,9 @@ public class CustomMark extends Mark {
 			int posy,
 			int pageno,
 			int markerid,
-			long timecreated) {
-		super(posx, posy, pageno, markerid, timecreated);
+			long timecreated,
+			String colour) {
+		super(posx, posy, pageno, markerid, timecreated, colour);
 		
 		this.format = 1000;
 		this.title = title;
@@ -56,7 +57,7 @@ public class CustomMark extends Mark {
 
 	@Override
 	protected void setMarkHTML() {
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+this.getTitle()+"</div>";
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+this.getTitle()+"</div>";
 		this.setHTML(html);		
 	}
 	
@@ -77,7 +78,8 @@ public class CustomMark extends Mark {
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
-				Long.parseLong(markMap.get("timecreated")));
+				Long.parseLong(markMap.get("timecreated")),
+				String.valueOf(markMap.get("colour")));
 
 		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
 		commentobj.setRawtext(markMap.get("rawtext"));

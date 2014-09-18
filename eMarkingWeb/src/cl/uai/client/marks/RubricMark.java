@@ -71,8 +71,9 @@ public class RubricMark extends Mark {
 			int pageno,
 			int markerid,
 			int lvlid,
-			long timecreated) {
-		super(posx, posy, pageno, markerid, timecreated);
+			long timecreated, 
+			String colour) {
+		super(posx, posy, pageno, markerid, timecreated, colour);
 		
 		// Rubric marks have format 2
 		this.format = 2;
@@ -213,7 +214,8 @@ public class RubricMark extends Mark {
 				Integer.parseInt(mark.get("pageno")),
 				Integer.parseInt(mark.get("markerid")),
 				Integer.parseInt(mark.get("levelid")),
-				Long.parseLong(mark.get("timecreated")));
+				Long.parseLong(mark.get("timecreated")),
+				String.valueOf(mark.get("colour")));
 		
 		markobj.setId(Integer.parseInt(mark.get("id"))); 
 		markobj.setRawtext(mark.get("rawtext"));

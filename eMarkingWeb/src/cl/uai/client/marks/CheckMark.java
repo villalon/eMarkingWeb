@@ -45,9 +45,10 @@ public class CheckMark extends Mark {
 			int posy,
 			int pageno,
 			int markerid,
-			long timecreated
+			long timecreated,
+			String colour
 			) {
-		super(posx, posy, pageno, markerid, timecreated);
+		super(posx, posy, pageno, markerid, timecreated, colour);
 		
 		this.format = 3;
 
@@ -57,7 +58,7 @@ public class CheckMark extends Mark {
 	@Override
 	protected void setMarkHTML() {
 		Icon icon = new Icon(IconType.OK);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+icon.toString()+"</div>";
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+icon.toString()+"</div>";
 		this.setHTML(html);		
 	}
 	
@@ -75,7 +76,8 @@ public class CheckMark extends Mark {
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
-				Long.parseLong(markMap.get("timecreated")));
+				Long.parseLong(markMap.get("timecreated")),
+				String.valueOf(markMap.get("colour")));
 
 		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
 		commentobj.setRawtext(markMap.get("rawtext"));

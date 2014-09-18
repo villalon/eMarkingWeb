@@ -47,7 +47,7 @@ public class QuestionMark extends Mark {
 			int markerid,
 			long timecreated
 			) {
-		super(posx, posy, pageno, markerid, timecreated);
+		super(posx, posy, pageno, markerid, timecreated, "");
 		
 		this.format = 6;
 

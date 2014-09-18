@@ -72,6 +72,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 		}
 
 		final long unixtime = System.currentTimeMillis() / 1000L;
+		
+		final int selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
 
 		// Switches over the selected button in the rubric interface, to know what mark to add
 		switch(EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedButton()) {
@@ -83,6 +85,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					dialogposy,
 					0, // No level id for a text comment
 					0); // No regradeid either
+			
 			dialog.addCloseHandler(new CloseHandler<PopupPanel>() {				
 				@Override
 				public void onClose(CloseEvent<PopupPanel> event) {
@@ -96,7 +99,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 							newposy, 
 							pageno,
 							MarkingInterface.markerid,
-							unixtime
+							unixtime,
+							"criterion"+ selectedCriterion
 							);
 					mark.setRawtext(dialog.getTxtComment());
 					EMarkingWeb.markingInterface.addMark(mark, parentPage);
@@ -111,7 +115,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposy, 
 					pageno,
 					MarkingInterface.markerid, 
-					unixtime);
+					unixtime,
+					"criterion"+ selectedCriterion);
 			EMarkingWeb.markingInterface.addMark(crmark, parentPage);
 			break;
 			// A pen
@@ -131,7 +136,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposy, 
 					pageno,
 					MarkingInterface.markerid,
-					unixtime);
+					unixtime,
+					"criterion"+ selectedCriterion);
 			EMarkingWeb.markingInterface.addMark(cmark, parentPage);
 			break;
 			// A check mark
@@ -152,7 +158,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposy, 
 					pageno,
 					MarkingInterface.markerid,
-					unixtime);
+					unixtime,
+					"criterion"+ selectedCriterion);
 			custommark.setRawtext(
 					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
 						.getSelectedButtonLabel() + ": "
