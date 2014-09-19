@@ -128,8 +128,8 @@ public class OptionsDialog extends JDialog {
 							}
 							moodle.setLastfile(filename.getText());
 							moodle.setDoubleside(chckbxDoubleSide.isSelected());
-							moodle.setMaxthreads((int) getMaxThreads().getSelectedItem()); 
-							moodle.setResolution((int) getResolution().getSelectedItem()); 
+							moodle.setMaxthreads(Integer.parseInt(getMaxThreads().getSelectedItem().toString())); 
+							moodle.setResolution(Integer.parseInt(getResolution().getSelectedItem().toString())); 
 							moodle.setMaxzipsize(getMaxZipSize().getSelectedItem().toString());
 							moodle.saveProperties();
 							cancelled = false;

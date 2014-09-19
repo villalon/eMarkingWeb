@@ -98,8 +98,8 @@ public class QRextractor implements Runnable {
 
 	public QRextractor() {
 		listenerList = new EventListenerList();
-		decodedpages = new TreeMap<>();
-		errorpages = new TreeMap<>();
+		decodedpages = new TreeMap<Integer, Map<Integer, String>>();
+		errorpages = new TreeMap<Integer, String>();
 	}
 
 	/**

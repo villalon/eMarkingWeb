@@ -20,72 +20,62 @@
  ******************************************************************************/
 package cl.uai.webcursos.emarking.desktop;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-
-import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import javax.swing.JMenuItem;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+
 import org.apache.log4j.Logger;
-import org.ghost4j.document.DocumentException;
 import org.ghost4j.document.PDFDocument;
 
+import cl.uai.webcursos.emarking.desktop.QRextractor.FileType;
 import cl.uai.webcursos.emarking.desktop.data.Activity;
 import cl.uai.webcursos.emarking.desktop.data.Course;
 import cl.uai.webcursos.emarking.desktop.data.Moodle;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorker;
+import cl.uai.webcursos.emarking.desktop.data.MoodleWorker.Action;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorkerEvent;
 import cl.uai.webcursos.emarking.desktop.data.MoodleWorkerListener;
-import cl.uai.webcursos.emarking.desktop.QRextractor.FileType;
-import cl.uai.webcursos.emarking.desktop.data.MoodleWorker.Action;
 import cl.uai.webcursos.emarking.desktop.data.Page;
 import cl.uai.webcursos.emarking.desktop.utils.ZipFile;
-
-import java.awt.Toolkit;
-
-import javax.swing.ImageIcon;
-import javax.swing.JToolBar;
-import javax.swing.JButton;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JSplitPane;
-
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.KeyStroke;
-
-import java.awt.event.InputEvent;
-
-import javax.swing.JSeparator;
-import javax.swing.JLabel;
-import javax.swing.JTabbedPane;
-import javax.swing.border.EtchedBorder;
 
 /**
  * Main class for the program's execution. Contains the main
@@ -659,9 +649,10 @@ public class EmarkingDesktop {
 			public void stepPerformed(MoodleWorkerEvent e) {
 				progress.getProgressBar().setValue(e.getCurrent());
 				progress.getLblProgress().setText(lang.getString("processingpage") + " " + e.getOutput());
-				scrollToRow((int) e.getOutput());
-				updateTableData((int) e.getOutput());
-				loadSelectedRowPreview((int) e.getOutput());
+				int rowNumber = Integer.parseInt(e.getOutput().toString());
+				scrollToRow(rowNumber);
+				updateTableData(rowNumber);
+				loadSelectedRowPreview(rowNumber);
 			}
 			@Override
 			public void processFinished(MoodleWorkerEvent e) {
@@ -756,7 +747,7 @@ public class EmarkingDesktop {
 				pdfdoc.load(pdfFile);
 				pages = pdfdoc.getPageCount();
 				moodle.getQr().setFileType(FileType.PDF);
-			} catch (IOException | DocumentException ex) {
+			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
 				ex.printStackTrace();
 				return;

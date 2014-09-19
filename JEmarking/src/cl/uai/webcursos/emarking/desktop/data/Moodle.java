@@ -68,8 +68,6 @@ public class Moodle {
 	public static final String USER_AGENT = "Mozilla/5.0";
 	/** URL of the eMarking's REST service in Moodle **/
 	public static final String EMARKING_MODULE_URL = "mod/emarking/ajaxdesktop.php";
-	// TODO: Make emarking URL a configuration parameter
-
 	/** Moodle installation URL **/
 	private String moodleUrl;
 	/** Moodle username **/
@@ -92,8 +90,7 @@ public class Moodle {
 	private Pages studentPages;
 	/** The QR extractor **/
 	private QRextractor qrExtractor;
-
-	/** Util for ... TODO: explain **/
+	/** Stores the last file processed by user **/
 	private String lastfile;
 
 	/**
@@ -140,9 +137,9 @@ public class Moodle {
 		this.doubleSide = doubleside;
 	}
 
-	private Hashtable<Integer, Student> students = new Hashtable<>();
-	private Hashtable<Integer, Course> courses = new Hashtable<>();
-	private Hashtable<Integer, Course> usercourses = new Hashtable<>();
+	private Hashtable<Integer, Student> students = new Hashtable<Integer, Student>();
+	private Hashtable<Integer, Course> courses = new Hashtable<Integer, Course>();
+	private Hashtable<Integer, Course> usercourses = new Hashtable<Integer, Course>();
 
 	public boolean connect() {
 		try {
@@ -161,7 +158,7 @@ public class Moodle {
 		JsonArray jarr = parseMoodleResponse(response);
 
 		if(students == null)
-			students = new Hashtable<>();
+			students = new Hashtable<Integer, Student>();
 
 			for(int i=0;i<jarr.size();i++) {
 				try {
@@ -193,7 +190,7 @@ public class Moodle {
 
 		JsonArray jarr = parseMoodleResponse(response);
 
-		usercourses = new Hashtable<>();
+		usercourses = new Hashtable<Integer, Course>();
 
 		for(int i=0;i<jarr.size();i++) {
 			try {
