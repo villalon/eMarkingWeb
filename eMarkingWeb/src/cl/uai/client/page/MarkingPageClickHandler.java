@@ -147,7 +147,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposy, 
 					pageno,
 					MarkingInterface.markerid,
-					unixtime);
+					unixtime,
+					"criterion"+ selectedCriterion);
 			EMarkingWeb.markingInterface.addMark(qmark, parentPage);
 			break;
 		case BUTTON_CUSTOM:

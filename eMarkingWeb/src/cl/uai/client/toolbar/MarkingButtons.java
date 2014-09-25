@@ -186,10 +186,8 @@ public class MarkingButtons extends EMarkingComposite {
 
 		buttons.get(selectedIndex).setValue(true);
 
+
 		this.initWidget(mainPanel);
-	}
-	public void AddCriterionList(){
-		
 	}
 	
 	public Criterion getSelectedCriterion(){
@@ -299,6 +297,18 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		
 	}
+	public void enableButtons(boolean bool){
+		for (int i = 1; i < buttons.size(); i++) {
+			buttons.get(i).setEnabled(bool);
+			if(buttons.get(i).isDown()){
+				buttons.get(i).setDown(false);
+				buttons.get(i).setValue(false);
+			}
+		}
+		selectedIndex = 0;
+	}
+	
+	
 	public void setCriterionList(){
 		
 		criterionList = new ListBox();  
@@ -311,7 +321,7 @@ public class MarkingButtons extends EMarkingComposite {
 			criterionList.addItem(c.getDescription(), Integer.toString(criterionId));
 		}
 		
-		//asignarle color
+		//assign color
 		SelectElement selectElement = SelectElement.as(criterionList.getElement());
 		com.google.gwt.dom.client.NodeList<OptionElement> options = selectElement.getOptions();
 		
@@ -320,19 +330,30 @@ public class MarkingButtons extends EMarkingComposite {
 		     options.getItem(i).setClassName("criterion"+i);
 		}
 		
+		this.enableButtons(false);
+		
 		criterionList.addChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
 				int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
-				for (int i = 0; i < buttons.size(); i++) {
+				if(c == 0){
+					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(false);
+				}else{
+					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(true);
+				}
+				
+				for (int i = 1; i < buttons.size(); i++) {
+				
 					String style = buttons.get(i).getStyleName();
 					String regex = "\\s*criterion[0-9]{1,3}";
 					style = style.replaceAll(regex, "");
 					buttons.get(i).setStyleName(style + " criterion" + c);
+					
+					
 				}
 				//EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getButtons().size()
-							}
+			}
 		});
 		
 	}

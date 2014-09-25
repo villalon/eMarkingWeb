@@ -45,9 +45,9 @@ public class QuestionMark extends Mark {
 			int posy,
 			int pageno,
 			int markerid,
-			long timecreated
-			) {
-		super(posx, posy, pageno, markerid, timecreated, "");
+			long timecreated,
+			String colour) {
+		super(posx, posy, pageno, markerid, timecreated, colour);
 		
 		this.format = 6;
 
@@ -57,7 +57,7 @@ public class QuestionMark extends Mark {
 	@Override
 	protected void setMarkHTML() {
 		Icon icon = new Icon(IconType.QUESTION_SIGN);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+icon.toString()+"</div>";
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+icon.toString()+"</div>";
 		this.setHTML(html);		
 	}
 	
@@ -75,7 +75,8 @@ public class QuestionMark extends Mark {
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
-				Long.parseLong(markMap.get("timecreated")));
+				Long.parseLong(markMap.get("timecreated")),
+				String.valueOf(markMap.get("colour")));
 
 		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
 		commentobj.setRawtext(markMap.get("rawtext"));
