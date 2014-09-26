@@ -518,7 +518,8 @@ public class MarkingInterface extends EMarkingComposite {
 								markingPagesInterface.addMarkWidget(mark, previd, page);
 								rubricInterface.getRubricPanel().addMarkToRubric(mark);
 								toolbar.getMarkingButtons().updateStats();
-								toolbar.getMarkingButtons().changeColor(criterion.getId());
+								if(EMarkingWeb.markingInterface.getLinkRubric() == 1)
+									toolbar.getMarkingButtons().changeColor(criterion.getId());
 								
 								EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
 								getPreviousComments().addMarkAsCommentToInterface(mark);							

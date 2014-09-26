@@ -336,26 +336,30 @@ public class MarkingButtons extends EMarkingComposite {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
-				if(c == 0){
-					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(false);
-				}else{
-					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(true);
-				}
-				
-				for (int i = 1; i < buttons.size(); i++) {
-				
-					String style = buttons.get(i).getStyleName();
-					String regex = "\\s*criterion[0-9]{1,3}";
-					style = style.replaceAll(regex, "");
-					buttons.get(i).setStyleName(style + " criterion" + c);
-					
-					
-				}
+				EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
 				//EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getButtons().size()
 			}
 		});
 		
+	}
+	
+	public void changeColorButtons(){
+		int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
+		if(c == 0){
+			EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(false);
+		}else{
+			EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(true);
+		}
+		
+		for (int i = 1; i < buttons.size(); i++) {
+		
+			String style = buttons.get(i).getStyleName();
+			String regex = "\\s*criterion[0-9]{1,3}";
+			style = style.replaceAll(regex, "");
+			buttons.get(i).setStyleName(style + " criterion" + c);
+			
+			
+		}
 	}
 
 	public void loadCustomMarksButtons(String customMarks) {
@@ -454,7 +458,14 @@ public class MarkingButtons extends EMarkingComposite {
 
 	public void changeColor(int id) {
 		// TODO Auto-generated method stub
-		criterionList.setSelectedIndex(id);
+		
+		for (int i = 0; i < criterionList.getItemCount(); i++) {
+			if(Integer.parseInt(criterionList.getValue(i)) == id){
+				criterionList.setSelectedIndex(i);
+				changeColorButtons();
+			}
+		}
+		
 		
 	}
 }
