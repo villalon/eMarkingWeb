@@ -22,6 +22,7 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
 /**
@@ -57,7 +58,7 @@ public class CustomMark extends Mark {
 
 	@Override
 	protected void setMarkHTML() {
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+this.getTitle()+"</div>";
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+ MarkingInterface.getMapCss().get(colour) +"\">"+this.getTitle()+"</div>";
 		this.setHTML(html);		
 	}
 	

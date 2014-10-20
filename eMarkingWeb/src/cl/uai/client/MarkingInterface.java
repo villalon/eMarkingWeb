@@ -21,6 +21,7 @@
 package cl.uai.client;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -182,10 +183,21 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Suggester for previous comments **/
 	public MultiWordSuggestOracle previousCommentsOracle = new MultiWordSuggestOracle() ;
 
-	public int linkrubric = 0;
+	private static int linkrubric = 0;
+
+	private static int collaborativefeatures = 0;
 	
-	public int getLinkRubric() {
+	public static int getCollaborativeFeatures(){
+		return collaborativefeatures;
+	}
+	
+	public static int getLinkRubric() {
 		return linkrubric;
+	}
+	public static Map<String, String> MapCss = new HashMap<String, String>();
+	
+	public static Map<String, String> getMapCss(){
+		return MapCss;
 	}
 
 	/**
@@ -269,6 +281,57 @@ public class MarkingInterface extends EMarkingComposite {
 				});
 			}
 		};
+		
+		MapCss.put("criterion0", Resources.INSTANCE.css().criterion0());
+		MapCss.put("criterion1", Resources.INSTANCE.css().criterion1());
+		MapCss.put("criterion2", Resources.INSTANCE.css().criterion2());
+		MapCss.put("criterion3", Resources.INSTANCE.css().criterion3());
+		MapCss.put("criterion4", Resources.INSTANCE.css().criterion4());
+		MapCss.put("criterion5", Resources.INSTANCE.css().criterion5());
+		MapCss.put("criterion6", Resources.INSTANCE.css().criterion6());
+		MapCss.put("criterion7", Resources.INSTANCE.css().criterion7());
+		MapCss.put("criterion8", Resources.INSTANCE.css().criterion8());
+		MapCss.put("criterion9", Resources.INSTANCE.css().criterion9());
+		MapCss.put("criterion10", Resources.INSTANCE.css().criterion10());
+		MapCss.put("criterion11", Resources.INSTANCE.css().criterion11());
+		MapCss.put("criterion12", Resources.INSTANCE.css().criterion12());
+		MapCss.put("criterion13", Resources.INSTANCE.css().criterion13());
+		MapCss.put("criterion14", Resources.INSTANCE.css().criterion14());
+		MapCss.put("criterion15", Resources.INSTANCE.css().criterion15());
+		MapCss.put("criterion16", Resources.INSTANCE.css().criterion16());
+		MapCss.put("criterion17", Resources.INSTANCE.css().criterion17());
+		MapCss.put("criterion18", Resources.INSTANCE.css().criterion18());
+		MapCss.put("criterion19", Resources.INSTANCE.css().criterion19());
+		MapCss.put("criterion20", Resources.INSTANCE.css().criterion20());
+		MapCss.put("criterion21", Resources.INSTANCE.css().criterion21());
+		MapCss.put("criterion22", Resources.INSTANCE.css().criterion22());
+		MapCss.put("criterion23", Resources.INSTANCE.css().criterion23());
+		MapCss.put("criterion25", Resources.INSTANCE.css().criterion24());
+		
+		MapCss.put("color1", Resources.INSTANCE.css().color1());
+		MapCss.put("color2", Resources.INSTANCE.css().color2());
+		MapCss.put("color3", Resources.INSTANCE.css().color3());
+		MapCss.put("color4", Resources.INSTANCE.css().color4());
+		MapCss.put("color5", Resources.INSTANCE.css().color5());
+		MapCss.put("color6", Resources.INSTANCE.css().color6());
+		MapCss.put("color7", Resources.INSTANCE.css().color7());
+		MapCss.put("color8", Resources.INSTANCE.css().color8());
+		MapCss.put("color9", Resources.INSTANCE.css().color9());
+		MapCss.put("color10", Resources.INSTANCE.css().color10());
+		MapCss.put("color11", Resources.INSTANCE.css().color11());
+		MapCss.put("color12", Resources.INSTANCE.css().color12());
+		MapCss.put("color13", Resources.INSTANCE.css().color13());
+		MapCss.put("color14", Resources.INSTANCE.css().color14());
+		MapCss.put("color15", Resources.INSTANCE.css().color15());
+		MapCss.put("color16", Resources.INSTANCE.css().color16());
+		MapCss.put("color17", Resources.INSTANCE.css().color17());
+		MapCss.put("color18", Resources.INSTANCE.css().color18());
+		MapCss.put("color19", Resources.INSTANCE.css().color19());
+		MapCss.put("color20", Resources.INSTANCE.css().color20());
+		MapCss.put("color21", Resources.INSTANCE.css().color21());
+		MapCss.put("color22", Resources.INSTANCE.css().color22());
+		MapCss.put("color23", Resources.INSTANCE.css().color23());
+		MapCss.put("color25", Resources.INSTANCE.css().color24());
 
 		// Drag and Drop controller attached to marking panel
 		dragController = new PickupDragController(markingPanel, false);
@@ -314,7 +377,7 @@ public class MarkingInterface extends EMarkingComposite {
 		
 		//por defecto el criterionid = 0 y la clase para el color es criterion0
 		int cid = 0;
-		if(EMarkingWeb.markingInterface.linkrubric == 1){
+		if(MarkingInterface.linkrubric == 1){
 			Criterion c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 			cid = c.getId();
 		}
@@ -518,7 +581,7 @@ public class MarkingInterface extends EMarkingComposite {
 								markingPagesInterface.addMarkWidget(mark, previd, page);
 								rubricInterface.getRubricPanel().addMarkToRubric(mark);
 								toolbar.getMarkingButtons().updateStats();
-								if(EMarkingWeb.markingInterface.getLinkRubric() == 1)
+								if(MarkingInterface.getLinkRubric() == 1)
 									toolbar.getMarkingButtons().changeColor(criterion.getId());
 								
 								EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
@@ -835,6 +898,8 @@ public class MarkingInterface extends EMarkingComposite {
 					}
 										
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
+					
+					//collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
 
 					// Load submission data
 					loadSubmissionData();

@@ -337,7 +337,6 @@ public class MarkingButtons extends EMarkingComposite {
 			@Override
 			public void onChange(ChangeEvent event) {
 				EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
-				//EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getButtons().size()
 			}
 		});
 		
@@ -352,13 +351,7 @@ public class MarkingButtons extends EMarkingComposite {
 		}
 		
 		for (int i = 1; i < buttons.size(); i++) {
-		
-			String style = buttons.get(i).getStyleName();
-			String regex = "\\s*criterion[0-9]{1,3}";
-			style = style.replaceAll(regex, "");
-			buttons.get(i).setStyleName(style + " criterion" + c);
-			
-			
+			buttons.get(i).setStyleName("gwt-ToggleButton gwt-ToggleButton-down-hovering " + Resources.INSTANCE.css().rubricbutton()+ " " + MarkingInterface.getMapCss().get("criterion"+c));
 		}
 	}
 

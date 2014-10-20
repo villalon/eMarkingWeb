@@ -20,6 +20,8 @@
  */
 package cl.uai.client.rubric;
 
+import java.util.logging.Logger;
+
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
@@ -33,6 +35,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -52,6 +55,8 @@ public class CriterionHeader extends EMarkingComposite {
 	private HTML bonusHtml = null;
 	private HTML regradeHtml = null;
 	private HTML loadingIcon = null;
+	//NEW
+	private HTML rectangle = null;
 	private int commentId = 0;
 	private int commentPage = 0;
 	private int backGroundPercent = 0;
@@ -92,6 +97,18 @@ public class CriterionHeader extends EMarkingComposite {
 		
 		mainPanel.add(lbl);
 		
+		HorizontalPanel horizontal = new HorizontalPanel();
+		
+		//the square with the color
+		if(MarkingInterface.getLinkRubric() == 1){
+			rectangle = new HTML();
+			rectangle.setHTML("<div style='width:20px;height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) + "' ></div>");
+			horizontal.add(rectangle);
+		}
+		
+		HTML separation = new HTML();
+		separation.setHTML("<div style='width:20px;height:20px;'></div>");
+		horizontal.add(separation);
 		
 		criterionMarker = new HTML();
 		criterionMarker.addStyleName(Resources.INSTANCE.css().rubricmark());
@@ -104,7 +121,9 @@ public class CriterionHeader extends EMarkingComposite {
 					EMarkingWeb.markingInterface.getMarkingPagesInterface().highlightRubricMark(commentId, commentPage);
 			}
 		});
-		mainPanel.add(criterionMarker);
+		horizontal.add(criterionMarker);
+		
+		mainPanel.add(horizontal);
 		
 		bonusHtml = new HTML();
 		setBonus(b);

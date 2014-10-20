@@ -22,6 +22,7 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
 /**
@@ -63,7 +64,7 @@ public class PathMark extends Mark{
 	@Override
 	protected void setMarkHTML() {
 		String html = 
-				"<svg style=\"overflow:visible;\"><path class=\""+ colour + "\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
+				"<svg style=\"overflow:visible;\"><path class=\""+ MarkingInterface.getMapCss().get(colour) + "\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
 		this.setHTML(html);
 	}
 	

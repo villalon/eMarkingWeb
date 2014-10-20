@@ -22,6 +22,8 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import cl.uai.client.EMarkingWeb;
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
@@ -60,7 +62,7 @@ public class CrossMark extends Mark {
 	protected void setMarkHTML() {
 		//int indexSelected = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
 		Icon icon = new Icon(IconType.REMOVE);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+icon.toString()+"</div>";
+		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+ " " + MarkingInterface.getMapCss().get(colour) + "\">"+icon.toString()+"</div>";
 		this.setHTML(html);		
 	}
 	

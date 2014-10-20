@@ -1,0 +1,621 @@
+/* This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+ * @package   eMarking
+ * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+/** Main interfaces **/
+.interfaceMainPanel,.toolbar,.interfacepanel,.rubricinterface,.buttonspanel,.rubricrow,.rubrictable,.rubricpanel
+	{
+	width: 100%;
+}
+
+.rubricinterface {
+	background-color: #fff;
+}
+
+.rubricinterface,.rubricinterface td {
+	font-size: 8pt;
+}
+
+.interfacepanel,.buttonspanel {
+	background-color: #ccc;
+}
+
+.jumptonext label {
+	display: inline;
+	margin-left: 3px;
+	margin-right: 7px;
+}
+
+.pagespanel {
+	background-color: #000;
+}
+
+/** Toolbar parts **/
+.studentSelector select,.rubricfilterselect {
+	font-size: x-small;
+	height: 1.6em;
+	line-height: 1.6em;
+	padding: 0px;
+	width: 300px;
+}
+
+.rubricfilterselect {
+	width: 150px;
+	margin-right: 8px;
+}
+
+.pagescroll {
+	background-color: #fff;
+	margin-bottom: 10px;
+}
+
+.tabscrollbutton,.tabscrollpanel {
+	background-color: #2d5873;
+}
+
+.tabpage {
+	
+}
+
+.tabbar {
+	background-color: #2d5873;
+}
+
+.lastsave {
+	line-height: 14px;
+	margin-bottom: 4px;
+	color: #999;
+	font-size: x-small;
+}
+
+.lastsaveanim {
+	-webkit-animation: myfirst 3s; /* Chrome, Safari, Opera */
+	animation: myfirst 3s; /* Standard */
+}
+
+/* Chrome, Safari, Opera */
+@
+-webkit-keyframes myfirst {
+	from {background: #d0ffd0;
+	color: #000;
+	font-weight: bolder;
+}
+
+to {
+	background: #eee;
+	color: #999;
+	font-weight: normal;
+}
+
+}
+
+/* Standard syntax */
+@
+keyframes myfirst {
+	from {background: #d0ffd0;
+	color: #000;
+	font-weight: bolder;
+}
+
+to {
+	background: #eee;
+	color: #999;
+	font-weight: normal;
+}
+
+}
+.scale {
+	padding: 0px;
+	margin: 0px;
+	color: #999;
+}
+
+.grade {
+	font-size: 32pt;
+	font-weight: bold;
+	line-height: 36px;
+}
+
+.coursename {
+	margin-left: 5px;
+	margin-top: 2px;
+	color: #999;
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.gradepanel {
+	margin-right: 5px;
+	margin-top: 2px;
+}
+
+.toolbarinfo {
+	width: 100%;
+	background-color: #eeeeee;
+	border-bottom: solid 1px #999;
+}
+
+/** Mark classes **/
+.updating {
+	width: 20px;
+	height: 20px;
+}
+
+.previousComment {
+	float: left;
+	background-color: #61B7CF;
+}
+
+.iconupdating,.iconloading,.rubricmark {
+	margin: 2px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.iconloading {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 30%;
+	margin-bottom: auto;
+	font-size: 3em;
+}
+
+.criterionDescription,.previousComment {
+	margin: 5px;
+	padding: 2px;
+}
+
+.criterionheader,.criterionheaderregrade,.criterionheaderregradeaccepted
+	{
+	font-weight: bold;
+}
+
+.criterionheaderregrade {
+	color: #ff0000;
+}
+
+.criterionheaderregradeaccepted {
+	color: #ffff00;
+}
+
+.leveldesc {
+	
+}
+
+.regradecomment {
+	background-color: #E8FFE8;
+}
+
+.criterionDescription,.previousComment,.sortpagesdraghandle {
+	border-radius: 3px;
+	border: solid 1px;
+}
+
+.rubricLevelSelected {
+	background-color: #D0FFD0;
+}
+
+.criterionDescription hr {
+	margin: 0px;
+}
+
+.mark {
+	width: 20px;
+	height: 20px;
+	z-index: 100;
+}
+
+.mark:hover {
+	border-style: dotted;
+	border-width: 1px;
+	border-color: #999;
+}
+
+.rubricmark {
+	width: 20px;
+	height: 34px;
+}
+
+.checkmark,.crossmark {
+	color: #ff0000;
+	font-size: 12pt;
+	font-weight: 100;
+}
+
+.commentmark {
+	color: #0000ff;
+}
+
+.othermark {
+	background-color: rgba(255, 0, 0, 0.5);
+	color: #a0a0a0;
+}
+
+.lastmark {
+	color: #a0a000;
+}
+
+.pathmark {
+	overflow: visible;
+}
+
+.innercomment {
+	text-align: center;
+	font-weight: bold;
+}
+
+.scale,.criterionheaderbonus {
+	font-size: x-small;
+}
+
+.criterionheaderbonus {
+	text-align: center;
+	white-space: nowrap;
+}
+
+.markpts,.rubrictitle,.prevcommentstitle {
+	margin-left: 10px;
+}
+
+.activityname,.rubrictitle,.prevcommentstitle {
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.rubrictitle,.prevcommentstitle {
+	height: 26px;
+	margin-top: 6px;
+}
+
+.rubrictitle,.prevcommentstitle,.rubrictitlepanel {
+	background-color: #2d5873;
+	color: #fff;
+}
+
+.rowCriterionSelected {
+	
+}
+
+.rowCriterionSelectedHidden {
+	display: none;
+}
+
+.rowCriterionNotSelected {
+	
+}
+
+.trashicon,.editicon,.loadingicon,.regradeicon {
+	z-index: 100;
+}
+
+.trashicon:hover,.editicon:hover,.rubriclabelclickable:hover,.regradeicon:hover
+	{
+	cursor: pointer;
+}
+
+.loadingicon {
+	font-size: 10pt;
+}
+
+.bonuslist,.levelslist {
+	width: 220px;
+	margin-bottom: 3px;
+	margin-left: 10px;
+}
+
+.levelslist {
+	margin-bottom: 10px;
+}
+
+.previouscomments,.rubrictitlepanel,.loadingtoolbar {
+	width: 100%;
+}
+
+.loadingtoolbar {
+	height: 100%;
+}
+
+.checkboxrubric input {
+	float: right;
+	margin-right: 5px;
+	margin-top: 9px;
+}
+
+.checkboxrubric label {
+	width: 150px;
+	text-align: left;
+	margin-top: 4px;
+}
+
+.levelpts {
+	color: #575;
+	white-space: nowrap;
+}
+
+.markcrit,.markpts {
+	font-weight: bold;
+	float: left;
+}
+
+.markpts {
+	float: right;
+	white-space: nowrap;
+}
+
+.markcrit,.marklvl,.criterionrow {
+	margin-left: 2px;
+}
+
+.btnsave,.btncancel {
+	margin-right: 10px;
+}
+
+.marklvl {
+	font-size: 8pt;
+}
+
+.marklvl hr {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.commentdialog {
+	z-index: 999;
+}
+
+.markmarkername,.markrawtext {
+	width: 100%;
+	font-size: 8pt;
+	color: #999;
+}
+
+.markmarkername {
+	border-top: dashed 1px #999;
+}
+
+.oddrow {
+	background-color: #eee;
+}
+
+.pagecanvas {
+	z-index: 99;
+}
+
+.absolutepage {
+	z-index: 0;
+}
+
+.markpopup,.markpopup:hover {
+	max-width: 400px;
+	background-color: #fff;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #999;
+	border-radius: 3px;
+	padding: 3px;
+	z-index: 9000;
+}
+
+.markpopuppanel {
+	border-style: none;
+	border-width: 0px;
+	border-color: #FFF;
+}
+
+.rubricmarkhover {
+	background-color: #ccc;
+}
+
+.criterionheader {
+	width: 100px;
+}
+
+.toolbarbuttons {
+	
+}
+
+.criterionrow .rubricmark {
+	cursor: pointer;
+}
+
+.criterionrow .loadingicon {
+	font-size: 16pt;
+}
+
+.rubricbutton,.finishmarkingbutton {
+	height: 21px;
+	font-size: 16pt;
+	text-align: center;
+}
+
+.finishmarkingbutton {
+	font-size: 10pt;
+	width: 120px;
+	margin-left: 3px;
+	margin-right: 7px;
+}
+
+.rubricbutton,.rubricbuttoncustom {
+	width: 21px;
+}
+
+.rubricbuttoncustom {
+	font-size: 8pt;
+}
+
+.rubricbuttonjewel {
+	background: -webkit-linear-gradient(top, #fa3c45, #dc0d17);
+	background: -moz-linear-gradient(center top, rgb(250, 60, 69),
+		rgb(220, 13, 23)) repeat scroll 0% 0% transparent;
+	border: none;
+	-webkit-border-radius: 2px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .7);
+	border: medium none;
+	border-radius: 2px 2px 2px 2px;
+	font-family: "Helvetica Neue", Helvetica, Arial, "segoe ui", tahoma,
+		sans-serif;
+	font-size: 10px;
+	-webkit-font-smoothing: antialiased;
+	font-weight: bold;
+	height: 12px;
+	line-height: 12px;
+	min-width: 12px;
+	padding: 0;
+	text-align: center;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, .4);
+	color: #fff;
+}
+
+.generalfeedbacktxt {
+	width: 400px;
+	height: 180px;
+}
+
+.logo {
+	color: rgb(0, 0, 0);
+	font-size: 18pt;
+	text-shadow: 2px 1px #999;
+	font-weight: bold;
+	margin-left: 5px;
+	margin-bottom: 6px;
+}
+
+.addmarkdialog,.requestregradedialog {
+	width: 600px;
+}
+
+.requestregradedialog table {
+	margin-top: 5px;
+}
+
+.editmarkdialog {
+	width: 300px;
+}
+
+.sortpagesflextable {
+	width: 200px;
+	text-align: center;
+}
+
+.sortpagesdraghandle {
+	margin-top: 5px;
+}
+
+.sortpagestableproxy {
+	border: 1px solid blue;
+	opacity: 0.5;
+}
+
+.sortpagespositioner {
+	z-index: 1;
+	border-top: 1px solid blue;
+	margin-top: 3px;
+}
+
+/** Context Menu **/
+.cell:hover {
+	border-color: #afd2fd;
+	border-style: solid;
+	border-width: 1px;
+	background-color: #e1eefd;
+	color: black;
+}
+
+.cell {
+	border-color: white;
+	border-style: solid;
+	border-width: 1px;
+	/*padding: 3px 29px 3px 10px;*/
+	font-size: 11px;
+	padding: 3px 61px 3px 41px;
+}
+
+.contextMenu {
+	background-color: white;
+	border-color: #979797;
+	border-style: solid;
+	border-width: 1px;
+	box-shadow: 2px 3px 5px -3px black;
+	padding: 3px;
+}
+
+.cellListWidget {
+	
+}
+
+.cellListEvenItem {
+	cursor: pointer;
+	zoom: 1;
+}
+
+.cellListOddItem {
+	cursor: pointer;
+	zoom: 1;
+}
+
+.cellListKeyboardSelectedItem {
+	background: white;
+}
+/*
+@sprite .cellListSelectedItem {
+  gwt-image: 'cellListSelectedBackground';
+  background-color: white;
+  color: white;
+  height: auto;
+  overflow: visible;
+}
+*/
+@sprite .marker0 {
+	gwt-image: "marker0";
+}
+
+@sprite .marker25 {
+	gwt-image: "marker25";
+}
+
+@sprite .marker50 {
+	gwt-image: "marker50";
+}
+
+@sprite .marker75 {
+	gwt-image: "marker75";
+}
+
+@sprite .marker100 {
+	gwt-image: "marker100";
+}
+
+@sprite .othermarker0 {
+	gwt-image: "othermarker0";
+}
+
+@sprite .othermarker25 {
+	gwt-image: "othermarker25";
+}
+
+@sprite .othermarker50 {
+	gwt-image: "othermarker50";
+}
+
+@sprite .othermarker75 {
+	gwt-image: "othermarker75";
+}
+
+@sprite .othermarker100 {
+	gwt-image: "othermarker100";
+}

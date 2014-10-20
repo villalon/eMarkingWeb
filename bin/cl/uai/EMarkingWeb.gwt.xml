@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  When updating your version of GWT, you should also update this DTD reference,
+  so that your app can take advantage of the latest GWT module capabilities.
+-->
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.1//EN"
+  "http://google-web-toolkit.googlecode.com/svn/tags/2.5.1/distro-source/core/src/gwt-module.dtd">
+<module rename-to='emarkingweb'>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+
+  <!-- Inherit the default GWT style sheet.  You can change       -->
+  <!-- the theme of your GWT application by uncommenting          -->
+  <!-- any one of the following lines.                            -->
+  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
+  <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
+  <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+  <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+
+  <!-- Other module inherits                                      -->
+  <inherits name="com.google.gwt.json.JSON" /> 
+  <inherits name="com.google.gwt.http.HTTP" />
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  <inherits name ="com.github.gwtbootstrap.Bootstrap"/>
+  <inherits name="com.google.gwt.logging.Logging"/>
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="com.google.gwt.resources.Resources"/>
+  <inherits name='org.vaadin.gwtgraphics.GWTGraphics' /> 
+
+  <!-- Logging configuration -->
+  <set-property name="gwt.logging.logLevel" value="ALL"/> 
+  <set-property name="gwt.logging.enabled" value="TRUE"/>
+  <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  
+  <set-property name="gwt.logging.popupHandler" value="DISABLED"/>  
+
+  <!-- Locales configuration -->
+  <extend-property name="locale" values="en"/>
+  <extend-property name="locale" values="es"/>
+  <set-property-fallback name="locale" value="en"/>
+
+  <!-- Specify the app entry point class.                         -->
+  <entry-point class='cl.uai.client.EMarkingWeb'/>
+
+  <!-- Specify the paths for translatable code                    -->
+  <source path='client'/>
+  <source path='shared'/>
+
+</module>
