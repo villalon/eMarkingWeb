@@ -20,8 +20,6 @@
  */
 package cl.uai.client.rubric;
 
-import java.util.logging.Logger;
-
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;

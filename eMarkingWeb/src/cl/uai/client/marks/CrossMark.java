@@ -22,7 +22,6 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 

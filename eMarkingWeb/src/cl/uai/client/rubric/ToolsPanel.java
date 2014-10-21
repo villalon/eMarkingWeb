@@ -25,6 +25,15 @@ public class ToolsPanel extends Composite {
 	/** Sorting pages interfaces **/
 	private SortPagesInterface sortPages = null;
 	
+	/** chat interfances (just for collaborative features) **/
+	private ChatInterface chat = null;
+	/** administration interface interfances (just for collaborative features) **/
+	private AdministrationInformationInterface administrationInformation = null;
+	/** cordination interfances (just for collaborative features) **/
+	private CordinationInformationInterface cordinationInformation = null;
+	/** other interfances (just for collaborative features) **/
+	private OtherInformationInterface otherInformation = null;
+	
 	private MarksSummaryInterface marksSummary = null;
 	
 	/** Scroll panel for managing a large number of comments **/
@@ -57,6 +66,22 @@ public class ToolsPanel extends Composite {
 		if(!MarkingInterface.readonly) {
 			toolsPanel.add(previousComments, MarkingInterface.messages.PreviousComments());
 			toolsPanel.add(generalFeedback, MarkingInterface.messages.GeneralFeedback());
+		}
+		
+		//chat
+		if(MarkingInterface.getCollaborativeFeatures()==1){
+			chat = new ChatInterface();
+			toolsPanel.add(chat, "Chat");
+			
+			administrationInformation = new AdministrationInformationInterface();
+			toolsPanel.add(administrationInformation, "Info Administrativa");
+			
+			cordinationInformation = new CordinationInformationInterface();
+			toolsPanel.add(cordinationInformation, "Info de Coordinación");
+			
+			otherInformation = new OtherInformationInterface();
+			toolsPanel.add(otherInformation, "Info Otros");
+			
 		}
 
 		// Sorting pages

@@ -29,6 +29,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.marks.CheckMark;
@@ -225,7 +226,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 				
 				for(Map<String, String> mark : pageMarks) {
 					
-					if(EMarkingWeb.markingInterface.getLinkRubric() == 0)
+					if(MarkingInterface.getLinkRubric() == 0)
 						mark.put("colour", "criterion0");			
 					
 					int format = Integer.parseInt(mark.get("format"));

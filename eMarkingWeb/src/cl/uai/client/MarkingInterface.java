@@ -899,7 +899,7 @@ public class MarkingInterface extends EMarkingComposite {
 										
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
 					
-					//collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
+					collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
 
 					// Load submission data
 					loadSubmissionData();
