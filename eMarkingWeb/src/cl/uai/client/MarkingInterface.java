@@ -20,7 +20,9 @@
  */
 package cl.uai.client;
 
+
 import java.util.Date;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -183,17 +185,43 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Suggester for previous comments **/
 	public MultiWordSuggestOracle previousCommentsOracle = new MultiWordSuggestOracle() ;
 
+	/** If is enabled linkrubric (Marcelo's thesis) **/
 	private static int linkrubric = 0;
-
+	
+	public static int getLinkRubric() {
+		return linkrubric;
+	}
+	
+	/** If is enabled collaborativefeatures (Manuel's thesis) **/
 	private static int collaborativefeatures = 0;
 	
 	public static int getCollaborativeFeatures(){
 		return collaborativefeatures;
 	}
 	
-	public static int getLinkRubric() {
-		return linkrubric;
+	//TODO
+	
+	/** Get array of markers for the chat and wall collaborative features **/
+	private Map<String, String> markers = null;
+	
+	public Map<String, String> getMarkers(){
+		return markers;
 	}
+	
+	/** Get username of actual online user data for the chat and wall collaborative features **/
+	private static String username = null;
+	
+	public static String getUsername(){
+		return username;
+	}
+	
+	/** Get user id of actual online user for the chat and wall collaborative features **/
+	private static int user = 0;
+	
+	public static int getUser(){
+		return user;
+	}
+	//TODO
 	public static Map<String, String> MapCss = new HashMap<String, String>();
 	
 	public static Map<String, String> getMapCss(){
@@ -896,11 +924,30 @@ public class MarkingInterface extends EMarkingComposite {
 						// Every two minutes
 						heartBeatTimer.scheduleRepeating(2 * 60 * 1000);
 					}
-										
+
+					// Link rubric colors if configured as
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
 					
+					// Collaborative features (chat, wall) if configured as
 					collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
-
+					
+					/**
+					 * GET TOTAL MARKERS ARRAY OF AN eMarking.
+					 * This saves all markers of a group (each group has a different room for chat and wall).
+					 */
+					//get the json_encode() PHP format string
+					String preMarkersJsonString = value.get("markers");
+					//parse json string and get a value, in this case: id from second marker of the array
+					String functionTestResult = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers", 1, "id");
+					logger.severe("ID del segundo marker del array: "+functionTestResult);
+					
+					
+					// Assign actual online username
+					username = value.get("username");
+					
+					//Assign actual online user
+					user = Integer.parseInt(value.get("user"));
+					
 					// Load submission data
 					loadSubmissionData();
 					

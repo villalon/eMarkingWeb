@@ -28,7 +28,10 @@ import java.util.logging.Logger;
 
 import cl.uai.client.MarkingInterface;
 
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -113,4 +116,48 @@ public class AjaxRequest {
 		}
 		return output;	
 	}
+	
+	//TODO: "on construction" function for parsing Json strings coming from json_encode() PHP format.
+	
+	/**
+	 * Assuming a json string (PHP json_encode() format), it transforms the string to a JSONObject.
+	 * @param Json string to parse.
+	 * @param Header of the string (this fix the json_encode() PHP format).
+	 * @param Numeric key of the json collection to get the values.
+	 * @param 
+	 * @return a string value of defined key
+	 */
+	
+	public static String getValuesFromJsonString(String json, String header, Integer numKey, String assocKey){
+		//fix the json format for JSONObject to understand it
+		String jsonString = "{\""+header+"\":"+json+"}";
+		//Set json string as a JSONValue
+		JSONValue markersValue = JSONParser.parseStrict(jsonString);
+		JSONObject markersObject;
+		JSONArray markersArray;
+		JSONString jsonStringOutput;
+		//Object checking
+		if ((markersObject = markersValue.isObject()) == null) {
+		    logger.severe("Error parsing the JSONObject");
+		}
+		//Array checking
+		markersValue = markersObject.get(header);
+		if ((markersArray = markersValue.isArray()) == null) {
+			logger.severe("Error parsing the JSONArray");
+		}
+		//Object checking for defined numeric key of the array
+		markersValue = markersArray.get(numKey);
+		if ((markersObject = markersValue.isObject()) == null) {
+			logger.severe("Error parsing the JSONValue");
+		}
+		//String checking
+		markersValue = markersObject.get(assocKey);
+		if ((jsonStringOutput = markersValue.isString()) == null) {
+			logger.severe("Error parsing the JSONString");
+		}
+		
+		String output = jsonStringOutput.stringValue();
+		return output;
+	}
+	
 }

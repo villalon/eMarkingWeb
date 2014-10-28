@@ -72,6 +72,7 @@ public class ToolsPanel extends Composite {
 		if(MarkingInterface.getCollaborativeFeatures()==1){
 			chat = new ChatInterface();
 			toolsPanel.add(chat, "Chat");
+			chat.setHeight("300px");
 			
 			administrationInformation = new AdministrationInformationInterface();
 			toolsPanel.add(administrationInformation, "Info Administrativa");

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <title>eMarking CHAT</title>
+  <link rel="stylesheet" type="text/css" href="/css/estilo.css" />
+  <!-- cargar socket y jQuery -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script>
+    
+  	//función para obtener variables desde URL
+  	function getQueryVariable(variable)
+	{
+	       var query = window.location.search.substring(1);
+	       var vars = query.split("&");
+	       for (var i=0;i<vars.length;i++) {
+	               var pair = vars[i].split("=");
+	               if(pair[0] == variable){return pair[1];}
+	       }
+	       return(false);
+	}
+	
+  	//obtener usuario que se conectó
+  	var usernameOnlineURI = new String(getQueryVariable("username"));
+  	var usernameOnline = decodeURIComponent(usernameOnlineURI);
+  	var idOnline = new Int(getQueryVariable("id"));
+  	
+    //carga el usuario obtenido desde archivo JSON
+    var usuario;
+    var usuarioJson = jQuery.ajax({
+        url: "/usuario.json",
+        type: "GET",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+            usuario = data;
+            console.log(data);
+        }
+    });
+    
+    //para mostrar el nombre del usuario al principio del chat
+    //var userActual = usuario.nombre; //forma para obtener user desde archivo json
+
+    alert("Bienvenido " + usernameOnline + "! Tu ID es: " + idOnline);
+    
+  </script>
+
+</head>
+<body>
+  <div id="allChat">
+  <div id='header'>
+  <p id="usuarioActual"></p>
+  </div>
+    <!-- area del texto que escriben usuarios -->
+    <div id='campo'>
+      <div id='areaChat'>
+        <ul id="listaMensajes"></ul>
+      </div>
+      <!-- listado de usuarios conectados -->
+      <div id='divUsers'>
+        <h5 style="padding-left:5px;">Usuarios online:</h5>
+        <div id='users' style="padding-left:5px;"></div>
+      </div>
+    </div>
+
+    <!-- input del texto del mensaje -->
+    <div id='contenido'>
+      <form action="" id='formularioMensaje'>
+      	<div class="inputText">
+        <input id="mensaje" autocomplete="off" placeholder='Escribe un mensaje...' />
+        </div>
+        <div class="inputButton">
+        <button onClick="submit_form(); return false;">Enviar</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- comunicación con el servidor -->
+  <script>
+	  //nombre en el banner
+	  document.getElementById("usuarioActual").innerHTML = "Bienvenido, "+usernameOnline+"!";
+    //definición de variables
+    var socket = io();
+    var $chatForm = $('#formularioMensaje');
+    var $mensaje = $('#mensaje');
+    var $usuarioEscribe = $('#nicknameWrap'); 
+    var $listaMensajes = $('#listaMensajes');
+    var $users = $('#users');
+    var $areaChat = $('#areaChat');
+
+    //funcion para guardar el nickname
+      socket.emit('nuevo usuario', usernameOnline, function(nombre){ //$nickname.val()
+        });
+
+      //muestra la lista de todos los usuarios a la derecha
+      socket.on('usernames', function(data){
+        var html = '';
+        for(var i=0;i<data.length;i++){
+          html += data[i] + '<br/>'
+        }
+        $users.html(html);
+      });
+
+    //función para enviar los mensajes al hacer submit luego de escribir mensaje
+    $chatForm.submit(function(e){
+      e.preventDefault();
+      socket.emit('chat message', $mensaje.val(), function(data){
+        $listaMensajes.append($('<li class="error">').text('Error! El usuario no existe.'));
+      //always on bottom
+        $areaChat[0].scrollTop = $areaChat[0].scrollHeight;
+      });
+      $mensaje.val('');
+      return false;
+    });
+
+    //funcion para mostrar los mensajes antiguos
+    socket.on('cargar mensajes antiguos', function(docs){
+      for(var i=0; i<docs.length; i++){
+        displayMsg(docs[i]);
+      //always on bottom
+        $areaChat[0].scrollTop = $areaChat[0].scrollHeight;
+      } 
+    });
+
+    //función que muestra los mensajes a todos
+    socket.on('chat message', function(data){
+      displayMsg(data);
+    //always on bottom
+      $areaChat[0].scrollTop = $areaChat[0].scrollHeight;
+    });
+
+    //funcion para escribir el mensaje
+    function displayMsg(data){
+      $listaMensajes.append($('<li>').text(data.nick+': '+data.msg));
+    //always on bottom
+      $areaChat[0].scrollTop = $areaChat[0].scrollHeight;
+    }
+
+    //funcion que envia mensajes privados (no se guardan en la db)
+    socket.on('whisper', function(data){
+      $listaMensajes.append($('<li class="privado">').text('(PRIVADO) '+data.nick+': '+data.msg));
+      //always on bottom
+      $areaChat[0].scrollTop = $areaChat[0].scrollHeight;
+    });
+  	
+  </script>
+
+</body>
+</html>
