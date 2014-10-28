@@ -11,11 +11,9 @@ Instrucciones para habilitar el chat (hacer esto antes de ejecutar eMarking):
 	>cd
 	>sudo mongod
 
-2. En otra terminal, iniciar el archivo app.js con node:
-	>cd /RUTA/eMarking/eMarkingWeb/war/
-	>node /chat/app.js
-
-	OBS: los módulos de node están en “../war/node_modules”, por esto se debe iniciar el app.js desde la ruta “../war/chat”. Los módulos node serán usados para otras features.
+2. En otra terminal, iniciar el archivo app.js del chat con node:
+	>cd /RUTA/eMarking/eMarkingWeb/war/chat
+	>node app.js
 
 3. Ejecutar eMarking con normalidad.
 

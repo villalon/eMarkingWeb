@@ -25,24 +25,6 @@
   	var usernameOnlineURI = new String(getQueryVariable("username"));
   	var usernameOnline = decodeURIComponent(usernameOnlineURI);
   	var idOnline = new Int(getQueryVariable("id"));
-  	
-    //carga el usuario obtenido desde archivo JSON
-    var usuario;
-    var usuarioJson = jQuery.ajax({
-        url: "/usuario.json",
-        type: "GET",
-        dataType: "json",
-        async: false,
-        success: function (data) {
-            usuario = data;
-            console.log(data);
-        }
-    });
-    
-    //para mostrar el nombre del usuario al principio del chat
-    //var userActual = usuario.nombre; //forma para obtener user desde archivo json
-
-    alert("Bienvenido " + usernameOnline + "! Tu ID es: " + idOnline);
     
   </script>
 
