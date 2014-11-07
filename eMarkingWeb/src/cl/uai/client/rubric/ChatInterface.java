@@ -1,6 +1,7 @@
 package cl.uai.client.rubric;
 
 import cl.uai.client.MarkingInterface;
+
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -26,8 +27,19 @@ public class ChatInterface extends Composite{
 		*Node.js+socket.io file "app.js" MUST be running on 127.0.0.1:3000 (node server instance).
 		**/
 		String usernameOnline = MarkingInterface.getUsername();
-		Integer idOnline = MarkingInterface.getUser();
-		this.frame = new Frame("http://127.0.0.1:3000/chat.html?username="+usernameOnline+"&id="+idOnline);
+		String userOnline = MarkingInterface.getRealUsername();
+		Integer idOnline = MarkingInterface.getUserID();
+		Integer currentGroupID = MarkingInterface.getGroupID();
+		
+		
+		this.frame = new Frame(
+						"http://127.0.0.1:3000/chat.html?"
+						+"username="+usernameOnline
+						+"&user="+userOnline
+						+"&id="+idOnline
+						+"&groupID="+currentGroupID
+						);
+		
 		frame.setSize("100%", "100%");
 		
 		

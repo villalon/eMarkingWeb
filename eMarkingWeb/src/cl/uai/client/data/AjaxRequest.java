@@ -21,6 +21,7 @@
 package cl.uai.client.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,13 @@ public class AjaxRequest {
 	 * @return a string value of defined key
 	 */
 	
-	public static String getValuesFromJsonString(String json, String header, Integer numKey, String assocKey){
+	public static List<Map<String, String>> getValuesFromJsonString(String json, String header){
+		
+		//Defining output
+		List<Map<String, String>> output = new ArrayList<Map<String,String>>();
+		//Define keys to get from the markers json array
+		List<String> markersKeys = Arrays.asList("id","username","firstname","lastname");
+		
 		//fix the json format for JSONObject to understand it
 		String jsonString = "{\""+header+"\":"+json+"}";
 		//Set json string as a JSONValue
@@ -145,18 +152,27 @@ public class AjaxRequest {
 		if ((markersArray = markersValue.isArray()) == null) {
 			logger.severe("Error parsing the JSONArray");
 		}
-		//Object checking for defined numeric key of the array
-		markersValue = markersArray.get(numKey);
-		if ((markersObject = markersValue.isObject()) == null) {
-			logger.severe("Error parsing the JSONValue");
+		//Loop for getting each marker info, creating markers info array
+		for(int i=0;i<markersArray.size();i++){
+			Map<String, String> obj = new HashMap<String, String>();
+			//Object checking for defined numeric key of the array
+			markersValue = markersArray.get(i);
+			if ((markersObject = markersValue.isObject()) == null) {
+				logger.severe("Error parsing the JSONValue");
+			}
+			//String checking for "id", "username", "firstname", "lastname"
+			//Loop for getting the info values for each marker
+			for(int j=0;j<markersKeys.size();j++){
+				markersValue = markersObject.get(markersKeys.get(j).toString());
+				if ((jsonStringOutput = markersValue.isString()) == null) {
+					logger.severe("Error parsing the JSONString");
+				}
+				obj.put(markersKeys.get(j).toString(), jsonStringOutput.stringValue());
+			}
+			output.add(obj);
 		}
-		//String checking
-		markersValue = markersObject.get(assocKey);
-		if ((jsonStringOutput = markersValue.isString()) == null) {
-			logger.severe("Error parsing the JSONString");
-		}
+		//Return markers array output
 		
-		String output = jsonStringOutput.stringValue();
 		return output;
 	}
 	

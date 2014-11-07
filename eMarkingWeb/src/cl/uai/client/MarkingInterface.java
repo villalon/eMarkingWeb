@@ -22,8 +22,8 @@ package cl.uai.client;
 
 
 import java.util.Date;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -199,28 +199,41 @@ public class MarkingInterface extends EMarkingComposite {
 		return collaborativefeatures;
 	}
 	
-	//TODO
-	
 	/** Get array of markers for the chat and wall collaborative features **/
-	private Map<String, String> markers = null;
+	private List<Map<String, String>> markers = null;
 	
-	public Map<String, String> getMarkers(){
+	public List<Map<String, String>> getMarkers(){
 		return markers;
 	}
 	
-	/** Get username of actual online user data for the chat and wall collaborative features **/
+	/** Get username (firstname lastname) of actual online user data for the chat and wall collaborative features **/
 	private static String username = null;
 	
 	public static String getUsername(){
 		return username;
 	}
 	
-	/** Get user id of actual online user for the chat and wall collaborative features **/
-	private static int user = 0;
+	/** Get user username (real username) of actual online user for the chat and wall collaborative features **/
+	private static String realUsername = null;
 	
-	public static int getUser(){
-		return user;
+	public static String getRealUsername(){
+		return realUsername;
 	}
+	
+	/** Get user id of actual online user for the chat and wall collaborative features **/
+	private static int userID = 0;
+	
+	public static int getUserID(){
+		return userID;
+	}
+	
+	/** Get user id of actual online user for the chat and wall collaborative features **/
+	private static int groupID = 0;
+	
+	public static int getGroupID(){
+		return groupID;
+	}
+	
 	//TODO
 	public static Map<String, String> MapCss = new HashMap<String, String>();
 	
@@ -935,18 +948,23 @@ public class MarkingInterface extends EMarkingComposite {
 					 * GET TOTAL MARKERS ARRAY OF AN eMarking.
 					 * This saves all markers of a group (each group has a different room for chat and wall).
 					 */
-					//get the json_encode() PHP format string
+					//Get the json_encode() PHP format string
 					String preMarkersJsonString = value.get("markers");
-					//parse json string and get a value, in this case: id from second marker of the array
-					String functionTestResult = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers", 1, "id");
-					logger.severe("ID del segundo marker del array: "+functionTestResult);
 					
+					//Parse json string to a List<Map<String, String>> markers
+					markers = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers");
 					
-					// Assign actual online username
+					// Assign actual online username (firstname lastname)
 					username = value.get("username");
 					
+					//Assign actual online real username
+					realUsername = value.get("realUsername");
+					
 					//Assign actual online user
-					user = Integer.parseInt(value.get("user"));
+					userID = Integer.parseInt(value.get("user"));
+					
+					//Assign actual group of online user (equals to emarking->id)
+					groupID = Integer.parseInt(value.get("groupID"));
 					
 					// Load submission data
 					loadSubmissionData();
