@@ -181,8 +181,15 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 				stats.remove(format);
 			}
 			
-			newvalue++;
+			int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
+			String criterionid = "criterion"+c;
+			if(c == 0){
+				newvalue++;
+			}else if(mark.getColour().equals(criterionid)){
+				newvalue++;
+			}
 			stats.put(format, newvalue);
+			
 		}
 		
 		return stats;

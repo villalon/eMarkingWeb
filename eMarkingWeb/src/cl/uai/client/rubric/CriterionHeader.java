@@ -29,8 +29,10 @@ import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -100,7 +102,19 @@ public class CriterionHeader extends EMarkingComposite {
 		//the square with the color
 		if(MarkingInterface.getLinkRubric() == 1){
 			rectangle = new HTML();
-			rectangle.setHTML("<div style='width:20px;height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) + "' ></div>");
+			rectangle.setHTML("<div data-index='"+idx +"' style='width:20px;height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) + "' ></div>");
+			/*rectangle.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					String eventTarget = event.getNativeEvent().getEventTarget().toString();
+					String regex = "/data-index (.+)/";
+					String index  = eventTarget.replaceAll(regex, "");
+					Window.alert(eventTarget + "  --  "+ index);
+					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeCriterionList(Integer.parseInt(index));
+					
+				}
+			});*/
 			horizontal.add(rectangle);
 		}
 		
