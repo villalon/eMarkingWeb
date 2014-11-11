@@ -77,6 +77,7 @@ public class MarkingButtons extends EMarkingComposite {
 	private ListBox criterionList = null;
 	public void changeCriterionList(int index){
 		criterionList.setItemSelected(index, true);
+		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
 	}
 
 	private EmarkingToolBarValueChangeHandler handler = new EmarkingToolBarValueChangeHandler();

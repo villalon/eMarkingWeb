@@ -185,4 +185,5 @@ public interface EmarkingCss extends CssResource {
 	String color22();
 	String color23();
 	String color24();
+	String colorsquare();
 }

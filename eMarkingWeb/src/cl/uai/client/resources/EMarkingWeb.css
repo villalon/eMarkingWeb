@@ -792,4 +792,9 @@ background-color: #806600;
 .color24{
 background-color: #0057D9;
 }
+.colorsquare{
+	width:20px;
+	height:20px;
+	border:1px solid #000;
+}
 
