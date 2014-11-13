@@ -81,8 +81,9 @@
   <script>
   	//Banner name
   	document.getElementById("usuarioActual").innerHTML = "Sala "+groupID+" - Bienvenido "+usernameOnline+"!";
+  	//Connect to socket (of the specific namespace)
+    var socket = io('/chat');
   	//Set variables
-    var socket = io();
     var $chatForm = $('#formularioMensaje');
     var $mensaje = $('#mensaje'); 
     var $listaMensajes = $('#listaMensajes');

@@ -33,7 +33,7 @@ public class ChatInterface extends Composite{
 		
 		
 		this.frame = new Frame(
-						"http://127.0.0.1:3000/chat.html?"
+						"http://127.0.0.1:3000/chat/chat.html?"
 						+"username="+usernameOnline
 						+"&user="+userOnline
 						+"&id="+idOnline

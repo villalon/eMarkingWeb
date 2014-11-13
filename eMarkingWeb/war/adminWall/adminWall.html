@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+<title>eMarking MURO</title>
+<!-- load bootstrap css -->
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="bootstrap/css/estilo.css" />
+<!-- load socket and jQuery -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- load bootstrap js -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script>
+	//Get variables from URL
+	function getQueryVariable(variable)
+	{
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+		        var pair = vars[i].split("=");
+		        if(pair[0] == variable){return pair[1];}
+		}
+		return(false);
+	}
+	//Get online user firstname and lastname
+	var usernameOnlineURI = new String(getQueryVariable("username"));
+	var usernameOnline = decodeURIComponent(usernameOnlineURI);
+	//Get online real username
+	var userOnlineURI = new String(getQueryVariable("user"));
+	var userOnline = decodeURIComponent(userOnlineURI);
+	//Get online user id
+	var idOnlineURI = new String(getQueryVariable("id"));
+	var idOnline = decodeURIComponent(idOnlineURI);
+	//Get online user groupID
+	var groupIDURI = new String(getQueryVariable("groupID"));
+	var groupID = decodeURIComponent(groupIDURI);
+	//Get online user groupID
+	var roleURI = new String(getQueryVariable("role"));
+	var role = decodeURIComponent(roleURI);
+</script>
+</head>
+
+<body>
+<!-- Wall main div -->
+<div class="container-fluid">
+
+	<!-- Username banner -->
+	<div class="row userBanner">
+		<p id="usuarioActual"></p>
+	</div>
+	<!-- input del texto del post -->
+	<div class="row" id="inputPost">
+		<form class="form-inline postField" role="form" id="formularioPost">
+		<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+			<input type="text" autocomplete="off" class="form-control" id="posted" name="posted" placeholder="Escribe un post...">
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			<button class="btn btn-primary btn-block" onClick="submit_form(); return false;">Enviar</button>
+		</div>
+		</form>
+	 </div>
+	 <hr>
+	 
+	 <div class='row' id='testArea'></div>
+	  
+	<div class="row mainPost" id="postArea">
+        <ul id="mainPosts"></ul>
+	</div>
+
+</div> <!-- Close main container div -->
+
+<!-- Server communication -->
+<script>
+	//Banner
+	document.getElementById("usuarioActual").innerHTML = "Sala "+groupID+", muro administración - Bienvenido "+usernameOnline+"! Con rol: "+role;
+	//Connect to socket (of the specific namespace)
+	var socket = io('/adminWall');
+	//Set variables
+	var $postArea = $('#postArea');
+	var $listaPosts = $('#mainPosts');
+	var $postForm = $('#formularioPost');
+	var $posted = $('#posted');
+	
+	//Post input
+	$('#testArea').append(newCommentArea("id123123"));
+	
+	//Get old posts
+	socket.emit('adminWall room', groupID, function(data){
+	});
+	
+	//Send post after submit text function
+	$postForm.submit(function(e){
+		e.preventDefault();
+		//It includes message and room (groupID)
+		socket.emit('send post adminWall', userOnline, $posted.val(), groupID, function(data){
+		});
+		$posted.val('');
+		return false;
+	});
+	
+	//Show old posts function
+	socket.on('old posts adminWall', function(docs){
+		for(var i=0; i<docs.length; i++){
+			displayPost(docs[i],'oldPost');
+		} 
+	});
+	
+	//Broadcast post function
+	socket.on('post message', function(data){
+		displayPost(data,'broadcast');
+	});
+	
+	//Create input text for comments function
+	function createSubPostInput(id){
+		var newForm = "<form action='#' id='form_"+id+"'>";
+		var newInput = "<input class='form-control input-sm' type='text' style='width:100%;' id='"+id+"' name='"+id+"' autocomplete='off' placeholder='Comentar...'>";
+		var newButton = "<button class='btn btn-primary btn-block' style='width:9%;' onClick='submit_form(); return false;'>Enviar</button>";
+		var endForm = "</form>";
+		return newForm + newInput + newButton + endForm;
+		//return newInput;
+	}
+	
+	//Create text area for comments
+	function newComment(id){
+		var txtArea = "<textarea style='width:100%;' name='"+id+"' id='"+id+"' autocomplete='off' placeholder='Comentar...' ></textarea>";
+		return txtArea;
+	}
+	
+	//Create comment textarea
+	function newCommentArea(id){
+		var input = document.createElement("textarea");
+		input.name = id;
+		input.maxLength = "5000";
+		input.placeholder = "Comentar...";
+		input.style.cssText = "width:100%;";
+		return input;
+	}
+	
+	//Get actual date on specific format
+	function getActualDate(){
+		var thisDate = new Date();
+		var now = thisDate.getDate()+"-"+thisDate.getMonth()+"-"+thisDate.getFullYear()+" "+thisDate.getHours()+":"+thisDate.getMinutes();
+		return now;
+	}
+	
+	//Write post function
+	function displayPost(data,appendType){
+		//Check room
+		if(data.room==groupID){
+			//if real time post it must be "prepend"
+			if(appendType=='broadcast'){
+				//Get parent ID for subPosts comments
+				$listaPosts
+						.append('<br><li class="aPost"><strong>'+data.user+' </strong>('+getActualDate()+'):<br> '+data.post)
+						.append(newCommentArea(data.lastId));
+			//if loading old post it must be "append"
+			} else if (appendType=='oldPost'){
+				$listaPosts.append($('<br><li class="aPost">')
+							.append("<strong>"+data.user+" </strong>("+getActualDate()+"): <br>"+data.post+"<br>"))
+							.append(newCommentArea(data._id)).append("<br>");
+			}
+		}
+		//always on bottom
+	    $postArea[0].scrollTop = $postArea[0].scrollHeight;
+	}
+	
+	//If any subpost is submitted (main post must be excluded!)
+	//socket.emit('send subPost adminWall', userOnline, subPostParent, subPosted, function(data){
+	//});
+	
+	//Textarea submit function (with ENTER key) FUNCIONA solo con textareas iniciales??
+	$('textarea').keypress(function(e){
+		if(e.which == '13'){
+			console.log('submitted!');
+			console.log('name: '+this.name);
+			console.log('value: '+this.value);
+		}
+	})
+	
+</script>
+
+</body>
+</html>

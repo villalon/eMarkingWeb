@@ -220,6 +220,13 @@ public class MarkingInterface extends EMarkingComposite {
 		return realUsername;
 	}
 	
+	/** Get role of actual online user for the chat and wall collaborative features **/
+	private static String userRole = null;
+	
+	public static String getUserRole(){
+		return userRole;
+	}
+	
 	/** Get user id of actual online user for the chat and wall collaborative features **/
 	private static int userID = 0;
 	
@@ -959,6 +966,9 @@ public class MarkingInterface extends EMarkingComposite {
 					
 					//Assign actual online real username
 					realUsername = value.get("realUsername");
+					
+					//Assign actual online role
+					userRole = value.get("role");
 					
 					//Assign actual online user
 					userID = Integer.parseInt(value.get("user"));
