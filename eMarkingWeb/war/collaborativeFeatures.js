@@ -26,6 +26,8 @@ users = {};
  */
 numRoom = "0";
 actualUser = "no";
+lastCommentID = "";
+newCommentID = "";
 
 /**
  * MONGO CONNECTION
@@ -48,6 +50,12 @@ var chatSchema = mongoose.Schema({
 	created: {type: Date, default: Date.now},
 	room: {type: String, default: "0"}
 });
+//Comments sub schema
+var commentsSchema = mongoose.Schema({
+	user: String,
+	created: {type: Date, default: Date.now},
+	comment: String
+});
 //Wall
 var wallSchema = mongoose.Schema({
 	user: String,
@@ -56,7 +64,7 @@ var wallSchema = mongoose.Schema({
 	created: {type: Date, default: Date.now},
 	room: {type: String, default: "0"},
 	wallType: String,
-	comments: {subUser: String, subCreated: {type: Date, default: Date.now}, comment: String}
+	comments: [commentsSchema]
 });
 
 /**
@@ -205,8 +213,8 @@ adminWallNSP.on('connection',function(socket){
 		var query = Wall.find({ room:numRoom, wallType:"admin" });
 		query
 			.sort('created') //'-created' is DESC 'created is ASC'
-			.limit(100). //last 100 messages only!
-			exec(function(err, docs){
+			.limit(100) //last 100 messages only!
+			.exec(function(err, docs){
 			if(err) throw err;
 			console.log('WALL: Enviando posts antiguos de la room '+numRoom);
 			socket.emit('old posts adminWall',docs);
@@ -219,23 +227,36 @@ adminWallNSP.on('connection',function(socket){
 		newPost.save(function(err){
 			if(err) throw err;
 			//else
-			//Show message to ALL users connected
-			console.log("Este es el ultimo post id: "+newPost._id);
+			//Broadcast post for online users
 			adminWallNSP.emit('post message', {user: userOnline, post: posted, room: chatRoom, lastId: newPost._id });
 		});
   	});
 	
-	//When a user submits a subPost (it uploads a post adding a comment)
-	socket.on('send subPost adminWall', function(userOnline, parent, subPost){
-		//Update main post with their comment (subPost) into mongoDB
-		Wall.update({ _id: parent }, { $set: { comments: { subUser: userOnline, comment: subPost } } });
-		newPost.save(function(err){
-			if(err) throw err;
-			//else
-			//Show subPost to ALL users connected
-			//adminWallNSP.emit('post message', {user: userOnline, post: posted, room: chatRoom});
+	//When a user comments a post (it uploads a post adding a comment, of the requesting walltype)
+	socket.on('send comment wall', function(userOnline, parent, commented, chatRoom, actualWall){
+		//Set conditions, update query and options
+		var conditions={ _id: parent, wallType: actualWall }, 
+						update={ $push:{ comments: { parent: parent, user: userOnline, created: Date.now, comment: commented } } }, 
+						options={ multi:true };
+		//Update post adding a comment
+		Wall.findOneAndUpdate(conditions, update, options, callback);
+		function callback (err, object){
+			//Get last comment id (for knowing where to append the new comment)
+			if(object.comments.length == 1){ //If there aren't previous comments
+				lastCommentID = "NADA";
+				newCommentID = object.comments[0]._id;
+				adminWallNSP.emit('comment message', {newComm: newCommentID, lastComm: lastCommentID, user: userOnline, comment: commented, room: chatRoom, parent: parent});
+			} else { //If there are previous comments
+				var largoNew = object.comments.length-1;
+				var largoLast = object.comments.length-2;
+				lastCommentID = object.comments[largoLast]._id;
+				newCommentID = object.comments[largoNew]._id;
+				adminWallNSP.emit('comment message', {newComm: newCommentID, lastComm: lastCommentID, user: userOnline, comment: commented, room: chatRoom, parent: parent});
+			}
+		}
+		//Broadcast the comment
+		console.log('WALL: Enviando comentarios...');
 		});
-  	});
 	
 	//When user is disconnected from adminWall
 	socket.on('disconnect',function(){
