@@ -75,6 +75,10 @@ public class MarkingButtons extends EMarkingComposite {
 	private int selectedIndex = 0;
 	
 	private ListBox criterionList = null;
+	public void changeCriterionList(int index){
+		criterionList.setItemSelected(index, true);
+		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
+	}
 
 	private EmarkingToolBarValueChangeHandler handler = new EmarkingToolBarValueChangeHandler();
 	/**
@@ -204,7 +208,7 @@ public class MarkingButtons extends EMarkingComposite {
 	public int getIndexSelectedCriterion(){
 		
 		int index = 0;
-		if(EMarkingWeb.markingInterface.getLinkRubric() == 1)
+		if(MarkingInterface.getLinkRubric() == 1)
 			index = criterionList.getSelectedIndex();
 		
 		return index;
@@ -284,7 +288,6 @@ public class MarkingButtons extends EMarkingComposite {
 				logger.severe("Format " + format + " could not be found");
 				continue;
 			}
-			
 			buttonsStats.get(format).setText(Integer.toString(value));
 
 			if(value > 0) {
@@ -351,8 +354,9 @@ public class MarkingButtons extends EMarkingComposite {
 		}
 		
 		for (int i = 1; i < buttons.size(); i++) {
-			buttons.get(i).setStyleName("gwt-ToggleButton gwt-ToggleButton-down-hovering " + Resources.INSTANCE.css().rubricbutton()+ " " + MarkingInterface.getMapCss().get("criterion"+c));
+			buttons.get(i).setStyleName("gwt-ToggleButton gwt-ToggleButton-up-hovering " + Resources.INSTANCE.css().rubricbutton()+ " " + MarkingInterface.getMapCss().get("criterion"+c));
 		}
+		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
 	}
 
 	public void loadCustomMarksButtons(String customMarks) {

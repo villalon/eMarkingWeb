@@ -20,6 +20,9 @@
  */
 package cl.uai.client.rubric;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
@@ -29,13 +32,16 @@ import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * 
@@ -99,9 +105,24 @@ public class CriterionHeader extends EMarkingComposite {
 		
 		//the square with the color
 		if(MarkingInterface.getLinkRubric() == 1){
-			rectangle = new HTML();
-			rectangle.setHTML("<div style='width:20px;height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) + "' ></div>");
-			horizontal.add(rectangle);
+			Label lbl2 = new Label("");
+			lbl2.addStyleName(MarkingInterface.getMapCss().get("color"+idx));
+			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());
+			lbl2.setTitle(String.valueOf(idx));
+			//lbl2.addStyleName(MarkingInterface.getMapCss().get("colorsquare"));
+
+			//HTML rectangle = new HTML();
+			//rectangle.setHTML("<div data-index='"+idx+"' style='width:20px;	height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) +" "+MarkingInterface.getMapCss().get("colorsquare") + "' ></div>");
+			lbl2.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					Label rectangle = (Label) event.getSource();
+					int index = Integer.parseInt(rectangle.getTitle());
+					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeCriterionList(index);
+				}
+			});
+			horizontal.add(lbl2);
 		}
 		
 		HTML separation = new HTML();
