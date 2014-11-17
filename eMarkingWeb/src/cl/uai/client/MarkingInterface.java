@@ -956,26 +956,31 @@ public class MarkingInterface extends EMarkingComposite {
 					 * This saves all markers of a group (each group has a different room for chat and wall).
 					 */
 					//Get the json_encode() PHP format string
-					String preMarkersJsonString = value.get("markers");
+					logger.severe("the value is :" + value.get("markers"));
 					
-					//Parse json string to a List<Map<String, String>> markers
+					
+					String preMarkersJsonString = value.get("markers");
+		
+						//Parse json string to a List<Map<String, String>> markers
 					markers = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers");
 					
 					// Assign actual online username (firstname lastname)
 					username = value.get("username");
 					
-					//Assign actual online real username
-					realUsername = value.get("realUsername");
-					
-					//Assign actual online role
-					userRole = value.get("role");
-					
-					//Assign actual online user
-					userID = Integer.parseInt(value.get("user"));
-					
-					//Assign actual group of online user (equals to emarking->id)
-					groupID = Integer.parseInt(value.get("groupID"));
-					
+					if(value.get("realUsername") != null){
+						//Assign actual online real username
+						realUsername = value.get("realUsername");
+						
+						//Assign actual online role
+						userRole = value.get("role");
+						
+						//Assign actual online user
+						userID = Integer.parseInt(value.get("user"));
+						
+						//Assign actual group of online user (equals to emarking->id)
+						groupID = Integer.parseInt(value.get("groupID"));
+						
+					}					
 					// Load submission data
 					loadSubmissionData();
 					
