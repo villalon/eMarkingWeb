@@ -55,17 +55,14 @@ public class ToolsPanel extends Composite {
 
 		//Collaborative features
 		if(MarkingInterface.getCollaborativeFeatures()==1){
-			
 			//Chat
 			chat = new ChatInterface();
 			toolsPanel.add(chat, "Chat");
 			chat.setHeight("300px");
-			
 			//Wall
 			wall = new WallInterface();
 			toolsPanel.add(wall, "Muro");
 			wall.setHeight("300px");
-			
 		}
 		
 		// Marking tools

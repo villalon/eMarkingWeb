@@ -38,7 +38,7 @@
 	//Get online user groupID
 	var roleURI = new String(getQueryVariable("role"));
 	var role = decodeURIComponent(roleURI);
-	var wallType = "admin";
+	var wallType = "public";
 	var nuevoPost = 0;
 </script>
 </head>
@@ -77,10 +77,6 @@
 <script>
 	//Banner
 	//document.getElementById("usuarioActual").innerHTML = "Sala "+groupID+", muro administración - Bienvenido "+usernameOnline+"! Con rol: "+role;
-	//Only teachers can post
-	if(role=="marker"){
-		$("#inputPost").hide();
-	}
 	//Connect to socket (of the specific namespace)
 	var socket = io('/adminWall');
 	//Set variables
@@ -110,7 +106,7 @@
 	//Show old posts function
 	socket.on('old posts adminWall', function(docs){
 		for(var i=0; i<docs.length; i++){
-			if(docs[i].wallType=="admin"){
+			if(docs[i].wallType=="public"){
 				displayPost(docs[i],'oldPost');
 			}
 		}
@@ -126,7 +122,7 @@
 	
 	//Show broadcast comments function
 	socket.on('comment message', function(data){
-		if(data.room == groupID && data.wallType=="admin"){
+		if(data.room == groupID && data.wallType=="public"){
 			//Add the comment row after last comment li
 			console.log("id para append: "+data.lastComm);
 			console.log("id new com: "+data.newComm);
@@ -162,7 +158,7 @@
 	function displayPost(data,appendType){
 		var elementToTop = null;
 		//Check room and wall type
-		if(data.room == groupID && data.wallType=="admin"){
+		if(data.room == groupID && data.wallType=="public"){
 			//if real time post it must be "prepend"
 			if(appendType=='broadcast'){
 				elementToTop = '#post_'+data.lastId;
@@ -188,7 +184,7 @@
 		if(e.which == '13'){
 			var parent = this.name;
 			var comment = this.value;
-			var wallType = "admin";
+			var wallType = "public";
 			if(comment!="" && comment!="\n"){
 				//Save comment into mongo database
 				socket.emit('send comment wall', userOnline, parent, comment, groupID, wallType, function(data){

@@ -39,12 +39,11 @@ public class ChatInterface extends Composite{
 						+"&id="+idOnline
 						+"&groupID="+currentGroupID
 						);
-		
 		frame.setSize("100%", "100%");
-		
 		
 		//mainPanel.add(title);
 		mainPanel.add(frame);
+		mainPanel.setHeight("300px");
 		
 		this.initWidget(mainPanel);
 		

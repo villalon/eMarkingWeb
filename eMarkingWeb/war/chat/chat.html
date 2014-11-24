@@ -45,7 +45,7 @@
 <!-- chat total area -->
 <div class="container-fluid">
 
-<!-- Username banner -->
+<!-- Username banner (commented for reducing used frame space!!) -->
   <div class="row userBanner">
   	<p id="usuarioActual"></p>
   </div>
@@ -80,7 +80,7 @@
   <!-- Server communication -->
   <script>
   	//Banner name
-  	document.getElementById("usuarioActual").innerHTML = "Sala "+groupID+" - Bienvenido "+usernameOnline+"!";
+  	//document.getElementById("usuarioActual").innerHTML = "Sala "+groupID+" - Bienvenido "+usernameOnline+"!";
   	//Connect to socket (of the specific namespace)
     var socket = io('/chat');
   	//Set variables

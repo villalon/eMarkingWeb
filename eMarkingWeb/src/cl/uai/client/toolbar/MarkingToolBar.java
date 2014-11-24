@@ -97,7 +97,8 @@ public class MarkingToolBar extends EMarkingComposite {
 	private Label courseName = null;
 	private Label activityName = null;
 	private Label lastSave = null;
-	
+	private Label progressStatus = null;
+	private Label collaborationStatus = null;
 	
 	/**
 	 * Creates the interface
@@ -139,6 +140,20 @@ public class MarkingToolBar extends EMarkingComposite {
 		submissionPanel.add(activityName);
 		submissionPanel.add(studentSelector);
 		submissionPanel.add(lastSave);
+		
+		//TODO AGREGAR LOS VALORES A LOS LABELS A TRAVES DEL MarkingInterface
+		//Progress bar panel
+		progressStatus = new Label();
+		//progressStatus = MarkingInterface.getGeneralProgress();
+		progressStatus.addStyleName(Resources.INSTANCE.css().activityname());
+		
+		collaborationStatus = new Label();
+		collaborationStatus.addStyleName(Resources.INSTANCE.css().activityname());
+		
+		VerticalPanel progressBarsPanel = new VerticalPanel();
+		progressBarsPanel.add(progressStatus);
+		progressBarsPanel.add(collaborationStatus);
+		//TODO
 		
 		// Info label
 		infoLabelPanel = new HorizontalPanel();

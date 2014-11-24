@@ -1,3 +1,14 @@
+.scrollToTop{
+	height:50px;
+	width:100px;
+	text-align:center; 
+	font-weight: bold;
+	position:fixed;
+	top:75px;
+	right:40px;
+	display:none;
+}
+
 .postField {
 	padding-top:5px;
 }

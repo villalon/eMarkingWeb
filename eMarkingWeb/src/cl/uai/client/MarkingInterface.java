@@ -241,6 +241,22 @@ public class MarkingInterface extends EMarkingComposite {
 		return groupID;
 	}
 	
+	//TODO VER COMO LLEGAN ESTOS INDICADORES EN EL PING
+	/** Get indicators for progress and agree bars of collaborative features **/
+	private static String generalProgress = null;
+	public static String getGeneralProgress(){
+		return generalProgress;
+	}
+	private static String generalAgree = null;
+	public static String getGeneralAgree(){
+		return generalAgree;
+	}
+	private List<Map<String, String>> actualTestAgree = null;
+	
+	public List<Map<String, String>> getActualTestAgree(){
+		return actualTestAgree;
+	}
+	
 	//TODO
 	public static Map<String, String> MapCss = new HashMap<String, String>();
 	
@@ -975,6 +991,16 @@ public class MarkingInterface extends EMarkingComposite {
 					
 					//Assign actual group of online user (equals to emarking->id)
 					groupID = Integer.parseInt(value.get("groupID"));
+					
+					//Assign general progress of marked assessments
+					//generalProgress = Integer.parseInt(value.get("generalProgress"));
+					generalProgress = "70";
+					
+					//Assign general agree between markers (of actual group)
+					//generalAgree = Integer.parseInt(value.get("generalAgree"));
+					generalAgree = "50";
+					
+					
 					
 					// Load submission data
 					loadSubmissionData();

@@ -12,13 +12,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class WallInterface extends Composite{
 
 	private VerticalPanel mainPanel;
-	//private Label title;
+	//Frames for the 3 walls
 	private Frame frameAdmin;
+	//private Frame frameCoord;
+	private Frame frameOther;
 	
 	/** The panels containing the comments **/
 	private FlowPanel WallInterfaceAdministration = null;
-	private FlowPanel WallInterfaceCoordination = null;
-	private FlowPanel WallInterfaceOther = null;
+	//private FlowPanel WallInterfaceCoordination = null;
+	private FlowPanel WallInterfacePublic = null;
 	
 	private TabPanel wallTabs = null;
 	
@@ -53,6 +55,30 @@ public class WallInterface extends Composite{
 						);
 		frameAdmin.setSize("100%", "100%");
 		
+		//Coordination Tab
+		/*
+		this.frameCoord = new Frame(
+						"http://127.0.0.1:3000/coordWall/coordWall.html?"
+						+"username="+usernameOnline
+						+"&user="+userOnline
+						+"&id="+idOnline
+						+"&groupID="+currentGroupID
+						+"&role="+roleOnline
+						);
+		frameCoord.setSize("100%", "100%");
+		*/
+		
+		//Other Tab
+		this.frameOther = new Frame(
+						"http://127.0.0.1:3000/adminWall/publicWall.html?"
+						+"username="+usernameOnline
+						+"&user="+userOnline
+						+"&id="+idOnline
+						+"&groupID="+currentGroupID
+						+"&role="+roleOnline
+						);
+		frameOther.setSize("100%", "100%");
+		
 		
 		/**
 		 * CREATING TABS
@@ -61,16 +87,22 @@ public class WallInterface extends Composite{
 		
 		// Add wall tabs
 		WallInterfaceAdministration = new FlowPanel();
-		WallInterfaceCoordination = new FlowPanel();
-		WallInterfaceOther = new FlowPanel();
+		//WallInterfaceCoordination = new FlowPanel();
+		WallInterfacePublic = new FlowPanel();
 		
+		//Embed admin wall
 		WallInterfaceAdministration.add(frameAdmin);
 		WallInterfaceAdministration.setHeight("250px");
 		WallInterfaceAdministration.setWidth("600px");
+
+		//Embed public wall
+		WallInterfacePublic.add(frameOther);
+		WallInterfacePublic.setHeight("250px");
+		WallInterfacePublic.setWidth("600px");
 		
 		wallTabs.add(WallInterfaceAdministration, "Administración");
-		wallTabs.add(WallInterfaceCoordination, "Coordinación");
-		wallTabs.add(WallInterfaceOther, "Público");
+		//wallTabs.add(WallInterfaceCoordination, "Coordinación");
+		wallTabs.add(WallInterfacePublic, "Público");
 		
 		wallTabs.selectTab(0);
 		

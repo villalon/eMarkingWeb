@@ -28,6 +28,7 @@ numRoom = "0";
 actualUser = "no";
 lastCommentID = "";
 newCommentID = "";
+thisWall = "";
 
 /**
  * MONGO CONNECTION
@@ -72,20 +73,6 @@ var wallSchema = mongoose.Schema({
  */
 var Chat = mongoose.model('Message', chatSchema);
 var Wall = mongoose.model('Posts',wallSchema);
-
-/**
- * REDIRECTING TO HTML FILES
- */
-/*
-//Chat
-app.get('/chat', function(req, res){
-  res.sendfile('chat.html');
-});
-//Wall
-app.get('/wall', function(req, res){
-  res.sendfile('wall.html');
-});
-*/
 
 /**
  * SAME PATHS FOR STATIC FILES (css, js, html...)
@@ -189,46 +176,46 @@ socket.on('disconnect',function(){
 }); //END OF Chat SOCKET
 
 /**
- * adminWall SOCKET.on
+ * Wall sockets (for admin and public walls)
  */
 adminWallNSP.on('connection',function(socket){
 	//At connection
 	console.log('WALL: Someone connected at adminWall namespace!');
 	
-	//Get groupID into room object and load old posts from room
-	socket.on('adminWall room', function(groupID, callback){
+	//Get groupID and wall type into room object and load old posts from room
+	socket.on('adminWall room', function(groupID, wall){
 		if(groupID){
-			callback("WALL: Success wall room!");
-			numRoom = groupID;
+			//numRoom = groupID;
+			//thisWall = wall;
 			console.log("WALL: Success loading room: "+numRoom);
-			loadAdminPosts();
-		}else{
-			callback("Error getting room!");
+			loadAdminPosts(groupID,wall);
+		} else {
 			console.log("FAILURE! No room is detected");
-			//loadAdminPosts();
 		}
 	});
 	//Get old posts function for Wall
-	function loadAdminPosts(){
-		var query = Wall.find({ room:numRoom, wallType:"admin" });
+	function loadAdminPosts(numRoom,thisWall){
+		console.log(thisWall);
+		var query = Wall.find({ room:numRoom, wallType:thisWall });
 		query
-			.sort('created') //'-created' is DESC 'created is ASC'
+			.sort('-created') //'-created' is DESC 'created is ASC'
 			.limit(100) //last 100 messages only!
 			.exec(function(err, docs){
 			if(err) throw err;
-			console.log('WALL: Enviando posts antiguos de la room '+numRoom);
+			console.log('WALL: Enviando posts antiguos de la room '+numRoom+' para el muro '+thisWall);
+			console.log("Este es el old post enviado: "+docs);
 			socket.emit('old posts adminWall',docs);
 		});
 	}
 	//When a user submits a post (includes post text and chatRoom)
-	socket.on('send post adminWall', function(userOnline, posted, chatRoom){
+	socket.on('send post adminWall', function(userOnline, userRole, wall, posted, chatRoom){
 		//Save global posts into mongoDB
-		var newPost = new Wall({user: userOnline, role:"admin", post: posted, room: chatRoom, wallType:"admin"});
+		var newPost = new Wall({user: userOnline, role: userRole, post: posted, room: chatRoom, wallType:wall});
 		newPost.save(function(err){
 			if(err) throw err;
 			//else
 			//Broadcast post for online users
-			adminWallNSP.emit('post message', {user: userOnline, post: posted, room: chatRoom, lastId: newPost._id });
+			adminWallNSP.emit('post message', {user: userOnline, post: posted, room: chatRoom, lastId: newPost._id, wallType:wall });
 		});
   	});
 	
@@ -245,13 +232,13 @@ adminWallNSP.on('connection',function(socket){
 			if(object.comments.length == 1){ //If there aren't previous comments
 				lastCommentID = "NADA";
 				newCommentID = object.comments[0]._id;
-				adminWallNSP.emit('comment message', {newComm: newCommentID, lastComm: lastCommentID, user: userOnline, comment: commented, room: chatRoom, parent: parent});
+				adminWallNSP.emit('comment message', {newComm: newCommentID, lastComm: lastCommentID, user: userOnline, comment: commented, wallType:actualWall, room: chatRoom, parent: parent});
 			} else { //If there are previous comments
 				var largoNew = object.comments.length-1;
 				var largoLast = object.comments.length-2;
 				lastCommentID = object.comments[largoLast]._id;
 				newCommentID = object.comments[largoNew]._id;
-				adminWallNSP.emit('comment message', {newComm: newCommentID, lastComm: lastCommentID, user: userOnline, comment: commented, room: chatRoom, parent: parent});
+				adminWallNSP.emit('comment message', {newComm: newCommentID, lastComm: lastCommentID, user: userOnline, comment: commented, wallType:actualWall, room: chatRoom, parent: parent});
 			}
 		}
 		//Broadcast the comment
