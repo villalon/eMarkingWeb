@@ -185,8 +185,6 @@ adminWallNSP.on('connection',function(socket){
 	//Get groupID and wall type into room object and load old posts from room
 	socket.on('adminWall room', function(groupID, wall){
 		if(groupID){
-			//numRoom = groupID;
-			//thisWall = wall;
 			console.log("WALL: Success loading room: "+numRoom);
 			loadAdminPosts(groupID,wall);
 		} else {
@@ -203,7 +201,7 @@ adminWallNSP.on('connection',function(socket){
 			.exec(function(err, docs){
 			if(err) throw err;
 			console.log('WALL: Enviando posts antiguos de la room '+numRoom+' para el muro '+thisWall);
-			console.log("Este es el old post enviado: "+docs);
+			//console.log("Este es el old post enviado: "+docs);
 			socket.emit('old posts adminWall',docs);
 		});
 	}

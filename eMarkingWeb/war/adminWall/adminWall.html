@@ -119,8 +119,6 @@
 	//Show broadcast post function
 	socket.on('post message', function(data){
 		displayPost(data,'broadcast');
-		//always on top after creating a new post.
-		//$("#postArea").animate({ scrollTop: 0 }, "slow");
 		nuevoPost = 1;
 	});
 	
@@ -128,8 +126,6 @@
 	socket.on('comment message', function(data){
 		if(data.room == groupID && data.wallType=="admin"){
 			//Add the comment row after last comment li
-			console.log("id para append: "+data.lastComm);
-			console.log("id new com: "+data.newComm);
 			if(data.lastComm=="NADA"){ //If there aren't previous comments, then append to textarea
 				$('#'+data.parent).after("<li class='aComment' id='"+data.newComm+"'><strong>"+data.user+"</strong> ("+getActualDate()+"): <br>"+data.comment+"</li>");
 			} else { //If there are previous comments, then append to last comment
@@ -193,7 +189,7 @@
 				//Save comment into mongo database
 				socket.emit('send comment wall', userOnline, parent, comment, groupID, wallType, function(data){
 				});
-				console.log('Comment submitted! ParentID: '+this.name+' , Comment: '+this.value);
+				//console.log('Comment submitted! ParentID: '+this.name+' , Comment: '+this.value);
 			} else {
 				console.log('Comment not sended, its empty!');
 			}

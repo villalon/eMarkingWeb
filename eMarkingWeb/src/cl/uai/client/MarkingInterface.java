@@ -243,14 +243,25 @@ public class MarkingInterface extends EMarkingComposite {
 	
 	//TODO VER COMO LLEGAN ESTOS INDICADORES EN EL PING
 	/** Get indicators for progress and agree bars of collaborative features **/
-	private static String generalProgress = null;
-	public static String getGeneralProgress(){
+	private static int inProgressTests = 0;
+	private static int publishedTests = 0;
+	private static int totalTests = 0;
+	private static double generalProgress = 0.0;
+	private static double publishedProgress = 0.0;
+	
+	public static double getGeneralProgress(){
 		return generalProgress;
 	}
-	private static String generalAgree = null;
-	public static String getGeneralAgree(){
+	public static double getPublishedProgress(){
+		return publishedProgress;
+	}
+	
+	private static double generalAgree = 0;
+	
+	public static double getGeneralAgree(){
 		return generalAgree;
 	}
+	
 	private List<Map<String, String>> actualTestAgree = null;
 	
 	public List<Map<String, String>> getActualTestAgree(){
@@ -972,12 +983,10 @@ public class MarkingInterface extends EMarkingComposite {
 					 * This saves all markers of a group (each group has a different room for chat and wall).
 					 */
 					//Get the json_encode() PHP format string
-					logger.severe("the value is :" + value.get("markers"));
-					
-					
+					//logger.severe("the value is :" + value.get("markers"));
 					String preMarkersJsonString = value.get("markers");
 		
-						//Parse json string to a List<Map<String, String>> markers
+					//Parse json string to a List<Map<String, String>> markers
 					markers = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers");
 					
 					// Assign actual online username (firstname lastname)
@@ -995,8 +1004,19 @@ public class MarkingInterface extends EMarkingComposite {
 						
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
-						
-					}					
+					}
+					//TODO enviando info progress bars
+					//Get progress marking status
+					totalTests = Integer.parseInt(value.get("totalTests"));
+					inProgressTests = Integer.parseInt(value.get("inProgressTests"));
+					publishedTests = Integer.parseInt(value.get("publishedTests"));
+					generalProgress = (double)100*inProgressTests/totalTests;
+					publishedProgress = (double)100*publishedTests/totalTests;
+					
+					//Get agree level for collaborative preassure
+					if(value.get("agreeLevel") != null){
+						generalAgree = Integer.parseInt(value.get("agreeLevel"));
+					}
 
 					// Load submission data
 					loadSubmissionData();

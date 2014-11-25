@@ -67,6 +67,9 @@ public class MarkingToolBar extends EMarkingComposite {
 	private HorizontalPanel infoLabelPanel = null;
 	private HorizontalPanel buttonsPanel = null;
 	private Label studentSelector = null;
+	private HTML progressStatusHtml = new HTML("");
+	private HTML progressPublishedHtml = new HTML("");
+	private HTML agreeStatusHtml = new HTML("");
 	
 	/** Buttons to select commands **/
 	private MarkingButtons markingButtons = null;
@@ -97,8 +100,6 @@ public class MarkingToolBar extends EMarkingComposite {
 	private Label courseName = null;
 	private Label activityName = null;
 	private Label lastSave = null;
-	private Label progressStatus = null;
-	private Label collaborationStatus = null;
 	
 	/**
 	 * Creates the interface
@@ -142,18 +143,11 @@ public class MarkingToolBar extends EMarkingComposite {
 		submissionPanel.add(lastSave);
 		
 		//TODO AGREGAR LOS VALORES A LOS LABELS A TRAVES DEL MarkingInterface
-		//Progress bar panel
-		progressStatus = new Label();
-		//progressStatus = MarkingInterface.getGeneralProgress();
-		progressStatus.addStyleName(Resources.INSTANCE.css().activityname());
-		
-		collaborationStatus = new Label();
-		collaborationStatus.addStyleName(Resources.INSTANCE.css().activityname());
-		
+		//Progress bars panel		
 		VerticalPanel progressBarsPanel = new VerticalPanel();
-		progressBarsPanel.add(progressStatus);
-		progressBarsPanel.add(collaborationStatus);
-		//TODO
+		progressBarsPanel.add(progressStatusHtml);
+		progressBarsPanel.add(progressPublishedHtml);
+		progressBarsPanel.add(agreeStatusHtml);
 		
 		// Info label
 		infoLabelPanel = new HorizontalPanel();
@@ -161,6 +155,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		infoLabelPanel.setVisible(false);
 		infoLabelPanel.add(coursenamePanel);
 		infoLabelPanel.add(submissionPanel);
+		infoLabelPanel.add(progressBarsPanel);
 		infoLabelPanel.add(submissionGrade);
 		infoLabelPanel.setCellHorizontalAlignment(submissionGrade, HasHorizontalAlignment.ALIGN_RIGHT);
 		
@@ -312,6 +307,12 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
 		
+		//TODO onload set progress bars values
+		//progressId: progressBar, pId: progressBarNum
+		//agreeId: agreeBar, pId: agreeBarNum
+		progressStatusHtml.setHTML("EN CORRECCIÓN: <progress id='progressBar' value='"+MarkingInterface.getGeneralProgress()+"' max='100'></progress> "+MarkingInterface.getGeneralProgress()+"%");
+		progressPublishedHtml.setHTML("PUBLICADAS: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<progress id='progressBar' value='"+MarkingInterface.getPublishedProgress()+"' max='100'></progress> "+MarkingInterface.getPublishedProgress()+"%");
+		agreeStatusHtml.setHTML("NIVEL ACUERDO: &nbsp;<progress id='agreeBar' value='"+MarkingInterface.getGeneralAgree()+"' max='100'></progress> "+MarkingInterface.getGeneralAgree()+"%");
 		
 		if(!MarkingInterface.isAnonymous()) {
 			this.courseName.setText(sdata.getCoursename());
