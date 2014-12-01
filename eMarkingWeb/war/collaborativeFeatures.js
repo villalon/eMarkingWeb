@@ -253,6 +253,6 @@ adminWallNSP.on('connection',function(socket){
 /**
  * ENABLE SERVER PORT ACCESS
  */
-http.listen(3000, function(){
+http.listen(3000, '0.0.0.0', function(){
   console.log('Node server for collaborativeFeatures listening on *:3000');
 });

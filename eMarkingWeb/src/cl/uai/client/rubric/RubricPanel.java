@@ -194,15 +194,16 @@ public class RubricPanel extends EMarkingComposite {
 			return;
 		}
 
+		//TODO
 		// Once loaded, we know all sizes
 		scrollPanel.setWidth("100%");
 		int height = Window.getClientHeight() - scrollPanel.getAbsoluteTop();
 		if(popupInterface)
-			height = (Window.getClientHeight() * 80) / 100;
+			height = (Window.getClientHeight() * 25) / 100;
 		else if(!MarkingInterface.readonly)
-			height = (Window.getClientHeight() * 50) / 100;
+			height = (Window.getClientHeight() * 25) / 100;
 		else
-			height = (Window.getClientHeight() * 50) / 100;
+			height = (Window.getClientHeight() * 25) / 100;
 		scrollPanel.setHeight(height+"px");
 		scrollPanel.setStyleName("rubricscroll");
 		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");

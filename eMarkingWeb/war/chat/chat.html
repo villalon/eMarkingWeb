@@ -29,7 +29,13 @@
   	var usernameOnline = decodeURIComponent(usernameOnlineURI);
   	//Get online user firstname and lastname
   	var userOnlineURI = new String(getQueryVariable("user"));
-  	var userOnline = decodeURIComponent(userOnlineURI);
+  	var userOnlinePre = decodeURIComponent(userOnlineURI);
+  	//Removing @alumnos.uai.cl or @uai.cl from username
+  	if(userOnlinePre.indexOf('@') === -1){
+  		var userOnline = userOnlinePre;
+  	} else {
+  		var userOnline = userOnlinePre.substr(0, userOnlinePre.indexOf('@'));
+  	}
   	//Get online user id
   	var idOnlineURI = new String(getQueryVariable("id"));
   	var idOnline = decodeURIComponent(idOnlineURI);

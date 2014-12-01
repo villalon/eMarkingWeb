@@ -5,6 +5,7 @@
 <!-- load bootstrap css -->
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="bootstrap/css/estilo.css" />
+<link rel="stylesheet" href="alertify/alertify.bootstrap.css" />
 <!-- load socket and jQuery -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
@@ -28,7 +29,13 @@
 	var usernameOnline = decodeURIComponent(usernameOnlineURI);
 	//Get online real username
 	var userOnlineURI = new String(getQueryVariable("user"));
-	var userOnline = decodeURIComponent(userOnlineURI);
+	var userOnlinePre = decodeURIComponent(userOnlineURI);
+	//Removing @alumnos.uai.cl or @uai.cl from username
+  	if(userOnlinePre.indexOf('@') === -1){
+  		var userOnline = userOnlinePre;
+  	} else {
+  		var userOnline = userOnlinePre.substr(0, userOnlinePre.indexOf('@'));
+  	}
 	//Get online user id
 	var idOnlineURI = new String(getQueryVariable("id"));
 	var idOnline = decodeURIComponent(idOnlineURI);
@@ -39,7 +46,6 @@
 	var roleURI = new String(getQueryVariable("role"));
 	var role = decodeURIComponent(roleURI);
 	var wallType = "admin";
-	var nuevoPost = 0;
 </script>
 </head>
 
@@ -66,7 +72,6 @@
 	  
 	<div class="row mainPost" id="postArea">
         <ul id="mainPosts"></ul>
-        <a href="#" class="scrollToTop" id="scrollToTop"><button class="btn btn-primary btn-block">Nuevo post!</button></a>
 	</div>
 
 	
@@ -74,9 +79,7 @@
 </div> <!-- Close main container div -->
 
 <!-- Server communication -->
-<script>
-	//Banner
-	//document.getElementById("usuarioActual").innerHTML = "Sala "+groupID+", muro administración - Bienvenido "+usernameOnline+"! Con rol: "+role;
+<script>	
 	//Only teachers can post
 	if(role=="marker"){
 		$("#inputPost").hide();
@@ -165,6 +168,7 @@
 				//Get parent ID for subPosts comments
 				$listaPosts.prepend('<br><li class="aPost" id="post_'+data.lastId+'"><strong>'+data.user+' </strong>('+getActualDate()+'):<br> '+data.post);
 				$('#post_'+data.lastId).after(newCommentArea(data.lastId)).append("<br>");
+				toastr.info('Nuevo post!');
 			//if loading old post it must be "append"
 			} else if (appendType=='oldPost'){
 				$listaPosts.append($('<br><li class="aPost" id="#post_'+data._id+'">')
@@ -195,21 +199,6 @@
 			}
 			
 		}
-	});
-	
-	//Put a button for seeing the most recent posted
-	$("#postArea").scroll(function(){
-		if (($(this).scrollTop() > 50 || $(this).position().top > 50 ) && nuevoPost==1 ) {
-			$('.scrollToTop').fadeIn();
-		} else {
-			$('.scrollToTop').fadeOut();
-		}
-	});
-	//Onclick "Nuevo post!" goes back to top (for seeing the new post)
-	$('#scrollToTop').click(function(){
-		$('#postArea').animate({scrollTop : 0},"slow");
-		nuevoPost = 0;
-		return false;
 	});
 	
 </script>

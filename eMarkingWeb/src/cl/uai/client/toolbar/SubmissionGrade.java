@@ -57,6 +57,7 @@ public class SubmissionGrade extends EMarkingComposite {
 		mainPanel.clear();
 
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
+		
 		if(sdata == null)
 			return;
 		

@@ -4,6 +4,7 @@ import cl.uai.client.MarkingInterface;
 
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -33,18 +34,23 @@ public class ChatInterface extends Composite{
 		
 		
 		this.frame = new Frame(
-						"http://127.0.0.1:3000/chat/chat.html?"
+						"http://webcursos:3000/chat/chat.html?"
 						+"username="+usernameOnline
 						+"&user="+userOnline
 						+"&id="+idOnline
 						+"&groupID="+currentGroupID
 						);
-		frame.setSize("100%", "100%");
-		
-		//mainPanel.add(title);
+		//Set frame id
+		frame.getElement().setId("chatFrame");
+		//
+		//Add chat frame
 		mainPanel.add(frame);
-		mainPanel.setHeight("300px");
+		//Setting heights
+		int chatHeight = Window.getClientHeight()*50/100;
+		mainPanel.setHeight(chatHeight+"px");
+		frame.setSize("100%", chatHeight+"px");
 		
+		//Init
 		this.initWidget(mainPanel);
 		
 	}

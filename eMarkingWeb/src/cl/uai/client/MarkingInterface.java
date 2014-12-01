@@ -22,6 +22,7 @@ package cl.uai.client;
 
 
 import java.util.Date;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,10 @@ import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.base.ProgressBarBase;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.LinkElement;
+import com.google.gwt.dom.client.ScriptElement;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -241,8 +246,7 @@ public class MarkingInterface extends EMarkingComposite {
 		return groupID;
 	}
 	
-	//TODO VER COMO LLEGAN ESTOS INDICADORES EN EL PING
-	/** Get indicators for progress and agree bars of collaborative features **/
+	/** Get indicators for progress bar of collaborative features **/
 	private static int inProgressTests = 0;
 	private static int publishedTests = 0;
 	private static int totalTests = 0;
@@ -255,8 +259,8 @@ public class MarkingInterface extends EMarkingComposite {
 	public static double getPublishedProgress(){
 		return publishedProgress;
 	}
-	
-	private static double generalAgree = 0;
+	/** Get indicators for agree bar of collaborative features **/
+	private static double generalAgree = 0.0;
 	
 	public static double getGeneralAgree(){
 		return generalAgree;
@@ -924,6 +928,27 @@ public class MarkingInterface extends EMarkingComposite {
 
 	@Override
 	protected void onLoad() {
+		
+		//TODO add toastr script to head
+		//ScriptInjector.fromUrl("toastr/toastr.js");
+		/*
+		Element head = Document.get().getElementsByTagName("head").getItem(0);
+		ScriptElement toast = Document.get().createScriptElement();
+		toast.setSrc("toastr/toastr.js");
+		LinkElement link = Document.get().createLinkElement();
+		link.setRel("stylesheet");
+		link.setHref("toastr/toastr.css");
+		//Append toastr css and js
+		head.appendChild(link);
+		head.appendChild(toast);
+		
+		//Inject script for chat and walls notifications
+		ScriptElement loadToast = Document.get().createScriptElement();
+		loadToast.setType("text/javascript");
+		loadToast.setSrc("toastr/loadToast.js");
+		head.appendChild(loadToast);
+		*/
+		
 
 		// Ajax request to load submission data
 		AjaxRequest.ajaxRequest("action=ping", new AsyncCallback<AjaxData>() {
@@ -1005,7 +1030,6 @@ public class MarkingInterface extends EMarkingComposite {
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
 					}
-					//TODO enviando info progress bars
 					//Get progress marking status
 					totalTests = Integer.parseInt(value.get("totalTests"));
 					inProgressTests = Integer.parseInt(value.get("inProgressTests"));
@@ -1015,7 +1039,7 @@ public class MarkingInterface extends EMarkingComposite {
 					
 					//Get agree level for collaborative preassure
 					if(value.get("agreeLevel") != null){
-						generalAgree = Integer.parseInt(value.get("agreeLevel"));
+						generalAgree = Double.parseDouble(value.get("agreeLevel"));
 					}
 
 					// Load submission data

@@ -4,8 +4,10 @@
 package cl.uai.client.rubric;
 
 import cl.uai.client.MarkingInterface;
+
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -15,7 +17,7 @@ import com.google.gwt.user.client.ui.TabPanel;
  *
  */
 public class ToolsPanel extends Composite {
-
+	
 	/** Panel holding tools **/
 	private TabPanel toolsPanel = null;
 	/** Previous comments interface **/
@@ -52,17 +54,19 @@ public class ToolsPanel extends Composite {
 	public ToolsPanel() {
 		toolsPanel = new TabPanel();
 		toolsPanel.addStyleName(Resources.INSTANCE.css().previouscomments());
-
+		
 		//Collaborative features
 		if(MarkingInterface.getCollaborativeFeatures()==1){
+			//Setting height
+			int height = Window.getClientHeight()*50/100;
 			//Chat
 			chat = new ChatInterface();
 			toolsPanel.add(chat, "Chat");
-			chat.setHeight("300px");
+			chat.setHeight(height+"px");
 			//Wall
 			wall = new WallInterface();
 			toolsPanel.add(wall, "Muro");
-			wall.setHeight("300px");
+			wall.setHeight(height+"px");
 		}
 		
 		// Marking tools

@@ -3,6 +3,7 @@ package cl.uai.client.rubric;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
@@ -15,7 +16,7 @@ public class WallInterface extends Composite{
 	//Frames for the 3 walls
 	private Frame frameAdmin;
 	//private Frame frameCoord;
-	private Frame frameOther;
+	private Frame framePublic;
 	
 	/** The panels containing the comments **/
 	private FlowPanel WallInterfaceAdministration = null;
@@ -36,7 +37,7 @@ public class WallInterface extends Composite{
 		/**
 		*Embedded node.js Wall
 		*mongoDB MUST be listening
-		*Node.js+socket.io file "collaborativeFeatures.js" MUST be running on 127.0.0.1:3000 (node server instance).
+		*Node.js+socket.io file "collaborativeFeatures.js" MUST be running on webcursos:3000 (node server instance).
 		**/
 		String usernameOnline = MarkingInterface.getUsername();
 		String userOnline = MarkingInterface.getRealUsername();
@@ -46,39 +47,25 @@ public class WallInterface extends Composite{
 		
 		//Administration Tab
 		this.frameAdmin = new Frame(
-						"http://127.0.0.1:3000/adminWall/adminWall.html?"
+						"http://webcursos:3000/adminWall/adminWall.html?"
 						+"username="+usernameOnline
 						+"&user="+userOnline
 						+"&id="+idOnline
 						+"&groupID="+currentGroupID
 						+"&role="+roleOnline
 						);
-		frameAdmin.setSize("100%", "100%");
-		
-		//Coordination Tab
-		/*
-		this.frameCoord = new Frame(
-						"http://127.0.0.1:3000/coordWall/coordWall.html?"
-						+"username="+usernameOnline
-						+"&user="+userOnline
-						+"&id="+idOnline
-						+"&groupID="+currentGroupID
-						+"&role="+roleOnline
-						);
-		frameCoord.setSize("100%", "100%");
-		*/
+		frameAdmin.getElement().setId("adminWallFrame");
 		
 		//Other Tab
-		this.frameOther = new Frame(
-						"http://127.0.0.1:3000/adminWall/publicWall.html?"
+		this.framePublic = new Frame(
+						"http://webcursos:3000/adminWall/publicWall.html?"
 						+"username="+usernameOnline
 						+"&user="+userOnline
 						+"&id="+idOnline
 						+"&groupID="+currentGroupID
 						+"&role="+roleOnline
 						);
-		frameOther.setSize("100%", "100%");
-		
+		framePublic.getElement().setId("publicWallFrame");
 		
 		/**
 		 * CREATING TABS
@@ -92,22 +79,24 @@ public class WallInterface extends Composite{
 		
 		//Embed admin wall
 		WallInterfaceAdministration.add(frameAdmin);
-		WallInterfaceAdministration.setHeight("250px");
-		WallInterfaceAdministration.setWidth("600px");
 
 		//Embed public wall
-		WallInterfacePublic.add(frameOther);
-		WallInterfacePublic.setHeight("250px");
-		WallInterfacePublic.setWidth("600px");
+		WallInterfacePublic.add(framePublic);
 		
 		wallTabs.add(WallInterfaceAdministration, "Administración");
-		//wallTabs.add(WallInterfaceCoordination, "Coordinación");
 		wallTabs.add(WallInterfacePublic, "Público");
-		
 		wallTabs.selectTab(0);
 		
 		// Add to mainPanel
 		mainPanel.add(wallTabs);
+		
+		//Setting heights
+		int wallHeight = Window.getClientHeight()*50/100;
+		mainPanel.setHeight(wallHeight+"px");
+		WallInterfaceAdministration.setSize("470px",wallHeight+"px");
+		WallInterfacePublic.setSize("470px",wallHeight+"px");
+		frameAdmin.setSize("470px", wallHeight+"px");
+		framePublic.setSize("470px", wallHeight+"px");
 		
 		this.initWidget(mainPanel);
 	}
