@@ -40,6 +40,8 @@ public class SubmissionGrade extends EMarkingComposite {
 
 	/** The main panel holding the submission's grade **/
 	private HorizontalPanel mainPanel = null;
+	private Label lblGrade = null;
+	private Label lblScale = null;
 	
 	/**
 	 * Creates the interface
@@ -62,9 +64,10 @@ public class SubmissionGrade extends EMarkingComposite {
 			return;
 		
 		
-		Label lblGrade = new Label(RubricMark.scoreFormat(sdata.getFinalgrade(), false)+"");
+		lblGrade = new Label(RubricMark.scoreFormat(sdata.getFinalgrade(), false)+"");
 		lblGrade.addStyleName(Resources.INSTANCE.css().grade());
-		Label lblScale = new Label(RubricMark.scoreFormat(sdata.getGrademin(), false) + " / " + RubricMark.scoreFormat(sdata.getGrademax(), false));
+		
+		lblScale = new Label(RubricMark.scoreFormat(sdata.getGrademin(), false) + " / " + RubricMark.scoreFormat(sdata.getGrademax(), false));
 		lblScale.addStyleName(Resources.INSTANCE.css().scale());
 		
 		VerticalPanel gradePanel = new VerticalPanel();
@@ -76,4 +79,12 @@ public class SubmissionGrade extends EMarkingComposite {
 		
 		mainPanel.add(gradePanel);		
 	}
+	/*
+	public void setGradecss(){
+		lblGrade.removeStyleName(Resources.INSTANCE.css().grade());
+		lblGrade.addStyleName(Resources.INSTANCE.css().mininota());
+	}/*
+	public void setScalecss(){
+		lblScale.addStyleName(Resources.INSTANCE.css().miniescala());
+	}*/
 }
