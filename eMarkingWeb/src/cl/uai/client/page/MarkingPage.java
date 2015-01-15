@@ -205,7 +205,9 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		super.onLoad();
 
 		// Once loaded, we know all sizes
-		mainPanel.setWidth("818px");
+		int i= Window.getClientWidth();
+		String ancho = String.valueOf(i);
+		mainPanel.setWidth(ancho);
 
 		mainPanel.addStyleName(Resources.INSTANCE.css().pagescroll());
 

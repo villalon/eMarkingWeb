@@ -25,9 +25,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.vaadin.gwtgraphics.client.DrawingArea;
-import org.vaadin.gwtgraphics.client.shape.Circle;
-
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
@@ -319,8 +316,8 @@ public class MarkingToolBar extends EMarkingComposite {
 		chkContinue.setVisible(false);
 
 		buttonsPanel = new HorizontalPanel();
-		buttonsPanel.addStyleName(Resources.INSTANCE.css().buttonspanel());
 		
+		buttonsPanel.addStyleName(Resources.INSTANCE.css().buttonspanel());		
 		buttonsPanel.add(markingButtons);
 		buttonsPanel.setCellHorizontalAlignment(markingButtons, HasHorizontalAlignment.ALIGN_LEFT);
 		buttonsPanel.setCellWidth(markingButtons, "10%");
@@ -330,11 +327,11 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.add(aux);
 		buttonsPanel.setCellHorizontalAlignment(aux, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellVerticalAlignment(aux, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellWidth(aux, "45%");
+		buttonsPanel.setCellWidth(aux, "38%");
 		
 		//// BARRA DE PROGRESO
 		infoPor = new HorizontalPanel();
-		
+		infoPor.setHeight("24px");
 		infoPor.add(circuloEnCorreccion);
 		infoPor.setCellHorizontalAlignment(circuloEnCorreccion, HasHorizontalAlignment.ALIGN_RIGHT);
 		infoPor.setCellVerticalAlignment(circuloEnCorreccion, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -359,7 +356,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.add(infoPor);
 		buttonsPanel.setCellHorizontalAlignment(infoPor, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellVerticalAlignment(infoPor, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellWidth(infoPor, "11%");
+		buttonsPanel.setCellWidth(infoPor, "15%");
 		
 		///
 		//notas pequeñas
@@ -370,15 +367,15 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.add(chkContinue);
 		buttonsPanel.setCellHorizontalAlignment(chkContinue, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellVerticalAlignment(chkContinue, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellWidth(chkContinue, "8%");
+		buttonsPanel.setCellWidth(chkContinue, "10%");
 		
 		buttonsPanel.add(saveChangesButton);
 		buttonsPanel.setCellHorizontalAlignment(saveChangesButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(saveChangesButton, "10%");
+		buttonsPanel.setCellWidth(saveChangesButton, "5%");
 
 		buttonsPanel.add(finishMarkingButton);
 		buttonsPanel.setCellHorizontalAlignment(finishMarkingButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(finishMarkingButton, "10%");
+		buttonsPanel.setCellWidth(finishMarkingButton, "5%");
 				
 		mainPanel.add(buttonsPanel);
 		
@@ -434,7 +431,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		/// cargar las nuevas cosas de la barra
 		
 		// FLECHA
-		aux.setHTML("<div style='font-size:2em;'>"+icon.toString()+"</div>");
+		aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
 		aux.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				//revisa si en mainPanel esta infoLabelPanel
@@ -447,11 +444,11 @@ public class MarkingToolBar extends EMarkingComposite {
 			    }
 				if(h==1){
 			    	infoLabelPanel.removeFromParent();
-			    	aux.setHTML("<div style='font-size:2em;'>"+icon.toString()+"</div>");
+			    	aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
 			    }
 				if(h==0){
 					mainPanel.insert(infoLabelPanel, 0);
-					aux.setHTML("<div style='font-size:2em;'>"+icon2.toString()+"</div>");
+					aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon2.toString()+"</div>");
 				}
 			}
 		});
@@ -495,7 +492,7 @@ public class MarkingToolBar extends EMarkingComposite {
 			public void onMouseMove(MouseMoveEvent event){
 				popEnCorreccion.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 			          public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.65);
+			            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.62);
 			            int top = (int) ((Window.getClientHeight() - offsetHeight)*0.04);
 			            popEnCorreccion.setPopupPosition(left, top);
 			          }
@@ -548,7 +545,7 @@ public class MarkingToolBar extends EMarkingComposite {
 			public void onMouseMove(MouseMoveEvent event){
 				popPublicadas.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 			          public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.68);
+			            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.65);
 			            int top = (int) ((Window.getClientHeight() - offsetHeight)*0.04);
 			            popPublicadas.setPopupPosition(left, top);
 			          }
@@ -565,7 +562,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		//3. Nivel Acuerdo		
 		trun = (int) (MarkingInterface.getGeneralAgree()/10);
 		h = (int) (MarkingInterface.getGeneralAgree()-trun*10);
-		h= (int) MarkingInterface.getGeneralAgree() - h;
+		h = (int) MarkingInterface.getGeneralAgree() - h;
 		switch (h){
 				
 			case 0:  circuloNivelAcuerdo.setResource(Resources.INSTANCE.por10());
@@ -601,7 +598,7 @@ public class MarkingToolBar extends EMarkingComposite {
 				public void onMouseMove(MouseMoveEvent event){
 					popNivelAcuerdo.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 				          public void setPosition(int offsetWidth, int offsetHeight) {
-				            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.74);
+				            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.71);
 				            int top = (int) ((Window.getClientHeight() - offsetHeight)*0.04);
 				            popNivelAcuerdo.setPopupPosition(left, top);
 				          }

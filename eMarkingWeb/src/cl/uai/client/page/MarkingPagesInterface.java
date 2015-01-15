@@ -207,8 +207,8 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					boolean showmarker = Integer.parseInt(tabinfo.get("showmarker")) == 1;
 
 					float ratio = (float) width / (float) height;
-					int newheight = (int) (800 / ratio);
-					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), 800, newheight);
+					int newheight = (int) (Window.getClientWidth() / ratio);
+					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), Window.getClientWidth(), newheight);
 					if(!showmarker) {
 						page.setVisible(false);
 					}
