@@ -18,6 +18,7 @@
 *
 * @package   block_news_items
 * @copyright 2011 onwards Jorge Villalon {@link http://villalon.cl}
+* 						  Hans C. Jeria <hansj@live.cl>
 * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 package cl.uai.client.resources;
@@ -64,10 +65,43 @@ public interface Resources extends ClientBundle {
 	ImageResource othermarker50();	
 	
 	@Source("othermarker75.png")
-	ImageResource othermarker75();	
+	ImageResource othermarker75();
 	
 	@Source("othermarker100.png")
 	ImageResource othermarker100();
+	
+	@Source("por0.png")
+	ImageResource por0();
+	
+	@Source("por10.png")
+	ImageResource por10();
+
+	@Source("por20.png")
+	ImageResource por20();
+
+	@Source("por30.png")
+	ImageResource por30();
+
+	@Source("por40.png")
+	ImageResource por40();
+
+	@Source("por50.png")
+	ImageResource por50();
+
+	@Source("por60.png")
+	ImageResource por60();
+
+	@Source("por70.png")
+	ImageResource por70();
+
+	@Source("por80.png")
+	ImageResource por80();
+
+	@Source("por90.png")
+	ImageResource por90();
+
+	@Source("por100.png")
+	ImageResource por100();
 	
 	@Source("EMarkingWeb.css")
 	EmarkingCss css();

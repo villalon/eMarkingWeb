@@ -15,6 +15,7 @@
 
  * @package   eMarking
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ 				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /** Main interfaces **/
@@ -39,6 +40,7 @@
 	display: inline;
 	margin-left: 3px;
 	margin-right: 7px;
+	font-size: 0.9em;
 }
 
 .pagespanel {
@@ -70,6 +72,10 @@
 
 .tabpage {
 	
+}
+.buttonspanel{
+	opacity: 0.80;
+    filter: alpha(opacity=80); /* For IE8 and earlier */
 }
 
 .tabbar {
@@ -126,7 +132,7 @@ to {
 }
 
 .grade {
-	font-size: 32pt;
+	font-size: 32px;
 	font-weight: bold;
 	line-height: 36px;
 }
@@ -435,15 +441,20 @@ to {
 	font-size: 16pt;
 }
 
-.rubricbutton,.finishmarkingbutton {
+.rubricbutton {
 	height: 21px;
 	font-size: 16pt;
 	text-align: center;
 }
 
 .finishmarkingbutton {
-	font-size: 10pt;
-	width: 120px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+	border-radius:3px;
+	height: 18px;
+	text-align: center;
+	font-size: 0.9em;
+	width: 100px;
 	margin-left: 3px;
 	margin-right: 7px;
 }
@@ -797,4 +808,17 @@ background-color: #0057D9;
 	height:20px;
 	border:1px solid #000;
 }
-
+.mininota{
+	font-size: 2.2em;
+	font-weight: bold;
+	line-height: 24x;
+	margin-top: 1px;
+}
+.miniscale{
+	font-size: 0.6em;
+}
+.minigradepanel {
+	margin-top: 1px;
+	margin-bottom: 0.5px;
+	line-height: 24px;
+}

@@ -16,6 +16,7 @@
 /**
  * @package   eMarking
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ * 				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 package cl.uai.client;
@@ -800,10 +801,13 @@ public class MarkingInterface extends EMarkingComposite {
 		rubricInterface = new RubricInterface();
 
 		interfacePanel.add(markingPagesInterface);
+		interfacePanel.setCellWidth(markingPagesInterface, "100%");
 		
 		interfacePanel.add(rubricInterface);
+		interfacePanel.setCellWidth(rubricInterface, "0%");
 		interfacePanel.setCellHorizontalAlignment(rubricInterface, HasHorizontalAlignment.ALIGN_LEFT);
-
+		
+		rubricInterface.setVisible(false);
 		if(RootPanel.get().getOffsetWidth() > 1024) {
 			interfacePanel.setCellWidth(rubricInterface, "100%");
 		} else {

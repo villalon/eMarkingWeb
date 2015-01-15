@@ -25,7 +25,7 @@
   <inherits name="com.google.gwt.logging.Logging"/>
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.resources.Resources"/>
-  <inherits name='org.vaadin.gwtgraphics.GWTGraphics' /> 
+  <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
 
   <!-- Logging configuration -->
   <set-property name="gwt.logging.logLevel" value="ALL"/> 
