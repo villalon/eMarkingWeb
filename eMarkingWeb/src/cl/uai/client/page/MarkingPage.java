@@ -16,6 +16,7 @@
 /**
  * @package   eMarking
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ * 				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 package cl.uai.client.page;
@@ -78,6 +79,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	/** Page image and number within submission **/
 	private Image pageImage = null;
 	private int pageNumber = -1;
+	
+	private double porcentaje = 0.98;
 
 	public int getPageNumber() {
 		return pageNumber;
@@ -203,9 +206,9 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-
+		//TODO: Ancho de la prueba
 		// Once loaded, we know all sizes
-		int i= Window.getClientWidth();
+		int i= (int)(Window.getClientWidth()*porcentaje)+1;
 		String ancho = String.valueOf(i);
 		mainPanel.setWidth(ancho);
 
@@ -398,5 +401,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
         
         PopupPanel menu = new MarkingMenu(this, posx, posy);
         menu.show();
+	}
+	
+	public void setPorcentajePage(double por){
+		this.porcentaje=por;
+		onLoad();
 	}
 }

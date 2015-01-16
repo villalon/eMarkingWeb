@@ -16,6 +16,7 @@
 /**
  * @package   eMarking
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ * 				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 package cl.uai.client.page;
@@ -57,6 +58,8 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	/** Pages interface is organized as a tab panel **/
 	private VerticalPanel pagesPanel = null;
 	private ScrollPanel scrollContainerForPages = null;
+	
+	private double porcentaje = 0.98;
 
 	/** Number of pages **/
 	private int numPages = -1;
@@ -206,9 +209,12 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					int height = Integer.parseInt(tabinfo.get("height"));
 					boolean showmarker = Integer.parseInt(tabinfo.get("showmarker")) == 1;
 
+					double algo = Window.getClientWidth()+1;
+					int x = (int) (algo*porcentaje);
 					float ratio = (float) width / (float) height;
-					int newheight = (int) (Window.getClientWidth() / ratio);
-					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), Window.getClientWidth(), newheight);
+					int newheight = (int) (x / ratio);					
+					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), x, newheight);
+					//page.setPorcentajePage(porcentaje);
 					if(!showmarker) {
 						page.setVisible(false);
 					}
@@ -256,5 +262,10 @@ public class MarkingPagesInterface extends EMarkingComposite {
 			}
 		}
 		return allstats;
+	}
+	
+	public void setPorcentaje(double por){
+		this.porcentaje = por;
+		loadInterface();
 	}
 }

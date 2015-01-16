@@ -444,7 +444,7 @@ public class MarkingToolBar extends EMarkingComposite {
 			    }
 				if(h==1){
 			    	infoLabelPanel.removeFromParent();
-			    	aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
+			    	aux.setHTML("<div style='font-size:2em;line-height: 20px; '>"+icon.toString()+"</div>");
 			    }
 				if(h==0){
 					mainPanel.insert(infoLabelPanel, 0);
