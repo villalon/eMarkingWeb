@@ -16,6 +16,7 @@
 /**
  * @package   eMarking
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ * 				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 package cl.uai.client.rubric;
@@ -53,6 +54,7 @@ public class RubricInterface extends EMarkingComposite {
 	 */
 	public RubricInterface() {
 		mainPanel = new VerticalPanel();
+		mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
 
 		rubricPanel = new RubricPanel();
@@ -72,6 +74,8 @@ public class RubricInterface extends EMarkingComposite {
 	}
 	
 	public void resizeToolsPanel() {
+		if(true)
+		return;
 		int height = Window.getClientHeight() - toolsPanel.getAbsoluteTop();
 		toolsPanel.setWidth("100%");
 		toolsPanel.setHeight(height+"px");

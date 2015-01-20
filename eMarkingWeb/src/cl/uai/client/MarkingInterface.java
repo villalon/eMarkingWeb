@@ -43,8 +43,6 @@ import cl.uai.client.resources.Resources;
 import cl.uai.client.rubric.RubricInterface;
 import cl.uai.client.toolbar.MarkingToolBar;
 
-
-
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ProgressBar;
@@ -69,13 +67,11 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Label;
 
 
 /**
@@ -127,7 +123,6 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 	
 	/** Div contein Icon Rubric and PopUp-Rubric **/
-	private HTML divLeft = new HTML("");
 	private HTML divRight = new HTML("");
 	private HTML icono = new HTML("");
 	private HTML icono2 = new HTML("");
@@ -327,11 +322,10 @@ public class MarkingInterface extends EMarkingComposite {
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
 		
 		interfacePanel.add(loadingMessage);
-		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);
-		
+		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
-
+		markingPanel.add(divRight,(int)(Window.getClientWidth()*0.97),0);
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -813,23 +807,10 @@ public class MarkingInterface extends EMarkingComposite {
 
 		markingPagesInterface = new MarkingPagesInterface();
 		rubricInterface = new RubricInterface();
-//TODO: crear td con iconos de rubrica
-		//interfacePanel.add(divLeft);
-		//interfacePanel.setCellWidth(divLeft, "3%");
 		
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "97%");
-		
-		interfacePanel.add(divRight);
-		interfacePanel.setCellWidth(divRight, "3%");
-		
-		interfacePanel.add(rubricInterface);
-		interfacePanel.setCellWidth(rubricInterface, "0%");
-		interfacePanel.setCellHorizontalAlignment(rubricInterface, HasHorizontalAlignment.ALIGN_LEFT);
-		
-		//interfacePanel.add(divLeft);
-		//interfacePanel.setCellWidth(divLeft, "0%");
-		
+		markingPanel.add(rubricInterface,(int)(Window.getClientWidth()*0.62),0);
 		rubricInterface.setVisible(false);
 		if(RootPanel.get().getOffsetWidth() > 1024) {
 			interfacePanel.setCellWidth(rubricInterface, "100%");
@@ -1075,50 +1056,20 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
-//TODO: Icono Rubrica
 		icono.setHTML("<br><br>"+icon.toString());
 		icono2.setHTML("<br><br>"+icon2.toString());
+		divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
 		divRight.addClickHandler(new ClickHandler(){
-			public void onClick(ClickEvent event){	
-				divRight.removeFromParent();
-				// comprobar si divLeft esta en interfacePanel para agregarla o no
-				/*int h=0;
-				for(int i=0; i<=interfacePanel.getWidgetCount() ;i++){
-					if(divLeft == interfacePanel.getWidget(i)){
-						h++;
-					}
-			    }
-				if(h==1){
-					interfacePanel.insert(divLeft, 1);
-				}*/
-				interfacePanel.add(divLeft);
-				interfacePanel.setCellWidth(divLeft, "2%");
-				//redimension hojas prueba
-				markingPagesInterface.setPorcentaje(0.63);
-				interfacePanel.setCellWidth(markingPagesInterface, "63%");
-				rubricInterface.setVisible(true);
-				interfacePanel.setCellWidth(rubricInterface, "35%");
-				interfacePanel.setCellHorizontalAlignment(rubricInterface, HasHorizontalAlignment.ALIGN_LEFT);
-				
-				
-			}
-		});
-		
-		divLeft.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
-				divLeft.removeFromParent();
-				interfacePanel.insert(divRight, 1);
-				// ordenar el add
-				interfacePanel.setCellWidth(divRight, "2%");
-				markingPagesInterface.setPorcentaje(0.98);
-				interfacePanel.setCellWidth(markingPagesInterface, "98%");
-				rubricInterface.setVisible(false);
-				interfacePanel.setCellWidth(rubricInterface, "0%");
-				interfacePanel.setCellHorizontalAlignment(rubricInterface, HasHorizontalAlignment.ALIGN_LEFT);
+				if(rubricInterface.isVisible()){
+					rubricInterface.setVisible(false);
+					divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
+				}else{
+					rubricInterface.setVisible(true);
+					divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono2+"</div>");
+				}
 			}
 		});
-		divLeft.setHTML("<div align=center style='font-size:2em; background-color: #EAEAEA; height:"+Window.getClientHeight()+"px;'>"+icono2+"</div>");
-		divRight.setHTML("<div align=center style='font-size:2em; background-color: #EAEAEA; height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
 	}
 	
 	public void regradeMark(final RubricMark mark, final String comment, final int motive) {

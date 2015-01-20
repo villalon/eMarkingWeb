@@ -132,7 +132,6 @@ public class MarkingToolBar extends EMarkingComposite {
 	private static class MyPopup extends PopupPanel {
 	    public MyPopup() {
 	      super(true);
-	      //setWidget(new Label("En corrección: "+MarkingInterface.getGeneralProgress()));
 	    }
 	  }
 	
@@ -183,13 +182,9 @@ public class MarkingToolBar extends EMarkingComposite {
 		activityStudent.add(studentSelector);
 		activityStudent.setCellVerticalAlignment(studentSelector, HasVerticalAlignment.ALIGN_MIDDLE);
 		activityStudent.setCellHorizontalAlignment(studentSelector, HasHorizontalAlignment.ALIGN_LEFT);
-		//submissionPanel.add(activityName);
-		//submissionPanel.add(studentSelector);
 		submissionPanel.add(activityStudent);
 		submissionPanel.add(lastSave);
-		
-		//TODO AGREGAR LOS VALORES A LOS LABELS A TRAVES DEL MarkingInterface
-		//Progress bars panel		
+			
 		VerticalPanel progressBarsPanel = new VerticalPanel();
 		progressBarsPanel.add(progressStatusHtml);
 		progressBarsPanel.add(progressPublishedHtml);
@@ -321,7 +316,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellWidth(markingButtons, "10%");
 		
 		//FLECHA
-		
 		buttonsPanel.add(aux);
 		buttonsPanel.setCellHorizontalAlignment(aux, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellVerticalAlignment(aux, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -355,8 +349,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellHorizontalAlignment(infoPor, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellVerticalAlignment(infoPor, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellWidth(infoPor, "15%");
-		
-		///
+
 		//notas pequeñas
 		buttonsPanel.add(notas);
 		buttonsPanel.setCellHorizontalAlignment(notas, HasHorizontalAlignment.ALIGN_CENTER);
@@ -432,11 +425,9 @@ public class MarkingToolBar extends EMarkingComposite {
 		aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
 		aux.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
-				//revisa si en mainPanel esta infoLabelPanel
 				int h=0;
 				for(int i=0; i<mainPanel.getWidgetCount() ;i++){
 					if(infoLabelPanel == mainPanel.getWidget(i)){
-						//esta la info
 						h++;
 					}
 			    }
@@ -485,7 +476,9 @@ public class MarkingToolBar extends EMarkingComposite {
 		}
 		circuloEnCorreccion.setHeight("2em");
 		circuloEnCorreccion.setWidth("2em");
-		popEnCorreccion.setWidget(new Label("En corrección: "+MarkingInterface.getGeneralProgress()+"%"));
+		int progress = (int) (MarkingInterface.getGeneralProgress()*100);
+		double cirProgress = (progress/100);
+		popEnCorreccion.setWidget(new Label("En corrección: "+cirProgress+"%"));
 		circuloEnCorreccion.addMouseMoveHandler(new MouseMoveHandler(){
 			public void onMouseMove(MouseMoveEvent event){
 				popEnCorreccion.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
@@ -538,7 +531,9 @@ public class MarkingToolBar extends EMarkingComposite {
 		}
 		circuloPublicadas.setHeight("2em");
 		circuloPublicadas.setWidth("2em");
-		popPublicadas.setWidget(new Label("Publicadas: "+MarkingInterface.getPublishedProgress()+"%"));
+		int publish = (int) (MarkingInterface.getPublishedProgress()*100);
+		double cirPublish = (publish/100);
+ 		popPublicadas.setWidget(new Label("Publicadas: "+cirPublish+"%"));
 		circuloPublicadas.addMouseMoveHandler(new MouseMoveHandler(){
 			public void onMouseMove(MouseMoveEvent event){
 				popPublicadas.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
@@ -591,7 +586,9 @@ public class MarkingToolBar extends EMarkingComposite {
 			}		
 			circuloNivelAcuerdo.setHeight("2em");
 			circuloNivelAcuerdo.setWidth("2em");
-			popNivelAcuerdo.setWidget(new Label("Nivel Acuerdo: "+MarkingInterface.getGeneralAgree()+"%"));
+			int general = (int) (MarkingInterface.getGeneralAgree()*100);
+			double cirGeneral = (general/100);
+			popNivelAcuerdo.setWidget(new Label("Nivel Acuerdo: "+cirGeneral+"%"));
 			circuloNivelAcuerdo.addMouseMoveHandler(new MouseMoveHandler(){
 				public void onMouseMove(MouseMoveEvent event){
 					popNivelAcuerdo.setPopupPositionAndShow(new PopupPanel.PositionCallback() {

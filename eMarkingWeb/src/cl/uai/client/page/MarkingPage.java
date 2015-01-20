@@ -241,8 +241,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 					if(MarkingInterface.getLinkRubric() == 0)
 						mark.put("colour", "criterion0");			
 					
-					int format = Integer.parseInt(mark.get("format"));
 					try {
+						int format = Integer.parseInt(mark.get("format"));
 					switch(format) {
 					case 1:
 						addMarkWidget(CommentMark.createFromMap(mark));
