@@ -110,6 +110,8 @@ public class RubricPanel extends EMarkingComposite {
 	public RubricPanel() {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricpanel());
+		//TODO: Cambio redimension
+		mainPanel.setWidth((Window.getClientWidth()*0.35)	+"px");
 
 		// Adds the title
 		rubricTitle = new Label();
@@ -199,11 +201,11 @@ public class RubricPanel extends EMarkingComposite {
 		scrollPanel.setWidth("100%");
 		int height = Window.getClientHeight() - scrollPanel.getAbsoluteTop();
 		if(popupInterface)
-			height = (Window.getClientHeight() * 25) / 100;
+			height = (Window.getClientHeight() * 35) / 100;
 		else if(!MarkingInterface.readonly)
-			height = (Window.getClientHeight() * 25) / 100;
+			height = (Window.getClientHeight() * 35) / 100;
 		else
-			height = (Window.getClientHeight() * 25) / 100;
+			height = (Window.getClientHeight() * 35) / 100;
 		scrollPanel.setHeight(height+"px");
 		scrollPanel.setStyleName("rubricscroll");
 		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");

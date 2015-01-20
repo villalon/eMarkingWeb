@@ -54,13 +54,15 @@ public class RubricInterface extends EMarkingComposite {
 	 */
 	public RubricInterface() {
 		mainPanel = new VerticalPanel();
-		mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
+		mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 
 		rubricPanel = new RubricPanel();
+		rubricPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 		mainPanel.add(rubricPanel);
 		
 		toolsPanel = new ToolsPanel();
+		toolsPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 		mainPanel.add(toolsPanel);
 		
 		this.initWidget(mainPanel);
@@ -69,7 +71,7 @@ public class RubricInterface extends EMarkingComposite {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		
+		toolsPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 		resizeToolsPanel();
 	}
 	

@@ -352,6 +352,7 @@ public class MarkingToolBar extends EMarkingComposite {
 
 		//notas pequeñas
 		buttonsPanel.add(notas);
+		buttonsPanel.setCellVerticalAlignment(notas, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(notas, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellWidth(notas, "4%");
 		
