@@ -325,7 +325,7 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
-		markingPanel.add(divRight,(int)(Window.getClientWidth()*0.97),0);
+		markingPanel.add(divRight);
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -1058,6 +1058,7 @@ public class MarkingInterface extends EMarkingComposite {
 		});
 		icono.setHTML("<br><br>"+icon.toString());
 		icono2.setHTML("<br><br>"+icon2.toString());
+		markingPanel.setWidgetPosition(divRight,(int)(Window.getClientWidth()*0.97),0);
 		divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
 		divRight.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
