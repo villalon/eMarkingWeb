@@ -810,13 +810,17 @@ public class MarkingInterface extends EMarkingComposite {
 		
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "97%");
+		//markingPanel.add(divRight,(int)(Window.getClientWidth()*0.97),0);
 		markingPanel.add(rubricInterface,(int)(Window.getClientWidth()*0.62),0);
 		rubricInterface.setVisible(false);
+		markingPanel.setWidgetPosition(divRight,(int)(Window.getClientWidth()*0.97),0);
+		divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
+		/*
 		if(RootPanel.get().getOffsetWidth() > 1024) {
 			interfacePanel.setCellWidth(rubricInterface, "100%");
 		} else {
 			rubricInterface.setVisible(false);
-		}
+		}*/
 
 		Scheduler.get().scheduleFinally(new Command() {
 			@Override
@@ -1058,8 +1062,10 @@ public class MarkingInterface extends EMarkingComposite {
 		});
 		icono.setHTML("<br><br>"+icon.toString());
 		icono2.setHTML("<br><br>"+icon2.toString());
+		/*
 		markingPanel.setWidgetPosition(divRight,(int)(Window.getClientWidth()*0.97),0);
 		divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
+		*/
 		divRight.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(rubricInterface.isVisible()){
