@@ -201,8 +201,18 @@ public class MarkingToolBar extends EMarkingComposite {
 		//infoLabelPanel.add(progressBarsPanel);
 		infoLabelPanel.add(submissionGrade);
 		infoLabelPanel.setCellHorizontalAlignment(submissionGrade, HasHorizontalAlignment.ALIGN_RIGHT);
-		
-		//mainPanel.add(infoLabelPanel);
+		mainPanel.add(infoLabelPanel);
+		aux.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event){
+				if(infoLabelPanel.isVisible()){
+					infoLabelPanel.setVisible(false);
+			    	aux.setHTML("<div style='font-size:2em;line-height: 20px; '>"+icon.toString()+"</div>");
+			    }else{
+			    	infoLabelPanel.setVisible(true);
+					aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon2.toString()+"</div>");
+				}
+			}
+		});
 		
 		finishMarkingButton = new PushButton(MarkingInterface.messages.FinishMarking());
 		finishMarkingButton.addStyleName(Resources.INSTANCE.css().finishmarkingbutton());
@@ -299,7 +309,6 @@ public class MarkingToolBar extends EMarkingComposite {
 							EMarkingWeb.markingInterface.finishLoading();							
 						}
 					}
-
 				});
 			}
 		});
@@ -381,7 +390,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		mainPanel.removeStyleName(Resources.INSTANCE.css().loadingtoolbar());
 		mainPanel.addStyleName(Resources.INSTANCE.css().toolbar());
 		
-		infoLabelPanel.setVisible(true);
+		infoLabelPanel.setVisible(false);
 		markingButtons.setVisible(true);
 		saveChangesButton.setVisible(true);
 		finishMarkingButton.setVisible(false);
@@ -424,24 +433,25 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		// FLECHA
 		aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
-		aux.addClickHandler(new ClickHandler(){
+		/*aux.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
+				/*
 				int h=0;
 				for(int i=0; i<mainPanel.getWidgetCount() ;i++){
 					if(infoLabelPanel == mainPanel.getWidget(i)){
 						h++;
 					}
-			    }
-				if(h==1){
-			    	infoLabelPanel.removeFromParent();
+			    }*/
+		/*
+				if(infoLabelPanel.isVisible()){
+					infoLabelPanel.setVisible(false);
 			    	aux.setHTML("<div style='font-size:2em;line-height: 20px; '>"+icon.toString()+"</div>");
-			    }
-				if(h==0){
-					mainPanel.insert(infoLabelPanel, 0);
+			    }else{
+			    	infoLabelPanel.setVisible(true);
 					aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon2.toString()+"</div>");
 				}
 			}
-		});
+		});*/
 		// Circulos Progreso
 		//1. En corrección
 		int trun = (int) (MarkingInterface.getGeneralProgress()/10);
