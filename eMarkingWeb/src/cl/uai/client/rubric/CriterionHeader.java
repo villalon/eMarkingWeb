@@ -222,7 +222,6 @@ public class CriterionHeader extends EMarkingComposite {
 		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker50());
 		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker75());
 		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker100());
-		this.criterionMarker.addStyleName(RubricMark.getBackgroundImage(backGroundPercent));
 	}
 
 	public void setLoadingVisible(boolean visible) {

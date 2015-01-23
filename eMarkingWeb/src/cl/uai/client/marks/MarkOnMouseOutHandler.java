@@ -20,11 +20,8 @@
  */
 package cl.uai.client.marks;
 
-import cl.uai.client.EMarkingWeb;
-
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * Manages when the mouse goes out from a Mark
@@ -35,22 +32,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 public class MarkOnMouseOutHandler implements MouseOutHandler {
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
-		Mark mark = (Mark) event.getSource();
-		
-		// Hide details popup
-		if(Mark.markPopup != null) {
-			if(Mark.markPopup.getParent() instanceof PopupPanel) {
-				Mark.markPopup.getParent().setVisible(false);
-			}
-			Mark.markPopup.removeFromParent();
-			Mark.markPopup = null;
-		}
-		
-		// Dehighlight the corresponding row in the rubric
-		if(mark instanceof RubricMark) {
-			int criterionid = ((RubricMark) mark).getCriterionId();
-			EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().dehighlightRubricCriterion(criterionid);
-		}
 	}
 }
 

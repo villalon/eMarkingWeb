@@ -24,13 +24,10 @@ import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
-import cl.uai.client.page.MarkPopup;
-import cl.uai.client.resources.Resources;
 
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * Handler for moving the mouse over a mark. Implements showing
@@ -43,42 +40,6 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(MarkOnMouseOverHandler.class.getName());
-	
-	/**
-	 * Calculates the Top position for the popup according to a Mark
-	 * and the AbsolutePanel which contains it
-	 * 
-	 * @param mark
-	 * @param abspanel
-	 * @return top coordinate
-	 */
-	private int calculatePopupTopPosition(Mark mark, AbsolutePanel abspanel, MarkPopup popup) {
-		int top = mark.getAbsoluteTop();
-		int maxtop = abspanel.getOffsetHeight()
-				- popup.getOffsetHeight();
-		if(mark.getAbsoluteTop() > maxtop) {
-			top = mark.getAbsoluteTop() 
-			- popup.getOffsetHeight();
-		}
-		return top;
-	}
-
-	/**
-	 * Calculates the Left position for the popup according to a Mark
-	 * and the AbsolutePanel which contains it
-	 * 
-	 * @param mark
-	 * @param abspanel
-	 * @return left coordinate
-	 */
-	private int calculatePopupLeftPosition(Mark mark, AbsolutePanel abspanel, MarkPopup popup) {
-		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth();
-		int maxleft = abspanel.getOffsetWidth() - popup.getOffsetWidth();
-		if(left > maxleft) {
-			left = mark.getAbsoluteLeft() - popup.getOffsetWidth() -  mark.getOffsetWidth() / 2;
-		}
-		return left;
-	}
 
 	@Override
 	public void onMouseOver(MouseOverEvent event) {
@@ -130,30 +91,6 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 			}			
 		}
 
-		if(!(mark instanceof PathMark || mark instanceof CheckMark || mark instanceof CrossMark)) {
-			
-			if(Mark.markPopup != null) {
-				Mark.markPopup.removeFromParent();
-			}
-			
-			Mark.markPopup = new MarkPopup();
-			Mark.markPopup.setMark(mark);
-			abspanel.add(Mark.markPopup, 0, 0);
-			
-			// Draw popup comment and author
-			left = calculatePopupLeftPosition(mark, abspanel, Mark.markPopup);
-			top = calculatePopupTopPosition(mark, abspanel, Mark.markPopup);
-
-			Mark.markPopup.removeFromParent();
-			
-			PopupPanel popup = new PopupPanel();
-			popup.addStyleName(Resources.INSTANCE.css().markpopuppanel());
-			popup.add(Mark.markPopup);
-			popup.setPopupPosition(left, top);
-			popup.show();
-			// abspanel.setWidgetPosition(Mark.markPopup, left, top);
-		}
-		
 		// Highlight the rubric interface if the mark is a RubricMark
 		if(mark instanceof RubricMark) {
 			int criterionid = ((RubricMark) mark).getCriterionId();

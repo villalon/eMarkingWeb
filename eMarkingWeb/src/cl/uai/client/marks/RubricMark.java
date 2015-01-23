@@ -78,12 +78,9 @@ public class RubricMark extends Mark {
 		// Rubric marks have format 2
 		this.format = 2;
 
-		this.setLevelId(lvlid);
-
-		this.addStyleName(Resources.INSTANCE.css().rubricmark());
+		this.addStyleName(Resources.INSTANCE.css().markpopup());
 		
-		// Sets the background image accordingly
-		this.setBackground();
+		this.setLevelId(lvlid);
 	}
 
 	/**
@@ -116,89 +113,7 @@ public class RubricMark extends Mark {
 		String format = sign ? "+#.##;-#" : "#.##";
 		return NumberFormat.getFormat(format);
 	}
-	
-	/**
-	 * Sets the inner HTML of the Mark
-	 */
-	@Override
-	protected void setMarkHTML() {
-		super.setMarkHTML();
-		
-		int index = EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().getCriterionIndex(this.getCriterionId());
-
-		this.setHTML("<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+index+"</div>");
 			
-		
-		this.setBackground();
-	}
-	
-	/**
-	 * Sets the background image according to the rubric level
-	 */
-	private void setBackground(){
-		
-		this.removeStyleName(Resources.INSTANCE.css().othermarker0());
-		this.removeStyleName(Resources.INSTANCE.css().othermarker25());
-		this.removeStyleName(Resources.INSTANCE.css().othermarker50());
-		this.removeStyleName(Resources.INSTANCE.css().othermarker75());
-		this.removeStyleName(Resources.INSTANCE.css().othermarker100());
-		this.removeStyleName(Resources.INSTANCE.css().marker0());
-		this.removeStyleName(Resources.INSTANCE.css().marker25());
-		this.removeStyleName(Resources.INSTANCE.css().marker50());
-		this.removeStyleName(Resources.INSTANCE.css().marker75());
-		this.removeStyleName(Resources.INSTANCE.css().marker100());
-		Level lvl = MarkingInterface.submissionData.getLevelById(levelid);
-		if(this.isReadOnly()&&!MarkingInterface.readonly){
-			this.addStyleName(this.getOtherBackgroundImage(
-					lvl.getCriterion().getPercentForLevel(lvl)));
-		}else{
-			this.addStyleName(getBackgroundImage(
-					lvl.getCriterion().getPercentForLevel(lvl)));
-		}
-	}
-	
-	/**
-	 * Gets the image corresponding to a certain number from 0 to 120
-	 * 
-	 * @param percent the number from 0 to 120
-	 * @return a CSS url image
-	 */
-	public static String getBackgroundImage(int percent) {
-		
-		if(percent <= 30) {			
-			return Resources.INSTANCE.css().marker0();
-		} else if(percent <= 60) {			
-			return Resources.INSTANCE.css().marker25();
-		} else if(percent <= 90) {			
-			return Resources.INSTANCE.css().marker50();
-		} else if(percent < 120) {			
-			return Resources.INSTANCE.css().marker75();
-		} else {			
-			return Resources.INSTANCE.css().marker100();
-		}		
-	}
-	
-	/**
-	 * Gets the image corresponding to a certain number from 0 to 120
-	 * 
-	 * @param percent the number from 0 to 120
-	 * @return a CSS url image
-	 */
-	private String getOtherBackgroundImage(int percent) {
-		
-		if(percent <= 30) {			
-			return Resources.INSTANCE.css().othermarker0();
-		} else if(percent <= 60) {			
-			return Resources.INSTANCE.css().othermarker25();
-		} else if(percent <= 90) {			
-			return Resources.INSTANCE.css().othermarker50();
-		} else if(percent < 120) {			
-			return Resources.INSTANCE.css().othermarker75();
-		} else {			
-			return Resources.INSTANCE.css().othermarker100();
-		}		
-	}
-	
 	/**
 	 * Creates a RubricMark from a Hash with Strings as key value pairs,
 	 * parsing the values in the map and casting them to the proper

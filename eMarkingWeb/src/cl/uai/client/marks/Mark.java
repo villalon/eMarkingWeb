@@ -31,7 +31,6 @@ import cl.uai.client.page.EditIcon;
 import cl.uai.client.page.EditMarkDialog;
 import cl.uai.client.page.EditMarkMenu;
 import cl.uai.client.page.LoadingIcon;
-import cl.uai.client.page.MarkPopup;
 import cl.uai.client.page.RegradeIcon;
 import cl.uai.client.page.TrashIcon;
 import cl.uai.client.resources.Resources;
@@ -86,14 +85,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 	public static LoadingIcon loadingIcon = null;
 	static {
 		loadingIcon = new LoadingIcon();
-	}
-
-	/** The mark popup **/
-	protected static MarkPopup markPopup = null;
-
-	static {
-		markPopup = new MarkPopup();
-		markPopup.setVisible(false);
 	}
 
 	/**
@@ -219,8 +210,45 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 	 * Sets the inner HTML according to an icon
 	 */
 	protected void setMarkHTML() {
-		Icon icon = new Icon(IconType.COMMENT);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+icon.toString()+"</div>";
+		
+		// Starts with an empty HTML
+		String html = "";
+		
+		// If it's a RubricMark add score header and both rubric and criterion descriptions
+		if(this instanceof RubricMark) {
+			RubricMark rmark = (RubricMark) this;
+			html += "<table style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
+					+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" 
+					+ rmark.getLevel().getCriterion().getDescription() + "</div></td>";
+			html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
+					+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
+					+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
+					+"</div></td></tr></table>";
+			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
+					+ "</div>";
+		}
+		
+		// If the inner comment contains something
+		if(this.getRawtext().trim().length() > 0) {
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+		}
+		
+		// Show the marker's name if the marking process is not anonymous
+		if(!MarkingInterface.isAnonymous()&&(!this.isReadOnly())) {
+			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
+		}
+		
+		if(this instanceof RubricMark && ((RubricMark)this).getRegradeid() > 0) {
+			html += "<div style=\"background-color:yellow\">"+"Recorrección"
+					+ (((RubricMark)this).getRegradeaccepted() == 0 ? " solicitada" : " lista")
+					+"</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
+					+ "Motivo: " + ((RubricMark)this).getRegradeMotiveText() + "<hr>" 
+					+ "Comentario: " + ((RubricMark)this).getRegradecomment()
+					+ (((RubricMark)this).getRegradeaccepted() == 0 ? "" : "<hr>Respuesta: " + (((RubricMark)this).getRegrademarkercomment()))
+					+ "</div>";
+		}
+
 		this.setHTML(html);		
 	}
 
