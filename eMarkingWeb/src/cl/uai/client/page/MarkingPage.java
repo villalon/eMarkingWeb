@@ -225,7 +225,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		EMarkingWeb.markingInterface.addLoading(false);
 		
 		// Ajax request to get the marks
-		AjaxRequest.ajaxRequest("action=getcomments&pageno=" + this.pageNumber, new AsyncCallback<AjaxData>() {
+		AjaxRequest.ajaxRequest("action=getcomments&pageno=" + this.pageNumber + "&windowswidth=" + Window.getClientWidth() + "&windowsheight=" + Window.getClientHeight(), new AsyncCallback<AjaxData>() {
 
 			@Override
 			public void onSuccess(AjaxData result) {

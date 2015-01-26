@@ -329,7 +329,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				"&regrademarkercomment=" + newregrademarkercomment +
 				"&width=" + this.width +
 				"&height=" + this.height +
-				"&comment=" + URL.encode(newcomment), new AsyncCallback<AjaxData>() {
+				"&comment=" + URL.encode(newcomment) +
+				"&windowswidth=" + Window.getClientWidth() +
+				"&windowsheight=" + Window.getClientHeight(), new AsyncCallback<AjaxData>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

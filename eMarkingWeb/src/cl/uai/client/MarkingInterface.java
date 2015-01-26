@@ -476,7 +476,9 @@ public class MarkingInterface extends EMarkingComposite {
 				"&format=" + mark.getFormat() +
 				"&pageno=" + mark.getPageno() +
 				"&criterionid="+cid + 
-				"&colour="+mark.getColour()
+				"&colour="+mark.getColour() +
+				"&windowswidth=" + Window.getClientWidth() +
+				"&windowsheight=" + Window.getClientHeight()
 				, new AsyncCallback<AjaxData>() {
 
 			@Override
@@ -579,7 +581,9 @@ public class MarkingInterface extends EMarkingComposite {
 								"&pageno="+(page.getPageNumber())+
 								"&sesskey="+sessKey+
 								"&bonus="+bonus+
-								"&comment="+URL.encode(comment);
+								"&comment="+URL.encode(comment) +
+								"&windowswidth=" + Window.getClientWidth() +
+								"&windowsheight=" + Window.getClientHeight();
 
 						// Add loading icon
 						Mark.loadingIcon.removeFromParent();
