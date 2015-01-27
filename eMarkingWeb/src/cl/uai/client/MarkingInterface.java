@@ -122,7 +122,7 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Submission data (student, course, grade, marker) **/
 	public static SubmissionGradeData submissionData = null;
 	
-	/** Div contein Icon Rubric and PopUp-Rubric **/
+	/** Div contein Icon Rubric  **/
 	private HTML divRight = new HTML("");
 	private HTML icono = new HTML("");
 	private HTML icono2 = new HTML("");

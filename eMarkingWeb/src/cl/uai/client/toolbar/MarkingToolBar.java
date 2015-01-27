@@ -94,6 +94,7 @@ public class MarkingToolBar extends EMarkingComposite {
 	private MyPopup popEnCorreccion = new MyPopup();
 	private MyPopup popPublicadas = new MyPopup();
 	private MyPopup popNivelAcuerdo = new MyPopup();
+	private boolean visibilidadToolbar = false;
 	
 	/** Buttons to select commands **/
 	private MarkingButtons markingButtons = null;
@@ -206,8 +207,10 @@ public class MarkingToolBar extends EMarkingComposite {
 			public void onClick(ClickEvent event){
 				if(infoLabelPanel.isVisible()){
 					infoLabelPanel.setVisible(false);
+					visibilidadToolbar = false;
 			    	aux.setHTML("<div style='font-size:2em;line-height: 20px; '>"+icon.toString()+"</div>");
 			    }else{
+			    	visibilidadToolbar = true;
 			    	infoLabelPanel.setVisible(true);
 					aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon2.toString()+"</div>");
 				}
@@ -252,6 +255,7 @@ public class MarkingToolBar extends EMarkingComposite {
 											EMarkingWeb.markingInterface.finishLoading();
 											MarkingInterface.setSubmissionId(nextsubmission);
 											EMarkingWeb.markingInterface.loadSubmissionData();
+											loadSubmissionData();
 											return;
 										}
 										logger.fine("Closing window");
@@ -303,6 +307,7 @@ public class MarkingToolBar extends EMarkingComposite {
 							EMarkingWeb.markingInterface.finishLoading();
 							MarkingInterface.setSubmissionId(nextsubmission);
 							EMarkingWeb.markingInterface.loadSubmissionData();
+							loadSubmissionData();
 							return;
 						} else {
 							Window.alert(MarkingInterface.messages.NoMoreSubmissions());
@@ -390,7 +395,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		mainPanel.removeStyleName(Resources.INSTANCE.css().loadingtoolbar());
 		mainPanel.addStyleName(Resources.INSTANCE.css().toolbar());
 		
-		infoLabelPanel.setVisible(false);
+		infoLabelPanel.setVisible(visibilidadToolbar);
 		markingButtons.setVisible(true);
 		saveChangesButton.setVisible(true);
 		finishMarkingButton.setVisible(false);
@@ -432,31 +437,23 @@ public class MarkingToolBar extends EMarkingComposite {
 		/// cargar las nuevas cosas de la barra
 		
 		// FLECHA
-		aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
-		/*aux.addClickHandler(new ClickHandler(){
-			public void onClick(ClickEvent event){
-				/*
-				int h=0;
-				for(int i=0; i<mainPanel.getWidgetCount() ;i++){
-					if(infoLabelPanel == mainPanel.getWidget(i)){
-						h++;
-					}
-			    }*/
-		/*
-				if(infoLabelPanel.isVisible()){
-					infoLabelPanel.setVisible(false);
-			    	aux.setHTML("<div style='font-size:2em;line-height: 20px; '>"+icon.toString()+"</div>");
-			    }else{
-			    	infoLabelPanel.setVisible(true);
-					aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon2.toString()+"</div>");
-				}
-			}
-		});*/
+		if(visibilidadToolbar){
+			aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon2.toString()+"</div>");
+		}else{
+			aux.setHTML("<div style='font-size:2em;line-height: 20px;'>"+icon.toString()+"</div>");
+		}
 		// Circulos Progreso
 		//1. En corrección
+		int h;
 		int trun = (int) (MarkingInterface.getGeneralProgress()/10);
-		int h = (int) (MarkingInterface.getGeneralProgress()-trun*10);
-		h= (int) MarkingInterface.getGeneralProgress() - h;
+		if(trun >= 5){
+			h = (int) (MarkingInterface.getGeneralProgress()-trun*10);
+			h= (int) MarkingInterface.getGeneralProgress() - h;
+		}else{
+			h = (int) (MarkingInterface.getGeneralProgress()-trun*10);
+			h= (int) MarkingInterface.getGeneralProgress() - h - 10;
+		}
+		
 		switch (h){
 		
 			case 0: circuloEnCorreccion.setResource(Resources.INSTANCE.por10());
@@ -508,10 +505,15 @@ public class MarkingToolBar extends EMarkingComposite {
 			 }
 		});
 		
-		//2. Publicadas		
+		//2. Publicadas	
 		trun = (int) (MarkingInterface.getPublishedProgress()/10);
-		h = (int) (MarkingInterface.getPublishedProgress()-trun*10);
-		h= (int) MarkingInterface.getPublishedProgress() - h;
+		if(trun >= 5){
+			h = (int) (MarkingInterface.getPublishedProgress()-trun*10);
+			h= (int) MarkingInterface.getPublishedProgress() - h;
+		}else{
+			h = (int) (MarkingInterface.getPublishedProgress()-trun*10);
+			h= (int) MarkingInterface.getPublishedProgress() - h - 10;
+		}
 		switch (h){
 		
 			case 0:  circuloPublicadas.setResource(Resources.INSTANCE.por10());
@@ -565,8 +567,13 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		//3. Nivel Acuerdo		
 		trun = (int) (MarkingInterface.getGeneralAgree()/10);
-		h = (int) (MarkingInterface.getGeneralAgree()-trun*10);
-		h = (int) MarkingInterface.getGeneralAgree() - h;
+		if(trun >= 5){
+			h = (int) (MarkingInterface.getGeneralAgree()-trun*10);
+			h= (int) MarkingInterface.getGeneralAgree() - h;
+		}else{
+			h = (int) (MarkingInterface.getGeneralAgree()-trun*10);
+			h= (int) MarkingInterface.getGeneralAgree() - h - 10;
+		}
 		switch (h){
 				
 			case 0:  circuloNivelAcuerdo.setResource(Resources.INSTANCE.por10());
