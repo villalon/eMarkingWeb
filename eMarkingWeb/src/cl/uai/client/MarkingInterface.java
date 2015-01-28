@@ -1205,4 +1205,5 @@ public class MarkingInterface extends EMarkingComposite {
 	public void setDialogNewBonus(float bonus){
 		this.setBonus = bonus;
 	}
+	
 }

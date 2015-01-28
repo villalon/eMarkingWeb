@@ -23,18 +23,25 @@ package cl.uai.client.toolbar;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
+
+import org.omg.CORBA.MARSHAL;
 
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.page.MarkingPage;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.SubmissionGradeData;
+import cl.uai.client.marks.Mark;
+import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dev.js.rhino.ObjToIntMap.Iterator;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -223,6 +230,24 @@ public class MarkingToolBar extends EMarkingComposite {
 		finishMarkingButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				int tieneMarcaRubrica = 0;
+				int noVisible = 0;
+				VerticalPanel paginas = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPagesPanel();
+				for(int negro = 0; negro < paginas.getWidgetCount() ; negro++){
+					Map<Integer, Mark> marks = ((MarkingPage) paginas.getWidget(negro)).getMarkWidgets();
+					tieneMarcaRubrica+= ((MarkingPage)paginas.getWidget(negro)).isHaveRubricMark();
+					//System.out.println("******"+tieneMarcaRubrica);
+					for(Mark m : marks.values()) {
+						if(m instanceof RubricMark){
+							if(!m.isVisible()){
+								noVisible++;
+							}
+						}
+					}
+				}
+				//System.out.println("******"+tieneMarcaRubrica+"******"+noVisible);
+				// Comprueba que exista al menos un criterio de la rubrica agregado
+				if( (tieneMarcaRubrica > 0 && noVisible == 0) || (tieneMarcaRubrica > noVisible && tieneMarcaRubrica > 0)){				
 				if(MarkingInterface.submissionData != null && MarkingInterface.submissionData.getId() > 0) {
 					
 					FinishMarkingDialog finishDialog = new FinishMarkingDialog();
@@ -276,6 +301,10 @@ public class MarkingToolBar extends EMarkingComposite {
 					});
 					finishDialog.center();
 				}
+			}else{
+				//No existe ningun criterio de la rubrica agregado
+				Window.alert("Es necesario agregar al menos un criterio de la rubrica");
+			}
 			}
 		});
 		

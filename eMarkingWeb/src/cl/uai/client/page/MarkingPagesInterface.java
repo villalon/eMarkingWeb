@@ -268,4 +268,8 @@ public class MarkingPagesInterface extends EMarkingComposite {
 		this.porcentaje = por;
 		loadInterface();
 	}
+	
+	public VerticalPanel getPagesPanel(){
+		return pagesPanel;
+	}
 }

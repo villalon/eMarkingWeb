@@ -390,6 +390,18 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		}
 		return mark;
 	}
+	
+	// Cuenta cuantas marcas de la rubrica tiene la pagina.
+	public int isHaveRubricMark(){
+		int negrito = 0;
+		for(Mark m : marks.values()) {
+			if(m instanceof RubricMark) {
+				negrito++;
+			}
+		}
+		
+		return negrito;
+	}
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
