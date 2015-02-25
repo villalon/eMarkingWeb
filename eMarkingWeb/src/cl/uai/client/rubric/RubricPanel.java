@@ -34,11 +34,14 @@ import cl.uai.client.marks.RubricMark;
 import cl.uai.client.page.AddMarkDialog;
 import cl.uai.client.resources.Resources;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -65,6 +68,7 @@ public class RubricPanel extends EMarkingComposite {
 
 	private Map<Integer, HorizontalPanel> rubricRows = null;
 	private Map<Integer, Integer> rubricIndices = null;
+	private HTML closeButton = null;
 
 	/** Buttons for toolbar **/
 	private ListBox rubricFilter = null;
@@ -127,6 +131,15 @@ public class RubricPanel extends EMarkingComposite {
 		rubricFilter.setSelectedIndex(0);
 		rubricFilter.addChangeHandler(new RubricFilterListBoxValueChangeHandler());
 
+		closeButton = new HTML((new Icon(IconType.REMOVE)).toString());
+		closeButton.addStyleName(Resources.INSTANCE.css().closerubricbutton());
+		closeButton.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				EMarkingWeb.markingInterface.getRubricInterface().setVisible(false);
+			}
+		});
+		
 		// An horizontal panel holds title and checkbox
 		HorizontalPanel hpanelTitle = new HorizontalPanel();
 		hpanelTitle.addStyleName(Resources.INSTANCE.css().rubrictitlepanel());
@@ -135,6 +148,9 @@ public class RubricPanel extends EMarkingComposite {
 		hpanelTitle.add(rubricFilter);
 		hpanelTitle.setCellHorizontalAlignment(rubricFilter, HasHorizontalAlignment.ALIGN_RIGHT);
 		hpanelTitle.setCellVerticalAlignment(rubricFilter, HasVerticalAlignment.ALIGN_MIDDLE);
+		hpanelTitle.add(closeButton);
+		hpanelTitle.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
+		hpanelTitle.setCellVerticalAlignment(closeButton, HasVerticalAlignment.ALIGN_MIDDLE);
 		mainPanel.add(hpanelTitle);
 
 		// Adds the scroll panel containing the rubric table

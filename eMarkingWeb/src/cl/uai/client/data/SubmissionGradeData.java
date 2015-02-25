@@ -67,6 +67,7 @@ public class SubmissionGradeData {
 	private String rubricname;
 	private String custommarks;
 	private boolean supervisor;
+	private boolean qualitycontrol;
 
 	public boolean isSupervisor() {
 		return supervisor;
@@ -399,5 +400,19 @@ public class SubmissionGradeData {
 		default:
 			return MarkingInterface.messages.Other();
 		}
+	}
+
+	/**
+	 * @return the qualitycontrol
+	 */
+	public boolean isQualitycontrol() {
+		return qualitycontrol;
+	}
+
+	/**
+	 * @param qualitycontrol the qualitycontrol to set
+	 */
+	public void setQualitycontrol(boolean qualitycontrol) {
+		this.qualitycontrol = qualitycontrol;
 	}
 }

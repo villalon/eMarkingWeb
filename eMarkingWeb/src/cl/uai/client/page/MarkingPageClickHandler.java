@@ -55,6 +55,10 @@ public class MarkingPageClickHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent event) {
 
+		// Hide rubric interface if it was shown when clicking somewhere else
+		if(EMarkingWeb.markingInterface.getRubricInterface().isVisible()) {
+			EMarkingWeb.markingInterface.getRubricInterface().setVisible(false);
+		}
 		// If interface is in readonly mode no popups should be allowed.
 		if(MarkingInterface.readonly) {
 			return;

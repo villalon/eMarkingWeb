@@ -59,7 +59,7 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	private VerticalPanel pagesPanel = null;
 	private ScrollPanel scrollContainerForPages = null;
 	
-	private double porcentaje = 0.98;
+	private double percentage = 0.98;
 
 	/** Number of pages **/
 	private int numPages = -1;
@@ -210,7 +210,7 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					boolean showmarker = Integer.parseInt(tabinfo.get("showmarker")) == 1;
 
 					double algo = Window.getClientWidth()+1;
-					int x = (int) (algo*porcentaje);
+					int x = (int) (algo*percentage);
 					float ratio = (float) width / (float) height;
 					int newheight = (int) (x / ratio);					
 					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), x, newheight);
@@ -265,7 +265,7 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	}
 	
 	public void setPorcentaje(double por){
-		this.porcentaje = por;
+		this.percentage = por;
 		loadInterface();
 	}
 	

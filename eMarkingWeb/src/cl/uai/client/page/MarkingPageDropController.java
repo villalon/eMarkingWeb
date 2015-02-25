@@ -57,6 +57,11 @@ public class MarkingPageDropController extends SimpleDropController {
 	@Override
 	public void onPreviewDrop(DragContext context) throws VetoDragException {
 		super.onPreviewDrop(context);
+		
+		// If we are in readonly mode we shouldn't accept new marks in the interface
+		if(MarkingInterface.readonly) {
+			throw new VetoDragException();
+		}
 
 		// Calculate position accordingly. Substracting the absolute panel position to the final drop position.
 		int posx = context.desiredDraggableX 

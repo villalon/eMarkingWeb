@@ -199,11 +199,11 @@ public class EMarkingWeb implements EntryPoint {
 			AjaxRequest.moodleUrl = moodleurl;
 
 			// Automagically resize popup to use most of the window
-			int width = screenWidth() - 10;
-			int height = screenHeight() - 10;
+			int width = screenWidth();
+			int height = screenHeight();
 
 			// If we have a narrow window, just fix it on 847
-			if(width < 1200) {
+/*			if(width < 1200) {
 				width = 847;
 				if(Navigator.getUserAgent().toLowerCase().contains("mozilla")) {
 					width = 850;
@@ -212,7 +212,7 @@ public class EMarkingWeb implements EntryPoint {
 				// Otherwise we use as much as we can
 				width = Math.min(width, 1280);
 			}
-			
+*/			
 			//  Resize the popup window and move it to the top left corner
 			Window.resizeTo(width, height);
 			Window.moveTo(0, 0);

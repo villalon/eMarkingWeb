@@ -23,10 +23,7 @@ package cl.uai.client.toolbar;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
-
-import org.omg.CORBA.MARSHAL;
 
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
@@ -41,7 +38,6 @@ import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.google.gwt.dev.js.rhino.ObjToIntMap.Iterator;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -452,7 +448,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		}
 		this.activityName.setText(sdata.getActivityname());
 		
-		if(MarkingInterface.supervisor) {
+		if(MarkingInterface.supervisor && !MarkingInterface.submissionData.isQualitycontrol()) {
 			finishMarkingButton.setVisible(true);
 		}
 		

@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
  * @package   eMarking
- * @copyright 2013 Jorge Villalón <villalon@gmail.com>
+ * @copyright 2013-2015 Jorge Villalón <villalon@gmail.com>
  				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -819,4 +819,23 @@ background-color: #0057D9;
 	margin-top: 1px;
 	margin-bottom: 0.5px;
 	line-height: 24px;
+}
+
+.showrubricbutton {
+	font-size:2em; 
+	background-color: #EAEAEA;
+	height:40px;
+	text-align: center;
+	vertical-align: middle;
+	width: 40px;
+	border-radius: 50%;
+	display: table-cell;
+	line-height: 40px;
+	cursor: pointer;
+}
+
+.closerubricbutton {
+	font-size: 1em;
+	margin-right: 10px;
+	cursor: pointer;
 }

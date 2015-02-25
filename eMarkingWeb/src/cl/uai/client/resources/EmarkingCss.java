@@ -191,4 +191,6 @@ public interface EmarkingCss extends CssResource {
 	String mininota();
 	String miniscale();
 	String minigradepanel();
+	String showrubricbutton();
+	String closerubricbutton();
 }

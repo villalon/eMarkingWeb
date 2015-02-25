@@ -54,7 +54,6 @@ public class CriterionHeader extends EMarkingComposite {
 	private HTML regradeHtml = null;
 	private HTML loadingIcon = null;
 	//NEW
-	private HTML rectangle = null;
 	private int commentId = 0;
 	private int commentPage = 0;
 	private int backGroundPercent = 0;

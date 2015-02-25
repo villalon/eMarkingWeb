@@ -49,7 +49,6 @@ import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.base.ProgressBarBase;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -57,8 +56,9 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -123,11 +123,8 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 	
 	/** Div contein Icon Rubric  **/
-	private HTML divRight = new HTML("");
-	private HTML icono = new HTML("");
-	private HTML icono2 = new HTML("");
-	private final Icon icon = new Icon(IconType.ANGLE_LEFT);
-	private final Icon icon2 = new Icon(IconType.ANGLE_RIGHT);
+	private HTML showRubricButton = null;
+	private final Icon showRubricIconOpen = new Icon(IconType.TH);
 	
 	/**
 	 * @return the eMarkingVersion
@@ -188,6 +185,10 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Timer related variables **/
 	private Timer timer = null;
 	private int timerWaitingTurns = 1;
+	
+	private Timer resizeTimer = null;
+	private Date resizeTime = new Date();
+	private boolean resizeTimeout = false;
 	
 	private Timer heartBeatTimer = null;
 	
@@ -258,6 +259,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private static int totalTests = 0;
 	private static double generalProgress = 0.0;
 	private static double publishedProgress = 0.0;
+	private static int markingType = 0;
 	
 	public static double getGeneralProgress(){
 		return generalProgress;
@@ -292,6 +294,34 @@ public class MarkingInterface extends EMarkingComposite {
 
 		logger.fine("Initializing eMarking");
 
+		// The timer will check if no other resize events have been called in the last 200 ms
+		resizeTimer = new Timer() {			
+			@Override
+			public void run() {
+				Date now = new Date();
+				long diff = now.getTime() - resizeTime.getTime();
+				// The last resize was in less than 200 ms
+				if(diff < 200) {
+					resizeTimer.schedule(200);
+				} else {					
+					// More than 200 ms, we accept no more resize is being done
+					resizeTimeout = false;
+					EMarkingWeb.markingInterface.loadSubmissionData();
+				}
+			}
+		};
+		
+		Window.addResizeHandler(new ResizeHandler() {			
+			@Override
+			public void onResize(ResizeEvent event) {
+				resizeTime = new Date();
+				if(!resizeTimeout) {
+					resizeTimeout=true;
+					resizeTimer.schedule(200);
+				}
+			}
+		});
+		
 		// Focus panel to catch key events
 		focusPanel = new FocusPanel();
 		focusPanel.addKeyDownHandler(new KeyDownHandler() {
@@ -321,11 +351,15 @@ public class MarkingInterface extends EMarkingComposite {
 
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
 		
+		showRubricButton = new HTML();
+		showRubricButton.addStyleName(Resources.INSTANCE.css().showrubricbutton());
+		
+		
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
-		markingPanel.add(divRight);
+		markingPanel.add(showRubricButton);
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -813,25 +847,14 @@ public class MarkingInterface extends EMarkingComposite {
 		rubricInterface = new RubricInterface();
 		
 		interfacePanel.add(markingPagesInterface);
-		interfacePanel.setCellWidth(markingPagesInterface, "97%");
+		interfacePanel.setCellWidth(markingPagesInterface, "100%");
 		//markingPanel.add(divRight,(int)(Window.getClientWidth()*0.97),0);
-		markingPanel.add(rubricInterface,(int)(Window.getClientWidth()*0.62),0);
+		markingPanel.add(
+				rubricInterface,(int)(Window.getClientWidth() * 0.65),0);
 		rubricInterface.setVisible(false);
-		markingPanel.setWidgetPosition(divRight,(int)(Window.getClientWidth()*0.97),0);
-		divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
-		/*
-		if(RootPanel.get().getOffsetWidth() > 1024) {
-			interfacePanel.setCellWidth(rubricInterface, "100%");
-		} else {
-			rubricInterface.setVisible(false);
-		}*/
+		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
+		showRubricButton.setHTML(showRubricIconOpen.toString());
 
-		Scheduler.get().scheduleFinally(new Command() {
-			@Override
-			public void execute() {
-				toolbar.getStudentSelector();
-			}
-		});
 		/** Codigo Implantado tesis **/
 		if(linkrubric == 1){
 			toolbar.getMarkingButtons().setCriterionList();
@@ -891,6 +914,7 @@ public class MarkingInterface extends EMarkingComposite {
 					submissionData.setActivityname(values.get("activityname"));
 					submissionData.setFeedback(values.get("feedback"));
 					submissionData.setCustommarks(values.get("custommarks"));
+					submissionData.setQualitycontrol(values.get("qualitycontrol").equals("1"));
 				} catch(Exception e) {
 					// If something goes wrong, data is invalid and we can't work with it
 					logger.severe("Exception parsing submission data.");
@@ -902,7 +926,7 @@ public class MarkingInterface extends EMarkingComposite {
 				try {
 					submissionData.setDatecreated(Long.parseLong(values.get("timecreated")));					
 				} catch(Exception e) {
-					logger.severe("Exception parsing submission timecreated data.");
+					logger.severe("Exception parsing submission timecreated data."+values.get("timecreated"));
 					logger.severe(e.getMessage());
 				}
 
@@ -1008,6 +1032,9 @@ public class MarkingInterface extends EMarkingComposite {
 						// Every two minutes
 						heartBeatTimer.scheduleRepeating(2 * 60 * 1000);
 					}
+					
+					// Read the marking type
+					markingType = Integer.parseInt(value.get("markingtype"));
 
 					// Link rubric colors if configured as
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
@@ -1064,20 +1091,13 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
-		icono.setHTML("<br><br>"+icon.toString());
-		icono2.setHTML("<br><br>"+icon2.toString());
-		/*
-		markingPanel.setWidgetPosition(divRight,(int)(Window.getClientWidth()*0.97),0);
-		divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
-		*/
-		divRight.addClickHandler(new ClickHandler(){
+		
+		showRubricButton.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(rubricInterface.isVisible()){
 					rubricInterface.setVisible(false);
-					divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono+"</div>");
 				}else{
 					rubricInterface.setVisible(true);
-					divRight.setHTML("<div align=center style='font-size:3em; background-color: #EAEAEA; width: "+(Window.getClientWidth()*0.03)+"px ;height:"+Window.getClientHeight()+"px;'>"+icono2+"</div>");
 				}
 			}
 		});
@@ -1205,5 +1225,10 @@ public class MarkingInterface extends EMarkingComposite {
 	public void setDialogNewBonus(float bonus){
 		this.setBonus = bonus;
 	}
-	
+	/**
+	 * @return the markingType
+	 */
+	public static int getMarkingType() {
+		return markingType;
+	}
 }

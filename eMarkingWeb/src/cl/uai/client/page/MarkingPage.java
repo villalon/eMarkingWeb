@@ -308,7 +308,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		marks.put(mark.getId(), mark);
 
 		// Make the mark draggable within page if not in readonly mode
-		if(!mark.isReadOnly()&&!(mark instanceof PathMark)) {
+		if(!(mark instanceof PathMark)) {
 			dragController.makeDraggable(mark);
 		}
 		absolutePanel.add(mark, mark.getPosx(), mark.getPosy());

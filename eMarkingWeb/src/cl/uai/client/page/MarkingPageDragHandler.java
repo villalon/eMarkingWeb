@@ -22,6 +22,7 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 
@@ -75,6 +76,12 @@ public class MarkingPageDragHandler implements DragHandler {
 	 */
 	@Override
 	public void onDragEnd(DragEndEvent event) {
+		
+		// If we are in readonly mode we don't update the data but let the mark move for usability
+		if(MarkingInterface.readonly)
+			return;
+
+		// Read the data from the interface to update the mark
 		Mark mark = (Mark) event.getSource();
 		int level = 0;
 		float bonus = 0;
@@ -97,6 +104,4 @@ public class MarkingPageDragHandler implements DragHandler {
 				regradecomment, 
 				motive);				
 	}
-
-
 }
