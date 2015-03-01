@@ -310,18 +310,7 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		};
-		
-		Window.addResizeHandler(new ResizeHandler() {			
-			@Override
-			public void onResize(ResizeEvent event) {
-				resizeTime = new Date();
-				if(!resizeTimeout) {
-					resizeTimeout=true;
-					resizeTimer.schedule(200);
-				}
-			}
-		});
-		
+				
 		// Focus panel to catch key events
 		focusPanel = new FocusPanel();
 		focusPanel.addKeyDownHandler(new KeyDownHandler() {
@@ -957,7 +946,18 @@ public class MarkingInterface extends EMarkingComposite {
 					logger.severe("Error parsing submission data!");
 					Window.alert(messages.InvalidSubmissionData());
 				}
+				
 				finishLoading();
+				Window.addResizeHandler(new ResizeHandler() {			
+					@Override
+					public void onResize(ResizeEvent event) {
+						resizeTime = new Date();
+						if(!resizeTimeout) {
+							resizeTimeout=true;
+							resizeTimer.schedule(200);
+						}
+					}
+				});
 			}
 		});
 	}

@@ -118,6 +118,49 @@ public class AjaxRequest {
 		return output;	
 	}
 	
+	/**
+	 * Assuming a String, parses the result and returns as a Hash
+	 * @param result
+	 * @return a Hash with key value pairs (all Strings)
+	 */
+	public static Map<String, String> getValueFromResultString(String result) {
+		JSONValue jsonValue;
+		JSONObject values;
+
+		jsonValue = JSONParser.parseStrict(result);
+		values = jsonValue.isObject();
+		
+		Map<String, String> output = new HashMap<String,String>();
+		for(String key2 : values.keySet()) {
+			if(values.get(key2) != null && values.get(key2).isString() != null)
+				output.put(key2, values.get(key2).isString().stringValue());
+			else
+				output.put(key2, values.get(key2).toString());
+		}
+		
+		
+		return output;
+	}
+		
+	/**
+	 * Assuming a String, it transforms them in a list of Hashes
+	 * @param result the result to parse
+	 * @return a List of Hash with String key value pairs
+	 */
+	public static List<Map<String, String>>  getValuesFromResultString(String result) {
+		JSONValue jsonValue;
+		JSONArray jsonArray;
+		jsonValue = JSONParser.parseStrict(result);
+		JSONObject values = new JSONObject();
+		jsonArray = jsonValue.isArray();
+		for(int i=0;i<jsonArray.size();i++){
+			
+			values.put(String.valueOf(i),jsonArray.get(i));
+		}
+		
+		return getValuesFromResult(values);
+		
+	}	
 	//TODO: "on construction" function for parsing Json strings coming from json_encode() PHP format.
 	
 	/**

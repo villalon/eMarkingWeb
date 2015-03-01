@@ -12,20 +12,24 @@
             Deploy the Concept Map web based editor as a zip file to a Moodle server.
     </description>
 	
-	<property name="moodle.dir"     value="/Applications/XAMPP/xamppfiles/htdocs/moodle"/>
+	<property name="moodle.dir"     value="C:/xampp/htdocs/moodle"/>
 
     <!-- ================================= 
           target: deploy-local              
          ================================= -->
     <target name="deploy-local">
     	
-    	<delete dir="${moodle.dir}/mod/emarking/emarkingweb/"/>
+    	<delete dir="${moodle.dir}/mod/emarking/marking/emarkingweb/"/>
     	
-    	<copy todir="${moodle.dir}/mod/emarking/">
+    	<copy todir="${moodle.dir}/mod/emarking/marking/">
     		<fileset dir="war/">
     			<exclude name="**/EMarkingWeb.html"/>
     			<exclude name="**/EmarkingPopup.html"/>
     			<exclude name="**/WEB-INF/"/>
+    			<exclude name="**/adminWall/"/>
+        		<exclude name="**/chat/"/>
+        		<exclude name="**/node_modules/"/>
+        		<exclude name="**/toastr/"/>
     			<exclude name="**/build.number"/>
     			<exclude name="**/cl.uai.EMarkingWeb.JUnit/"/>
     			<exclude name="**/favicon.ico"/>

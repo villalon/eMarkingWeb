@@ -26,6 +26,7 @@
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.resources.Resources"/>
   <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
+  <inherits name="com.googlecode.gwt.charts.Charts"/> 
 
   <!-- Logging configuration -->
   <set-property name="gwt.logging.logLevel" value="ALL"/> 
@@ -43,6 +44,5 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
-  <source path='shared'/>
 
 </module>
