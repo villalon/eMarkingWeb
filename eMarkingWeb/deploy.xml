@@ -20,6 +20,7 @@
     <target name="deploy-local">
     	
     	<delete dir="${moodle.dir}/mod/emarking/marking/emarkingweb/"/>
+    	<delete dir="${moodle.dir}/mod/emarking/marking/emarkingreports/"/>
     	
     	<copy todir="${moodle.dir}/mod/emarking/marking/">
     		<fileset dir="war/">

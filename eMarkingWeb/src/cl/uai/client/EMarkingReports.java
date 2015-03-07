@@ -2,6 +2,7 @@ package cl.uai.client;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
@@ -43,7 +44,7 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 
 public class EMarkingReports implements EntryPoint {
 
-
+	private static Logger logger = Logger.getLogger(EMarkingReports.class.getName());
 	private String action;
 	private int id ;
 	private String dirroot;
@@ -110,8 +111,11 @@ public class EMarkingReports implements EntryPoint {
 	public static native void console(String text)
 	/*-{
        console.log(text);
-   }-*/;
+    }-*/;
+	
 	public void onModuleLoad() {
+		logger.fine("Initializing eMarking reports");
+		
 		action=RootPanel.get("reports").getElement().getAttribute("action");
 		id =Integer.parseInt(RootPanel.get("reports").getElement().getAttribute("cmid"));
 		dirroot = RootPanel.get("reports").getElement().getAttribute("url");
