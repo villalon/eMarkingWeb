@@ -2,23 +2,23 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/commons-cli-1.2/commons-cli-1.2.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/ghost4j-0.5.1.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/jmock/hamcrest-core-1.1.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/jmock/hamcrest-library-1.1.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/jmock/jmock-2.5.1.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/commons-validator-1.4.0.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/javax.json-1.0.3.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/jbig2.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/seaglasslookandfeel-0.2.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/zxing-core1.6.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/zxing1.6.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/commons-beanutils-1.8.3.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/commons-io-1.3.1.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/itext-2.1.7.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/jna-3.3.0.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/xmlgraphics-commons-1.4.jar"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarking/JEmarking/lib/ghost4j/lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/commons-cli-1.2/commons-cli-1.2.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/ghost4j-0.5.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/jmock/hamcrest-core-1.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/jmock/hamcrest-library-1.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/jmock/jmock-2.5.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/commons-validator-1.4.0.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/javax.json-1.0.3.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/jbig2.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/seaglasslookandfeel-0.2.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/zxing-core1.6.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/zxing1.6.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/commons-beanutils-1.8.3.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/commons-io-1.3.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/itext-2.1.7.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/jna-3.3.0.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/xmlgraphics-commons-1.4.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
