@@ -66,10 +66,10 @@ public class Moodle {
 
 	/** User agent to use when connecting to Moodle **/
 	public static final String USER_AGENT = "Mozilla/5.0";
-	/** URL of the eMarking's REST service in Moodle **/
-	public static final String EMARKING_MODULE_URL = "mod/emarking/ajaxdesktop.php";
 	/** Moodle installation URL **/
 	private String moodleUrl;
+	/** The Ajax url within Moodle **/
+	private String moodleAjaxUrl;
 	/** Moodle username **/
 	private String moodleUsername;
 	/** Moodle password **/
@@ -93,6 +93,8 @@ public class Moodle {
 	/** Stores the last file processed by user **/
 	private String lastfile;
 
+	private String omrTemplate;
+	
 	/**
 	 * @return the QR extractor
 	 */
@@ -153,7 +155,7 @@ public class Moodle {
 
 	public void retrieveStudents(int courseId) throws Exception {
 
-		String response = makeMoodleRequest(EMARKING_MODULE_URL + "?action=students&course="+courseId+"&username="+moodleUsername+"&password="+moodlePassword);
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+courseId+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
 
@@ -186,7 +188,7 @@ public class Moodle {
 
 	private void retrieveCourses() throws Exception {
 
-		String response = makeMoodleRequest(EMARKING_MODULE_URL + "?action=courses&username="+moodleUsername+"&password="+moodlePassword);
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courses&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
 
@@ -215,7 +217,7 @@ public class Moodle {
 
 	public Course[] searchCourses(String q) throws Exception {
 
-		String response = makeMoodleRequest(EMARKING_MODULE_URL + "?action=coursesearch&username="+moodleUsername+"&password="+moodlePassword+"&q="+q);
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=coursesearch&username="+moodleUsername+"&password="+moodlePassword+"&q="+q);
 
 		JsonArray jarr = parseMoodleResponse(response);
 
@@ -247,7 +249,7 @@ public class Moodle {
 
 	public void retrieveCourseFromId(int courseid) throws Exception {
 
-		String response = makeMoodleRequest(EMARKING_MODULE_URL + "?action=courseinfo&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courseinfo&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
 		JsonObject job = jarr.getJsonObject(0);
@@ -266,7 +268,7 @@ public class Moodle {
 
 	private Hashtable<Integer, Activity> retrieveEmarkingActivities(int courseid) throws Exception {
 
-		String response = makeMoodleRequest(EMARKING_MODULE_URL + "?action=activities&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=activities&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		Hashtable<Integer, Activity> activities = new Hashtable<Integer, Activity>();
 		JsonArray jarr = parseMoodleResponse(response);
@@ -376,7 +378,7 @@ public class Moodle {
 
 		String mergestring = merge ? "1" : "0";
 
-		String uploadUrl = moodleUrl + EMARKING_MODULE_URL + 
+		String uploadUrl = moodleUrl + getMoodleAjaxUrl() + 
 				"?action=upload" + 
 				"&course=" + courseId + 
 				"&merge=" + mergestring +
@@ -537,6 +539,12 @@ public class Moodle {
 		if(p.containsKey("maxzipsize")) {
 			setMaxzipsize(p.getProperty("maxzipsize"));
 		}
+		if(p.containsKey("ajaxurl")) {
+			setMoodleAjaxUrl(p.getProperty("ajaxurl"));
+		}
+		if(p.containsKey("omrtemplate")) {
+			setOMRTemplate(p.getProperty("omrtemplate"));
+		}
 	}
 
 	public void setResolution(int resolution) {
@@ -575,6 +583,8 @@ public class Moodle {
 		p.setProperty("maxthreads", Integer.toString(this.qrExtractor.getMaxThreads()));
 		p.setProperty("resolution", Integer.toString(this.qrExtractor.getResolution()));
 		p.setProperty("maxzipsize", this.maxzipsize);
+		p.setProperty("ajaxurl", this.moodleAjaxUrl);
+		p.setProperty("omrtemplate", this.omrTemplate);
 		try {
 			p.store(new FileOutputStream(f), "eMarking for Moodle");
 		} catch (Exception e) {
@@ -620,5 +630,37 @@ public class Moodle {
 				return st;
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getMoodleAjaxUrl() {
+		return moodleAjaxUrl;
+	}
+
+	/**
+	 * 
+	 * @param moodleAjaxUrl
+	 */
+	public void setMoodleAjaxUrl(String moodleAjaxUrl) {
+		this.moodleAjaxUrl = moodleAjaxUrl;
+	}
+
+	public void setOMRTemplate(String text) {
+		this.omrTemplate = text;
+		if(this.omrTemplate == null || this.omrTemplate.trim().length() == 0)
+			this.qrExtractor.setOmrTemplate(null);
+		
+		File f = new File(this.omrTemplate);
+		if(f.exists())
+			this.qrExtractor.setOmrTemplate(f);
+		else
+			this.qrExtractor.setOmrTemplate(null);
+	}
+	
+	public String getOMRTemplate() {
+		return this.omrTemplate;
 	}
 }

@@ -191,6 +191,9 @@ public class EmarkingDesktop {
 				p.setPagenumber(qrResult.getExampage());
 				p.setRotated(qrResult.isRotated());
 				if(p.getStudent() != null) {
+					if(qrResult.isAnswersheet()) {
+						p.getStudent().setAnswers(qrResult.getAnswers());
+					}
 					p.getStudent().addPage(p);
 					studentsTable.updateData(p.getStudent());
 				}
@@ -736,6 +739,7 @@ public class EmarkingDesktop {
 		if(dialog.isCancelled())
 			return;
 		moodle.getQr().setDoubleside(dialog.getDoubleSideSelected());
+		moodle.setOMRTemplate(dialog.getOMRTemplate());
 		moodle.clearPages();
 		lblStatusBarRight.setText(moodle.getQr().getTempdirStringPath());
 		File pdfFile = new File(dialog.getFilename().getText());

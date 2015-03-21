@@ -87,6 +87,16 @@ public class QRextractor implements Runnable {
 	}
 
 	private boolean doubleside = false;
+	
+	private File omrTemplate = null;
+
+	public File getOmrTemplate() {
+		return omrTemplate;
+	}
+
+	public void setOmrTemplate(File omrTemplate) {
+		this.omrTemplate = omrTemplate;
+	}
 
 	private String pdffile = null;
 
@@ -299,7 +309,8 @@ public class QRextractor implements Runnable {
 							currentpageimage, 
 							nextpageimage, 
 							filenumber,
-							tempdir);
+							tempdir,
+							omrTemplate);
 
 					decoderthreads[j] = new Thread(decoders[j]);
 					decoderthreads[j].start();

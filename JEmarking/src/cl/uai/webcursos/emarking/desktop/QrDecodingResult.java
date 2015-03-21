@@ -3,6 +3,8 @@
  */
 package cl.uai.webcursos.emarking.desktop;
 
+import java.util.Map;
+
 /**
  * @author Jorge Villalón
  *
@@ -12,12 +14,14 @@ public class QrDecodingResult {
 	private int userid = 0;
 	private int courseid = 0;
 	private int exampage = 0;
+	private boolean answersheet = false;
 	private String output = null;
 	private String filename = null;
 	private boolean rotated = false;
 	private boolean flipped = false;
 	private boolean success = false;
 	private String backfilename;
+	private Map<String, String> answers = null;
 	
 	/**
 	 * @return the success
@@ -134,5 +138,33 @@ public class QrDecodingResult {
 
 	public void setBackfilename(String backfilename) {
 		this.backfilename = backfilename;
+	}
+
+	/**
+	 * @return the answersheet
+	 */
+	public boolean isAnswersheet() {
+		return answersheet;
+	}
+
+	/**
+	 * @param answersheet the answersheet to set
+	 */
+	public void setAnswersheet(boolean answersheet) {
+		this.answersheet = answersheet;
+	}
+
+	/**
+	 * @return the answers
+	 */
+	public Map<String, String> getAnswers() {
+		return answers;
+	}
+
+	/**
+	 * @param answers the answers to set
+	 */
+	public void setAnswers(Map<String, String> answers) {
+		this.answers = answers;
 	}
 }

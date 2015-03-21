@@ -143,7 +143,7 @@ public class UploadWorker implements Runnable {
 
 			String mergestring = merge ? "1" : "0";
 
-			String uploadUrl = moodle.getUrl() + Moodle.EMARKING_MODULE_URL + 
+			String uploadUrl = moodle.getUrl() + moodle.getMoodleAjaxUrl() + 
 					"?action=upload" + 
 					"&course=" + this.courseId + 
 					"&merge=" + mergestring +

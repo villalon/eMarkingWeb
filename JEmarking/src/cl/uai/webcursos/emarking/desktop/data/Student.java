@@ -20,6 +20,8 @@
  ******************************************************************************/
 package cl.uai.webcursos.emarking.desktop.data;
 
+import java.util.Map;
+
 public class Student {
 
 	private int id;
@@ -27,6 +29,7 @@ public class Student {
 	private String idnumber;
 	private int rownumber;
 	private int pages = 0;
+	private Map<String, String> answers;
 	
 	/**
 	 * @return the id
@@ -98,5 +101,27 @@ public class Student {
 	}
 	public void removePage(Page current) {
 		this.setPages(this.getPages() - 1);
+	}
+	/**
+	 * @return the answers
+	 */
+	public Map<String, String> getAnswers() {
+		return answers;
+	}
+	/**
+	 * @param answers the answers to set
+	 */
+	public void setAnswers(Map<String, String> answers) {
+		this.answers = answers;
+	}
+	public String getAnswersValues() {
+		String output = "";
+		if(this.answers == null)
+			return output;
+		
+		for(String key : this.answers.keySet()) {
+			output += key + ":" + this.answers.get(key) + ";";
+		}
+		return output;
 	}
 }

@@ -66,7 +66,7 @@ public class OptionsDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 3424578643623876331L;
-	
+
 	private static Logger logger = Logger.getLogger(OptionsDialog.class);
 	private JCheckBox chckbxDoubleSide;
 	private boolean cancelled = false;
@@ -82,6 +82,8 @@ public class OptionsDialog extends JDialog {
 	private JComboBox<Integer> resolution;
 	private JPanel panel;
 	private JButton btnOpenPdfFile;
+	private final JTextField omrtemplate;
+	private JButton btnOpenOMRTemplate;
 
 	/**
 	 * @return the cancelled
@@ -104,7 +106,7 @@ public class OptionsDialog extends JDialog {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(OptionsDialog.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_439_wrench.png")));
 		setTitle(EmarkingDesktop.lang.getString("emarkingoptions"));
 		setModal(true);
-		setBounds(100, 100, 706, 357);
+		setBounds(100, 100, 707, 400);
 		this.moodle = _moodle;
 		this.moodle.loadProperties();
 		getContentPane().setLayout(new BorderLayout());
@@ -126,11 +128,18 @@ public class OptionsDialog extends JDialog {
 							if(!f.exists() || f.isDirectory() || (!f.getPath().endsWith(".pdf") && !f.getPath().endsWith(".zip"))) {
 								throw new Exception(EmarkingDesktop.lang.getString("invalidpdffile") + " " + filename.getText());								
 							}
+							if(omrtemplate.getText().trim().length() > 0) {
+								File omrf = new File(omrtemplate.getText());
+								if(!omrf.exists() || omrf.isDirectory() || (!omrf.getPath().endsWith(".xtmpl"))) {
+									throw new Exception(EmarkingDesktop.lang.getString("invalidomrfile") + " " + omrtemplate.getText());								
+								}
+							}
 							moodle.setLastfile(filename.getText());
 							moodle.setDoubleside(chckbxDoubleSide.isSelected());
 							moodle.setMaxthreads(Integer.parseInt(getMaxThreads().getSelectedItem().toString())); 
 							moodle.setResolution(Integer.parseInt(getResolution().getSelectedItem().toString())); 
 							moodle.setMaxzipsize(getMaxZipSize().getSelectedItem().toString());
+							moodle.setOMRTemplate(omrtemplate.getText());
 							moodle.saveProperties();
 							cancelled = false;
 							setVisible(false);
@@ -156,25 +165,25 @@ public class OptionsDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		
+
 		panel = new JPanel();
 		tabbedPane.addTab(EmarkingDesktop.lang.getString("general"), null, panel, null);
 		panel.setLayout(null);
-		
+
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		panel_2.setBounds(10, 11, 665, 131);
 		panel.add(panel_2);
 		panel_2.setLayout(null);
-		
+
 		JLabel lblPassword = new JLabel(EmarkingDesktop.lang.getString("password"));
 		lblPassword.setBounds(10, 99, 109, 14);
 		panel_2.add(lblPassword);
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		password = new JPasswordField();
 		password.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -184,39 +193,39 @@ public class OptionsDialog extends JDialog {
 		password.setBounds(129, 96, 329, 20);
 		panel_2.add(password);
 		this.password.setText(this.moodle.getPassword());
-		
+
 		btnTestConnection = new JButton(EmarkingDesktop.lang.getString("connect"));
 		btnTestConnection.setEnabled(false);
 		btnTestConnection.setBounds(468, 93, 172, 27);
 		panel_2.add(btnTestConnection);
-		
+
 		username = new JTextField();
 		username.setBounds(129, 65, 329, 20);
 		panel_2.add(username);
 		username.setColumns(10);
 		this.username.setText(this.moodle.getUsername());
-		
+
 		moodleurl = new JTextField();
 		moodleurl.setBounds(129, 34, 329, 20);
 		panel_2.add(moodleurl);
 		moodleurl.setColumns(10);
 		moodleurl.getDocument().addDocumentListener(new DocumentListener() {
-			
+
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				warn();
 			}
-			
+
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				warn();
 			}
-			
+
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				warn();
 			}
-			
+
 			private void warn() {
 				UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 				if(!validator.isValid(moodleurl.getText()) || !moodleurl.getText().endsWith("/")) {
@@ -228,20 +237,20 @@ public class OptionsDialog extends JDialog {
 				}
 			}
 		});
-		
+
 		// Initializing values from moodle configuration
 		this.moodleurl.setText(this.moodle.getUrl());
-		
+
 		JLabel lblMoodleUrl = new JLabel(EmarkingDesktop.lang.getString("moodleurl"));
 		lblMoodleUrl.setBounds(10, 37, 109, 14);
 		panel_2.add(lblMoodleUrl);
 		lblMoodleUrl.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel lblUsername = new JLabel(EmarkingDesktop.lang.getString("username"));
 		lblUsername.setBounds(10, 68, 109, 14);
 		panel_2.add(lblUsername);
 		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel lblMoodleSettings = new JLabel(EmarkingDesktop.lang.getString("moodlesettings"));
 		lblMoodleSettings.setBounds(10, 11, 230, 14);
 		panel_2.add(lblMoodleSettings);
@@ -250,66 +259,108 @@ public class OptionsDialog extends JDialog {
 				testConnection();
 			}
 		});
-		
+
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_3.setBounds(10, 159, 665, 90);
+		panel_3.setBounds(10, 159, 666, 131);
 		panel.add(panel_3);
 		panel_3.setLayout(null);
-		
+
 		JLabel lblPdfFile = new JLabel(EmarkingDesktop.lang.getString("pdffile"));
 		lblPdfFile.setBounds(0, 39, 119, 14);
 		panel_3.add(lblPdfFile);
 		lblPdfFile.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel lblScanned = new JLabel(EmarkingDesktop.lang.getString("scanned"));
 		lblScanned.setBounds(0, 64, 119, 14);
 		panel_3.add(lblScanned);
 		lblScanned.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		chckbxDoubleSide = new JCheckBox(EmarkingDesktop.lang.getString("doubleside"));
 		chckbxDoubleSide.setEnabled(false);
 		chckbxDoubleSide.setBounds(125, 60, 117, 23);
 		panel_3.add(chckbxDoubleSide);
 		chckbxDoubleSide.setToolTipText(EmarkingDesktop.lang.getString("doublesidetooltip"));
 		this.chckbxDoubleSide.setSelected(this.moodle.isDoubleside());
-		
+
 		filename = new JTextField();
 		filename.setEnabled(false);
 		filename.setBounds(129, 36, 329, 20);
 		panel_3.add(filename);
 		filename.setColumns(10);
 		filename.getDocument().addDocumentListener(new DocumentListener() {
-			
+
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				warn();
 			}
-			
+
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				warn();
 			}
-			
+
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				warn();
 			}
-			
+
 			private void warn() {
 				validateFileForProcessing(!btnTestConnection.isEnabled());
 			}
 		});
 		this.filename.setText(this.moodle.getLastfile());
-		
+
 		btnOpenPdfFile = new JButton(EmarkingDesktop.lang.getString("openfile"));
 		btnOpenPdfFile.setEnabled(false);
 		btnOpenPdfFile.setBounds(468, 33, 172, 27);
 		panel_3.add(btnOpenPdfFile);
-		
+
 		JLabel lblPdfFileSettings = new JLabel(EmarkingDesktop.lang.getString("filesettings"));
 		lblPdfFileSettings.setBounds(10, 11, 230, 14);
 		panel_3.add(lblPdfFileSettings);
+
+		JLabel lblOMRtemplate = new JLabel(EmarkingDesktop.lang.getString("omrfile"));
+		lblOMRtemplate.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOMRtemplate.setBounds(0, 95, 119, 14);
+		panel_3.add(lblOMRtemplate);
+
+		omrtemplate = new JTextField();
+		omrtemplate.setEnabled(false);
+		omrtemplate.setText((String) null);
+		omrtemplate.setColumns(10);
+		omrtemplate.setBounds(129, 92, 329, 20);
+		panel_3.add(omrtemplate);
+
+		btnOpenOMRTemplate = new JButton(EmarkingDesktop.lang.getString("openomrfile"));
+		btnOpenOMRTemplate.setEnabled(false);
+		btnOpenOMRTemplate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle(EmarkingDesktop.lang.getString("openfiletitle"));
+				chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				chooser.setFileFilter(new FileFilter() {					
+					@Override
+					public String getDescription() {
+						return "*.xtmpl";
+					}
+					@Override
+					public boolean accept(File arg0) {
+						if(arg0.getName().endsWith(".xtmpl") || arg0.isDirectory())
+							return true;
+						return false;
+					}
+				});
+				int retval = chooser.showOpenDialog(panel);
+				if(retval == JFileChooser.APPROVE_OPTION) {
+					omrtemplate.setText(chooser.getSelectedFile().getAbsolutePath());
+				} else {
+					return;
+				}
+			}
+		});
+		btnOpenOMRTemplate.setBounds(468, 89, 172, 27);
+		panel_3.add(btnOpenOMRTemplate);
 		btnOpenPdfFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				okButton.setEnabled(false);
@@ -337,50 +388,50 @@ public class OptionsDialog extends JDialog {
 				}
 			}
 		});
-		
+
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab(EmarkingDesktop.lang.getString("advanced"), null, panel_1, null);
 		panel_1.setLayout(null);
-		
+
 		JPanel panel_4 = new JPanel();
 		panel_4.setLayout(null);
 		panel_4.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		panel_4.setBounds(10, 11, 665, 131);
 		panel_1.add(panel_4);
-		
+
 		JLabel lblAdvancedOptions = new JLabel(EmarkingDesktop.lang.getString("advancedoptions"));
 		lblAdvancedOptions.setBounds(10, 11, 233, 14);
 		panel_4.add(lblAdvancedOptions);
-		
+
 		JLabel lblThreads = new JLabel(EmarkingDesktop.lang.getString("maxthreads"));
 		lblThreads.setBounds(10, 38, 130, 14);
 		panel_4.add(lblThreads);
 		lblThreads.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel lblSomething = new JLabel(EmarkingDesktop.lang.getString("separatezipfiles"));
 		lblSomething.setBounds(10, 73, 130, 14);
 		panel_4.add(lblSomething);
 		lblSomething.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		JLabel label = new JLabel(EmarkingDesktop.lang.getString("resolution"));
 		label.setBounds(10, 105, 130, 14);
 		panel_4.add(label);
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		resolution = new JComboBox<Integer>();
 		resolution.setBounds(150, 99, 169, 27);
 		panel_4.add(resolution);
 		resolution.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {75, 100, 150, 300, 400, 500, 600}));
 		resolution.setSelectedIndex(2);
 		this.resolution.setSelectedItem(this.moodle.getQr().getResolution());		
-		
+
 		maxZipSize = new JComboBox<String>();
 		maxZipSize.setBounds(150, 67, 169, 27);
 		panel_4.add(maxZipSize);
 		maxZipSize.setModel(new DefaultComboBoxModel<String>(new String[] {"<dynamic>", "2Mb", "4Mb", "8Mb", "16Mb", "32Mb", "64Mb", "128Mb", "256Mb", "512Mb", "1024Mb"}));
 		maxZipSize.setSelectedIndex(6);
 		this.maxZipSize.setSelectedItem(this.moodle.getMaxZipSizeString());
-		
+
 		maxThreads = new JComboBox<Integer>();
 		maxThreads.setBounds(150, 32, 169, 27);
 		panel_4.add(maxThreads);
@@ -388,7 +439,7 @@ public class OptionsDialog extends JDialog {
 		maxThreads.setSelectedIndex(1);
 		this.maxThreads.setSelectedItem(this.moodle.getQr().getMaxThreads());
 	}
-	
+
 	public boolean getDoubleSideSelected() {
 		return chckbxDoubleSide.isSelected();
 	}
@@ -430,6 +481,9 @@ public class OptionsDialog extends JDialog {
 				okButton.setEnabled(true);
 		}		
 	}
+	public String getOMRTemplate() {
+		return this.omrtemplate.getText();
+	}
 	private void testConnection() {
 		btnTestConnection.setEnabled(false);
 		logger.debug("Testing Moodle connection");
@@ -447,6 +501,8 @@ public class OptionsDialog extends JDialog {
 			username.setEnabled(false);
 			moodleurl.setEnabled(false);
 			password.setEnabled(false);
+			btnOpenOMRTemplate.setEnabled(true);
+			omrtemplate.setEnabled(true);
 			validateFileForProcessing(true);
 		} else {
 			JOptionPane.showMessageDialog(panel, EmarkingDesktop.lang.getString("connectionfailed"));					

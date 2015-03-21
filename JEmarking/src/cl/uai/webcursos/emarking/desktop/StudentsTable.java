@@ -29,7 +29,8 @@ public class StudentsTable extends JTable {
 	private final static String[] columnNames = {
 		"#",
 		EmarkingDesktop.lang.getString("student"),
-		EmarkingDesktop.lang.getString("pages")
+		EmarkingDesktop.lang.getString("pages"),
+		"Answers"
 	};
 
 	/**
@@ -71,6 +72,7 @@ public class StudentsTable extends JTable {
 					this.setValueAt(st.getRownumber()+1, i, 0);
 					this.setValueAt(st.getFullname(), i, 1);
 					this.setValueAt(st.getPages(), i, 2);
+					this.setValueAt(st.getAnswersValues(), i, 3);
 				} else {
 					logger.error("Invalid student");
 				}
@@ -80,6 +82,7 @@ public class StudentsTable extends JTable {
 		this.setValueAt(student.getRownumber()+1, row, 0);
 		this.setValueAt(student.getFullname(), row, 1);
 		this.setValueAt(student.getPages(), row, 2);
+		this.setValueAt(student.getAnswersValues(), row, 3);
 
 		// Resize columns code
 		for(int i=0;i<this.model.getColumnCount();i++) {

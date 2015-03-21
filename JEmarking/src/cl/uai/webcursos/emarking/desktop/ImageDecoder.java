@@ -11,11 +11,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
+import com.albertoborsetta.formscanner.api.FormField;
+import com.albertoborsetta.formscanner.api.FormTemplate;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
@@ -33,13 +37,13 @@ import com.google.zxing.qrcode.QRCodeReader;
 public class ImageDecoder implements Runnable {
 
 	private static Logger logger = Logger.getLogger(ImageDecoder.class);
-	
+
 	private int filenumber = 0;
-	
+
 	private File tempdir;
 
 	private boolean doubleside = false;
-	
+
 	private QrDecodingResult qrResult;
 
 	public QrDecodingResult getQrResult() {
@@ -72,20 +76,23 @@ public class ImageDecoder implements Runnable {
 
 	private BufferedImage qr;
 	
-	public ImageDecoder(BufferedImage _img, BufferedImage _back, int _filenumber, File _tmpdir) {
+	private File omrTemplateFile = null;
+
+	public ImageDecoder(BufferedImage _img, BufferedImage _back, int _filenumber, File _tmpdir, File _omrTemplateFile) {
 		this.image = _img;
 		this.backimage = _back;
 		this.reader = new QRCodeReader();
 		this.filenumber = _filenumber;
 		this.tempdir = _tmpdir;
-		
+		this.omrTemplateFile = _omrTemplateFile;
+
 		if(this.backimage != null) {
 			this.doubleside = true;
 		}
 	}
-	
+
 	private BufferedImage createAnonymousVersion(BufferedImage image) {
-		int cropHeight = (int) ((float) image.getHeight() / 10.0f);
+		int cropHeight = (int) Math.max(((float) image.getHeight() / 10.0f),130);
 		BufferedImage anonymousimage = new BufferedImage(
 				image.getWidth(), 
 				image.getHeight(), 
@@ -99,17 +106,17 @@ public class ImageDecoder implements Runnable {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, anonymousimage.getWidth(), cropHeight);
 		g.dispose();
-		
+
 		return anonymousimage;
 	}
-	
+
 	public BufferedImage getAnonymous() {
 		return anonymous;
 	}
 	public int getFilenumber() {
 		return filenumber;
 	}
-	
+
 	public BufferedImage getImage() {
 		return image;
 	}
@@ -117,15 +124,15 @@ public class ImageDecoder implements Runnable {
 	public BufferedImage getQr() {
 		return qr;
 	}
-	
+
 	public boolean isRotated() {
 		return rotated;
 	}
-	
+
 	public boolean isSuccess() {
 		return success;
 	}
-	
+
 	private BufferedImage rotateImage180(BufferedImage image) {
 		// Flip the image vertically and horizontally; equivalent to rotating the image 180 degrees
 		AffineTransform tx = AffineTransform.getScaleInstance(-1, -1);
@@ -134,7 +141,7 @@ public class ImageDecoder implements Runnable {
 		image = op.filter(image, null);
 		return image;
 	}
-	
+
 	private BinaryBitmap extractTopRightCornerForQR(BufferedImage image) {
 		BufferedImage subimage = image.getSubimage(
 				image.getWidth() - image.getWidth() / 4, 0,
@@ -143,10 +150,10 @@ public class ImageDecoder implements Runnable {
 				subimage);
 		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(
 				source));
-		
+
 		return bitmap;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
@@ -159,19 +166,19 @@ public class ImageDecoder implements Runnable {
 		// If we couldn't find a code, but we have a backpage, we try processing it
 		if(!qrResult.isSuccess() && this.doubleside) {
 			QrDecodingResult qrresultback = decodeQR(backimage, filenumber);
-			
+
 			// If the backpage contains a valid QR then it was flipped, we flip the front and backpages
 			if(qrresultback.isSuccess()) {
 				// Flip front and backpages
 				BufferedImage tmp = this.image;
 				this.image = this.backimage;
 				this.backimage = tmp;
-				
+
 				// Replace decoding info with the backpage
 				qrResult = qrresultback;
 			}
 		}
-		
+
 		// If images were rotated, both are rotated
 		if(qrResult.isSuccess() && qrResult.isRotated()) {
 			this.image = rotateImage180(this.image);
@@ -185,64 +192,94 @@ public class ImageDecoder implements Runnable {
 		if(this.doubleside) {
 			this.backanonymous = createAnonymousVersion(this.backimage);
 		}
-		
+
 		this.success = qrResult.isSuccess();
 		this.rotated = qrResult.isRotated();
+		
+		int threshold = 127;
+		int density = 40;
+		int shapeSize = 8;
+
+		if(this.success && qrResult.isAnswersheet() && this.omrTemplateFile != null) {
+			Map<String, String> answers = new HashMap<String, String>();
+			FormTemplate formTemplate = null;
+			try {
+				formTemplate = new FormTemplate(this.omrTemplateFile);
+				FormTemplate filledForm = new FormTemplate(qrResult.getFilename(), formTemplate);
+				filledForm.findCorners(anonymous, threshold, density);
+				filledForm.findPoints(anonymous, threshold, density, shapeSize);
+
+				for(String key : filledForm.getFields().keySet()) {
+					FormField ff = filledForm.getField(key);
+					answers.put(key, ff.getValues());
+				}
+				
+				qrResult.setAnswers(answers);
+			} catch (Exception e) {
+				logger.error("Problem with the OMR template");
+				e.printStackTrace();
+			}
+		}
 		
 		// Now write images as files
 		try {
 			ImageIO.write((RenderedImage) image, "png", 
 					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + ".png"));
-				ImageIO.write((RenderedImage) anonymous, "png",			
+			ImageIO.write((RenderedImage) anonymous, "png",			
 					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "_a.png"));
 			if(doubleside) {
 				ImageIO.write((RenderedImage) backimage, "png", 
 						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + ".png"));
 				ImageIO.write((RenderedImage) backanonymous, "png", 
 						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "_a.png"));
-				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private QrDecodingResult decodeQR(BufferedImage image, int filenumber) {
 		// Create qr image from original for decoding
 		BinaryBitmap bitmap = extractTopRightCornerForQR(image);
 		QrDecodingResult decodingresult = new QrDecodingResult();
-		
+
 		try {
 			// Decode QR
 			Result result = reader.decode(bitmap);
-			
+
 			// Clean the output from the QR
 			decodingresult.setOutput(result.getText().replace(" ", "").trim());
-			
+
 			// The image filename will be the output
 			decodingresult.setFilename(decodingresult.getOutput());
-			
+
 			// Consistency checking
 			if(decodingresult.getFilename().length() == 0) {
 				decodingresult.setFilename("ERROR-EMPTYQR-" + (filenumber + 1));
 			} else {
 				String[] parts = decodingresult.getFilename().split("-");
 
-				// Now check if the image is rotated
-				if(parts.length == 4 && parts[3].trim().contains("R")) {
-					// If the QR indicates that the page is rotated then rotate both images (if doublesided)					
-					decodingresult.setRotated(true);
-					
+				// Now check if the QR string has a fourth component (either image is rotated or it is an answer sheet)
+				if(parts.length == 4) {
+					if(parts[3].trim().contains("R")) {
+						// If the QR indicates that the page is rotated then rotate both images (if doublesided)					
+						decodingresult.setRotated(true);					
+					} else if(parts[3].trim().contains("BB")) {
+						// If the QR indicates that it is an answer sheet, set it					
+						decodingresult.setAnswersheet(true);
+					}
+					// Set filename with the first three parts only
 					decodingresult.setFilename(parts[0].trim() + "-" + parts[1].trim() + "-" + parts[2].trim());
 				}
-				
+
 				// If everything looks well, parse the numbers from the decoded QR info
-				if((parts.length == 3 || (parts.length == 4 && decodingresult.isRotated())) 
+				if((parts.length == 3 || (parts.length == 4 && (decodingresult.isRotated() || decodingresult.isAnswersheet()))) 
 						&& parts[0].trim().length() > 0) {
-					
+
 					decodingresult.setUserid(Integer.parseInt(parts[0]));
 					decodingresult.setCourseid(Integer.parseInt(parts[1]));
 					decodingresult.setExampage(Integer.parseInt(parts[2]));
-					
+
 					decodingresult.setSuccess(true);
 				} else {
 					logger.error("QR contains invalid information");
@@ -258,9 +295,9 @@ public class ImageDecoder implements Runnable {
 		} catch(Exception e) {
 			decodingresult.setFilename("ERROR-NULL-" + (filenumber + 1));
 		}
-		
+
 		decodingresult.setBackfilename(decodingresult.getFilename() + "b");
-		
+
 		return decodingresult;
 	}
 }
