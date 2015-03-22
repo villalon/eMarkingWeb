@@ -42,6 +42,8 @@ import org.ghost4j.Ghostscript;
 import org.ghost4j.GhostscriptException;
 import org.ghost4j.document.DocumentException;
 
+import cl.uai.webcursos.emarking.desktop.data.Moodle;
+
 /**
  * @author Jorge Villalón
  *
@@ -88,16 +90,6 @@ public class QRextractor implements Runnable {
 
 	private boolean doubleside = false;
 	
-	private File omrTemplate = null;
-
-	public File getOmrTemplate() {
-		return omrTemplate;
-	}
-
-	public void setOmrTemplate(File omrTemplate) {
-		this.omrTemplate = omrTemplate;
-	}
-
 	private String pdffile = null;
 
 	private TreeMap<Integer, Map<Integer, String>> decodedpages = null;
@@ -105,11 +97,14 @@ public class QRextractor implements Runnable {
 	private TreeMap<Integer, String> errorpages = null;
 
 	private EventListenerList listenerList = null;
+	
+	private Moodle moodle;
 
-	public QRextractor() {
-		listenerList = new EventListenerList();
-		decodedpages = new TreeMap<Integer, Map<Integer, String>>();
-		errorpages = new TreeMap<Integer, String>();
+	public QRextractor(Moodle _moodle) {
+		this.listenerList = new EventListenerList();
+		this.decodedpages = new TreeMap<Integer, Map<Integer, String>>();
+		this.errorpages = new TreeMap<Integer, String>();
+		this.moodle = _moodle;
 	}
 
 	/**
@@ -310,7 +305,7 @@ public class QRextractor implements Runnable {
 							nextpageimage, 
 							filenumber,
 							tempdir,
-							omrTemplate);
+							this.moodle);
 
 					decoderthreads[j] = new Thread(decoders[j]);
 					decoderthreads[j].start();

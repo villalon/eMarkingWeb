@@ -59,6 +59,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
+import javax.swing.JSpinner;
 
 public class OptionsDialog extends JDialog {
 
@@ -84,6 +85,9 @@ public class OptionsDialog extends JDialog {
 	private JButton btnOpenPdfFile;
 	private final JTextField omrtemplate;
 	private JButton btnOpenOMRTemplate;
+	private JSpinner spinnerOMRshapeSize;
+	private JSpinner spinnerOMRdensity;
+	private JSpinner spinnerOMRthreshold;
 
 	/**
 	 * @return the cancelled
@@ -140,6 +144,9 @@ public class OptionsDialog extends JDialog {
 							moodle.setResolution(Integer.parseInt(getResolution().getSelectedItem().toString())); 
 							moodle.setMaxzipsize(getMaxZipSize().getSelectedItem().toString());
 							moodle.setOMRTemplate(omrtemplate.getText());
+							moodle.setThreshold(Integer.parseInt(spinnerOMRthreshold.getValue().toString()));
+							moodle.setDensity(Integer.parseInt(spinnerOMRdensity.getValue().toString()));
+							moodle.setShapeSize(Integer.parseInt(spinnerOMRshapeSize.getValue().toString()));
 							moodle.saveProperties();
 							cancelled = false;
 							setVisible(false);
@@ -331,6 +338,7 @@ public class OptionsDialog extends JDialog {
 		omrtemplate.setColumns(10);
 		omrtemplate.setBounds(129, 92, 329, 20);
 		panel_3.add(omrtemplate);
+		omrtemplate.setText(this.moodle.getOMRTemplate());
 
 		btnOpenOMRTemplate = new JButton(EmarkingDesktop.lang.getString("openomrfile"));
 		btnOpenOMRTemplate.setEnabled(false);
@@ -438,6 +446,46 @@ public class OptionsDialog extends JDialog {
 		maxThreads.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {2, 4, 8, 16}));
 		maxThreads.setSelectedIndex(1);
 		this.maxThreads.setSelectedItem(this.moodle.getQr().getMaxThreads());
+		
+		JPanel panel_5 = new JPanel();
+		panel_5.setLayout(null);
+		panel_5.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		panel_5.setBounds(10, 153, 665, 131);
+		panel_1.add(panel_5);
+		
+		JLabel lblOMRoptions = new JLabel(EmarkingDesktop.lang.getString("omroptions"));
+		lblOMRoptions.setBounds(10, 11, 233, 14);
+		panel_5.add(lblOMRoptions);
+		
+		JLabel lblOMRthreshold = new JLabel(EmarkingDesktop.lang.getString("omrthreshold"));
+		lblOMRthreshold.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblOMRthreshold.setBounds(10, 32, 130, 14);
+		panel_5.add(lblOMRthreshold);
+		
+		JLabel lblShapeSize = new JLabel(EmarkingDesktop.lang.getString("omrshapesize"));
+		lblShapeSize.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblShapeSize.setBounds(10, 99, 130, 14);
+		panel_5.add(lblShapeSize);
+		
+		JLabel lblDensity = new JLabel(EmarkingDesktop.lang.getString("omrdensity"));
+		lblDensity.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblDensity.setBounds(10, 70, 130, 14);
+		panel_5.add(lblDensity);
+		
+		spinnerOMRthreshold = new JSpinner();
+		spinnerOMRthreshold.setBounds(150, 32, 169, 20);
+		panel_5.add(spinnerOMRthreshold);
+		spinnerOMRthreshold.setValue(this.moodle.getOMRthreshold());
+		
+		spinnerOMRdensity = new JSpinner();
+		spinnerOMRdensity.setBounds(150, 67, 169, 20);
+		panel_5.add(spinnerOMRdensity);
+		spinnerOMRdensity.setValue(this.moodle.getOMRdensity());
+		
+		spinnerOMRshapeSize = new JSpinner();
+		spinnerOMRshapeSize.setBounds(150, 99, 169, 20);
+		panel_5.add(spinnerOMRshapeSize);
+		spinnerOMRshapeSize.setValue(this.moodle.getOMRshapeSize());
 	}
 
 	public boolean getDoubleSideSelected() {

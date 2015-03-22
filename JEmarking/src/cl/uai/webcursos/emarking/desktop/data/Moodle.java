@@ -93,7 +93,11 @@ public class Moodle {
 	/** Stores the last file processed by user **/
 	private String lastfile;
 
+	/** OMR template for parsing bubbles **/
 	private String omrTemplate;
+	private int threshold = 127;
+	private int density = 40;
+	private int shapesize = 8;
 	
 	/**
 	 * @return the QR extractor
@@ -110,7 +114,7 @@ public class Moodle {
 	}
 	
 	public Moodle() {
-		this.qrExtractor = new QRextractor();
+		this.qrExtractor = new QRextractor(this);
 		this.clearPages();
 	}
 
@@ -545,6 +549,15 @@ public class Moodle {
 		if(p.containsKey("omrtemplate")) {
 			setOMRTemplate(p.getProperty("omrtemplate"));
 		}
+		if(p.containsKey("threshold")) {
+			setThreshold(Integer.parseInt(p.getProperty("threshold")));
+		}
+		if(p.containsKey("density")) {
+			setDensity(Integer.parseInt(p.getProperty("density")));
+		}
+		if(p.containsKey("shapesize")) {
+			setShapeSize(Integer.parseInt(p.getProperty("shapesize")));
+		}
 	}
 
 	public void setResolution(int resolution) {
@@ -585,6 +598,9 @@ public class Moodle {
 		p.setProperty("maxzipsize", this.maxzipsize);
 		p.setProperty("ajaxurl", this.moodleAjaxUrl);
 		p.setProperty("omrtemplate", this.omrTemplate);
+		p.setProperty("threshold", Integer.toString(this.threshold));
+		p.setProperty("density", Integer.toString(this.density));
+		p.setProperty("shapesize", Integer.toString(this.shapesize));
 		try {
 			p.store(new FileOutputStream(f), "eMarking for Moodle");
 		} catch (Exception e) {
@@ -650,17 +666,33 @@ public class Moodle {
 
 	public void setOMRTemplate(String text) {
 		this.omrTemplate = text;
-		if(this.omrTemplate == null || this.omrTemplate.trim().length() == 0)
-			this.qrExtractor.setOmrTemplate(null);
-		
-		File f = new File(this.omrTemplate);
-		if(f.exists())
-			this.qrExtractor.setOmrTemplate(f);
-		else
-			this.qrExtractor.setOmrTemplate(null);
 	}
 	
 	public String getOMRTemplate() {
 		return this.omrTemplate;
+	}
+
+	public int getOMRdensity() {
+		return this.density;
+	}
+
+	public void setThreshold(int threshold) {
+		this.threshold = threshold;
+	}
+
+	public void setDensity(int density) {
+		this.density = density;
+	}
+
+	public void setShapeSize(int shapeSize) {
+		this.shapesize = shapeSize;
+	}
+
+	public int getOMRthreshold() {
+		return this.threshold;
+	}
+
+	public int getOMRshapeSize() {
+		return this.shapesize;
 	}
 }

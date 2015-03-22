@@ -3,7 +3,7 @@
  */
 package cl.uai.webcursos.emarking.desktop;
 
-import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Jorge Villalón
@@ -21,7 +21,7 @@ public class QrDecodingResult {
 	private boolean flipped = false;
 	private boolean success = false;
 	private String backfilename;
-	private Map<String, String> answers = null;
+	private TreeMap<String, String> answers = null;
 	
 	/**
 	 * @return the success
@@ -157,14 +157,14 @@ public class QrDecodingResult {
 	/**
 	 * @return the answers
 	 */
-	public Map<String, String> getAnswers() {
+	public TreeMap<String, String> getAnswers() {
 		return answers;
 	}
 
 	/**
 	 * @param answers the answers to set
 	 */
-	public void setAnswers(Map<String, String> answers) {
+	public void setAnswers(TreeMap<String, String> answers) {
 		this.answers = answers;
 	}
 }

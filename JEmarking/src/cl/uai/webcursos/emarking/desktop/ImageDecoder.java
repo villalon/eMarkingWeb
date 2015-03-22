@@ -11,12 +11,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
+
+import cl.uai.webcursos.emarking.desktop.data.Moodle;
 
 import com.albertoborsetta.formscanner.api.FormField;
 import com.albertoborsetta.formscanner.api.FormTemplate;
@@ -76,15 +77,15 @@ public class ImageDecoder implements Runnable {
 
 	private BufferedImage qr;
 	
-	private File omrTemplateFile = null;
+	private Moodle moodle;
 
-	public ImageDecoder(BufferedImage _img, BufferedImage _back, int _filenumber, File _tmpdir, File _omrTemplateFile) {
+	public ImageDecoder(BufferedImage _img, BufferedImage _back, int _filenumber, File _tmpdir, Moodle _moodle) {
 		this.image = _img;
 		this.backimage = _back;
 		this.reader = new QRCodeReader();
 		this.filenumber = _filenumber;
 		this.tempdir = _tmpdir;
-		this.omrTemplateFile = _omrTemplateFile;
+		this.moodle = _moodle;
 
 		if(this.backimage != null) {
 			this.doubleside = true;
@@ -196,18 +197,15 @@ public class ImageDecoder implements Runnable {
 		this.success = qrResult.isSuccess();
 		this.rotated = qrResult.isRotated();
 		
-		int threshold = 127;
-		int density = 40;
-		int shapeSize = 8;
-
-		if(this.success && qrResult.isAnswersheet() && this.omrTemplateFile != null) {
-			Map<String, String> answers = new HashMap<String, String>();
+		if(this.success && qrResult.isAnswersheet() && this.moodle.getOMRTemplate() != null) {
+			TreeMap<String, String> answers = new TreeMap<String, String>();
 			FormTemplate formTemplate = null;
 			try {
-				formTemplate = new FormTemplate(this.omrTemplateFile);
+				File omrtemplatefile = new File(this.moodle.getOMRTemplate());
+				formTemplate = new FormTemplate(omrtemplatefile);
 				FormTemplate filledForm = new FormTemplate(qrResult.getFilename(), formTemplate);
-				filledForm.findCorners(anonymous, threshold, density);
-				filledForm.findPoints(anonymous, threshold, density, shapeSize);
+				filledForm.findCorners(anonymous, this.moodle.getOMRthreshold(), this.moodle.getOMRdensity());
+				filledForm.findPoints(anonymous, this.moodle.getOMRthreshold(), this.moodle.getOMRdensity(), this.moodle.getOMRshapeSize());
 
 				for(String key : filledForm.getFields().keySet()) {
 					FormField ff = filledForm.getField(key);
@@ -259,27 +257,28 @@ public class ImageDecoder implements Runnable {
 			} else {
 				String[] parts = decodingresult.getFilename().split("-");
 
-				// Now check if the QR string has a fourth component (either image is rotated or it is an answer sheet)
-				if(parts.length == 4) {
-					if(parts[3].trim().contains("R")) {
-						// If the QR indicates that the page is rotated then rotate both images (if doublesided)					
-						decodingresult.setRotated(true);					
-					} else if(parts[3].trim().contains("BB")) {
-						// If the QR indicates that it is an answer sheet, set it					
-						decodingresult.setAnswersheet(true);
-					}
-					// Set filename with the first three parts only
-					decodingresult.setFilename(parts[0].trim() + "-" + parts[1].trim() + "-" + parts[2].trim());
+				// Now check if the QR string has five parts (which indicates it is an answer sheet)
+				if(parts.length == 5 && parts[4].trim().contains("BB")) {
+					decodingresult.setAnswersheet(true);
 				}
-
+				
+				// Now check if the QR string has a fourth component (image is rotated)
+				if(parts.length == 4 && parts[3].trim().contains("R")) {
+					decodingresult.setRotated(true);					
+				}
+				
 				// If everything looks well, parse the numbers from the decoded QR info
-				if((parts.length == 3 || (parts.length == 4 && (decodingresult.isRotated() || decodingresult.isAnswersheet()))) 
-						&& parts[0].trim().length() > 0) {
+				if(parts.length >= 3) {
 
+					// Parse the parts (any exception will be caught as an error)
 					decodingresult.setUserid(Integer.parseInt(parts[0]));
 					decodingresult.setCourseid(Integer.parseInt(parts[1]));
 					decodingresult.setExampage(Integer.parseInt(parts[2]));
-
+					
+					// Set filename with the corresponding IDs
+					decodingresult.setFilename(decodingresult.getUserid() + "-" + decodingresult.getCourseid() + "-" + decodingresult.getExampage());
+					
+					// Processing was a success
 					decodingresult.setSuccess(true);
 				} else {
 					logger.error("QR contains invalid information");
@@ -296,6 +295,7 @@ public class ImageDecoder implements Runnable {
 			decodingresult.setFilename("ERROR-NULL-" + (filenumber + 1));
 		}
 
+		// Regardless of the result, the back-file name is the sames as the file with a b
 		decodingresult.setBackfilename(decodingresult.getFilename() + "b");
 
 		return decodingresult;

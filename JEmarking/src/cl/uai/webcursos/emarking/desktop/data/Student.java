@@ -21,6 +21,7 @@
 package cl.uai.webcursos.emarking.desktop.data;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Student {
 
@@ -29,7 +30,7 @@ public class Student {
 	private String idnumber;
 	private int rownumber;
 	private int pages = 0;
-	private Map<String, String> answers;
+	private TreeMap<String, String> answers;
 	
 	/**
 	 * @return the id
@@ -105,13 +106,13 @@ public class Student {
 	/**
 	 * @return the answers
 	 */
-	public Map<String, String> getAnswers() {
+	public TreeMap<String, String> getAnswers() {
 		return answers;
 	}
 	/**
 	 * @param answers the answers to set
 	 */
-	public void setAnswers(Map<String, String> answers) {
+	public void setAnswers(TreeMap<String, String> answers) {
 		this.answers = answers;
 	}
 	public String getAnswersValues() {
@@ -119,8 +120,8 @@ public class Student {
 		if(this.answers == null)
 			return output;
 		
-		for(String key : this.answers.keySet()) {
-			output += key + ":" + this.answers.get(key) + ";";
+		for(Map.Entry<String, String> entry : this.answers.entrySet()) {
+			output += entry.getKey() + ":" + entry.getValue() + ";";
 		}
 		return output;
 	}
