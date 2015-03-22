@@ -67,7 +67,7 @@ public class Moodle {
 	/** User agent to use when connecting to Moodle **/
 	public static final String USER_AGENT = "Mozilla/5.0";
 	/** URL of the eMarking's REST service in Moodle **/
-	public static final String EMARKING_MODULE_URL = "mod/emarking/ajaxdesktop.php";
+	public static final String EMARKING_MODULE_URL = "mod/emarking/ajax/d.php";
 	/** Moodle installation URL **/
 	private String moodleUrl;
 	/** Moodle username **/
