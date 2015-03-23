@@ -12,7 +12,7 @@
             Deploys a zip file containing the jar and libraries to the moodle installation
     </description>
 	
-	<property name="moodle.dir"     value="/Users/jorgevillalon/Sites/webcursos"/>
+	<property name="moodle.dir"     value="C:/xampp/htdocs/webcursos"/>
 
     <!-- ================================= 
           target: deploy-local              
