@@ -22,6 +22,7 @@ public class QrDecodingResult {
 	private boolean success = false;
 	private String backfilename;
 	private TreeMap<String, String> answers = null;
+	private int attemptid;
 	
 	/**
 	 * @return the success
@@ -166,5 +167,13 @@ public class QrDecodingResult {
 	 */
 	public void setAnswers(TreeMap<String, String> answers) {
 		this.answers = answers;
+	}
+
+	public int getAttemptId() {
+		return this.attemptid;
+	}
+	
+	public void setAttemptId(int id) {
+		this.attemptid = id;
 	}
 }

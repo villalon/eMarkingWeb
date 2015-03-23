@@ -193,6 +193,8 @@ public class EmarkingDesktop {
 				if(p.getStudent() != null) {
 					if(qrResult.isAnswersheet()) {
 						p.getStudent().setAnswers(qrResult.getAnswers());
+						p.getStudent().setAttemptid(qrResult.getAttemptId());
+						moodle.setAnswerSheets(true);
 					}
 					p.getStudent().addPage(p);
 					studentsTable.updateData(p.getStudent());
@@ -696,7 +698,18 @@ public class EmarkingDesktop {
 			}
 			int num = 1;
 			for(File zip : zipFiles) {
-				File dest = new File(zipfilename + num + ".zip");
+				String filename = zipfilename + ".zip";
+				if(num > 1) {
+					filename = zipfilename + "_" + num + ".zip";
+				}
+				File dest = new File(filename);
+				if(dest.exists()) {
+					int result = JOptionPane.showConfirmDialog(frame, "File " + filename + 
+						 " already exists. Overwrite?", "Alert", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+					if(result == JOptionPane.YES_OPTION) {
+						dest.delete();
+					}
+				}
 				zip.renameTo(dest);
 				num++;
 			}

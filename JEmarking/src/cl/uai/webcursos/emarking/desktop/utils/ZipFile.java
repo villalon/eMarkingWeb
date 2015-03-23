@@ -24,6 +24,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -117,29 +120,31 @@ public class ZipFile implements Runnable  {
 			for(String file : this.fileList){
 				String zipfilename = zipFile + currentfile + ".zip";
 				currentimage++;
-				String[] parts = file.split("-");
-				if(parts.length != 3) {
-					logger.error("Invalid file in directory");
-				}
-				if(!laststudent.equals(parts[0])) {
-					laststudent = parts[0];
-					accumulateddata += studentdatasize;
-					studentdatasize = 0;
+				if(!file.equals("answers.txt")) {
+					String[] parts = file.split("-");
+					if(parts.length != 3) {
+						logger.error("Invalid file in directory " + file);
+					}
+					if(!laststudent.equals(parts[0])) {
+						laststudent = parts[0];
+						accumulateddata += studentdatasize;
+						studentdatasize = 0;
 
-					if(accumulateddata > datalimit) {
-						currentfile++;
-						accumulateddata = 0;
+						if(accumulateddata > datalimit) {
+							currentfile++;
+							accumulateddata = 0;
 
-						zos.closeEntry();
-						zos.close();
+							zos.closeEntry();
+							zos.close();
 
-						zipfilename = zipFile + currentfile + ".zip";
-						logger.debug("New file created " + zipfilename);
+							zipfilename = zipFile + currentfile + ".zip";
+							logger.debug("New file created " + zipfilename);
 
-						fos = new FileOutputStream(zipfilename);
-						zos = new ZipOutputStream(fos);
+							fos = new FileOutputStream(zipfilename);
+							zos = new ZipOutputStream(fos);
 
-						zips.add(new File(zipfilename));
+							zips.add(new File(zipfilename));
+						}
 					}
 				}
 
@@ -203,6 +208,18 @@ public class ZipFile implements Runnable  {
 
 	@Override
 	public void run() {
+
+		if(moodle.isAnswerSheets()) {
+			Path path = Paths.get(moodle.getQr().getTempdirStringPath() + "/answers.txt");
+			logger.info("Saving answers to " + path.toString());
+			try {
+				Files.write(path, moodle.getStudentOMRAnswers().getBytes());
+			} catch (IOException e1) {
+				logger.error("Error writing answers");
+				e1.printStackTrace();
+			}
+		}
+
 		this.generateFileList(new File(moodle.getQr().getTempdirStringPath()));
 		logger.debug("Files to include in zip:" + this.fileList.size());
 
@@ -271,7 +288,7 @@ public class ZipFile implements Runnable  {
 			zis.close();
 
 			logger.info("Done");
-			
+
 			return totalFiles;
 
 		} catch(IOException ex){

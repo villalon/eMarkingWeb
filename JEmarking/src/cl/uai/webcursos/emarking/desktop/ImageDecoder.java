@@ -259,6 +259,7 @@ public class ImageDecoder implements Runnable {
 
 				// Now check if the QR string has five parts (which indicates it is an answer sheet)
 				if(parts.length == 5 && parts[4].trim().contains("BB")) {
+					decodingresult.setAttemptId(Integer.parseInt(parts[3]));
 					decodingresult.setAnswersheet(true);
 				}
 				

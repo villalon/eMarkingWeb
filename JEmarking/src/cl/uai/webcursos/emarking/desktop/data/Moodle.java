@@ -36,6 +36,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.json.Json;
@@ -60,7 +61,7 @@ import cl.uai.webcursos.emarking.desktop.QRextractor;
  *
  */
 public class Moodle {
-	
+
 	/** For logging **/
 	private static Logger logger = Logger.getLogger(Moodle.class);
 
@@ -76,42 +77,32 @@ public class Moodle {
 	private String moodlePassword;
 	/** Scanning was made for both sides of pages **/
 	private boolean doubleSide;
-	public int getMaxthreads() {
-		return qrExtractor.getMaxThreads();
-	}
-
-	public String getMaxzipsize() {
-		return maxzipsize;
-	}
-
 	/** Max zip size before generating multiple zips **/
 	private String maxzipsize = "64Mb";
+
 	/** The scanned and processed pages **/
 	private Pages studentPages;
+
 	/** The QR extractor **/
 	private QRextractor qrExtractor;
 	/** Stores the last file processed by user **/
 	private String lastfile;
-
-	/** OMR template for parsing bubbles **/
+	/** OMR template for parsing multiple choice marks **/
 	private String omrTemplate;
+	/** OMR settings. Threshold {@link http://www.formscanner.org/} **/
 	private int threshold = 127;
+	/** OMR settings. Density {@link http://www.formscanner.org/} **/
 	private int density = 40;
+	/** OMR settings. ShapeSize {@link http://www.formscanner.org/}**/
 	private int shapesize = 8;
-	
-	/**
-	 * @return the QR extractor
-	 */
-	public QRextractor getQr() {
-		return qrExtractor;
-	}
+	/** Students data **/
+	private Hashtable<Integer, Student> students = new Hashtable<Integer, Student>();
+	/** Courses data **/
+	private Hashtable<Integer, Course> courses = new Hashtable<Integer, Course>();
+	/** Enrolments data **/
+	private Hashtable<Integer, Course> usercourses = new Hashtable<Integer, Course>();
 
-	/**
-	 * @return the pages
-	 */
-	public Pages getPages() {
-		return studentPages;
-	}
+	private boolean answerSheets = false;
 	
 	public Moodle() {
 		this.qrExtractor = new QRextractor(this);
@@ -125,28 +116,6 @@ public class Moodle {
 		this.courses = new Hashtable<Integer, Course>();
 	}
 
-	public QRextractor getQrExtractor() {
-		return this.qrExtractor;
-	}
-
-	/**
-	 * @return the doubleside
-	 */
-	public boolean isDoubleside() {
-		return doubleSide;
-	}
-
-	/**
-	 * @param doubleside the doubleside to set
-	 */
-	public void setDoubleside(boolean doubleside) {
-		this.doubleSide = doubleside;
-	}
-
-	private Hashtable<Integer, Student> students = new Hashtable<Integer, Student>();
-	private Hashtable<Integer, Course> courses = new Hashtable<Integer, Course>();
-	private Hashtable<Integer, Course> usercourses = new Hashtable<Integer, Course>();
-
 	public boolean connect() {
 		try {
 			retrieveCourses();
@@ -157,37 +126,262 @@ public class Moodle {
 		}
 	}
 
-	public void retrieveStudents(int courseId) throws Exception {
+	/**
+	 * @return the courses
+	 */
+	public Hashtable<Integer, Course> getCourses() {
+		return courses;
+	}
 
-		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+courseId+"&username="+moodleUsername+"&password="+moodlePassword);
+	/**
+	 * @return the lastfile
+	 */
+	public String getLastfile() {
+		return lastfile;
+	}
+
+	public int getMaxthreads() {
+		return qrExtractor.getMaxThreads();
+	}
+
+	public int getMaxThreads() {
+		return this.qrExtractor.getMaxThreads();
+	}
+	public String getMaxzipsize() {
+		return maxzipsize;
+	}
+	public int getMaxZipSize() {
+		int datasize = 0;
+		if(this.maxzipsize.equals(EmarkingDesktop.lang.getString("nosplit"))) {
+			datasize = Integer.MAX_VALUE;
+		} else {
+			datasize = Integer.parseInt(this.maxzipsize.toLowerCase().replaceAll("mb", ""));
+		}
+		return datasize;
+	}
+
+	public String getMaxZipSizeString() {
+		return this.maxzipsize;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getMoodleAjaxUrl() {
+		return moodleAjaxUrl;
+	}
+
+	public int getOMRdensity() {
+		return this.density;
+	}
+
+	public int getOMRshapeSize() {
+		return this.shapesize;
+	}
+
+	public String getOMRTemplate() {
+		return this.omrTemplate;
+	}
+
+	public int getOMRthreshold() {
+		return this.threshold;
+	}
+
+	/**
+	 * @return the pages
+	 */
+	public Pages getPages() {
+		return studentPages;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return moodlePassword;
+	}
+
+	/**
+	 * @return the QR extractor
+	 */
+	public QRextractor getQr() {
+		return qrExtractor;
+	}
+
+	public QRextractor getQrExtractor() {
+		return this.qrExtractor;
+	}
+
+	public Student getStudentByRowNumber(int row) {
+		for(Student st : this.students.values()) {
+			if(st.getRownumber() == row)
+				return st;
+		}
+		return null;
+	}
+
+	/**
+	 * @return the students
+	 */
+	public Hashtable<Integer, Student> getStudents() {
+		return students;
+	}
+
+	/**
+	 * Creates a json string with all student answers
+	 * @return
+	 */
+	public String getStudentOMRAnswers() {
+		StringBuilder string = new StringBuilder();
+		string.append("{\n\"students\" : [\n");
+		for(Map.Entry<Integer, Student> entry : this.students.entrySet()) {
+			string.append("\t{ \"userid\" : " + entry.getKey() + ",\n");
+			string.append("\t\"attemptid\" : " + entry.getValue().getAttemptid() + ",\n");
+			if(entry.getValue().getAnswers() != null) {
+				string.append("\t\"answers\" : [\n");
+				for(Map.Entry<String, String> questionEntry : entry.getValue().getAnswers().entrySet()) {
+					string.append("\t\t{\"question\" : \"" + questionEntry.getKey() + "\",");
+					string.append("\t\t\"value\" : \"" + questionEntry.getValue() + "\"},\n");
+				}
+				string.append("\t\t]\n");
+			}
+			string.append("\t},\n");
+		}
+		string.append("]\n}");
+		return string.toString();
+	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return moodleUrl;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return moodleUsername;
+	}
+
+	/**
+	 * @return the doubleside
+	 */
+	public boolean isDoubleside() {
+		return doubleSide;
+	}
+
+	public void loadProperties() {
+		Properties p = new Properties();
+		File f = new File("moodle.properties");
+		if(f.exists()) {
+			try {
+				p.load(new FileInputStream(f));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		if(p.containsKey("moodleurl")) {
+			setUrl(p.getProperty("moodleurl"));
+		}
+		if(p.containsKey("username")) {
+			setUsername(p.getProperty("username"));
+		}
+		if(p.containsKey("filename")) {
+			setLastfile(p.getProperty("filename"));
+		}
+		if(p.containsKey("doubleside")) {
+			setDoubleside(p.getProperty("doubleside").equals("true"));
+		}
+		if(p.containsKey("maxthreads")) {
+			setMaxthreads(Integer.parseInt(p.getProperty("maxthreads")));
+		}
+		if(p.containsKey("resolution")) {
+			setResolution(Integer.parseInt(p.getProperty("resolution")));
+		}
+		if(p.containsKey("maxzipsize")) {
+			setMaxzipsize(p.getProperty("maxzipsize"));
+		}
+		if(p.containsKey("ajaxurl")) {
+			setMoodleAjaxUrl(p.getProperty("ajaxurl"));
+		}
+		if(p.containsKey("omrtemplate")) {
+			setOMRTemplate(p.getProperty("omrtemplate"));
+		}
+		if(p.containsKey("threshold")) {
+			setThreshold(Integer.parseInt(p.getProperty("threshold")));
+		}
+		if(p.containsKey("density")) {
+			setDensity(Integer.parseInt(p.getProperty("density")));
+		}
+		if(p.containsKey("shapesize")) {
+			setShapeSize(Integer.parseInt(p.getProperty("shapesize")));
+		}
+	}
+
+	private String makeMoodleRequest(String urlpostfix) throws Exception {
+		URL obj = new URL(moodleUrl + urlpostfix);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+		// optional default is GET
+		con.setRequestMethod("GET");
+
+		//add request header
+		con.setRequestProperty("User-Agent", USER_AGENT);
+
+		int responseCode = con.getResponseCode();
+		logger.debug("Sending 'GET' request to URL : " + moodleUrl + urlpostfix.replaceAll("password=.*", "password=xxxx&"));
+		logger.debug("Response Code : " + responseCode);
+
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+
+		return response.toString();
+	}
+
+	public JsonArray parseMoodleResponse(String response) throws Exception {
+		JsonReader jsonreader = Json.createReader(new StringReader(response));
+		JsonObject jobj = jsonreader.readObject();
+		String error = jobj.getString("error");
+		logger.debug("Error code:"+error);
+
+		if(error.trim().equals("")) {
+			jsonreader = Json.createReader(new StringReader(jobj.get("values").toString()));
+			JsonArray jarr = jsonreader.readArray();
+			return jarr;
+		} else {
+			logger.error(error);
+			throw new Exception(error);
+		}
+	}
+
+	public void retrieveCourseFromId(int courseid) throws Exception {
+
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courseinfo&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
+		JsonObject job = jarr.getJsonObject(0);
 
-		if(students == null)
-			students = new Hashtable<Integer, Student>();
+		int id = Integer.parseInt(job.getString("id"));			
+		String shortname = job.getString("shortname");			
+		String fullname = job.getString("fullname");
 
-			for(int i=0;i<jarr.size();i++) {
-				try {
-					JsonObject job = jarr.getJsonObject(i);
-					int id = Integer.parseInt(job.getString("id"));			
-					String idnumber = job.getString("idnumber");			
-					String studentname = job.getString("lastname") + ", " + job.getString("firstname");
+		Course st = new Course();
+		st.setId(id);
+		st.setShortname(shortname);
+		st.setFullname(fullname);
 
-					Student st = new Student();
-					st.setId(id);
-					st.setIdnumber(idnumber);
-					st.setFullname(studentname);
-
-					if(!students.containsKey(id)) {
-						st.setRownumber(students.keySet().size());
-						students.put(id, st);
-					}
-
-					logger.debug("id:" + id + " student:" + studentname + " idnumber:" + idnumber);
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-				}
-			}
+		courses.put(id, st);
 	}
 
 	private void retrieveCourses() throws Exception {
@@ -216,6 +410,99 @@ public class Moodle {
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
+		}
+	}
+
+	public Hashtable<Integer, Activity> retrieveEmarkingActivities(
+			Hashtable<Integer, Course> courses) {
+		Hashtable<Integer, Activity> output = new Hashtable<Integer, Activity>();
+		for(int courseid : courses.keySet()) {
+			try {
+				Hashtable<Integer, Activity> outputCourse = retrieveEmarkingActivities(courseid);
+				output.putAll(outputCourse);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return output;
+	}
+
+	private Hashtable<Integer, Activity> retrieveEmarkingActivities(int courseid) throws Exception {
+
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=activities&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
+
+		Hashtable<Integer, Activity> activities = new Hashtable<Integer, Activity>();
+		JsonArray jarr = parseMoodleResponse(response);
+		for(int i=0;i<jarr.size();i++) {
+			try {
+				JsonObject job = jarr.getJsonObject(i);
+				int id = Integer.parseInt(job.getString("id"));			
+				String name = job.getString("name");
+
+				Activity st = new Activity();
+				st.setId(id);
+				st.setName(name);
+
+				activities.put(id, st);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return activities;
+	}
+
+	public void retrieveStudents(int courseId) throws Exception {
+
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+courseId+"&username="+moodleUsername+"&password="+moodlePassword);
+
+		JsonArray jarr = parseMoodleResponse(response);
+
+		if(students == null)
+			students = new Hashtable<Integer, Student>();
+
+		for(int i=0;i<jarr.size();i++) {
+			try {
+				JsonObject job = jarr.getJsonObject(i);
+				int id = Integer.parseInt(job.getString("id"));			
+				String idnumber = job.getString("idnumber");			
+				String studentname = job.getString("lastname") + ", " + job.getString("firstname");
+
+				Student st = new Student();
+				st.setId(id);
+				st.setIdnumber(idnumber);
+				st.setFullname(studentname);
+
+				if(!students.containsKey(id)) {
+					st.setRownumber(students.keySet().size());
+					students.put(id, st);
+				}
+
+				logger.debug("id:" + id + " student:" + studentname + " idnumber:" + idnumber);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+	}
+
+	public void saveProperties() {
+		Properties p = new Properties();
+		File f = new File("moodle.properties");
+		p.setProperty("moodleurl", this.moodleUrl);
+		p.setProperty("username", this.moodleUsername);
+		p.setProperty("filename", this.lastfile);
+		p.setProperty("doubleside", this.doubleSide ? "true" : "false");
+		p.setProperty("maxthreads", Integer.toString(this.qrExtractor.getMaxThreads()));
+		p.setProperty("resolution", Integer.toString(this.qrExtractor.getResolution()));
+		p.setProperty("maxzipsize", this.maxzipsize);
+		p.setProperty("ajaxurl", this.moodleAjaxUrl);
+		p.setProperty("omrtemplate", this.omrTemplate);
+		p.setProperty("threshold", Integer.toString(this.threshold));
+		p.setProperty("density", Integer.toString(this.density));
+		p.setProperty("shapesize", Integer.toString(this.shapesize));
+		try {
+			p.store(new FileOutputStream(f), "eMarking for Moodle");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -251,68 +538,61 @@ public class Moodle {
 		return courses;
 	}
 
-	public void retrieveCourseFromId(int courseid) throws Exception {
-
-		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courseinfo&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
-
-		JsonArray jarr = parseMoodleResponse(response);
-		JsonObject job = jarr.getJsonObject(0);
-
-		int id = Integer.parseInt(job.getString("id"));			
-		String shortname = job.getString("shortname");			
-		String fullname = job.getString("fullname");
-
-		Course st = new Course();
-		st.setId(id);
-		st.setShortname(shortname);
-		st.setFullname(fullname);
-
-		courses.put(id, st);
-	}
-
-	private Hashtable<Integer, Activity> retrieveEmarkingActivities(int courseid) throws Exception {
-
-		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=activities&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
-
-		Hashtable<Integer, Activity> activities = new Hashtable<Integer, Activity>();
-		JsonArray jarr = parseMoodleResponse(response);
-		for(int i=0;i<jarr.size();i++) {
-			try {
-				JsonObject job = jarr.getJsonObject(i);
-				int id = Integer.parseInt(job.getString("id"));			
-				String name = job.getString("name");
-
-				Activity st = new Activity();
-				st.setId(id);
-				st.setName(name);
-
-				activities.put(id, st);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return activities;
+	public void setDensity(int density) {
+		this.density = density;
 	}
 
 	/**
-	 * @return the courses
+	 * @param doubleside the doubleside to set
 	 */
-	public Hashtable<Integer, Course> getCourses() {
-		return courses;
+	public void setDoubleside(boolean doubleside) {
+		this.doubleSide = doubleside;
 	}
 
 	/**
-	 * @return the students
+	 * @param lastfile the lastfile to set
 	 */
-	public Hashtable<Integer, Student> getStudents() {
-		return students;
+	public void setLastfile(String lastfile) {
+		this.lastfile = lastfile;
+	}
+
+	public void setMaxthreads(int maxthreads) {
+		this.qrExtractor.setMaxThreads(maxthreads);
+	}
+
+	public void setMaxzipsize(String maxzipsize) {
+		this.maxzipsize = maxzipsize;
 	}
 
 	/**
-	 * @return the url
+	 * 
+	 * @param moodleAjaxUrl
 	 */
-	public String getUrl() {
-		return moodleUrl;
+	public void setMoodleAjaxUrl(String moodleAjaxUrl) {
+		this.moodleAjaxUrl = moodleAjaxUrl;
+	}
+
+	public void setOMRTemplate(String text) {
+		this.omrTemplate = text;
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.moodlePassword = password;
+	}
+
+	public void setResolution(int resolution) {
+		this.qrExtractor.setResolution(resolution);
+	}
+
+	public void setShapeSize(int shapeSize) {
+		this.shapesize = shapeSize;
+	}
+
+	public void setThreshold(int threshold) {
+		this.threshold = threshold;
 	}
 
 	/**
@@ -323,58 +603,10 @@ public class Moodle {
 	}
 
 	/**
-	 * @return the username
-	 */
-	public String getUsername() {
-		return moodleUsername;
-	}
-
-	/**
 	 * @param username the username to set
 	 */
 	public void setUsername(String username) {
 		this.moodleUsername = username;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return moodlePassword;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.moodlePassword = password;
-	}
-
-	private String makeMoodleRequest(String urlpostfix) throws Exception {
-		URL obj = new URL(moodleUrl + urlpostfix);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
-		con.setRequestMethod("GET");
-
-		//add request header
-		con.setRequestProperty("User-Agent", USER_AGENT);
-
-		int responseCode = con.getResponseCode();
-		logger.debug("Sending 'GET' request to URL : " + moodleUrl + urlpostfix.replaceAll("password=.*", "password=xxxx&"));
-		logger.debug("Response Code : " + responseCode);
-
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-
-		return response.toString();
 	}
 
 	public boolean uploadFile(File fileToUpload, Activity activity, String newactivityname, boolean merge, int courseId) throws Exception {
@@ -495,204 +727,17 @@ public class Moodle {
 		return true;
 	}
 
-	public JsonArray parseMoodleResponse(String response) throws Exception {
-		JsonReader jsonreader = Json.createReader(new StringReader(response));
-		JsonObject jobj = jsonreader.readObject();
-		String error = jobj.getString("error");
-		logger.debug("Error code:"+error);
-
-		if(error.trim().equals("")) {
-			jsonreader = Json.createReader(new StringReader(jobj.get("values").toString()));
-			JsonArray jarr = jsonreader.readArray();
-			return jarr;
-		} else {
-			logger.error(error);
-			throw new Exception(error);
-		}
-	}
-
-	public void loadProperties() {
-		Properties p = new Properties();
-		File f = new File("moodle.properties");
-		if(f.exists()) {
-			try {
-				p.load(new FileInputStream(f));
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
-		}
-		if(p.containsKey("moodleurl")) {
-			setUrl(p.getProperty("moodleurl"));
-		}
-		if(p.containsKey("username")) {
-			setUsername(p.getProperty("username"));
-		}
-		if(p.containsKey("filename")) {
-			setLastfile(p.getProperty("filename"));
-		}
-		if(p.containsKey("doubleside")) {
-			setDoubleside(p.getProperty("doubleside").equals("true"));
-		}
-		if(p.containsKey("maxthreads")) {
-			setMaxthreads(Integer.parseInt(p.getProperty("maxthreads")));
-		}
-		if(p.containsKey("resolution")) {
-			setResolution(Integer.parseInt(p.getProperty("resolution")));
-		}
-		if(p.containsKey("maxzipsize")) {
-			setMaxzipsize(p.getProperty("maxzipsize"));
-		}
-		if(p.containsKey("ajaxurl")) {
-			setMoodleAjaxUrl(p.getProperty("ajaxurl"));
-		}
-		if(p.containsKey("omrtemplate")) {
-			setOMRTemplate(p.getProperty("omrtemplate"));
-		}
-		if(p.containsKey("threshold")) {
-			setThreshold(Integer.parseInt(p.getProperty("threshold")));
-		}
-		if(p.containsKey("density")) {
-			setDensity(Integer.parseInt(p.getProperty("density")));
-		}
-		if(p.containsKey("shapesize")) {
-			setShapeSize(Integer.parseInt(p.getProperty("shapesize")));
-		}
-	}
-
-	public void setResolution(int resolution) {
-		this.qrExtractor.setResolution(resolution);
-	}
-
-	public void setMaxthreads(int maxthreads) {
-		this.qrExtractor.setMaxThreads(maxthreads);
-	}
-
-	public void setMaxzipsize(String maxzipsize) {
-		this.maxzipsize = maxzipsize;
+	/**
+	 * @return the answerSheets
+	 */
+	public boolean isAnswerSheets() {
+		return answerSheets;
 	}
 
 	/**
-	 * @return the lastfile
+	 * @param answerSheets the answerSheets to set
 	 */
-	public String getLastfile() {
-		return lastfile;
-	}
-
-	/**
-	 * @param lastfile the lastfile to set
-	 */
-	public void setLastfile(String lastfile) {
-		this.lastfile = lastfile;
-	}
-
-	public void saveProperties() {
-		Properties p = new Properties();
-		File f = new File("moodle.properties");
-		p.setProperty("moodleurl", this.moodleUrl);
-		p.setProperty("username", this.moodleUsername);
-		p.setProperty("filename", this.lastfile);
-		p.setProperty("doubleside", this.doubleSide ? "true" : "false");
-		p.setProperty("maxthreads", Integer.toString(this.qrExtractor.getMaxThreads()));
-		p.setProperty("resolution", Integer.toString(this.qrExtractor.getResolution()));
-		p.setProperty("maxzipsize", this.maxzipsize);
-		p.setProperty("ajaxurl", this.moodleAjaxUrl);
-		p.setProperty("omrtemplate", this.omrTemplate);
-		p.setProperty("threshold", Integer.toString(this.threshold));
-		p.setProperty("density", Integer.toString(this.density));
-		p.setProperty("shapesize", Integer.toString(this.shapesize));
-		try {
-			p.store(new FileOutputStream(f), "eMarking for Moodle");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public int getMaxZipSize() {
-		int datasize = 0;
-		if(this.maxzipsize.equals(EmarkingDesktop.lang.getString("nosplit"))) {
-			datasize = Integer.MAX_VALUE;
-		} else {
-			datasize = Integer.parseInt(this.maxzipsize.toLowerCase().replaceAll("mb", ""));
-		}
-		return datasize;
-	}
-
-	public String getMaxZipSizeString() {
-		return this.maxzipsize;
-	}
-
-	public int getMaxThreads() {
-		return this.qrExtractor.getMaxThreads();
-	}
-
-	public Hashtable<Integer, Activity> retrieveEmarkingActivities(
-			Hashtable<Integer, Course> courses) {
-		Hashtable<Integer, Activity> output = new Hashtable<Integer, Activity>();
-		for(int courseid : courses.keySet()) {
-			try {
-				Hashtable<Integer, Activity> outputCourse = retrieveEmarkingActivities(courseid);
-				output.putAll(outputCourse);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return output;
-	}
-
-	public Student getStudentByRowNumber(int row) {
-		for(Student st : this.students.values()) {
-			if(st.getRownumber() == row)
-				return st;
-		}
-		return null;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getMoodleAjaxUrl() {
-		return moodleAjaxUrl;
-	}
-
-	/**
-	 * 
-	 * @param moodleAjaxUrl
-	 */
-	public void setMoodleAjaxUrl(String moodleAjaxUrl) {
-		this.moodleAjaxUrl = moodleAjaxUrl;
-	}
-
-	public void setOMRTemplate(String text) {
-		this.omrTemplate = text;
-	}
-	
-	public String getOMRTemplate() {
-		return this.omrTemplate;
-	}
-
-	public int getOMRdensity() {
-		return this.density;
-	}
-
-	public void setThreshold(int threshold) {
-		this.threshold = threshold;
-	}
-
-	public void setDensity(int density) {
-		this.density = density;
-	}
-
-	public void setShapeSize(int shapeSize) {
-		this.shapesize = shapeSize;
-	}
-
-	public int getOMRthreshold() {
-		return this.threshold;
-	}
-
-	public int getOMRshapeSize() {
-		return this.shapesize;
+	public void setAnswerSheets(boolean answerSheets) {
+		this.answerSheets = answerSheets;
 	}
 }

@@ -31,6 +31,7 @@ public class Student {
 	private int rownumber;
 	private int pages = 0;
 	private TreeMap<String, String> answers;
+	private int attemptid;
 	
 	/**
 	 * @return the id
@@ -124,5 +125,17 @@ public class Student {
 			output += entry.getKey() + ":" + entry.getValue() + ";";
 		}
 		return output;
+	}
+	/**
+	 * @return the attemptid
+	 */
+	public int getAttemptid() {
+		return attemptid;
+	}
+	/**
+	 * @param attemptid the attemptid to set
+	 */
+	public void setAttemptid(int attemptid) {
+		this.attemptid = attemptid;
 	}
 }
