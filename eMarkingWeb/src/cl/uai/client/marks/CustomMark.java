@@ -57,7 +57,7 @@ public class CustomMark extends Mark {
 	}
 
 	@Override
-	protected void setMarkHTML() {
+	public void setMarkHTML() {
 		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+ MarkingInterface.getMapCss().get(colour) +"\">"+this.getTitle()+"</div>";
 		this.setHTML(html);		
 	}

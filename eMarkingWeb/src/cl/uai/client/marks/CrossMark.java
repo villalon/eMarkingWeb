@@ -58,7 +58,7 @@ public class CrossMark extends Mark {
 	}
 
 	@Override
-	protected void setMarkHTML() {
+	public void setMarkHTML() {
 		//int indexSelected = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
 		Icon icon = new Icon(IconType.REMOVE);
 		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+ " " + MarkingInterface.getMapCss().get(colour) + "\">"+icon.toString()+"</div>";

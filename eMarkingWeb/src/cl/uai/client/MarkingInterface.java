@@ -1152,8 +1152,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 				// Add the mark to the rubric so it updates the information in the rubric panel
 				EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(mark);
-				
-
+				mark.setMarkHTML();
 				
 				// Updates toolbar
 				setTimemodified(timemodified);

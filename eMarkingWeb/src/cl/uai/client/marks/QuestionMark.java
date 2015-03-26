@@ -55,7 +55,7 @@ public class QuestionMark extends Mark {
 	}
 
 	@Override
-	protected void setMarkHTML() {
+	public void setMarkHTML() {
 		Icon icon = new Icon(IconType.QUESTION_SIGN);
 		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+icon.toString()+"</div>";
 		this.setHTML(html);		

@@ -209,7 +209,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 	/**
 	 * Sets the inner HTML according to an icon
 	 */
-	protected void setMarkHTML() {
+	public void setMarkHTML() {
 		
 		// Starts with an empty HTML
 		String html = "";

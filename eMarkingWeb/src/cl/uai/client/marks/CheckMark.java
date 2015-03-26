@@ -57,7 +57,7 @@ public class CheckMark extends Mark {
 	}
 
 	@Override
-	protected void setMarkHTML() {
+	public void setMarkHTML() {
 		Icon icon = new Icon(IconType.OK);
 		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+ MarkingInterface.getMapCss().get(colour) +"\">"+icon.toString()+"</div>";
 		this.setHTML(html);		

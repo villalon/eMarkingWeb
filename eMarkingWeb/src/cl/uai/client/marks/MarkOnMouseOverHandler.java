@@ -49,7 +49,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 
 		// Calculates basic left, top position for icons
 		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() - (20);
-		int left = mark.getAbsoluteLeft() - (8);
+		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth() - (12);
 
 		// Check if icons and popup are already added in the panel, if not adds them
 		if(abspanel.getWidgetIndex(Mark.editIcon) < 0)
@@ -71,7 +71,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 				abspanel.setWidgetPosition(Mark.editIcon, left, top);
 				Mark.editIcon.setVisible(true);
 				Mark.editIcon.setMark(mark);
-				left += 15;
+				left -= 15;
 				top -= 1;
 			}
 
