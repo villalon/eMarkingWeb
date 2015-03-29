@@ -12,7 +12,7 @@
             Deploy the Concept Map web based editor as a zip file to a Moodle server.
     </description>
 	
-	<property name="moodle.dir"     value="C:/xampp/htdocs/moodle"/>
+	<property name="moodle.dir"     value="C:/xampp/htdocs/webcursos"/>
 
     <!-- ================================= 
           target: deploy-local              

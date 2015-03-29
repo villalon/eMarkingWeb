@@ -73,9 +73,9 @@
 .tabpage {
 	
 }
+
 .buttonspanel{
 	opacity: 0.80;
-    filter: alpha(opacity=80); /* For IE8 and earlier */
 }
 
 .tabbar {
@@ -314,10 +314,11 @@ to {
 	font-size: 10pt;
 }
 
-.bonuslist,.levelslist {
-	width: 220px;
+.bonuslist, .levelslist {
+	width: 200px;
 	margin-bottom: 3px;
 	margin-left: 10px;
+	text-align: right;
 }
 
 .levelslist {

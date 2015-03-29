@@ -34,6 +34,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -43,6 +45,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -105,10 +108,10 @@ public class EditMarkDialog extends DialogBox {
 		return levelId;
 	}
 
-	/** The list box with valid bonus values **/
-	private ListBox bonusList = null;
+	/** The bonus **/
+	private TextBox bonusTxt = null;
 
-	/** The list box with valid bonus values **/
+	/** The list box with valid level values **/
 	private ListBox levelsList = null;
 
 	/** Indicates if the dialog was cancelled **/
@@ -138,8 +141,8 @@ public class EditMarkDialog extends DialogBox {
 		this.setAnimationEnabled(true);
 		this.setGlassEnabled(true);
 
-		bonusList = new ListBox();
-		bonusList.addStyleName(Resources.INSTANCE.css().bonuslist());
+		bonusTxt = new TextBox();
+		bonusTxt.addStyleName(Resources.INSTANCE.css().bonuslist());
 
 		this.levelsList = new ListBox();
 		this.levelsList.addStyleName(Resources.INSTANCE.css().levelslist());
@@ -148,7 +151,6 @@ public class EditMarkDialog extends DialogBox {
 			public void onChange(ChangeEvent event) {
 				int levelid = Integer.parseInt(levelsList.getValue(levelsList.getSelectedIndex()));
 				levelId = levelid;
-				loadBonusList();
 				Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
 				setBonus(lvl.getBonus());
 			}
@@ -185,6 +187,10 @@ public class EditMarkDialog extends DialogBox {
 		btnSave.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				if(!bonusIsValid()) {
+					Window.alert(MarkingInterface.messages.InvalidBonusValue());
+					return;
+				}
 				cancelled = false;
 				hide();
 			}
@@ -219,16 +225,13 @@ public class EditMarkDialog extends DialogBox {
 
 		// If the rubric level is not null then create the bonus list and add it to the dialog 
 		if(this.levelId > 0) {
-
-			loadBonusList();
-
 			setBonus(lvl.getBonus());
 
 			HorizontalPanel hpanelBonus = new HorizontalPanel();
 			hpanelBonus.setWidth("100%");
 			hpanelBonus.add(new Label(MarkingInterface.messages.SetBonus()));
-			hpanelBonus.add(bonusList);
-			hpanelBonus.setCellHorizontalAlignment(bonusList, HasHorizontalAlignment.ALIGN_RIGHT);
+			hpanelBonus.add(bonusTxt);
+			hpanelBonus.setCellHorizontalAlignment(bonusTxt, HasHorizontalAlignment.ALIGN_RIGHT);
 			mainPanel.add(hpanelBonus);
 			mainPanel.setCellHorizontalAlignment(hpanelBonus, HasHorizontalAlignment.ALIGN_RIGHT);
 		}
@@ -295,14 +298,23 @@ public class EditMarkDialog extends DialogBox {
 	 * @return the bonus (e.g: -0.38)
 	 */
 	public float getBonus() {
-		if(this.bonusList == null || this.levelId <= 0)
+		if(this.bonusTxt.getText() == null || this.bonusTxt.getText().trim().length() == 0 || this.levelId <= 0)
 			return 0;
 
-		float currentbonus = 0;
-		String bonustxt = this.bonusList.getValue(this.bonusList.getSelectedIndex());
-		if(!bonustxt.equals("+0") && !bonustxt.equals("-0") && !bonustxt.equals("0")) {
-			currentbonus = (float) RubricMark.getNumberFormat(true).parse(bonustxt);
+		String text = bonusTxt.getText();
+		if (LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().equals(".")) {
+			text = text.replace(',','.');					
+		} else {
+			text = text.replace('.',',');					
 		}
+		bonusTxt.setText(text);
+
+		float currentbonus = 0;
+		String bonustxt = this.bonusTxt.getText();
+		if(!bonusTxt.getText().startsWith("+") && !bonusTxt.getText().startsWith("-")) {
+			bonustxt = '+' + bonustxt;
+		}
+		currentbonus = (float) RubricMark.getNumberFormat(true).parse(bonustxt);
 
 		return currentbonus;
 	}
@@ -324,7 +336,7 @@ public class EditMarkDialog extends DialogBox {
 		for(Level level : lvl.getCriterion().getLevels().values()) {
 
 			this.levelsList.addItem(
-					level.getDescription(),
+					level.getDescription() + " (" + RubricMark.scoreFormat(level.getScore(), false) + " pts)",
 					Integer.toString(level.getId()));
 
 			if(this.levelId == level.getId()) {
@@ -336,64 +348,6 @@ public class EditMarkDialog extends DialogBox {
 
 	}
 
-	/**
-	 * Creates a list box with valid bonus values
-	 */
-	private void loadBonusList() {
-		Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
-
-		double maxscore = lvl.getCriterion().getMaxscore();
-		double score = lvl.getScore();
-		double min = -score;
-		double max = maxscore - score;
-		double increment = 0.5f;
-
-		bonusList.clear();
-		boolean zeroAdded = false;
-		double lastmax = max;
-		int index=0;
-		if(min > 0) {
-			bonusList.addItem("0","0");
-			bonusList.setSelectedIndex(index);
-			zeroAdded = true;
-		}
-		for(double i=min;i<=max;i+=increment) {
-
-			String scoretxt = RubricMark.scoreFormat(i, true);
-			if(scoretxt.equals("+0") || scoretxt.equals("-0")) {
-				scoretxt = "0";
-			}
-
-			bonusList.addItem(scoretxt,scoretxt);
-
-			if(scoretxt.equals("0")) {
-				bonusList.setSelectedIndex(index);
-				zeroAdded = true;
-			}
-
-			index++;
-
-			if(i != 0 && i > -1 * increment / 2 && i < increment / 2 && !zeroAdded) {
-				bonusList.addItem("0","0");
-				bonusList.setSelectedIndex(index);
-				zeroAdded = true;
-				index++;
-			}
-
-			lastmax = i;
-		}
-		if(lastmax < 0 && !zeroAdded) {
-			bonusList.addItem("0","0");
-			bonusList.setSelectedIndex(index);
-			zeroAdded = true;
-		} else if(max - lastmax > increment) {
-			String scoretxt = RubricMark.scoreFormat(max, true);
-			bonusList.addItem(scoretxt,scoretxt);
-			bonusList.setSelectedIndex(index);
-			if(max == 0)
-				zeroAdded = true;
-		}
-	}
 
 	/**
 	 * Sets the selected bonus
@@ -406,18 +360,8 @@ public class EditMarkDialog extends DialogBox {
 			logger.warning("Edit dialog with no level associated. This shouldn't happen. Level id:" + this.levelId);
 			return;
 		}
-		
-		if(this.bonusList == null)
-			loadBonusList();
-		for(int i=0; i < this.bonusList.getItemCount(); i++) {
-			float currentbonus = 0;
-			String bonustxt = this.bonusList.getValue(i);
-			if(!bonustxt.equals("+0") && !bonustxt.equals("-0") && !bonustxt.equals("0")) {
-				currentbonus = (float) RubricMark.getNumberFormat(true).parse(bonustxt);
-			}
-			if(Math.abs(currentbonus - bonus) < 0.001f)
-				this.bonusList.setSelectedIndex(i);
-		}
+
+		this.bonusTxt.setText(RubricMark.getNumberFormat(true).format(bonus));
 	}
 
 	@Override
@@ -429,38 +373,30 @@ public class EditMarkDialog extends DialogBox {
 	
 	@Override
 	public boolean onKeyDownPreview(char key, int modifiers) {
-		int incr = 1;
-		int nextindex = 0;
 		switch (key) {
 		case KeyCodes.KEY_ESCAPE:
 			cancelled = true;
 			hide();
 			break;
 		case KeyCodes.KEY_ENTER:
+			if(!bonusIsValid()) {
+				Window.alert(MarkingInterface.messages.InvalidBonusValue());
+				break;
+			}			
 			cancelled = false;
 			hide();
 			break;
-		case KeyCodes.KEY_UP:
-
-			nextindex = bonusList.getSelectedIndex() + incr;
-			if (bonusList.getSelectedIndex() + 1 >= bonusList.getItemCount()) {
-				nextindex = bonusList.getItemCount() - 1;
-			}
-			bonusList.setSelectedIndex(nextindex);
-
-			break;
-		case KeyCodes.KEY_DOWN:
-			nextindex = bonusList.getSelectedIndex() - incr;
-			if (nextindex < 0) {
-				nextindex = 0;
-			}
-			bonusList.setSelectedIndex(nextindex);
-
-			break;
-			
 		}
-
 		return true;
 	}
-
+	
+	private boolean bonusIsValid() {
+		float bonus = getBonus();
+		Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
+		float maxscore = lvl.getCriterion().getMaxscore();
+		if(lvl.getScore() + bonus < 0 || lvl.getScore() + bonus > maxscore) {
+			return false;
+		}		
+		return true;
+	}
 }
