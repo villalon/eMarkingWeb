@@ -211,11 +211,19 @@ public class ZipFile implements Runnable  {
 
 		if(moodle.isAnswerSheets()) {
 			Path path = Paths.get(moodle.getQr().getTempdirStringPath() + "/answers.txt");
-			logger.info("Saving answers to " + path.toString());
+			logger.info("Saving answers in json format to " + path.toString());
 			try {
 				Files.write(path, moodle.getStudentOMRAnswers().getBytes());
 			} catch (IOException e1) {
-				logger.error("Error writing answers");
+				logger.error("Error writing answers in json");
+				e1.printStackTrace();
+			}
+			path = Paths.get(moodle.getQr().getTempdirStringPath() + "/answers.csv");
+			logger.info("Saving answers in CSV format to " + path.toString());
+			try {
+				Files.write(path, moodle.getStudentOMRAnswersCSV().getBytes());
+			} catch (IOException e1) {
+				logger.error("Error writing answers in CSV");
 				e1.printStackTrace();
 			}
 		}

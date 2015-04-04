@@ -88,7 +88,7 @@ public class Moodle {
 	/** Stores the last file processed by user **/
 	private String lastfile;
 	/** OMR template for parsing multiple choice marks **/
-	private String omrTemplate;
+	private String omrTemplate = null;
 	/** OMR settings. Threshold {@link http://www.formscanner.org/} **/
 	private int threshold = 127;
 	/** OMR settings. Density {@link http://www.formscanner.org/} **/
@@ -250,6 +250,33 @@ public class Moodle {
 		}
 		string.append("]\n}");
 		return string.toString();
+	}
+
+	/**
+	 * Creates a json string with all student answers
+	 * @return
+	 */
+	public String getStudentOMRAnswersCSV() {
+		StringBuilder string = new StringBuilder();
+		string.append("userid,attemptid,");
+		StringBuilder studentsstring = new StringBuilder();
+		int i=0;
+		for(Map.Entry<Integer, Student> entry : this.students.entrySet()) {
+			studentsstring.append(entry.getKey() + ",");
+			studentsstring.append(entry.getValue().getAttemptid() + ",");
+			if(entry.getValue().getAnswers() != null) {
+				for(Map.Entry<String, String> questionEntry : entry.getValue().getAnswers().entrySet()) {
+					if(i==0) {
+						string.append(questionEntry.getKey() + ",");
+					}
+						studentsstring.append(questionEntry.getValue() + ",");
+				}
+			}
+			studentsstring.append("\n");
+			i++;
+		}
+		string.append("\n");
+		return string.toString() + studentsstring.toString();
 	}
 
 	/**
@@ -495,7 +522,7 @@ public class Moodle {
 		p.setProperty("resolution", Integer.toString(this.qrExtractor.getResolution()));
 		p.setProperty("maxzipsize", this.maxzipsize);
 		p.setProperty("ajaxurl", this.moodleAjaxUrl);
-		p.setProperty("omrtemplate", this.omrTemplate);
+		p.setProperty("omrtemplate", this.omrTemplate == null ? "" : this.omrTemplate);
 		p.setProperty("threshold", Integer.toString(this.threshold));
 		p.setProperty("density", Integer.toString(this.density));
 		p.setProperty("shapesize", Integer.toString(this.shapesize));
@@ -573,7 +600,11 @@ public class Moodle {
 	}
 
 	public void setOMRTemplate(String text) {
-		this.omrTemplate = text;
+		File f = new File(text);
+		if(f.exists() && !f.isDirectory())
+			this.omrTemplate = text;
+		else
+			this.omrTemplate = null;
 	}
 
 	/**
