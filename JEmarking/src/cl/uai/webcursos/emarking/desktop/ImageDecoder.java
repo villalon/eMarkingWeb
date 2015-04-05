@@ -30,6 +30,7 @@ import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import com.jhlabs.image.MedianFilter;
 
 /**
  * @author jorgevillalon
@@ -143,16 +144,12 @@ public class ImageDecoder implements Runnable {
 		return image;
 	}
 
-	private BinaryBitmap extractTopRightCornerForQR(BufferedImage image) {
+	private BufferedImage extractTopRightCornerForQR(BufferedImage image) {
 		BufferedImage subimage = image.getSubimage(
 				image.getWidth() - image.getWidth() / 4, 0,
 				image.getWidth() / 4, image.getHeight() / 4);
-		LuminanceSource source = new BufferedImageLuminanceSource(
-				subimage);
-		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(
-				source));
 
-		return bitmap;
+		return subimage;
 	}
 
 	/* (non-Javadoc)
@@ -236,14 +233,49 @@ public class ImageDecoder implements Runnable {
 		}
 	}
 
+	private BinaryBitmap getBitmapFromBufferedImage(BufferedImage qrcorner) {
+		LuminanceSource source = new BufferedImageLuminanceSource(
+				qrcorner);
+		BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(
+				source));
+		return bitmap;
+	}
+	
 	private QrDecodingResult decodeQR(BufferedImage image, int filenumber) {
 		// Create qr image from original for decoding
-		BinaryBitmap bitmap = extractTopRightCornerForQR(image);
+
+		BufferedImage qrcorner = extractTopRightCornerForQR(image);
+
 		QrDecodingResult decodingresult = new QrDecodingResult();
 
 		try {
+			
 			// Decode QR
-			Result result = reader.decode(bitmap);
+			Result result = null;
+			Exception decodeException = null;
+
+			// Try to decode at least three times
+			int maxattempts = 3;
+			int attempt = 1;
+			while(attempt <= maxattempts) {
+				try {
+					BinaryBitmap bitmap = getBitmapFromBufferedImage(qrcorner);
+					result = reader.decode(bitmap);
+					decodeException = null;
+					break;
+				}  catch(Exception e) {
+					decodeException = e;
+				}
+				logger.debug("Attempt " + attempt);
+				attempt++;
+				com.jhlabs.image.MedianFilter filter = new MedianFilter();
+				BufferedImage newqrcorner = new BufferedImage(qrcorner.getWidth(), qrcorner.getHeight(), BufferedImage.TYPE_INT_RGB);
+				filter.filter(qrcorner, newqrcorner);
+				qrcorner = newqrcorner;
+			}
+			
+			if(decodeException != null)
+				throw decodeException;
 
 			// Clean the output from the QR
 			decodingresult.setOutput(result.getText().replace(" ", "").trim());

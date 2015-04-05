@@ -22,5 +22,6 @@
 	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/ghost4j/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/formscanner-api-0.10.0.jar"/>
 	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/JEmarking/lib/Filters.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
