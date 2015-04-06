@@ -839,3 +839,11 @@ background-color: #0057D9;
 	margin-right: 10px;
 	cursor: pointer;
 }
+.statisticalCircle{
+	height: 2em;
+	width: 2em;
+}
+.iconArrow{
+	font-size:2em;
+	line-height: 20px;
+}

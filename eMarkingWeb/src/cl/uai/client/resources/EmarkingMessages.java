@@ -108,4 +108,6 @@ public interface EmarkingMessages extends Messages {
 	public String Edit();
 	public String Delete();
 	public String QuestionTitle();
+	public String Published();
+	public String AgreeStatus();
 }

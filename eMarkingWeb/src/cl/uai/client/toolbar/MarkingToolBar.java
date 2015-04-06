@@ -27,13 +27,10 @@ import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
-import cl.uai.client.page.MarkingPage;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.SubmissionGradeData;
-import cl.uai.client.marks.Mark;
-import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
@@ -79,29 +76,26 @@ public class MarkingToolBar extends EMarkingComposite {
 	private HorizontalPanel infoLabelPanel = null;
 	private HorizontalPanel buttonsPanel = null;
 	private Label studentSelector = null;
-	private HTML progressStatusHtml = new HTML("");
-	private HTML progressPublishedHtml = new HTML("");
-	private HTML agreeStatusHtml = new HTML("");
 	
 	/** Icon(arrow) to show and hide the middle of the toolbar, circle with statistical information **/
 	private HorizontalPanel containerInformation = null;	
 	private boolean visibilityToolbar = false;
-	private  HTML containerIcon = new HTML("");
-	private final Icon iconArrowDown = new Icon(IconType.CHEVRON_DOWN);
-	private final Icon iconArrowUp = new Icon(IconType.CHEVRON_UP);
-	private Image circleProgressCorrection = new Image();
-	private Image circleProgressPublished = new Image();
-	private Image circleAgreeStatus = new Image();
+	private  HTML containerIcon = null;
+	private Icon iconArrowDown = null;
+	private Icon iconArrowUp = null;
+	private Image circleProgressCorrection = null;
+	private Image circleProgressPublished = null;
+	private Image circleAgreeStatus = null;
 	
 	/** Divs used in design **/
-	private HTML divLeft = new HTML("");
-	private HTML divMiddle = new HTML("");
-	private HTML divRight = new HTML("&ensp;");
+	private HTML divLeft = null;
+	private HTML divMiddle = null;
+	private HTML divRight = null;
 	
 	/** Pop up to display statistical information  **/
-	private MyPopup popUpProgressCorrection = new MyPopup();
-	private MyPopup popUpProgressPublished = new MyPopup();
-	private MyPopup popUpAgreeStatus = new MyPopup();
+	private MyPopup popUpProgressCorrection = null;
+	private MyPopup popUpProgressPublished = null;
+	private MyPopup popUpAgreeStatus = null;
 	
 	/** Buttons to select commands **/
 	private MarkingButtons markingButtons = null;
@@ -135,7 +129,7 @@ public class MarkingToolBar extends EMarkingComposite {
 	private Label lastSave = null;
 	
 	/**
-	 * Popup 
+	 * Popup with statistical data
 	 */
 	private static class MyPopup extends PopupPanel {
 	    public MyPopup() {
@@ -186,19 +180,14 @@ public class MarkingToolBar extends EMarkingComposite {
 		activityStudent.add(activityName);
 		activityStudent.setCellVerticalAlignment(activityName, HasVerticalAlignment.ALIGN_MIDDLE);
 		activityStudent.setCellHorizontalAlignment(activityName, HasHorizontalAlignment.ALIGN_RIGHT);
+		divRight = new HTML("&ensp;");
 		activityStudent.add(divRight);
 		activityStudent.add(studentSelector);
 		activityStudent.setCellVerticalAlignment(studentSelector, HasVerticalAlignment.ALIGN_MIDDLE);
 		activityStudent.setCellHorizontalAlignment(studentSelector, HasHorizontalAlignment.ALIGN_LEFT);
 		submissionPanel.add(activityStudent);
 		submissionPanel.add(lastSave);
-			
-		VerticalPanel progressBarsPanel = new VerticalPanel();
-		progressBarsPanel.add(progressStatusHtml);
-		progressBarsPanel.add(progressPublishedHtml);
-		progressBarsPanel.add(agreeStatusHtml);
 		
-		// Info label
 		infoLabelPanel = new HorizontalPanel();
 		infoLabelPanel.addStyleName(Resources.INSTANCE.css().toolbarinfo());
 		infoLabelPanel.setVisible(false);
@@ -210,16 +199,21 @@ public class MarkingToolBar extends EMarkingComposite {
 		infoLabelPanel.setCellHorizontalAlignment(submissionGrade, HasHorizontalAlignment.ALIGN_RIGHT);
 		mainPanel.add(infoLabelPanel);
 		// Implement show and hide the middle of the rubric, capture event clic in the arrow
+		containerIcon = new HTML("");
+		containerIcon.addStyleName(Resources.INSTANCE.css().iconArrow());
+		iconArrowDown = new Icon(IconType.CHEVRON_DOWN);
+		iconArrowUp = new Icon(IconType.CHEVRON_UP);
+		
 		containerIcon.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(infoLabelPanel.isVisible()){
 					infoLabelPanel.setVisible(false);
 					visibilityToolbar = false;
-			    	containerIcon.setHTML("<div style='font-size:2em;line-height: 20px; '>"+iconArrowDown.toString()+"</div>");
+			    	containerIcon.setHTML("<div>"+iconArrowDown.toString()+"</div>");
 			    }else{
 			    	visibilityToolbar = true;
 			    	infoLabelPanel.setVisible(true);
-					containerIcon.setHTML("<div style='font-size:2em;line-height: 20px;'>"+iconArrowUp.toString()+"</div>");
+					containerIcon.setHTML("<div>"+iconArrowUp.toString()+"</div>");
 				}
 			}
 		});
@@ -229,26 +223,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		finishMarkingButton.setVisible(false);
 		finishMarkingButton.addClickHandler(new ClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				// Count the total marks, rubric mark more toolbar mark
-				int allRubricMark = 0;
-				// If a rubric mark  is eliminated this becomes invisible
-				// Count how many rubric marks have been removed
-				int invisibleMark = 0;
-				VerticalPanel pages = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPagesPanel();
-				for(int i = 0; i < pages.getWidgetCount() ; i++){
-					Map<Integer, Mark> marks = ((MarkingPage) pages.getWidget(i)).getMarkWidgets();
-					allRubricMark+= ((MarkingPage)pages.getWidget(i)).isHaveRubricMark();
-					for(Mark m : marks.values()) {
-						if(m instanceof RubricMark){
-							if(!m.isVisible()){
-								invisibleMark++;
-							}
-						}
-					}
-				}
-				// Verify that there is at least one rubric mark, that means the rubric was used
-				if( (allRubricMark > 0 && invisibleMark == 0) || (allRubricMark > invisibleMark && allRubricMark > 0)){				
+			public void onClick(ClickEvent event) {			
 					if(MarkingInterface.submissionData != null && MarkingInterface.submissionData.getId() > 0) {
 					
 						FinishMarkingDialog finishDialog = new FinishMarkingDialog();
@@ -302,10 +277,6 @@ public class MarkingToolBar extends EMarkingComposite {
 						});
 						finishDialog.center();
 					}
-				}else{
-					//It has not been corrected any questions
-					Window.alert("You need to add one or more criteria in the rubric");
-				}
 			}
 		});
 		
@@ -359,31 +330,34 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellHorizontalAlignment(markingButtons, HasHorizontalAlignment.ALIGN_LEFT);
 		buttonsPanel.setCellWidth(markingButtons, "10%");
 		
-		// Add Arrow Icon
 		buttonsPanel.add(containerIcon);
 		buttonsPanel.setCellHorizontalAlignment(containerIcon, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellVerticalAlignment(containerIcon, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellWidth(containerIcon, "38%");
 		
-		// Add statistical circles
 		containerInformation = new HorizontalPanel();
 		containerInformation.setHeight("24px");
+		circleProgressCorrection = new Image();
 		containerInformation.add(circleProgressCorrection);
 		containerInformation.setCellHorizontalAlignment(circleProgressCorrection, HasHorizontalAlignment.ALIGN_RIGHT);
 		containerInformation.setCellVerticalAlignment(circleProgressCorrection, HasVerticalAlignment.ALIGN_MIDDLE);
 		containerInformation.setCellWidth(circleProgressCorrection,"20%");
 		
+		divMiddle = new HTML("");
 		containerInformation.add(divMiddle);
 		containerInformation.setCellWidth(divMiddle,"20%");
 		
+		circleProgressPublished = new Image();
 		containerInformation.add(circleProgressPublished);
 		containerInformation.setCellHorizontalAlignment(circleProgressPublished, HasHorizontalAlignment.ALIGN_CENTER);
 		containerInformation.setCellVerticalAlignment(circleProgressPublished, HasVerticalAlignment.ALIGN_MIDDLE);
 		containerInformation.setCellWidth(circleProgressPublished,"20%");
 		
+		divLeft =  new HTML("");
 		containerInformation.add(divLeft);
 		containerInformation.setCellWidth(divLeft,"20%");
 		
+		circleAgreeStatus = new Image();
 		containerInformation.add(circleAgreeStatus);
 		containerInformation.setCellHorizontalAlignment(circleAgreeStatus, HasHorizontalAlignment.ALIGN_LEFT);
 		containerInformation.setCellVerticalAlignment(circleAgreeStatus, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -438,9 +412,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		//TODO onload set progress bars values
 		//progressId: progressBar, pId: progressBarNum
 		//agreeId: agreeBar, pId: agreeBarNum
-		progressStatusHtml.setHTML("EN CORRECCIÓN: <progress id='progressBar' value='"+MarkingInterface.getGeneralProgress()+"' max='100'></progress> "+MarkingInterface.getGeneralProgress()+"%");
-		progressPublishedHtml.setHTML("PUBLICADAS: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<progress id='progressBar' value='"+MarkingInterface.getPublishedProgress()+"' max='100'></progress> "+MarkingInterface.getPublishedProgress()+"%");
-		agreeStatusHtml.setHTML("NIVEL ACUERDO: &nbsp;<progress id='agreeBar' value='"+MarkingInterface.getGeneralAgree()+"' max='100'></progress> "+MarkingInterface.getGeneralAgree()+"%");
 		
 		if(!MarkingInterface.isAnonymous()) {
 			this.courseName.setText(sdata.getCoursename());
@@ -463,18 +434,21 @@ public class MarkingToolBar extends EMarkingComposite {
 		markingButtons.loadCustomMarksButtons(sdata.getCustommarks());
 		
 		loadSubmissionTimeModified();
-		
+		containerIcon.addStyleName(Resources.INSTANCE.css().iconArrow());
 		if(visibilityToolbar){
-			containerIcon.setHTML("<div style='font-size:2em;line-height: 20px;'>"+iconArrowUp.toString()+"</div>");
+			containerIcon.setHTML("<div>"+iconArrowUp.toString()+"</div>");
 		}else{
-			containerIcon.setHTML("<div style='font-size:2em;line-height: 20px;'>"+iconArrowDown.toString()+"</div>");
+			containerIcon.setHTML("<div>"+iconArrowDown.toString()+"</div>");
 		}
+		
+		popUpProgressCorrection = new MyPopup();
+		implementStatisticalCircle(circleProgressCorrection, MarkingInterface.getGeneralProgress(), MarkingInterface.messages.StatusGrading(), popUpProgressCorrection, 0.62, 0.04);
+		
+		popUpProgressPublished = new MyPopup();
+		implementStatisticalCircle(circleProgressPublished, MarkingInterface.getPublishedProgress(), MarkingInterface.messages.Published(), popUpProgressPublished, 0.65, 0.04);
 
-		implementCircleCorrection();
-		
-		implementCirclePublished();
-		
-		implementCircleAgreeStatus();
+		popUpAgreeStatus = new MyPopup();
+		implementStatisticalCircle(circleAgreeStatus, MarkingInterface.getGeneralAgree(), MarkingInterface.messages.AgreeStatus(), popUpAgreeStatus, 0.71, 0.04);
 	}
 
 	/**
@@ -515,205 +489,75 @@ public class MarkingToolBar extends EMarkingComposite {
 	public HorizontalPanel getInfoLabel(){
 		return infoLabelPanel;
 	}
-	
 	/**
-	 * Implements the circle and the pop up that provides information about corrected tests
+	 * 	
+	 * @param circle: object Image
+	 * @param data: double with information statistical
+	 * @param text: String for MyPopup message
+	 * @param popUp: Object MyPopup for statistical circles
+	 * @param posx: int position axis x
+	 * @param posy: int position axis y
 	 */
-	private void implementCircleCorrection(){ 
+	private void implementStatisticalCircle(Image circle, double data, String text, final MyPopup popUp, final double posx, final double posy){
 		int percentageCircle = 0;
 		// Number tens
-		int tens = (int) (MarkingInterface.getGeneralProgress() - (int) (MarkingInterface.getGeneralProgress()/10));
+		int tens = (int) (data - (int) (data/10)*10);
 		if(tens >= 5){
-			percentageCircle= (int) MarkingInterface.getGeneralProgress() - tens;
+			percentageCircle= (int) data - tens;
 		}else{
-			percentageCircle= (int) MarkingInterface.getGeneralProgress() - tens - 10;
-		}
-		
-		// Add image corresponding to the percentage
-		switch (percentageCircle){
-		
-			case 0:  circleProgressCorrection.setResource(Resources.INSTANCE.por10());
-				  break;
-			case 10: circleProgressCorrection.setResource(Resources.INSTANCE.por20());
-				  break;
-			case 20: circleProgressCorrection.setResource(Resources.INSTANCE.por30());
-				  break;
-			case 30: circleProgressCorrection.setResource(Resources.INSTANCE.por40());
-				  break;
-			case 40: circleProgressCorrection.setResource(Resources.INSTANCE.por50());
-				  break;
-			case 50: circleProgressCorrection.setResource(Resources.INSTANCE.por60());
-				  break;
-			case 60: circleProgressCorrection.setResource(Resources.INSTANCE.por70());
-				  break;
-			case 70: circleProgressCorrection.setResource(Resources.INSTANCE.por80());
-				  break;
-			case 80: circleProgressCorrection.setResource(Resources.INSTANCE.por90());
-				  break;
-			case 90: circleProgressCorrection.setResource(Resources.INSTANCE.por100());
-				  break;
-			case 100: circleProgressCorrection.setResource(Resources.INSTANCE.por100());
-				  break;
-		}
-		if(MarkingInterface.getGeneralProgress() == 0.00){
-			circleProgressCorrection.setResource(Resources.INSTANCE.por0());
-		}
-		
-		circleProgressCorrection.setHeight("2em");
-		circleProgressCorrection.setWidth("2em");
-		
-		int progress = (int) (MarkingInterface.getGeneralProgress()*100);
-		double progressValue = (progress/100);
-		popUpProgressCorrection.setWidget(new Label("En corrección: "+ progressValue +"%"));
-		circleProgressCorrection.addMouseMoveHandler(new MouseMoveHandler(){
-			public void onMouseMove(MouseMoveEvent event){
-				popUpProgressCorrection.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-			          public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.62);
-			            int top = (int) ((Window.getClientHeight() - offsetHeight)*0.04);
-			            popUpProgressCorrection.setPopupPosition(left, top);
-			          }
-			        });
-				popUpProgressCorrection.show();
-			}
-		});
-		circleProgressCorrection.addMouseOutHandler(new MouseOutHandler(){
-			 public void onMouseOut(MouseOutEvent event){
-				 popUpProgressCorrection.hide();
-			 }
-		});
-	}
-	
-	/**
-	 * Implements the circle to pop up that provides information about published tests
-	 */
-	private void implementCirclePublished(){
-		int percentageCircle = 0;
-		// Number tens
-		int tens = (int) (MarkingInterface.getPublishedProgress() - (int) (MarkingInterface.getPublishedProgress()/10));
-		if(tens >= 5){
-			percentageCircle= (int) MarkingInterface.getPublishedProgress() - tens;
-		}else{
-			percentageCircle= (int) MarkingInterface.getPublishedProgress() - tens - 10;
-		}
-		
-		// Add image corresponding to the percentage
-		switch (percentageCircle){
-		
-			case 0:  circleProgressPublished.setResource(Resources.INSTANCE.por10());
-				  break;
-			case 10: circleProgressPublished.setResource(Resources.INSTANCE.por20());
-				  break;
-			case 20: circleProgressPublished.setResource(Resources.INSTANCE.por30());
-				  break;
-			case 30: circleProgressPublished.setResource(Resources.INSTANCE.por40());
-				  break;
-			case 40: circleProgressPublished.setResource(Resources.INSTANCE.por50());
-				  break;
-			case 50: circleProgressPublished.setResource(Resources.INSTANCE.por60());
-				  break;
-			case 60: circleProgressPublished.setResource(Resources.INSTANCE.por70());
-				  break;
-			case 70: circleProgressPublished.setResource(Resources.INSTANCE.por80());
-				  break;
-			case 80: circleProgressPublished.setResource(Resources.INSTANCE.por90());
-				  break;
-			case 90: circleProgressPublished.setResource(Resources.INSTANCE.por100());
-				  break;
-			case 100: circleProgressPublished.setResource(Resources.INSTANCE.por100());
-				  break;
-		}
-		if(MarkingInterface.getPublishedProgress() == 0.00){
-			circleProgressPublished.setResource(Resources.INSTANCE.por0());
-		}
-		circleProgressPublished.setHeight("2em");
-		circleProgressPublished.setWidth("2em");
-		
-		int published = (int) (MarkingInterface.getPublishedProgress()*100);
-		double publishedValue = (published/100);
- 		popUpProgressPublished.setWidget(new Label("Publicadas: "+ publishedValue +"%"));
-		circleProgressPublished.addMouseMoveHandler(new MouseMoveHandler(){
-			public void onMouseMove(MouseMoveEvent event){
-				popUpProgressPublished.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-			          public void setPosition(int offsetWidth, int offsetHeight) {
-			            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.65);
-			            int top = (int) ((Window.getClientHeight() - offsetHeight)*0.04);
-			            popUpProgressPublished.setPopupPosition(left, top);
-			          }
-			        });
-				popUpProgressPublished.show();
-			}
-		});
-		circleProgressPublished.addMouseOutHandler(new MouseOutHandler(){
-			 public void onMouseOut(MouseOutEvent event){
-				 popUpProgressPublished.hide();
-			 }
-		});
-	}
-	
-	/**
-	 * Implements the circle to pop up that provides information about the level of agreement on correction
-	 */
-	private void implementCircleAgreeStatus(){
-		int percentageCircle = 0;
-		// Number tens
-		int tens = (int) (MarkingInterface.getGeneralAgree() - (int) (MarkingInterface.getGeneralAgree()/10));
-		if(tens >= 5){
-			percentageCircle= (int) MarkingInterface.getGeneralAgree() - tens;
-		}else{
-			percentageCircle= (int) MarkingInterface.getGeneralAgree() - tens - 10;
+			percentageCircle= (int) data - tens - 10;
 		}
 		
 		// Add image corresponding to the percentage
 		switch (percentageCircle){
 				
-			case 0:  circleAgreeStatus.setResource(Resources.INSTANCE.por10());
+			case 0:  circle.setResource(Resources.INSTANCE.percentage10());
 					break;
-			case 10: circleAgreeStatus.setResource(Resources.INSTANCE.por20());
+			case 10: circle.setResource(Resources.INSTANCE.percentage20());
 					break;
-			case 20: circleAgreeStatus.setResource(Resources.INSTANCE.por30());
+			case 20: circle.setResource(Resources.INSTANCE.percentage30());
 					break;
-			case 30: circleAgreeStatus.setResource(Resources.INSTANCE.por40());
+			case 30: circle.setResource(Resources.INSTANCE.percentage40());
 					break;
-			case 40: circleAgreeStatus.setResource(Resources.INSTANCE.por50());
+			case 40: circle.setResource(Resources.INSTANCE.percentage50());
 					break;
-			case 50: circleAgreeStatus.setResource(Resources.INSTANCE.por60());
+			case 50: circle.setResource(Resources.INSTANCE.percentage60());
 					break;
-			case 60: circleAgreeStatus.setResource(Resources.INSTANCE.por70());
+			case 60: circle.setResource(Resources.INSTANCE.percentage70());
 					break;
-			case 70: circleAgreeStatus.setResource(Resources.INSTANCE.por80());
+			case 70: circle.setResource(Resources.INSTANCE.percentage80());
 					break;
-			case 80: circleAgreeStatus.setResource(Resources.INSTANCE.por90());
+			case 80: circle.setResource(Resources.INSTANCE.percentage90());
 					break;
-			case 90: circleAgreeStatus.setResource(Resources.INSTANCE.por100());
+			case 90: circle.setResource(Resources.INSTANCE.percentage100());
 					break;
-			case 100: circleAgreeStatus.setResource(Resources.INSTANCE.por100());
+			case 100: circle.setResource(Resources.INSTANCE.percentage100());
 					break;
 			}
-			if(MarkingInterface.getGeneralAgree() == 0.00){
-				circleAgreeStatus.setResource(Resources.INSTANCE.por0());
-			}		
-			circleAgreeStatus.setHeight("2em");
-			circleAgreeStatus.setWidth("2em");
+			if(data == 0.00){
+				circle.setResource(Resources.INSTANCE.percentage0());
+			}
 			
-			int generalAgree = (int) (MarkingInterface.getGeneralAgree()*100);
-			double generalAgreeValue = (generalAgree/100);
-			popUpAgreeStatus.setWidget(new Label("Nivel Acuerdo: "+ generalAgreeValue +"%"));
-			circleAgreeStatus.addMouseMoveHandler(new MouseMoveHandler(){
+			circle.addStyleName(Resources.INSTANCE.css().statisticalCircle());
+			
+			int percentaje = (int) (data*100);
+			double dataPercentaje = (percentaje/100);
+			popUp.setWidget(new Label(text +": "+ dataPercentaje +"%"));
+			circle.addMouseMoveHandler(new MouseMoveHandler(){
 				public void onMouseMove(MouseMoveEvent event){
-					popUpAgreeStatus.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+					popUp.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 				          public void setPosition(int offsetWidth, int offsetHeight) {
-				            int left = (int) ((Window.getClientWidth() - offsetWidth)*0.71);
-				            int top = (int) ((Window.getClientHeight() - offsetHeight)*0.04);
-				            popUpAgreeStatus.setPopupPosition(left, top);
+				            int left = (int) ((Window.getClientWidth() - offsetWidth) * posx);
+				            int top = (int) ((Window.getClientHeight() - offsetHeight) * posy);
+				            popUp.setPopupPosition(left, top);
 				          }
 				        });
-					popUpAgreeStatus.show();
+					popUp.show();
 				}
 			});
-			circleAgreeStatus.addMouseOutHandler(new MouseOutHandler(){
+			circle.addMouseOutHandler(new MouseOutHandler(){
 				 public void onMouseOut(MouseOutEvent event){
-					 popUpAgreeStatus.hide();
+					 popUp.hide();
 				 }
 			});
 	}
