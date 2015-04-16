@@ -55,6 +55,7 @@ public class RubricInterface extends EMarkingComposite {
 	public RubricInterface() {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
+		// Set width of the rubric at 35% of the window
 		mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 
 		rubricPanel = new RubricPanel();

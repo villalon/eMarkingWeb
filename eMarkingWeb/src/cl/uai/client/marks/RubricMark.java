@@ -172,8 +172,9 @@ public class RubricMark extends Mark {
 	 */
 	@Override
 	public void update(String newcomment, int newposx, int newposy,
-			int levelid, float bonus, String regradecomment, int regradeaccepted) {
-		super.update(newcomment, newposx, newposy, levelid, bonus, regradecomment, regradeaccepted);
+			int levelid, float bonus, String regradecomment, int regradeaccepted, int widthPage, int heightPage) {
+		
+		super.update(newcomment, newposx, newposy, levelid, bonus, regradecomment, regradeaccepted, widthPage, heightPage);
 		Criterion criterion = MarkingInterface.submissionData.getLevelById(levelid).getCriterion();
 		EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().updateRubricCriterion(
 				criterion.getId(), 

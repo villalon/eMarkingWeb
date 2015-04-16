@@ -59,7 +59,6 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	private VerticalPanel pagesPanel = null;
 	private ScrollPanel scrollContainerForPages = null;
 	
-	private double percentage = 0.98;
 
 	/** Number of pages **/
 	private int numPages = -1;
@@ -70,6 +69,9 @@ public class MarkingPagesInterface extends EMarkingComposite {
 		return numPages;
 	}
 
+	/** Width and Height Page**/
+	int widthPage = -1;
+	int heightPage = -1;
 
 	/**
 	 * Creates the main interface for pages
@@ -209,12 +211,13 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					int height = Integer.parseInt(tabinfo.get("height"));
 					boolean showmarker = Integer.parseInt(tabinfo.get("showmarker")) == 1;
 
-					double algo = Window.getClientWidth()+1;
-					int x = (int) (algo*percentage);
+					double screenWidth = Window.getClientWidth()+1;
+					int newwidth = (int) screenWidth;
+					widthPage = newwidth;
 					float ratio = (float) width / (float) height;
-					int newheight = (int) (x / ratio);					
-					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), x, newheight);
-					//page.setPorcentajePage(porcentaje);
+					int newheight = (int) (newwidth / ratio);
+					heightPage = newheight;
+					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), newwidth, newheight);
 					if(!showmarker) {
 						page.setVisible(false);
 					}
@@ -263,13 +266,18 @@ public class MarkingPagesInterface extends EMarkingComposite {
 		}
 		return allstats;
 	}
-	
-	public void setPorcentaje(double por){
-		this.percentage = por;
-		loadInterface();
-	}
+
 	
 	public VerticalPanel getPagesPanel(){
 		return pagesPanel;
 	}
+	
+	public int getWidthPage(){
+		return widthPage;
+	}
+	
+	public int getHeightPage(){
+		return heightPage;
+	}
+	
 }
