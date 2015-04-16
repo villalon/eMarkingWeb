@@ -299,7 +299,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 	 * @param newposy the new Y coordinate in the page
 	 * @param newbonus the new bonus
 	 */
-	public void update(final String newcomment, int newposx, int newposy, final int newlevel, final float newbonus, final String newregrademarkercomment, final int newregradeaccepted) {
+	public void update(final String newcomment, int newposx, int newposy, final int newlevel, final float newbonus, final String newregrademarkercomment, final int newregradeaccepted, int widthPage, int heightPage) {
 
 		final Mark mark = this;
 
@@ -330,8 +330,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				"&width=" + this.width +
 				"&height=" + this.height +
 				"&comment=" + URL.encode(newcomment) +
-				"&windowswidth=" + Window.getClientWidth() +
-				"&windowsheight=" + Window.getClientHeight(), new AsyncCallback<AjaxData>() {
+				"&windowswidth=" + widthPage +
+				"&windowsheight=" + heightPage, new AsyncCallback<AjaxData>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -404,6 +404,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				public void onClose(CloseEvent<PopupPanel> event) {
 					EditMarkDialog dialog = (EditMarkDialog) event.getSource();
 					
+					int widthPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getWidthPage();
+					int heightPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getHeightPage();
 					// If the dialog was not cancelled update the mark with the dialog values
 					if(!dialog.isCancelled()) {
 							mark.update(dialog.getTxtComment(),
@@ -412,7 +414,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 								dialog.getLevelId(),
 								dialog.getBonus(), 
 								dialog.getRegradeComment(), 
-								dialog.getRegradeAccepted());
+								dialog.getRegradeAccepted(),
+								widthPage,
+								heightPage);
 					}
 				}
 			});

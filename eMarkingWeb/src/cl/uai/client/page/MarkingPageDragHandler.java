@@ -22,6 +22,7 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
@@ -95,6 +96,9 @@ public class MarkingPageDragHandler implements DragHandler {
 			motive = ((RubricMark) mark).getRegrademotive();
 		}
 		
+		int widthPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getWidthPage();
+		int heightPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getHeightPage();
+		
 		mark.update(
 				mark.getRawtext(),
 				event.getContext().desiredDraggableX - absolutePanel.getAbsoluteLeft(), 
@@ -102,6 +106,8 @@ public class MarkingPageDragHandler implements DragHandler {
 				level,
 				bonus, 
 				regradecomment, 
-				motive);				
+				motive,
+				widthPage,
+				heightPage);				
 	}
 }

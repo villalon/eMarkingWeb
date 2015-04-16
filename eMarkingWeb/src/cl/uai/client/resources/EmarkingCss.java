@@ -193,4 +193,6 @@ public interface EmarkingCss extends CssResource {
 	String minigradepanel();
 	String showrubricbutton();
 	String closerubricbutton();
+	String statisticalCircle();
+	String iconArrow();
 }
