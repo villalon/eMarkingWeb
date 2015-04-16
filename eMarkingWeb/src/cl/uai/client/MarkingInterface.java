@@ -122,9 +122,9 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Submission data (student, course, grade, marker) **/
 	public static SubmissionGradeData submissionData = null;
 	
-	/** Div contein Icon Rubric  **/
+	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
-	private final Icon showRubricIconOpen = new Icon(IconType.TH);
+	private final Icon iconShowRubric = new Icon(IconType.TH);
 	
 	/**
 	 * @return the eMarkingVersion
@@ -500,8 +500,8 @@ public class MarkingInterface extends EMarkingComposite {
 				"&pageno=" + mark.getPageno() +
 				"&criterionid="+cid + 
 				"&colour="+mark.getColour() +
-				"&windowswidth=" + Window.getClientWidth() +
-				"&windowsheight=" + Window.getClientHeight()
+				"&windowswidth=" + page.getWidthPage() +
+				"&windowsheight=" + page.getHeightPage()
 				, new AsyncCallback<AjaxData>() {
 
 			@Override
@@ -605,8 +605,8 @@ public class MarkingInterface extends EMarkingComposite {
 								"&sesskey="+sessKey+
 								"&bonus="+bonus+
 								"&comment="+URL.encode(comment) +
-								"&windowswidth=" + Window.getClientWidth() +
-								"&windowsheight=" + Window.getClientHeight();
+								"&windowswidth=" + page.getWidthPage() +
+								"&windowsheight=" + page.getHeightPage();
 
 						// Add loading icon
 						Mark.loadingIcon.removeFromParent();
@@ -837,12 +837,12 @@ public class MarkingInterface extends EMarkingComposite {
 		
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "100%");
-		//markingPanel.add(divRight,(int)(Window.getClientWidth()*0.97),0);
-		markingPanel.add(
-				rubricInterface,(int)(Window.getClientWidth() * 0.65),0);
+		// Set position of the rubric to 65% width of the windows
+		markingPanel.add(rubricInterface,(int)(Window.getClientWidth() * 0.65),0);
+		// Set rubric invisible
 		rubricInterface.setVisible(false);
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
-		showRubricButton.setHTML(showRubricIconOpen.toString());
+		showRubricButton.setHTML(iconShowRubric.toString());
 
 		/** Codigo Implantado tesis **/
 		if(linkrubric == 1){
@@ -1091,7 +1091,7 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
-		
+		// Implemented rubric icon
 		showRubricButton.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(rubricInterface.isVisible()){
@@ -1230,4 +1230,5 @@ public class MarkingInterface extends EMarkingComposite {
 	public static int getMarkingType() {
 		return markingType;
 	}
+	
 }

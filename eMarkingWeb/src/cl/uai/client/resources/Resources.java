@@ -70,38 +70,38 @@ public interface Resources extends ClientBundle {
 	@Source("othermarker100.png")
 	ImageResource othermarker100();
 	
-	@Source("por0.png")
-	ImageResource por0();
+	@Source("percentage0.png")
+	ImageResource percentage0();
 	
-	@Source("por10.png")
-	ImageResource por10();
+	@Source("percentage10.png")
+	ImageResource percentage10();
 
-	@Source("por20.png")
-	ImageResource por20();
+	@Source("percentage20.png")
+	ImageResource percentage20();
 
-	@Source("por30.png")
-	ImageResource por30();
+	@Source("percentage30.png")
+	ImageResource percentage30();
 
-	@Source("por40.png")
-	ImageResource por40();
+	@Source("percentage40.png")
+	ImageResource percentage40();
 
-	@Source("por50.png")
-	ImageResource por50();
+	@Source("percentage50.png")
+	ImageResource percentage50();
 
-	@Source("por60.png")
-	ImageResource por60();
+	@Source("percentage60.png")
+	ImageResource percentage60();
 
-	@Source("por70.png")
-	ImageResource por70();
+	@Source("percentage70.png")
+	ImageResource percentage70();
 
-	@Source("por80.png")
-	ImageResource por80();
+	@Source("percentage80.png")
+	ImageResource percentage80();
 
-	@Source("por90.png")
-	ImageResource por90();
+	@Source("percentage90.png")
+	ImageResource percentage90();
 
-	@Source("por100.png")
-	ImageResource por100();
+	@Source("percentage100.png")
+	ImageResource percentage100();
 	
 	@Source("EMarkingWeb.css")
 	EmarkingCss css();

@@ -109,4 +109,6 @@ public interface EmarkingMessages extends Messages {
 	public String StudentN(String n);
 	public String TextTitle();
 	public String UnclearFeedback();
+	public String Published();
+	public String AgreeStatus();
 }

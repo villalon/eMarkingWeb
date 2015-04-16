@@ -79,8 +79,6 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	/** Page image and number within submission **/
 	private Image pageImage = null;
 	private int pageNumber = -1;
-	
-	private double porcentaje = 0.98;
 
 	public int getPageNumber() {
 		return pageNumber;
@@ -208,7 +206,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		super.onLoad();
 		//TODO: Ancho de la prueba
 		// Once loaded, we know all sizes
-		int i= (int)(Window.getClientWidth()*porcentaje)+1;
+		int i= (int)(Window.getClientWidth());
 		String ancho = String.valueOf(i);
 		mainPanel.setWidth(ancho);
 
@@ -224,8 +222,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		
 		EMarkingWeb.markingInterface.addLoading(false);
 		
+		int widthPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getWidthPage();
+		int heightPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getHeightPage();
 		// Ajax request to get the marks
-		AjaxRequest.ajaxRequest("action=getcomments&pageno=" + this.pageNumber + "&windowswidth=" + Window.getClientWidth() + "&windowsheight=" + Window.getClientHeight(), new AsyncCallback<AjaxData>() {
+		AjaxRequest.ajaxRequest("action=getcomments&pageno=" + this.pageNumber + "&windowswidth=" + widthPage + "&windowsheight=" + heightPage, new AsyncCallback<AjaxData>() {
 
 			@Override
 			public void onSuccess(AjaxData result) {
@@ -391,16 +391,19 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		return mark;
 	}
 	
-	// Cuenta cuantas marcas de la rubrica tiene la pagina.
+	/**
+	+	 * Count how many rubric marks has the page.
+	+	 * @return allMarksInPage
+	+	 */
 	public int isHaveRubricMark(){
-		int negrito = 0;
+		int allMarksInPage = 0;
 		for(Mark m : marks.values()) {
 			if(m instanceof RubricMark) {
-				negrito++;
+				allMarksInPage++;
 			}
 		}
 		
-		return negrito;
+		return allMarksInPage;
 	}
 
 	@Override
@@ -414,9 +417,12 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
         PopupPanel menu = new MarkingMenu(this, posx, posy);
         menu.show();
 	}
+
+	public int getWidthPage(){
+		return pageImage.getWidth();
+	}
 	
-	public void setPorcentajePage(double por){
-		this.porcentaje=por;
-		onLoad();
+	public int getHeightPage(){
+		return pageImage.getHeight();
 	}
 }
