@@ -70,8 +70,8 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	}
 
 	/** Width and Height Page**/
-	int widthPage = -1;
-	int heightPage = -1;
+	private int widthPage = -1;
+	private int heightPage = -1;
 
 	/**
 	 * Creates the main interface for pages

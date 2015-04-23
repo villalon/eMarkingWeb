@@ -45,6 +45,7 @@
 
 .pagespanel {
 	background-color: #000;
+	margin-left: 0px;
 }
 
 /** Toolbar parts **/
@@ -76,6 +77,7 @@
 
 .buttonspanel{
 	opacity: 0.80;
+	margin-left: 0px;
 }
 
 .tabbar {
@@ -841,10 +843,12 @@ background-color: #0057D9;
 	cursor: pointer;
 }
 
-.statisticalCircle{
+.statisticalCircle {
 	height: 2em;
 	width: 2em;
 }
-.iconArrow{
+
+.iconArrow {
 	font-size:2em;
  	line-height: 20px;
+}

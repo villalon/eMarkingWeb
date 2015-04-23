@@ -22,11 +22,7 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
-
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 
 /**
  * 
@@ -53,16 +49,9 @@ public class CommentMark extends Mark {
 		this.format = 1;
 
 		this.addStyleName(Resources.INSTANCE.css().commentmark());
+		this.addStyleName(Resources.INSTANCE.css().markpopup());
 	}
 
-	@Override
-	public void setMarkHTML() {
-		
-		Icon icon = new Icon(IconType.COMMENT);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+ MarkingInterface.getMapCss().get(colour) +"\">"+icon.toString()+"</div>";
-		this.setHTML(html);		
-	}
-	
 	/**
 	 * Creates a CommentMark from a Hash with Strings as key value pairs,
 	 * parsing the values in the map and casting them to the proper

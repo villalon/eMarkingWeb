@@ -228,9 +228,16 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 					+ "</div>";
 		}
 		
+		String iconhtml = "";
+		
+		if(this instanceof CommentMark) {
+			Icon icon = new Icon(IconType.COMMENT);
+			iconhtml = icon.toString();
+		}
+		
 		// If the inner comment contains something
 		if(this.getRawtext().trim().length() > 0) {
-			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ iconhtml + "&nbsp;" + this.getRawtext() + "</div>";
 		}
 		
 		// Show the marker's name if the marking process is not anonymous

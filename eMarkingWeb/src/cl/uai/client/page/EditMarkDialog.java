@@ -187,7 +187,7 @@ public class EditMarkDialog extends DialogBox {
 		btnSave.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if(!bonusIsValid()) {
+				if(levelId > 0 && !bonusIsValid()) {
 					Window.alert(MarkingInterface.messages.InvalidBonusValue());
 					return;
 				}
@@ -379,7 +379,7 @@ public class EditMarkDialog extends DialogBox {
 			hide();
 			break;
 		case KeyCodes.KEY_ENTER:
-			if(!bonusIsValid()) {
+			if(levelId > 0 && !bonusIsValid()) {
 				Window.alert(MarkingInterface.messages.InvalidBonusValue());
 				break;
 			}			

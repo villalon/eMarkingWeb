@@ -203,16 +203,16 @@ public class EMarkingWeb implements EntryPoint {
 			int height = screenHeight();
 
 			// If we have a narrow window, just fix it on 847
-/*			if(width < 1200) {
+			if(width < 1200) {
 				width = 847;
 				if(Navigator.getUserAgent().toLowerCase().contains("mozilla")) {
 					width = 850;
 				}
 			} else {
 				// Otherwise we use as much as we can
-				width = Math.min(width, 1280);
+				width = Math.min(width, 860);
 			}
-*/			
+			
 			//  Resize the popup window and move it to the top left corner
 			Window.resizeTo(width, height);
 			Window.moveTo(0, 0);

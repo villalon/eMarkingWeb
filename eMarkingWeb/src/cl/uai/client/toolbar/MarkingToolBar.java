@@ -378,10 +378,12 @@ public class MarkingToolBar extends EMarkingComposite {
 		containerInformation.setCellWidth(circleProgressPublished,"20%");
 		
 		divLeft =  new HTML("");
+		divLeft.setVisible(false);
 		containerInformation.add(divLeft);
 		containerInformation.setCellWidth(divLeft,"20%");
 		
 		circleAgreeStatus = new Image();
+		circleAgreeStatus.setVisible(false);
 		containerInformation.add(circleAgreeStatus);
 		containerInformation.setCellHorizontalAlignment(circleAgreeStatus, HasHorizontalAlignment.ALIGN_LEFT);
 		containerInformation.setCellVerticalAlignment(circleAgreeStatus, HasVerticalAlignment.ALIGN_MIDDLE);
