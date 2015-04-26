@@ -860,6 +860,17 @@ public class MarkingInterface extends EMarkingComposite {
 		/** FIN **/
 	}
 	
+	public void setRubricVisible(boolean visible) {
+		showRubricButton.setVisible(!visible);
+		if(visible) {
+			interfacePanel.setCellWidth(markingPagesInterface, "60%");
+			interfacePanel.setCellWidth(rubricInterface, "40%");
+		} else {
+			interfacePanel.setCellWidth(markingPagesInterface, "100%");
+			interfacePanel.setCellWidth(rubricInterface, "0%");
+		}
+	}
+	
 	public boolean isRubricEmbedded() {
 		return rubricEmbedded;
 	}
