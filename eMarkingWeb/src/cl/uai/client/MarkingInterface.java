@@ -66,11 +66,10 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -170,7 +169,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private VerticalPanel mainPanel = null;
 
 	private AbsolutePanel markingPanel = null;
-	private HorizontalPanel interfacePanel = null;
+	private SplitLayoutPanel interfacePanel = null;
 
 	private FocusPanel focusPanel = null;
 	private HTML loadingMessage = null;
@@ -340,7 +339,7 @@ public class MarkingInterface extends EMarkingComposite {
 		mainPanel.add(toolbar);
 
 		// Marking panel containing the marking interface
-		interfacePanel = new HorizontalPanel();
+		interfacePanel = new SplitLayoutPanel();
 		interfacePanel.addStyleName(Resources.INSTANCE.css().interfacepanel());
 
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
@@ -350,7 +349,7 @@ public class MarkingInterface extends EMarkingComposite {
 		
 		
 		interfacePanel.add(loadingMessage);
-		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
+		//interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
 		markingPanel.add(showRubricButton);
@@ -840,15 +839,19 @@ public class MarkingInterface extends EMarkingComposite {
 		markingPagesInterface = new MarkingPagesInterface();
 		rubricInterface = new RubricInterface();
 		
-		interfacePanel.add(markingPagesInterface);
-		interfacePanel.setCellWidth(markingPagesInterface, "60%");
+		interfacePanel.addWest(markingPagesInterface, 840);
+		
+		interfacePanel.setWidgetMinSize(markingPagesInterface, 600);
+		interfacePanel.setWidgetSize(markingPagesInterface, 850);
+		interfacePanel.setWidgetToggleDisplayAllowed(markingPagesInterface, false);
 
 		// Set show rubric button
 		showRubricButton.setHTML(iconShowRubric.toString());
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
 
 		interfacePanel.add(rubricInterface);
-		interfacePanel.setCellWidth(rubricInterface, "40%");
+		interfacePanel.setHeight(((int)(Window.getClientHeight()))+"px");
+		interfacePanel.setWidgetToggleDisplayAllowed(rubricInterface, true);
 		
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(this.rubricEmbedded);
@@ -863,11 +866,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public void setRubricVisible(boolean visible) {
 		showRubricButton.setVisible(!visible);
 		if(visible) {
-			interfacePanel.setCellWidth(markingPagesInterface, "60%");
-			interfacePanel.setCellWidth(rubricInterface, "40%");
 		} else {
-			interfacePanel.setCellWidth(markingPagesInterface, "100%");
-			interfacePanel.setCellWidth(rubricInterface, "0%");
 		}
 	}
 	

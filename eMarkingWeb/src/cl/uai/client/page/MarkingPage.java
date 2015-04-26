@@ -50,6 +50,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ProvidesResize;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 
@@ -58,7 +60,7 @@ import com.google.gwt.user.client.ui.ToggleButton;
  * @author Jorge Villalon <villalon@gmail.com>
  *
  */
-public class MarkingPage extends EMarkingComposite implements ContextMenuHandler {
+public class MarkingPage extends EMarkingComposite implements ContextMenuHandler, ProvidesResize, RequiresResize {
 
 	public int getWidth() {
 		return width;
@@ -421,5 +423,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
         
         PopupPanel menu = new MarkingMenu(this, posx, posy);
         menu.show();
+	}
+
+	@Override
+	public void onResize() {
+		logger.fine("Resize!");
 	}
 }

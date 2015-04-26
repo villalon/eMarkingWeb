@@ -32,6 +32,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Navigator;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 
@@ -198,6 +199,9 @@ public class EMarkingWeb implements EntryPoint {
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;
 
+			// Initialize eMarking's interface
+			markingInterface = new MarkingInterface();
+			
 			// Automagically resize popup to use most of the window
 			int width = screenWidth();
 			int height = screenHeight();
@@ -208,22 +212,20 @@ public class EMarkingWeb implements EntryPoint {
 				if(Navigator.getUserAgent().toLowerCase().contains("mozilla")) {
 					width = 850;
 				}
+				markingInterface.setRubricEmbedded(false);
 			} else {
 				// Otherwise we use as much as we can
-				width = Math.min(width, 860);
+				width = Math.max(width, 860);
+				markingInterface.setRubricEmbedded(true);
 			}
 			
 			//  Resize the popup window and move it to the top left corner
-			Window.resizeTo(Window.getClientWidth(), height);
+			Window.resizeTo(width, height);
 			Window.moveTo(0, 0);
 
-			// Initialize eMarking's interface
-			markingInterface = new MarkingInterface();
-			
 			// Add eMarking to the browser
-			RootPanel.get(eMarkingDivId).clear();
-			RootPanel.get(eMarkingDivId).add(markingInterface);
-			RootPanel.getBodyElement().focus();
+			RootLayoutPanel.get().clear();
+			RootLayoutPanel.get().add(markingInterface);
 		}
 	}
 }
