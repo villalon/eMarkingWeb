@@ -31,8 +31,6 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
-import cl.uai.client.data.AjaxData;
-import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.marks.CheckMark;
 import cl.uai.client.marks.CommentMark;
 import cl.uai.client.marks.CrossMark;
@@ -48,7 +46,6 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -62,6 +59,14 @@ import com.google.gwt.user.client.ui.ToggleButton;
  *
  */
 public class MarkingPage extends EMarkingComposite implements ContextMenuHandler {
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
 
 	/** For loggin purposes **/
 	Logger logger = Logger.getLogger(MarkingPage.class.getName());
@@ -83,7 +88,9 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	public int getPageNumber() {
 		return pageNumber;
 	}
-
+	
+	private int width;
+	private int height;
 
 	/** All marks in this page **/
 	private Map<Integer, Mark> marks = null;
@@ -91,13 +98,64 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	/**
 	 * 
 	 */
-	public MarkingPage(int pagenum, String image, int width, int height) {
+	public MarkingPage(int pagenum, String image, int width, int height, List<Map<String, String>> pageMarks) {
 		this.pageNumber = pagenum;
 		this.pageImage = new Image(image);
-		this.pageImage.setWidth(width + "px");
-		this.pageImage.setHeight(height + "px");
+		this.width = width;
+		this.height = height;
+		this.pageImage.setWidth(this.width + "px");
+		this.pageImage.setHeight(this.height + "px");
 
 		logger.fine("Adding page " + pagenum + " Url:" + image);
+
+		this.marks = new HashMap<Integer, Mark>();
+		
+		for(Map<String, String> markMap : pageMarks) {
+			
+			if(MarkingInterface.getLinkRubric() == 0)
+				markMap.put("colour", "criterion0");
+			try {
+				int format = Integer.parseInt(markMap.get("format"));
+				fixPositions(markMap, width, height);
+				Mark mark = null;
+			switch(format) {
+			case 1:
+				mark = CommentMark.createFromMap(markMap);
+				break;
+			case 2:
+				mark = RubricMark.createFromMap(markMap);
+				break;
+			case 3:
+				mark = CheckMark.createFromMap(markMap);
+				break;
+			case 4:
+				mark = CrossMark.createFromMap(markMap);
+				break;
+			case 5:
+				mark = PathMark.createFromMap(markMap);
+				break;
+			case 6:
+				mark = QuestionMark.createFromMap(markMap);
+				break;
+			case 1000:
+				mark = CustomMark.createFromMap(markMap);
+				break;
+			default:
+				logger.severe("Invalid format for comment");
+				mark = null;
+				break;
+			}
+			
+			if(mark !=null) {
+				this.marks.put(mark.getId(), mark);
+			}
+			
+			} catch(Exception e) {
+				e.printStackTrace();
+				logger.severe("Exception creating mark from DB. " + markMap.toString() + " Error:"+e.getMessage());
+			}
+		}
+
 		
 		mainPanel = new FocusPanel();
 		absolutePanel = new AbsolutePanel();
@@ -114,7 +172,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		dragController = new PickupDragController(absolutePanel, true);
 		dragController.setBehaviorDragStartSensitivity(1);
 		dragController.setBehaviorScrollIntoView(false); // TODO: Check this parameter
-		MarkingPageDragHandler dragHandler = new MarkingPageDragHandler(absolutePanel);
+		MarkingPageDragHandler dragHandler = new MarkingPageDragHandler(absolutePanel, this);
 		dragController.addDragHandler(dragHandler);
 
 		//Initialize Drawing controller for pen tool
@@ -126,7 +184,6 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		drawController.addListener(drawHandler);
 		absolutePanel.add(drawingArea,0,0);
 		
-		mainPanel.add(absolutePanel);
 		absolutePanel.add(pageImage);
 		canvas = Canvas.createIfSupported();
 		if(canvas != null) {
@@ -138,9 +195,26 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			absolutePanel.add(canvas, 0, 0);
 		}
 
+		mainPanel.add(absolutePanel);
+		
 		this.initWidget(mainPanel);
 		
 		addDomHandler(this, ContextMenuEvent.getType());
+	}
+	
+	/**
+	 * Fixes positions coming from Moodle in a 0-1 format to the actual page size
+	 * @param map
+	 * @param width
+	 * @param height
+	 */
+	private void fixPositions(Map<String, String> map, int width, int height) {
+		int posx = (int) (Float.parseFloat(map.get("posx")) * (float) width);
+		int posy = (int) (Float.parseFloat(map.get("posy")) * (float) height);
+		map.remove("posx");
+		map.remove("posy");
+		map.put("posx", Integer.toString(posx));
+		map.put("posy", Integer.toString(posy));
 	}
 	
 	/**
@@ -209,83 +283,14 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		int i= (int)(Window.getClientWidth());
 		String ancho = String.valueOf(i);
 		mainPanel.setWidth(ancho);
-
 		mainPanel.addStyleName(Resources.INSTANCE.css().pagescroll());
-
 		loadInterface();
 	}
-
-	/**
-	 * Get the marks for this page
-	 */
+	
 	public void loadInterface() {
-		
-		EMarkingWeb.markingInterface.addLoading(false);
-		
-		int widthPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getWidthPage();
-		int heightPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getHeightPage();
-		// Ajax request to get the marks
-		AjaxRequest.ajaxRequest("action=getcomments&pageno=" + this.pageNumber + "&windowswidth=" + widthPage + "&windowsheight=" + heightPage, new AsyncCallback<AjaxData>() {
-
-			@Override
-			public void onSuccess(AjaxData result) {
-				// Parse Json values
-				List<Map<String, String>> pageMarks = AjaxRequest.getValuesFromResult(result);
-
-				// Initialize hashmap and add comments
-				marks = new HashMap<Integer, Mark>();
-				
-				
-				for(Map<String, String> mark : pageMarks) {
-					
-					if(MarkingInterface.getLinkRubric() == 0)
-						mark.put("colour", "criterion0");			
-					
-					try {
-						int format = Integer.parseInt(mark.get("format"));
-					switch(format) {
-					case 1:
-						addMarkWidget(CommentMark.createFromMap(mark));
-						break;
-					case 2:
-						addMarkWidget(RubricMark.createFromMap(mark));
-						break;
-					case 3:
-						addMarkWidget(CheckMark.createFromMap(mark));
-						break;
-					case 4:
-						addMarkWidget(CrossMark.createFromMap(mark));
-						break;
-					case 5:
-						addMarkWidget(PathMark.createFromMap(mark));
-						break;
-					case 6:
-						addMarkWidget(QuestionMark.createFromMap(mark));
-						break;
-					case 1000:
-						addMarkWidget(CustomMark.createFromMap(mark));
-						break;
-					default:
-						logger.severe("Invalid format for comment");
-						break;
-					}
-					} catch(Exception e) {
-						logger.severe("Exception creating mark from DB. " + mark.toString() + " Error:"+e.getMessage());
-					}
-				}
-				
-				EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
-				EMarkingWeb.markingInterface.finishLoading();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.severe("Error getting marks from Moodle!");
-				logger.severe(caught.getMessage());
-				Window.alert(caught.getMessage());
-				EMarkingWeb.markingInterface.finishLoading();
-			}
-		});
+		for(Mark mark : this.marks.values()) {
+			addMarkWidget(mark);
+		}
 	}
 
 	/**
@@ -416,13 +421,5 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
         
         PopupPanel menu = new MarkingMenu(this, posx, posy);
         menu.show();
-	}
-
-	public int getWidthPage(){
-		return pageImage.getWidth();
-	}
-	
-	public int getHeightPage(){
-		return pageImage.getHeight();
 	}
 }

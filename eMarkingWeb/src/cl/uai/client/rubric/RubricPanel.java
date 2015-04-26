@@ -72,14 +72,17 @@ public class RubricPanel extends EMarkingComposite {
 
 	/** Buttons for toolbar **/
 	private ListBox rubricFilter = null;
-
+	private HorizontalPanel hpanelTitle = null;
+	
 	/** Scroll panel for rubric table **/
 	private ScrollPanel scrollPanel = null;
 
 	/** If the rubric must include headers for each criterion **/
 	private boolean popupInterface = false;
 
-
+	public HorizontalPanel getRubricTitle() {
+		return hpanelTitle;
+	}
 	/**
 	 * @return the includeCriterionHeaders
 	 */
@@ -115,14 +118,14 @@ public class RubricPanel extends EMarkingComposite {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricpanel());
 		//TODO: Cambio redimension
-		mainPanel.setWidth((Window.getClientWidth()*0.35)	+"px");
+		// mainPanel.setWidth((Window.getClientWidth()*0.35)	+"px");
 
 		// Adds the title
 		rubricTitle = new Label();
 		rubricTitle.addStyleName(Resources.INSTANCE.css().rubrictitle());
 
 		// Adds the checkbox
-		rubricFilter = new ListBox(false);
+		rubricFilter = new ListBox();
 		rubricFilter.addItem(MarkingInterface.messages.ShowRubric(), "all");
 		rubricFilter.addItem(MarkingInterface.messages.ShowMarkingPending(), "unmarked");
 		rubricFilter.addItem(MarkingInterface.messages.ShowRegradePending(), "regrade");
@@ -137,11 +140,12 @@ public class RubricPanel extends EMarkingComposite {
 			@Override
 			public void onClick(ClickEvent event) {
 				EMarkingWeb.markingInterface.getRubricInterface().setVisible(false);
+				EMarkingWeb.markingInterface.getShowRubricButton().setVisible(true);
 			}
 		});
 		
 		// An horizontal panel holds title and checkbox
-		HorizontalPanel hpanelTitle = new HorizontalPanel();
+		hpanelTitle = new HorizontalPanel();
 		hpanelTitle.addStyleName(Resources.INSTANCE.css().rubrictitlepanel());
 		hpanelTitle.add(rubricTitle);
 		hpanelTitle.setCellHorizontalAlignment(rubricTitle, HasHorizontalAlignment.ALIGN_LEFT);
@@ -211,6 +215,9 @@ public class RubricPanel extends EMarkingComposite {
 			logger.severe("Submission data should not be null when loading the rubric interface!");
 			return;
 		}
+		
+		// If we are in the popup interface we hide the close button
+		closeButton.setVisible(!popupInterface);
 
 		//TODO
 		// Once loaded, we know all sizes
@@ -290,7 +297,7 @@ public class RubricPanel extends EMarkingComposite {
 						});
 					}
 				} else {
-					logger.severe("Problem adding cick handler");
+					logger.severe("Problem adding click handler");
 					logger.severe(this.getParent().getClass().getName());
 					logger.severe(this.getParent().getParent().getClass().getName());
 					logger.severe(this.getParent().getParent().getParent().getClass().getName());

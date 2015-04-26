@@ -31,6 +31,7 @@ import cl.uai.client.page.EditIcon;
 import cl.uai.client.page.EditMarkDialog;
 import cl.uai.client.page.EditMarkMenu;
 import cl.uai.client.page.LoadingIcon;
+import cl.uai.client.page.MarkingPage;
 import cl.uai.client.page.RegradeIcon;
 import cl.uai.client.page.TrashIcon;
 import cl.uai.client.resources.Resources;
@@ -145,12 +146,12 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 			) {
         this.markerid = markerId;
 		this.posx = posx;
-		this.posy = posy;
+		this.posy = posy;        
 		this.pageno = pageno;
 		this.timecreated = timecreated;
 		
 		this.colour = colour;
-
+		
 		this.addStyleName(Resources.INSTANCE.css().mark());
 
 		this.addHandlers();
@@ -411,8 +412,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				public void onClose(CloseEvent<PopupPanel> event) {
 					EditMarkDialog dialog = (EditMarkDialog) event.getSource();
 					
-					int widthPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getWidthPage();
-					int heightPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getHeightPage();
+					MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPageByIndex(pageno);
+					int widthPage = page.getWidth();
+					int heightPage = page.getHeight();
 					// If the dialog was not cancelled update the mark with the dialog values
 					if(!dialog.isCancelled()) {
 							mark.update(dialog.getTxtComment(),

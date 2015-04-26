@@ -195,4 +195,5 @@ public interface EmarkingCss extends CssResource {
 	String closerubricbutton();
 	String statisticalCircle();
 	String iconArrow();
+	String resizepagepanel();
 }

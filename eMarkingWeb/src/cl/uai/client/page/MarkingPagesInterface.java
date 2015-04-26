@@ -69,10 +69,6 @@ public class MarkingPagesInterface extends EMarkingComposite {
 		return numPages;
 	}
 
-	/** Width and Height Page**/
-	private int widthPage = -1;
-	private int heightPage = -1;
-
 	/**
 	 * Creates the main interface for pages
 	 */
@@ -210,21 +206,23 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					int width = Integer.parseInt(tabinfo.get("width"));
 					int height = Integer.parseInt(tabinfo.get("height"));
 					boolean showmarker = Integer.parseInt(tabinfo.get("showmarker")) == 1;
+					
+					// Parse Json values
+					List<Map<String, String>> allcomments = AjaxRequest.getValuesFromResultString(tabinfo.get("comments"));
 
-					double screenWidth = Window.getClientWidth()+1;
+					double screenWidth = scrollContainerForPages.getOffsetWidth();
 					int newwidth = (int) screenWidth;
-					widthPage = newwidth;
-					float ratio = (float) width / (float) height;
-					int newheight = (int) (newwidth / ratio);
-					heightPage = newheight;
-					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), newwidth, newheight);
+					double ratio = (double) width / (double) height;
+					int newheight = (int) (screenWidth / ratio);
+					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), newwidth, newheight, allcomments);
 					if(!showmarker) {
 						page.setVisible(false);
 					}
 					pagesPanel.insert(page, tabnum-1);
 				}
 				scrollToPage(0);
-
+				
+				EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
 				EMarkingWeb.markingInterface.finishLoading();	
 			}
 		});
@@ -271,13 +269,4 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	public VerticalPanel getPagesPanel(){
 		return pagesPanel;
 	}
-	
-	public int getWidthPage(){
-		return widthPage;
-	}
-	
-	public int getHeightPage(){
-		return heightPage;
-	}
-	
 }

@@ -125,6 +125,7 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);
+	private boolean rubricEmbedded = true;
 	
 	/**
 	 * @return the eMarkingVersion
@@ -285,6 +286,10 @@ public class MarkingInterface extends EMarkingComposite {
 	
 	public static Map<String, String> getMapCss(){
 		return MapCss;
+	}
+	
+	public HTML getShowRubricButton() {
+		return this.showRubricButton;
 	}
 
 	/**
@@ -500,8 +505,8 @@ public class MarkingInterface extends EMarkingComposite {
 				"&pageno=" + mark.getPageno() +
 				"&criterionid="+cid + 
 				"&colour="+mark.getColour() +
-				"&windowswidth=" + page.getWidthPage() +
-				"&windowsheight=" + page.getHeightPage()
+				"&windowswidth=" + page.getWidth() +
+				"&windowsheight=" + page.getHeight()
 				, new AsyncCallback<AjaxData>() {
 
 			@Override
@@ -605,8 +610,8 @@ public class MarkingInterface extends EMarkingComposite {
 								"&sesskey="+sessKey+
 								"&bonus="+bonus+
 								"&comment="+URL.encode(comment) +
-								"&windowswidth=" + page.getWidthPage() +
-								"&windowsheight=" + page.getHeightPage();
+								"&windowswidth=" + page.getWidth() +
+								"&windowsheight=" + page.getHeight();
 
 						// Add loading icon
 						Mark.loadingIcon.removeFromParent();
@@ -837,22 +842,29 @@ public class MarkingInterface extends EMarkingComposite {
 		
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "100%");
-		// Set position of the rubric to 65% width of the windows
-		markingPanel.add(rubricInterface,(int)(Window.getClientWidth() * 0.65),0);
-		// Set rubric invisible
-		rubricInterface.setVisible(false);
-		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
+
+		// Set show rubric button
 		showRubricButton.setHTML(iconShowRubric.toString());
+		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
+
+		interfacePanel.add(rubricInterface);
+		
+		// When we set the rubric visibility we call the loadinterface in the markinginterface object
+		rubricInterface.setVisible(!this.rubricEmbedded);
 
 		/** Codigo Implantado tesis **/
 		if(linkrubric == 1){
 			toolbar.getMarkingButtons().setCriterionList();
 		}
 		/** FIN **/
-		
-		markingPagesInterface.loadInterface();
 	}
 	
+	public boolean isRubricEmbedded() {
+		return rubricEmbedded;
+	}
+	public void setRubricEmbedded(boolean rubricEmbedded) {
+		this.rubricEmbedded = rubricEmbedded;
+	}
 	/**
 	 * Loads submission data using global submission id
 	 */
@@ -1096,8 +1108,10 @@ public class MarkingInterface extends EMarkingComposite {
 			public void onClick(ClickEvent event){
 				if(rubricInterface.isVisible()){
 					rubricInterface.setVisible(false);
+					showRubricButton.setVisible(true);
 				}else{
 					rubricInterface.setVisible(true);
+					showRubricButton.setVisible(false);
 				}
 			}
 		});

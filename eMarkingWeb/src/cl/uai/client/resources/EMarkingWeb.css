@@ -19,13 +19,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /** Main interfaces **/
-.interfaceMainPanel,.toolbar,.interfacepanel,.rubricinterface,.buttonspanel,.rubricrow,.rubrictable,.rubricpanel
+.interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable, .rubricpanel
 	{
 	width: 100%;
 }
 
+
 .rubricinterface {
 	background-color: #fff;
+	max-width: 300px;
+	border-radius: 5px;
+	border: solid 1px #2d5873;
 }
 
 .rubricinterface,.rubricinterface td {
@@ -44,8 +48,13 @@
 }
 
 .pagespanel {
+	width: 100%;
 	background-color: #000;
 	margin-left: 0px;
+}
+
+.resizepagepanel {
+	border-collapse: collapse;
 }
 
 /** Toolbar parts **/

@@ -22,7 +22,6 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
-import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
@@ -45,14 +44,15 @@ public class MarkingPageDragHandler implements DragHandler {
 	
 	/** Marking pages are surrounded by a scroll and an absolute panel **/
 	private AbsolutePanel absolutePanel = null;
-	
+	private MarkingPage page = null;
 	/**
 	 * Constructor require the panels
 	 * @param apanel
 	 * @param spanel
 	 */
-	public MarkingPageDragHandler(AbsolutePanel apanel) {
+	public MarkingPageDragHandler(AbsolutePanel apanel, MarkingPage _page) {
 		this.absolutePanel = apanel;
+		this.page = _page;
 	}
 	
 	@Override
@@ -96,8 +96,8 @@ public class MarkingPageDragHandler implements DragHandler {
 			motive = ((RubricMark) mark).getRegrademotive();
 		}
 		
-		int widthPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getWidthPage();
-		int heightPage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getHeightPage();
+		int widthPage = this.page.getWidth();
+		int heightPage = this.page.getHeight();
 		
 		mark.update(
 				mark.getRawtext(),

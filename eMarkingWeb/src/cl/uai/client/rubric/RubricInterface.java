@@ -24,6 +24,7 @@ package cl.uai.client.rubric;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.Window;
@@ -56,7 +57,7 @@ public class RubricInterface extends EMarkingComposite {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
 		// Set width of the rubric at 35% of the window
-		mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
+		//mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 
 		rubricPanel = new RubricPanel();
 		mainPanel.add(rubricPanel);
@@ -77,6 +78,15 @@ public class RubricInterface extends EMarkingComposite {
 	public void resizeToolsPanel() {
 		int height = Window.getClientHeight() - toolsPanel.getAbsoluteTop();
 		toolsPanel.setHeight(height+"px");
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+
+		EMarkingWeb.markingInterface.setRubricEmbedded(visible);
+		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();
+		EMarkingWeb.markingInterface.getShowRubricButton().setVisible(!visible);
 	}
 	
 	/**
