@@ -19,7 +19,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /** Main interfaces **/
-.interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable, .rubricpanel
+.interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable, .rubricpanel, .rubricinterface
 	{
 	width: 100%;
 }
@@ -27,7 +27,6 @@
 
 .rubricinterface {
 	background-color: #fff;
-	max-width: 300px;
 	border-radius: 5px;
 	border: solid 1px #2d5873;
 }

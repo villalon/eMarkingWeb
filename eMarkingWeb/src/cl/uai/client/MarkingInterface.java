@@ -841,13 +841,14 @@ public class MarkingInterface extends EMarkingComposite {
 		rubricInterface = new RubricInterface();
 		
 		interfacePanel.add(markingPagesInterface);
-		interfacePanel.setCellWidth(markingPagesInterface, "100%");
+		interfacePanel.setCellWidth(markingPagesInterface, "60%");
 
 		// Set show rubric button
 		showRubricButton.setHTML(iconShowRubric.toString());
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
 
 		interfacePanel.add(rubricInterface);
+		interfacePanel.setCellWidth(rubricInterface, "40%");
 		
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(this.rubricEmbedded);
