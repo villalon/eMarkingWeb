@@ -214,7 +214,7 @@ public class EMarkingWeb implements EntryPoint {
 			}
 			
 			//  Resize the popup window and move it to the top left corner
-			Window.resizeTo(width, height);
+			Window.resizeTo(Window.getClientWidth(), height);
 			Window.moveTo(0, 0);
 
 			// Initialize eMarking's interface

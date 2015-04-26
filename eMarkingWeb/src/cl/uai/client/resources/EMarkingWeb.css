@@ -451,26 +451,11 @@ to {
 	font-size: 16pt;
 }
 
-.rubricbutton {
-	height: 21px;
+.rubricbutton,.rubricbuttoncustom,.finishmarkingbutton,.jumptonext {
+	min-height: 21px;
 	font-size: 16pt;
 	text-align: center;
-}
-
-.finishmarkingbutton {
-	margin-top: 1px;
-	margin-bottom: 1px;
-	border-radius:3px;
-	height: 18px;
-	text-align: center;
-	font-size: 0.9em;
-	width: 100px;
-	margin-left: 3px;
-	margin-right: 7px;
-}
-
-.rubricbutton,.rubricbuttoncustom {
-	width: 21px;
+	min-width: 21px;
 	font-weight: bolder;
 }
 

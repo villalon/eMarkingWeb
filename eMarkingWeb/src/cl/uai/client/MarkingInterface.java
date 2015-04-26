@@ -850,7 +850,7 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.add(rubricInterface);
 		
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
-		rubricInterface.setVisible(!this.rubricEmbedded);
+		rubricInterface.setVisible(this.rubricEmbedded);
 
 		/** Codigo Implantado tesis **/
 		if(linkrubric == 1){

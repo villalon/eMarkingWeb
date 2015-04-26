@@ -52,7 +52,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -61,6 +60,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -115,7 +115,7 @@ public class MarkingToolBar extends EMarkingComposite {
 
 	private PushButton saveChangesButton = null;
 	
-	private CheckBox chkContinue = null;
+	private ToggleButton chkContinue = null;
 
 	/**
 	 * @return the studentSelector
@@ -220,7 +220,10 @@ public class MarkingToolBar extends EMarkingComposite {
 			}
 		});
 		
-		finishMarkingButton = new PushButton(MarkingInterface.messages.FinishMarking());
+		Icon finishIcon = new Icon(IconType.CHECK);
+		finishMarkingButton = new PushButton();
+		finishMarkingButton.setHTML(finishIcon.toString());
+		finishMarkingButton.setTitle(MarkingInterface.messages.FinishMarking());
 		finishMarkingButton.addStyleName(Resources.INSTANCE.css().finishmarkingbutton());
 		finishMarkingButton.setVisible(false);
 		finishMarkingButton.addClickHandler(new ClickHandler() {
@@ -304,7 +307,10 @@ public class MarkingToolBar extends EMarkingComposite {
 			}
 		});
 		
-		saveChangesButton = new PushButton(MarkingInterface.messages.SaveChangesClose());
+		Icon icon = new Icon(IconType.SAVE);
+		saveChangesButton = new PushButton();
+		saveChangesButton.setHTML(icon.toString());
+		saveChangesButton.setTitle(MarkingInterface.messages.SaveChangesClose());
 		saveChangesButton.addStyleName(Resources.INSTANCE.css().finishmarkingbutton());
 		saveChangesButton.setVisible(false);
 		saveChangesButton.addClickHandler(new ClickHandler() {
@@ -343,7 +349,10 @@ public class MarkingToolBar extends EMarkingComposite {
 			}
 		});
 		
-		chkContinue = new CheckBox(MarkingInterface.messages.JumpToNextStudent());
+		Icon chkContinueIcon = new Icon(IconType.USER);
+		chkContinue = new ToggleButton();
+		chkContinue.setHTML(chkContinueIcon.toString());
+		chkContinue.setTitle(MarkingInterface.messages.JumpToNextStudent());
 		chkContinue.addStyleName(Resources.INSTANCE.css().jumptonext());
 		chkContinue.setVisible(false);
 
@@ -389,29 +398,25 @@ public class MarkingToolBar extends EMarkingComposite {
 		containerInformation.setCellVerticalAlignment(circleAgreeStatus, HasVerticalAlignment.ALIGN_MIDDLE);
 		containerInformation.setCellWidth(circleAgreeStatus,"20%");
 		
-		buttonsPanel.add(containerInformation);
+/*		buttonsPanel.add(containerInformation);
 		buttonsPanel.setCellHorizontalAlignment(containerInformation, HasHorizontalAlignment.ALIGN_CENTER);
 		buttonsPanel.setCellVerticalAlignment(containerInformation, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellWidth(containerInformation, "15%");
-
+*/
 		buttonsPanel.add(notes);
 		buttonsPanel.setCellVerticalAlignment(notes, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(notes, HasHorizontalAlignment.ALIGN_CENTER);
-		buttonsPanel.setCellWidth(notes, "4%");
+		//buttonsPanel.setCellWidth(notes, "4%");
 		
-		buttonsPanel.add(chkContinue);
-		buttonsPanel.setCellHorizontalAlignment(chkContinue, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellVerticalAlignment(chkContinue, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellWidth(chkContinue, "10%");
-		
-		buttonsPanel.add(saveChangesButton);
-		buttonsPanel.setCellHorizontalAlignment(saveChangesButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(saveChangesButton, "5%");
-
-		buttonsPanel.add(finishMarkingButton);
-		buttonsPanel.setCellHorizontalAlignment(finishMarkingButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(finishMarkingButton, "5%");
+		HorizontalPanel hpanel = new HorizontalPanel();		
+		hpanel.add(chkContinue);		
+		hpanel.add(saveChangesButton);
+		hpanel.add(finishMarkingButton);
 				
+		buttonsPanel.add(hpanel);
+		buttonsPanel.setCellHorizontalAlignment(hpanel, HasHorizontalAlignment.ALIGN_RIGHT);
+		buttonsPanel.setCellWidth(finishMarkingButton, "5%");
+		
 		mainPanel.add(buttonsPanel);		
 		this.initWidget(mainPanel);
 	}
