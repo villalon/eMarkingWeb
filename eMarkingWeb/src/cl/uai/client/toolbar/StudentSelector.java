@@ -103,7 +103,7 @@ public class StudentSelector extends EMarkingComposite {
 				int index=0;
 				for(Map<String, String> value : values) {
 					String studentname = MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()+" "+(index+1));
-					if(!MarkingInterface.isAnonymous()) {
+					if(!MarkingInterface.isStudentAnonymous()) {
 						studentname = value.get("lastname") + ", " + value.get("firstname");
 					}
 					studentname += "\t\t["+getStringFromStatus(value.get("status")) + "]";

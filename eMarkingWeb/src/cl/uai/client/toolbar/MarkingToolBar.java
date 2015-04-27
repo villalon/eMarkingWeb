@@ -442,7 +442,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		//progressId: progressBar, pId: progressBarNum
 		//agreeId: agreeBar, pId: agreeBarNum
 
-		if(!MarkingInterface.isAnonymous()) {
+		if(!MarkingInterface.isStudentAnonymous()) {
 			this.courseName.setText(sdata.getCoursename());
 			this.courseName.setTitle(sdata.getCourseshort());
 			studentSelector.setText(sdata.getLastname() + ", " + sdata.getFirstname());

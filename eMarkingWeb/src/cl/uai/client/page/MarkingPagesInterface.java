@@ -161,14 +161,10 @@ public class MarkingPagesInterface extends EMarkingComposite {
 			return;
 		}
 
-		// Checks if the assignment is anonymous
-		String anonymous = MarkingInterface.isAnonymous() ? "1" : "0";
-
 		EMarkingWeb.markingInterface.addLoading(false);
 		
 		// Ajax request to get the tab image and number of pages
-		AjaxRequest.ajaxRequest("action=getalltabs" +
-				"&anonymous=" + anonymous, 
+		AjaxRequest.ajaxRequest("action=getalltabs", 
 				new AsyncCallback<AjaxData>() {			
 			@Override
 			public void onFailure(Throwable caught) {

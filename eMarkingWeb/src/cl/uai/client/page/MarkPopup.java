@@ -88,7 +88,7 @@ public class MarkPopup extends HTML {
 		}
 		
 		// Show the marker's name if the marking process is not anonymous
-		if(!MarkingInterface.isAnonymous()&&(!mark.isReadOnly())) {
+		if(!MarkingInterface.isMarkerAnonymous()) {
 			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.mark.getMarkername()) + "</div>";
 		}
 		

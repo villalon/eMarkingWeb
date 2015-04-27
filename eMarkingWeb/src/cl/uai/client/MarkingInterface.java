@@ -102,7 +102,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private int loading=0;
 
 	/** Indicates if the marking interface will include anonymous information **/
-	private static boolean anonymous = false;
+	private static int anonymous = 0;
 
 	/** Indicates if the marking interface is in read only mode **/
 	public static boolean readonly = true;
@@ -145,15 +145,8 @@ public class MarkingInterface extends EMarkingComposite {
 	 * 
 	 * @return true if the marking is anonymous
 	 */
-	public static boolean isAnonymous() {
-		return anonymous;
-	}
-	/**
-	 * Sets if the marking process will be anonymous
-	 * @param anon
-	 */
-	public static void setAnonymous(boolean anon) {
-		anonymous = anon;
+	public static boolean isMarkerAnonymous() {
+		return (anonymous == 1 || anonymous == 3);
 	}
 	
 	/**
@@ -1031,7 +1024,7 @@ public class MarkingInterface extends EMarkingComposite {
 					sessKey = value.get("sesskey");
 
 					// Assign if the assignment is anonymous
-					anonymous = value.get("anonymous").equals("true");
+					anonymous = Integer.parseInt(value.get("anonymous"));
 					
 					logger.fine("Anonymous mode: " + anonymous);
 					
@@ -1255,6 +1248,9 @@ public class MarkingInterface extends EMarkingComposite {
 	 */
 	public static int getMarkingType() {
 		return markingType;
+	}
+	public static boolean isStudentAnonymous() {
+		return (anonymous == 0 || anonymous == 1);
 	}
 	
 }

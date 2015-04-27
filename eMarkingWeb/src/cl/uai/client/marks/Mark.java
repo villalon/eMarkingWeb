@@ -242,7 +242,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 		}
 		
 		// Show the marker's name if the marking process is not anonymous
-		if(!MarkingInterface.isAnonymous()&&(!this.isReadOnly())) {
+		if(!MarkingInterface.isMarkerAnonymous()) {
 			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
 		}
 		
