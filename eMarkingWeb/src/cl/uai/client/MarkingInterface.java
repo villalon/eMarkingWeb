@@ -125,6 +125,9 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Submission data (student, course, grade, marker) **/
 	public static SubmissionGradeData submissionData = null;
 	
+	/** Activate chat **/
+	public static boolean activateChat = false;
+	
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);

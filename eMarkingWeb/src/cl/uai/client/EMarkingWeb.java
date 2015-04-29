@@ -138,6 +138,7 @@ public class EMarkingWeb implements EntryPoint {
 		int submissionId = 0;
 		int preferredWidth = 860;
 		boolean showRubric = true;
+		boolean chat = false;
 
 		try {
 			// First try to read submissionId from emarking DIV tag
@@ -173,6 +174,11 @@ public class EMarkingWeb implements EntryPoint {
 			// Validate that the preferredWidth is a positive integer greater than 10
 			if(preferredWidth <= 10) {
 				errors.add("Preferred width should be a positive integer greater than 10.");
+			}
+			
+			// Fifth, check if the chat is active
+			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("chat") != null && !RootPanel.get(eMarkingDivId).getElement().getAttribute("chat").equals("")) {
+				chat = RootPanel.get(eMarkingDivId).getElement().getAttribute("chat").equals("true");
 			}
 			
 			logger.fine("ShowRubric: " + showRubric + " Preferred width:" + preferredWidth);
@@ -238,6 +244,7 @@ public class EMarkingWeb implements EntryPoint {
 			// Initialize eMarking's interface
 			markingInterface = new MarkingInterface();
 			markingInterface.setShowRubric(showRubric);
+			MarkingInterface.activateChat = chat;
 			
 			// Add eMarking to the browser
 			RootPanel.get(eMarkingDivId).clear();
