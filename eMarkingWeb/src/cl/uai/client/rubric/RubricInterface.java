@@ -84,7 +84,7 @@ public class RubricInterface extends EMarkingComposite {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 
-		EMarkingWeb.markingInterface.setRubricEmbedded(visible);
+		EMarkingWeb.markingInterface.setShowRubric(visible);
 		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();
 		EMarkingWeb.markingInterface.setRubricVisible(visible);
 	}

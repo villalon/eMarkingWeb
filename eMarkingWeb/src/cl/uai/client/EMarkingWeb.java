@@ -136,6 +136,8 @@ public class EMarkingWeb implements EntryPoint {
 		RootPanel.get(eMarkingDivId).add(new Label("Loading"));		
 
 		int submissionId = 0;
+		int preferredWidth = 860;
+		boolean showRubric = true;
 
 		try {
 			// First try to read submissionId from emarking DIV tag
@@ -153,7 +155,29 @@ public class EMarkingWeb implements EntryPoint {
 				errors.add("Submission id must be a non negative integer.");
 			}
 			
+			// Third, we get the preferred width (if any)
+			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth") != null) {
+				preferredWidth = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth")); 
+			}
+			
+			// Validate that the preferredWidth is a positive integer greater than 10
+			if(preferredWidth <= 10) {
+				errors.add("Preferred width should be a positive integer greater than 10.");
+			}
+			
+			// Fourth, we get the show rubric setting
+			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric") != null) {
+				showRubric = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric")) == 1; 
+			}
+			
+			// Validate that the preferredWidth is a positive integer greater than 10
+			if(preferredWidth <= 10) {
+				errors.add("Preferred width should be a positive integer greater than 10.");
+			}
+			
+			logger.fine("ShowRubric: " + showRubric + " Preferred width:" + preferredWidth);
 		} catch (Exception e) {
+			logger.severe(e.getMessage());
 			errors.add("Error in HTML for eMarkingWeb can not initalize. Invalid submissionId value (must be integer).");
 		}
 
@@ -202,23 +226,18 @@ public class EMarkingWeb implements EntryPoint {
 			int width = screenWidth();
 			int height = screenHeight();
 
-			// If we have a narrow window, just fix it on 847
-			if(width < 1200) {
-				width = 847;
-				if(Navigator.getUserAgent().toLowerCase().contains("mozilla")) {
-					width = 850;
-				}
-			} else {
-				// Otherwise we use as much as we can
-				width = Math.min(width, 860);
+			// Preferred width can not be bigger than the screen
+			if(width < preferredWidth) {
+				preferredWidth = width;
 			}
 			
 			//  Resize the popup window and move it to the top left corner
-			Window.resizeTo(Window.getClientWidth(), height);
+			Window.resizeTo(preferredWidth, height);
 			Window.moveTo(0, 0);
 
 			// Initialize eMarking's interface
 			markingInterface = new MarkingInterface();
+			markingInterface.setShowRubric(showRubric);
 			
 			// Add eMarking to the browser
 			RootPanel.get(eMarkingDivId).clear();

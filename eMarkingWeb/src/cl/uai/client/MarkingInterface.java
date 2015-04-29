@@ -101,8 +101,11 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Counter for how many interfaces are currently loading simultaneously **/
 	private int loading=0;
 
-	/** Indicates if the marking interface will include anonymous information **/
-	private static int anonymous = 0;
+	/** Indicates if the marking interface will include student anonymous information **/
+	private static boolean studentAnonymous = true;
+
+	/** Indicates if the marking interface will include marker anonymous information **/
+	private static boolean markerAnonymous = true;
 
 	/** Indicates if the marking interface is in read only mode **/
 	public static boolean readonly = true;
@@ -125,7 +128,7 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);
-	private boolean rubricEmbedded = true;
+	private boolean showRubric = true;
 	
 	/**
 	 * @return the eMarkingVersion
@@ -146,7 +149,7 @@ public class MarkingInterface extends EMarkingComposite {
 	 * @return true if the marking is anonymous
 	 */
 	public static boolean isMarkerAnonymous() {
-		return (anonymous == 1 || anonymous == 3);
+		return markerAnonymous;
 	}
 	
 	/**
@@ -844,7 +847,7 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.setCellWidth(rubricInterface, "40%");
 		
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
-		rubricInterface.setVisible(this.rubricEmbedded);
+		rubricInterface.setVisible(this.showRubric);
 
 		/** Codigo Implantado tesis **/
 		if(linkrubric == 1){
@@ -864,11 +867,11 @@ public class MarkingInterface extends EMarkingComposite {
 		}
 	}
 	
-	public boolean isRubricEmbedded() {
-		return rubricEmbedded;
+	public boolean isShowRubric() {
+		return showRubric;
 	}
-	public void setRubricEmbedded(boolean rubricEmbedded) {
-		this.rubricEmbedded = rubricEmbedded;
+	public void setShowRubric(boolean _showRubric) {
+		this.showRubric = _showRubric;
 	}
 	/**
 	 * Loads submission data using global submission id
@@ -1023,10 +1026,13 @@ public class MarkingInterface extends EMarkingComposite {
 					// Assign Moodle session key
 					sessKey = value.get("sesskey");
 
-					// Assign if the assignment is anonymous
-					anonymous = Integer.parseInt(value.get("anonymous"));
+					// Assign if the student is anonymous
+					studentAnonymous = value.get("studentanonymous").equals("true");
 					
-					logger.fine("Anonymous mode: " + anonymous);
+					// Assign if the marker is anonymous
+					markerAnonymous =  value.get("markeranonymous").equals("true");
+					
+					logger.fine("Anonymous mode - student:" + studentAnonymous + " marker:" + markerAnonymous);
 					
 					// Assign if the assignment is anonymous
 					readonly = (value.get("hascapability") != null && value.get("hascapability").equals("false"));
@@ -1249,8 +1255,9 @@ public class MarkingInterface extends EMarkingComposite {
 	public static int getMarkingType() {
 		return markingType;
 	}
+	
 	public static boolean isStudentAnonymous() {
-		return (anonymous == 0 || anonymous == 1);
+		return studentAnonymous;
 	}
 	
 }
