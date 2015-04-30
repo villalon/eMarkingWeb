@@ -412,7 +412,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				public void onClose(CloseEvent<PopupPanel> event) {
 					EditMarkDialog dialog = (EditMarkDialog) event.getSource();
 					
-					MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPageByIndex(pageno);
+					MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPageByIndex(pageno-1);
 					int widthPage = page.getWidth();
 					int heightPage = page.getHeight();
 					// If the dialog was not cancelled update the mark with the dialog values
