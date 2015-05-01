@@ -21,7 +21,6 @@
 package cl.uai.client.data;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -137,7 +136,7 @@ public class SubmissionGradeData {
 	private Date regradeclosedate;	
 
 	/** Rubric definition **/
-	private Map<Integer, Criterion> rubricdefinition = null;
+	private SortedMap<Integer, Criterion> rubricdefinition = null;
 
 	public String getActivityname() {
 		return activityname;
@@ -193,6 +192,14 @@ public class SubmissionGradeData {
 	public Map<Integer, Criterion> getRubricfillings() {
 		return rubricdefinition;
 	}
+	public Map<Integer, Criterion> getSortedRubricfillings() {
+		SortedMap<Integer, Criterion> map = new TreeMap<Integer, Criterion>();
+		for(int cid : rubricdefinition.keySet()) {
+			Criterion c = rubricdefinition.get(cid);
+			map.put(c.getSortorder(), c);
+		}
+		return map;
+	}
 	public int getStudentid() {
 		return studentid;
 	}
@@ -217,11 +224,12 @@ public class SubmissionGradeData {
 
 				List<Map<String, String>> rubric = AjaxRequest.getValuesFromResult(result);
 
-				Map<Integer, Criterion> definition = new HashMap<Integer, Criterion>();
+				SortedMap<Integer, Criterion> definition = new TreeMap<Integer, Criterion>();
 
 				try {
 					for(Map<String, String> criterion : rubric) {
 						int criterionId = Integer.parseInt(criterion.get("id"));
+						int criterionSortOrder = Integer.parseInt(criterion.get("sortorder"));
 						float maxscore = Float.parseFloat(criterion.get("maxscore"));
 						String criterionDescription = criterion.get("description").toString();
 						rubricname = criterion.get("rubricname").toString();
@@ -241,7 +249,8 @@ public class SubmissionGradeData {
 								maxscore, 
 								regradeid, 
 								regradeaccepted, 
-								levelsdata);
+								levelsdata,
+								criterionSortOrder);
 						criteriondata.setMarkerIsAssigned(markerIsAssigned);
 						criteriondata.setRegradeComment(regradecomment);
 						criteriondata.setRegradeMarkerComment(regrademarkercomment);

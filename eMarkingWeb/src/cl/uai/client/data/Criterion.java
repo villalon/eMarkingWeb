@@ -72,12 +72,17 @@ public class Criterion {
 	}
 
 	private int regradeaccepted = 0;
+	private int sortorder;
 	
 	/**
 	 * @return the maxscore
 	 */
 	public float getMaxscore() {
 		return maxscore;
+	}
+
+	public int getSortorder() {
+		return sortorder;
 	}
 
 	/**
@@ -142,7 +147,7 @@ public class Criterion {
 	 * @param id
 	 * @param description
 	 */
-	public Criterion(int id, String description, float maxscore, int regradeid, int regradeaccepted, SortedMap<Integer, Level> lvls) {
+	public Criterion(int id, String description, float maxscore, int regradeid, int regradeaccepted, SortedMap<Integer, Level> lvls, int sortorder) {
 		super();
 		this.id = id;
 		this.description = description;
@@ -150,6 +155,7 @@ public class Criterion {
 		this.maxscore = maxscore;
 		this.regradeid = regradeid;
 		this.regradeaccepted = regradeaccepted;
+		this.sortorder = sortorder;
 	}
 
 	/**

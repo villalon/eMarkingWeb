@@ -241,15 +241,15 @@ public class RubricPanel extends EMarkingComposite {
 
 		int rownumber = 0;
 		int index = 0;
-		for(int criterionId : MarkingInterface.submissionData.getRubricfillings().keySet()) {
-			Criterion criterion = MarkingInterface.submissionData.getRubricfillings().get(criterionId);
+		for(int criterionSortId : MarkingInterface.submissionData.getSortedRubricfillings().keySet()) {
+			Criterion criterion = MarkingInterface.submissionData.getSortedRubricfillings().get(criterionSortId);
 			index++;
 			HorizontalPanel rowPanel = new HorizontalPanel();
 			rowPanel.addStyleName(Resources.INSTANCE.css().rubricrow());
 
 			CriterionHeader header = new CriterionHeader(
 					index, 
-					criterionId, 
+					criterion.getId(), 
 					criterion.getDescription(), 
 					criterion.getBonus(),
 					criterion.getRegradeid(),
@@ -257,7 +257,7 @@ public class RubricPanel extends EMarkingComposite {
 			
 			rowPanel.add(header);
 
-			rubricIndices.put(criterionId, index);
+			rubricIndices.put(criterion.getId(), index);
 			boolean criterionSelected = false;
 			for(int levelid : criterion.getLevels().keySet()) {
 				Level level = criterion.getLevels().get(levelid);
@@ -320,7 +320,7 @@ public class RubricPanel extends EMarkingComposite {
 				rowPanel.addStyleName(Resources.INSTANCE.css().oddrow());						
 			}
 
-			rubricRows.put(criterionId, rowPanel);
+			rubricRows.put(criterion.getId(), rowPanel);
 			
 			rubricTable.add(rowPanel);
 		}
