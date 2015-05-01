@@ -186,6 +186,9 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					EMarkingWeb.markingInterface.finishLoading();				
 					return;
 				}
+				
+				// We remove any possible drop controller that could have been before (when resizing window or showing rubric)
+				EMarkingWeb.markingInterface.getDragController().unregisterDropControllers();
 
 				// Parse Json values
 				List<Map<String, String>> alltabs = AjaxRequest.getValuesFromResult(result);
