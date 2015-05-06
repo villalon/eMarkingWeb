@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.chat.NodeChat;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
@@ -291,6 +292,8 @@ public class MarkingInterface extends EMarkingComposite {
 		return this.showRubricButton;
 	}
 
+	/** Get Course Module of actual eMarking **/
+	private static int coursemodule = 0;
 	/**
 	 * 
 	 */
@@ -1065,6 +1068,9 @@ public class MarkingInterface extends EMarkingComposite {
 					// Link rubric colors if configured as
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
 					
+					//Give the Course Module of actual eMarking
+					coursemodule=Integer.parseInt(value.get("coursemodule"));
+					
 					// Collaborative features (chat, wall) if configured as
 					collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
 					
@@ -1094,6 +1100,12 @@ public class MarkingInterface extends EMarkingComposite {
 						
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
+						if(activateChat==true){
+							NodeChat chat = new NodeChat();
+							chat.username=realUsername;
+							chat.coursemodule=coursemodule;
+							chat.start();
+							}
 					}
 					//Get progress marking status
 					totalTests = Integer.parseInt(value.get("totalTests"));
