@@ -8,20 +8,19 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.ScriptInjector;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.OptionElement;
-import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.TimeZone;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -30,8 +29,11 @@ public class NodeChat {
 	private String path;
 	private VerticalPanel Vpanel;
 	private VerticalPanel MuroVpanel;
+	private VerticalPanel MessageVpanel;
 	public static String username = null;
+	public static int userid = 0;
 	public static int coursemodule = 0;
+
 	
 	native void consoleLog( String message) /*-{
     console.log( "me:" + message );
@@ -48,7 +50,7 @@ public class NodeChat {
 			public void onSuccess(Void result) {
 				// TODO Auto-generated method stub
 				
-				loadNodeJS(path, username, coursemodule);
+				loadNodeJS(path, username, coursemodule,userid);
 				
 			}
 			@Override
@@ -61,7 +63,7 @@ public class NodeChat {
 	
 
 	//////////////// CONEXIÓN CON EL SERVIDOR NODE /////////////////////////////
-	private native void loadNodeJS(String path, String Username, int coursemodule) /*-{
+	private native void loadNodeJS(String path, String Username, int coursemodule, int userid) /*-{
 	 //Utilzamos <websocket>,si la conexion falla entonces utiliza <xhr-polling>
 	 //la conexion  <xhr-polling> no controla el evento "disconnet",la conexion es mantenida unos 30 segundos
 	 //aparentemente es un error de OPENSHIFT!!!
@@ -72,6 +74,7 @@ public class NodeChat {
 		   var conectionData={};
 	       conectionData.Username=Username;
 	       conectionData.cm=coursemodule;
+	       conectionData.userid=userid;
 	       $wnd.socket.emit("joinserver",JSON.stringify(conectionData));
 	       
 	       $wnd.socket.on('userJoin', function (data) {
@@ -106,17 +109,8 @@ public class NodeChat {
 	
 	private void userJoin(UserData user, JsArray<UserData> people, JsArray<Message> chatHistory){
 		
-		 
-		HorizontalPanel hpanel = (HorizontalPanel) Vpanel.getWidget(0);
-		ListBox users =(ListBox)  hpanel.getWidget(1);
-		for(int i=0;i<people.length();i++){
-			if(people.get(i).getName().equals(user.getName())|| people.get(i).getRoom()!=user.getRoom())continue;
-					users.addItem(people.get(i).getName());
-				 
-				}
-			users.addItem(user.getName());
 			for(int i=0;i<chatHistory.length();i++){
-				formatearMensaje(chatHistory.get(i).getTime(),chatHistory.get(i).getUser() ,chatHistory.get(i).getMessage(),"grey", Vpanel);
+				formatearMensaje(chatHistory.get(i).getTime(),chatHistory.get(i).getUser() ,chatHistory.get(i).getMessage(),"grey");
 			}
 	}
 	
@@ -156,7 +150,7 @@ public class NodeChat {
 	}-*/;
 	private void onCatchMesageChatUsers(Message message){
 	    
-		formatearMensaje(message.getTime(),message.getUser(),message.getMessage(),"black", Vpanel);
+		formatearMensaje(message.getTime(),message.getUser(),message.getMessage(),"black");
 	}
 
 	
@@ -169,18 +163,18 @@ public class NodeChat {
 		dlg.setModal(true);
 	
 		Vpanel= new VerticalPanel(); 
-		HorizontalPanel Hpanel= new HorizontalPanel();
+		MessageVpanel= new VerticalPanel(); 
+		//create scrollpanel with content
 		
-		final ListBox Hmessages = new ListBox();
-		Hmessages.setVisibleItemCount(12);
-		Hmessages.setWidth("270px");
-		final ListBox users = new ListBox();
-		users.setVisibleItemCount(12);
-		users.setWidth("145px");
-		Hpanel.add(Hmessages);
-		Hpanel.add(users);
-		
-		final TextArea message = new TextArea();
+	
+
+		ScrollPanel scrollPanel = new ScrollPanel(MessageVpanel);
+	    scrollPanel.setSize("270px", "220px");
+	    Vpanel.add(scrollPanel);
+		scrollPanel.scrollToBottom();
+	    
+	    HorizontalPanel HpanelM= new HorizontalPanel();
+	    final TextArea message = new TextArea();
 	    message.setCharacterWidth(35);
 	    message.setVisibleLines(5);
 	    Button sendButton=new Button("Enviar");
@@ -194,16 +188,16 @@ public class NodeChat {
 				message.setText("");
 			}
 		});
+	   
+	
+                
 	    
-	    HorizontalPanel HpanelM= new HorizontalPanel();
 	    HpanelM.add(message);
 	    HpanelM.add(sendButton);
-	   
-	    Vpanel.add(Hpanel);
 	    Vpanel.add(HpanelM);
 	    
 	    AbsolutePanel Apanel = new AbsolutePanel();
-	    Apanel.setSize("414px", "337px");
+	    Apanel.setSize("270px", "337px");
 	    Apanel.add(Vpanel);
 	    dlg.add(Apanel);
 		
@@ -223,19 +217,13 @@ public class NodeChat {
 		dlgMuro.setAutoHideEnabled(true);
 		dlgMuro.setAnimationEnabled(true);
 		dlgMuro.setModal(true);
-		MuroVpanel= new VerticalPanel(); 
-		HorizontalPanel MuroHpanel= new HorizontalPanel();
+	      //create scrollpanel with content
+		
 
-		
-		final ListBox Muro = new ListBox();
-		Muro.setVisibleItemCount(40);
-		Muro.setWidth("540px");
-		MuroHpanel.add(Muro);
-		MuroVpanel.add(MuroHpanel);
-		
+	
 		AbsolutePanel MuroApanel = new AbsolutePanel();
 		MuroApanel.setSize("540px", "600px");
-	    MuroApanel.add(MuroVpanel);
+	    //MuroApanel.add(scrollPanel);
 		
 	    dlgMuro.add(MuroApanel);
 	    
@@ -258,46 +246,17 @@ public class NodeChat {
 		
 	}
 	
-	private void formatearMensaje(int time,String name,String  mensaje,String color, VerticalPanel Vpanel)
+	private void formatearMensaje(int time,String name,String  mensaje,String color)
 	{
 		
 		long ltime = (long) (time/ .001);
 		Date today = new Date(ltime);
 		DateTimeFormat fmt = DateTimeFormat.getFormat("h:mm");
 		String cad="["+fmt.format(today)+"] "+name+":"+mensaje;
-		int tam=cad.length();
-		int n=28;
-			for(int i=0;i<tam;i++){
-				if((i*n)+n>tam){
-					agregarMensajeLargo(cad.substring(i*n),color, Vpanel);
-					
-					break;
-				}
-				else{
-					agregarMensajeLargo(cad.substring(i*n, (i*n)+n),color,Vpanel);
-				}
-			}		
-	}
-	private void agregarMensajeLargo(String mensaje,String color, VerticalPanel Vpanel){
+		Label lbl = new Label(cad);
+		MessageVpanel.add(lbl);
 		
-		
-		HorizontalPanel hpanel = (HorizontalPanel) Vpanel.getWidget(0);
-		 ListBox Hmessages =(ListBox)  hpanel.getWidget(0);
-		 Hmessages.addItem(mensaje);
-		
-		
-		SelectElement selectElement = SelectElement.as(Hmessages.getElement());
-		NodeList<OptionElement> options = selectElement.getOptions();
-		options.getItem(Hmessages.getItemCount()-1).getStyle().setColor(color);
-		
-		//Mueve el scrooll bar al final
-		Hmessages.setItemSelected(Hmessages.getItemCount()-1, true);
-		Hmessages.setItemSelected(Hmessages.getItemCount()-1, false);
-	}
-	private void moveralfinal(ListBox lst){
-		//Mueve el scrooll bar al final
-		lst.setItemSelected(lst.getItemCount()-1, true);
-		lst.setItemSelected(lst.getItemCount()-1, false);
 	}
 	
+
 }

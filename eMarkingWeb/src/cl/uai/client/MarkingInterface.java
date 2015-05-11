@@ -1103,6 +1103,7 @@ public class MarkingInterface extends EMarkingComposite {
 						if(activateChat==true){
 							NodeChat chat = new NodeChat();
 							chat.username=realUsername;
+							chat.userid=userID;
 							chat.coursemodule=coursemodule;
 							chat.start();
 							}

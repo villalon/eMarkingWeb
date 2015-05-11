@@ -13,7 +13,7 @@ public class UserData extends JavaScriptObject{
 		 	return this.room;
 		 	 }-*/;
 		 public final native String getName() /*-{ 
-		 	return this.name; 
+		 	return this.username; 
 		 	}-*/;
 
 	}

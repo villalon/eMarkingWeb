@@ -10,7 +10,7 @@ public class Message extends JavaScriptObject{
 		 	return this.message;
 		 	 }-*/;
 		 public final native String getUser() /*-{ 
-		 	return this.user; 
+		 	return this.username; 
 		 	}-*/;
 		 public final native int getRoom() /*-{ 
 		 	return this.room; 
