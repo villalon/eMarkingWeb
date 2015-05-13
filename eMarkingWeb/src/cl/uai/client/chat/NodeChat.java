@@ -4,18 +4,24 @@ package cl.uai.client.chat;
 
 import java.util.Date;
 
+import cl.uai.client.resources.Resources;
+
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -30,9 +36,13 @@ public class NodeChat {
 	private VerticalPanel Vpanel;
 	private VerticalPanel MuroVpanel;
 	private VerticalPanel MessageVpanel;
+	private HorizontalPanel UsersHpanel;
+	private ScrollPanel scrollPanel;
+	private TextArea message;
 	public static String username = null;
 	public static int userid = 0;
 	public static int coursemodule = 0;
+	
 
 	
 	native void consoleLog( String message) /*-{
@@ -118,7 +128,6 @@ public class NodeChat {
 
 		HorizontalPanel hpanel = (HorizontalPanel) Vpanel.getWidget(0);
 		ListBox users =(ListBox)  hpanel.getWidget(1);
-		
 		users.addItem(user.getName());
 		
 	}
@@ -164,37 +173,44 @@ public class NodeChat {
 	
 		Vpanel= new VerticalPanel(); 
 		MessageVpanel= new VerticalPanel(); 
-		//create scrollpanel with content
 		
-	
-
-		ScrollPanel scrollPanel = new ScrollPanel(MessageVpanel);
+		scrollPanel = new ScrollPanel(MessageVpanel);
 	    scrollPanel.setSize("270px", "220px");
-	    Vpanel.add(scrollPanel);
+	    
 		scrollPanel.scrollToBottom();
 	    
-	    HorizontalPanel HpanelM= new HorizontalPanel();
-	    final TextArea message = new TextArea();
-	    message.setCharacterWidth(35);
-	    message.setVisibleLines(5);
-	    Button sendButton=new Button("Enviar");
-	    sendButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				
-				onSendMessageChatUser(message.getText());
-				message.setText("");
-			}
-		});
-	   
-	
-                
+		UsersHpanel= new HorizontalPanel();
+	    UsersHpanel.setSize("200px", "65px");
+	    HTML usersIcon = new HTML();
+	    usersIcon.setText("MC");
+	    usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
 	    
-	    HpanelM.add(message);
-	    HpanelM.add(sendButton);
-	    Vpanel.add(HpanelM);
+	    
+	   
+	    UsersHpanel.add(usersIcon);
+;
+		
+	    message = new TextArea();
+	   
+	    message.setWidth("258px");
+	    message.setVisibleLines(2);
+	   
+	    message.addKeyDownHandler(new KeyDownHandler() {
+
+	        @Override
+	        public void onKeyDown(KeyDownEvent event) {
+	         if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+	        	 onSendMessageChatUser(message.getText());
+				 message.setText("");
+				 scrollPanel.scrollToBottom();
+				 scrollPanel.setVerticalScrollPosition(scrollPanel.getMaximumVerticalScrollPosition()+1);
+	               }
+	        }
+	    });
+	   
+	    Vpanel.add(UsersHpanel);
+	    Vpanel.add(scrollPanel);
+	    Vpanel.add(message);
 	    
 	    AbsolutePanel Apanel = new AbsolutePanel();
 	    Apanel.setSize("270px", "337px");
@@ -255,7 +271,7 @@ public class NodeChat {
 		String cad="["+fmt.format(today)+"] "+name+":"+mensaje;
 		Label lbl = new Label(cad);
 		MessageVpanel.add(lbl);
-		
+		scrollPanel.scrollToBottom();
 	}
 	
 

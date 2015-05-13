@@ -830,7 +830,8 @@ background-color: #0057D9;
 	cursor: pointer;
 }
 
-.closerubricbutton {
+.closerubricbutton{
+	
 	font-size: 1em;
 	margin-right: 10px;
 	cursor: pointer;
@@ -844,4 +845,17 @@ background-color: #0057D9;
 .iconArrow {
 	font-size:2em;
  	line-height: 20px;
+}
+.chatusers{
+	font-size:1.5em; 
+	background-color: #00AAE6;
+	height:40px;
+	text-align: center;
+	vertical-align: middle;
+	width: 40px;
+	border-radius: 50%;
+	display: table-cell;
+	line-height: 40px;
+	
+	
 }
