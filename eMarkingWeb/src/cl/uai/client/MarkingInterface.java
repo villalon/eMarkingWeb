@@ -127,7 +127,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 	
 	/** Activate chat **/
-	public static boolean activateChat = false;
+	public static int activateChat = 0;
 	
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
@@ -1100,7 +1100,7 @@ public class MarkingInterface extends EMarkingComposite {
 						
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
-						if(activateChat==true){
+						if(activateChat==1){
 							NodeChat chat = new NodeChat();
 							chat.username=realUsername;
 							chat.userid=userID;
