@@ -3,7 +3,11 @@ package cl.uai.client.chat;
 
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.Callback;
@@ -20,18 +24,17 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class NodeChat {
-
+	/** For logging purposes */
+	private static Logger logger = Logger.getLogger(EMarkingWeb.class.getName());
 	private String path;
 	private VerticalPanel Vpanel;
 	private VerticalPanel MuroVpanel;
@@ -42,14 +45,12 @@ public class NodeChat {
 	public static String username = null;
 	public static int userid = 0;
 	public static int coursemodule = 0;
+	/** Connected users div**/
+	private Map<Integer, HTML> UserIcon = new HashMap<Integer, HTML>();
 	
 
-	
-	native void consoleLog( String message) /*-{
-    console.log( "me:" + message );
-}-*/;
 	public NodeChat(){
-
+		
 		path="http://127.0.0.1:9091/";
 		
 		GWT.log("RUTA NODE: "+ path);
@@ -122,32 +123,34 @@ public class NodeChat {
 			for(int i=0;i<chatHistory.length();i++){
 				formatearMensaje(chatHistory.get(i).getTime(),chatHistory.get(i).getUser() ,chatHistory.get(i).getMessage(),"grey");
 			}
+				
+			    
+			    
+			 for(int i=0;i<people.length();i++){
+			  if(people.get(i).getName().equals(user.getName())|| people.get(i).getRoom()!=user.getRoom())continue;
+			  	adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()));
+			    }
+			 
+			 	adduser(user.getName(),Integer.parseInt(user.getId()));
+			    				
+			    
+			    
 	}
 	
 	private void onBeginChatOther(UserData user){
 
-		HorizontalPanel hpanel = (HorizontalPanel) Vpanel.getWidget(0);
-		ListBox users =(ListBox)  hpanel.getWidget(1);
-		users.addItem(user.getName());
+		adduser(user.getName(),Integer.parseInt(user.getId()));
 		
 	}
 	
 	private void onRemoveChatUser(UserData user){
-		
-		HorizontalPanel hpanel = (HorizontalPanel) Vpanel.getWidget(0);
-		ListBox users =(ListBox)  hpanel.getWidget(1);
-		
-		for(int i=0;i<users.getItemCount();i++){
-			if(users.getItemText(i).equals(user.getName())){
-				
-				users.removeItem(i);
-				break;
-			}
-		}
-		
-		
 	
+	HTML userIcon = UserIcon.get(Integer.parseInt(user.getId()));
 		
+		if(userIcon != null) {
+			UsersHpanel.remove(userIcon);
+			UserIcon.remove(Integer.parseInt(user.getId()));
+		}
 		
 	}
 	public native void onSendMessageChatUser(String message) /*-{
@@ -166,6 +169,7 @@ public class NodeChat {
 	//////////////////////////////INTERFAZ/////////////////////////////////////////
 		public void start(){
 		
+		
 		final DialogBox dlg=new DialogBox();
 		dlg.setAutoHideEnabled(true);
 		dlg.setAnimationEnabled(true);
@@ -181,16 +185,7 @@ public class NodeChat {
 	    
 		UsersHpanel= new HorizontalPanel();
 	    UsersHpanel.setSize("200px", "65px");
-	    HTML usersIcon = new HTML();
-	    usersIcon.setText("MC");
-	    usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
-	    
-	    
-	   
-	    UsersHpanel.add(usersIcon);
-;
-		
-	    message = new TextArea();
+	     message = new TextArea();
 	   
 	    message.setWidth("258px");
 	    message.setVisibleLines(2);
@@ -202,8 +197,6 @@ public class NodeChat {
 	         if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 	        	 onSendMessageChatUser(message.getText());
 				 message.setText("");
-				 scrollPanel.scrollToBottom();
-				 scrollPanel.setVerticalScrollPosition(scrollPanel.getMaximumVerticalScrollPosition()+1);
 	               }
 	        }
 	    });
@@ -272,6 +265,43 @@ public class NodeChat {
 		Label lbl = new Label(cad);
 		MessageVpanel.add(lbl);
 		scrollPanel.scrollToBottom();
+	}
+	private void adduser(String userName,int id){
+		  String[] ary = userName.split("");
+		  
+		   HTML usersIcon = new HTML();
+		   usersIcon.setText(ary[1].toUpperCase());
+		   usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
+		   
+		   int n= (int)Math.floor((Math.random() * 19) + 1);
+		   
+		   switch(n) {
+           case 1:  usersIcon.addStyleName(Resources.INSTANCE.css().color1()); break;
+           case 2:  usersIcon.addStyleName(Resources.INSTANCE.css().color2()); break;
+           case 3:  usersIcon.addStyleName(Resources.INSTANCE.css().color3()); break;
+           case 4:  usersIcon.addStyleName(Resources.INSTANCE.css().color4()); break;
+           case 5:  usersIcon.addStyleName(Resources.INSTANCE.css().color5()); break;
+           case 6:  usersIcon.addStyleName(Resources.INSTANCE.css().color6()); break;
+           case 7:  usersIcon.addStyleName(Resources.INSTANCE.css().color7()); break;
+           case 8:  usersIcon.addStyleName(Resources.INSTANCE.css().color8()); break;
+           case 9:  usersIcon.addStyleName(Resources.INSTANCE.css().color9()); break;
+           case 10:  usersIcon.addStyleName(Resources.INSTANCE.css().color10()); break;
+           case 11:  usersIcon.addStyleName(Resources.INSTANCE.css().color11()); break;
+           case 12:  usersIcon.addStyleName(Resources.INSTANCE.css().color12()); break;
+           case 13:  usersIcon.addStyleName(Resources.INSTANCE.css().color13()); break;
+           case 14:  usersIcon.addStyleName(Resources.INSTANCE.css().color14()); break;
+           case 15:  usersIcon.addStyleName(Resources.INSTANCE.css().color15()); break;
+           case 16:  usersIcon.addStyleName(Resources.INSTANCE.css().color16()); break;
+           case 17:  usersIcon.addStyleName(Resources.INSTANCE.css().color17()); break;
+           case 18:  usersIcon.addStyleName(Resources.INSTANCE.css().color18()); break;
+           case 19:  usersIcon.addStyleName(Resources.INSTANCE.css().color19()); break;
+          
+           
+       }
+		   
+		   this.UserIcon.put(id, usersIcon);
+		   UsersHpanel.add(usersIcon);
+		
 	}
 	
 

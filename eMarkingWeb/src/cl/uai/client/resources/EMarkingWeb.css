@@ -847,15 +847,14 @@ background-color: #0057D9;
  	line-height: 20px;
 }
 .chatusers{
-	font-size:1.5em; 
-	background-color: #00AAE6;
-	height:40px;
+	font-size:2em; 
+	height:30px;
 	text-align: center;
 	vertical-align: middle;
-	width: 40px;
+	width: 30px;
 	border-radius: 50%;
 	display: table-cell;
-	line-height: 40px;
-	
+	line-height: 30px;
 	
 }
+

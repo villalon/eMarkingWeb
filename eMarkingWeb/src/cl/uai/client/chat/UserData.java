@@ -15,6 +15,9 @@ public class UserData extends JavaScriptObject{
 		 public final native String getName() /*-{ 
 		 	return this.username; 
 		 	}-*/;
+		 public final native String getId() /*-{ 
+		 	return this.userid; 
+		 	}-*/;
 
 	}
 
