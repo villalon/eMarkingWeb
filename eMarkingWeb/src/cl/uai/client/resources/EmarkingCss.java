@@ -198,4 +198,5 @@ public interface EmarkingCss extends CssResource {
 	String resizepagepanel();
 	
 	String chatusers();
+	String chatTextarea();
 }

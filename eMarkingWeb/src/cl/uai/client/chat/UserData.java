@@ -18,7 +18,9 @@ public class UserData extends JavaScriptObject{
 		 public final native String getId() /*-{ 
 		 	return this.userid; 
 		 	}-*/;
-
+		 public final native int getColor() /*-{ 
+		 	return this.color; 
+		 	}-*/;
 	}
 
 

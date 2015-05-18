@@ -121,17 +121,18 @@ public class NodeChat {
 	private void userJoin(UserData user, JsArray<UserData> people, JsArray<Message> chatHistory){
 		
 			for(int i=0;i<chatHistory.length();i++){
-				formatearMensaje(chatHistory.get(i).getTime(),chatHistory.get(i).getUser() ,chatHistory.get(i).getMessage(),"grey");
+				formatearMensaje(chatHistory.get(i).getTime(),chatHistory.get(i).getUser() ,chatHistory.get(i).getMessage(),0);
+				scrollPanel.scrollToBottom();
 			}
 				
 			    
 			    
 			 for(int i=0;i<people.length();i++){
 			  if(people.get(i).getName().equals(user.getName())|| people.get(i).getRoom()!=user.getRoom())continue;
-			  	adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()));
+			  	adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()),people.get(i).getColor());
 			    }
 			 
-			 	adduser(user.getName(),Integer.parseInt(user.getId()));
+			 	adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
 			    				
 			    
 			    
@@ -139,7 +140,7 @@ public class NodeChat {
 	
 	private void onBeginChatOther(UserData user){
 
-		adduser(user.getName(),Integer.parseInt(user.getId()));
+		adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
 		
 	}
 	
@@ -162,7 +163,7 @@ public class NodeChat {
 	}-*/;
 	private void onCatchMesageChatUsers(Message message){
 	    
-		formatearMensaje(message.getTime(),message.getUser(),message.getMessage(),"black");
+		formatearMensaje(message.getTime(),message.getUser(),message.getMessage(),message.getColor());
 	}
 
 	
@@ -179,17 +180,17 @@ public class NodeChat {
 		MessageVpanel= new VerticalPanel(); 
 		
 		scrollPanel = new ScrollPanel(MessageVpanel);
-	    scrollPanel.setSize("270px", "220px");
+	    scrollPanel.setSize("270px", "233px");
 	    
 		scrollPanel.scrollToBottom();
 	    
 		UsersHpanel= new HorizontalPanel();
-	    UsersHpanel.setSize("200px", "65px");
+	    UsersHpanel.setSize("200px", "47px");
 	     message = new TextArea();
 	   
 	    message.setWidth("258px");
 	    message.setVisibleLines(2);
-	   
+	    message.addStyleName(Resources.INSTANCE.css().chatTextarea());
 	    message.addKeyDownHandler(new KeyDownHandler() {
 
 	        @Override
@@ -217,6 +218,7 @@ public class NodeChat {
 			public void onClick(ClickEvent event) {
 				// TODO Auto-generated method stub
 				dlg.center();
+				scrollPanel.scrollToBottom();
 			}
 		});
 		
@@ -255,27 +257,56 @@ public class NodeChat {
 		
 	}
 	
-	private void formatearMensaje(int time,String name,String  mensaje,String color)
+	private void formatearMensaje(int time,String name,String  mensaje,int color)
 	{
 		
 		long ltime = (long) (time/ .001);
 		Date today = new Date(ltime);
-		DateTimeFormat fmt = DateTimeFormat.getFormat("h:mm");
-		String cad="["+fmt.format(today)+"] "+name+":"+mensaje;
+		DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy h:mm");
+		String cad=name+":"+mensaje;
 		Label lbl = new Label(cad);
+		if(color > 0){
+			
+			switch(color) {
+	           case 1:  lbl.addStyleName(Resources.INSTANCE.css().color1()); break;
+	           case 2:  lbl.addStyleName(Resources.INSTANCE.css().color2()); break;
+	           case 3:  lbl.addStyleName(Resources.INSTANCE.css().color3()); break;
+	           case 4:  lbl.addStyleName(Resources.INSTANCE.css().color4()); break;
+	           case 5:  lbl.addStyleName(Resources.INSTANCE.css().color5()); break;
+	           case 6:  lbl.addStyleName(Resources.INSTANCE.css().color6()); break;
+	           case 7:  lbl.addStyleName(Resources.INSTANCE.css().color7()); break;
+	           case 8:  lbl.addStyleName(Resources.INSTANCE.css().color8()); break;
+	           case 9:  lbl.addStyleName(Resources.INSTANCE.css().color9()); break;
+	           case 10:  lbl.addStyleName(Resources.INSTANCE.css().color10()); break;
+	           case 11:  lbl.addStyleName(Resources.INSTANCE.css().color11()); break;
+	           case 12:  lbl.addStyleName(Resources.INSTANCE.css().color12()); break;
+	           case 13:  lbl.addStyleName(Resources.INSTANCE.css().color13()); break;
+	           case 14:  lbl.addStyleName(Resources.INSTANCE.css().color14()); break;
+	           case 15:  lbl.addStyleName(Resources.INSTANCE.css().color15()); break;
+	           case 16:  lbl.addStyleName(Resources.INSTANCE.css().color16()); break;
+	           case 17:  lbl.addStyleName(Resources.INSTANCE.css().color17()); break;
+	           case 18:  lbl.addStyleName(Resources.INSTANCE.css().color18()); break;
+	           case 19:  lbl.addStyleName(Resources.INSTANCE.css().color19()); break;
+	          
+	           
+	       }	
+		}
+		
+		
+		lbl.setTitle(fmt.format(today));
 		MessageVpanel.add(lbl);
 		scrollPanel.scrollToBottom();
 	}
-	private void adduser(String userName,int id){
+	private void adduser(String userName,int id, int color){
 		  String[] ary = userName.split("");
 		  
 		   HTML usersIcon = new HTML();
 		   usersIcon.setText(ary[1].toUpperCase());
 		   usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
+		   usersIcon.setTitle(userName);
 		   
-		   int n= (int)Math.floor((Math.random() * 19) + 1);
 		   
-		   switch(n) {
+		   switch(color) {
            case 1:  usersIcon.addStyleName(Resources.INSTANCE.css().color1()); break;
            case 2:  usersIcon.addStyleName(Resources.INSTANCE.css().color2()); break;
            case 3:  usersIcon.addStyleName(Resources.INSTANCE.css().color3()); break;
@@ -303,6 +334,6 @@ public class NodeChat {
 		   UsersHpanel.add(usersIcon);
 		
 	}
-	
+
 
 }

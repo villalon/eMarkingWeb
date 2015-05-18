@@ -857,4 +857,7 @@ background-color: #0057D9;
 	line-height: 30px;
 	
 }
+.chatTextarea { 
+    resize: none; 
+}
 

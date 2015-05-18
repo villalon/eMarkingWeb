@@ -18,6 +18,9 @@ public class Message extends JavaScriptObject{
 		 public final native int getTime() /*-{ 
 		 	return this.time;
 		 	 }-*/;
+		 public final native int getColor() /*-{ 
+		 	return this.color;
+		 	 }-*/;
 		 
 		
 	
