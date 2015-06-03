@@ -1105,7 +1105,13 @@ public class MarkingInterface extends EMarkingComposite {
 							chat.username=realUsername;
 							chat.userid=userID;
 							chat.coursemodule=coursemodule;
-							chat.start();
+							chat.userRole=userRole;
+							chat.submissionId=getSubmissionId();
+							chat.moodleurl=AjaxRequest.moodleUrl;
+							chat.chatInterface();
+							chat.wallInterface();
+							chat.askHelpInterface();
+							chat.helpInterface();
 							}
 					}
 					//Get progress marking status

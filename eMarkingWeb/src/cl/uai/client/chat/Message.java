@@ -21,6 +21,9 @@ public class Message extends JavaScriptObject{
 		 public final native int getColor() /*-{ 
 		 	return this.color;
 		 	 }-*/;
+		 public final native int getSource() /*-{ 
+		 	return this.source;
+		 	 }-*/;
 		 
 		
 	
