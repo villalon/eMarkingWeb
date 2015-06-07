@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.chat.NodeChat;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
@@ -126,7 +127,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 	
 	/** Activate chat **/
-	public static boolean activateChat = false;
+	public static int activateChat = 0;
 	
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
@@ -290,7 +291,9 @@ public class MarkingInterface extends EMarkingComposite {
 	public HTML getShowRubricButton() {
 		return this.showRubricButton;
 	}
-
+	/** Get Course Module of actual eMarking **/
+	private static int coursemodule = 0;
+	/**
 	/**
 	 * 
 	 */
@@ -1065,6 +1068,9 @@ public class MarkingInterface extends EMarkingComposite {
 					// Link rubric colors if configured as
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
 					
+					//Give the Course Module of actual eMarking
+					coursemodule=Integer.parseInt(value.get("coursemodule"));
+					
 					// Collaborative features (chat, wall) if configured as
 					collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
 					
@@ -1095,6 +1101,21 @@ public class MarkingInterface extends EMarkingComposite {
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
 					}
+					if(activateChat==1){
+						NodeChat chat = new NodeChat();
+						chat.username=realUsername;
+						chat.userid=userID;
+						chat.coursemodule=coursemodule;
+						chat.userRole=userRole;
+						chat.submissionId=getSubmissionId();
+						chat.moodleurl=AjaxRequest.moodleUrl;
+						chat.chatInterface();
+						chat.wallInterface();
+						chat.askHelpInterface();
+						chat.helpInterface();
+						}
+					
+					
 					//Get progress marking status
 					totalTests = Integer.parseInt(value.get("totalTests"));
 					inProgressTests = Integer.parseInt(value.get("inProgressTests"));
