@@ -225,6 +225,8 @@ public class EMarkingWeb implements EntryPoint {
 			MarkingInterface.setSubmissionId(submissionId);
 			// eMarking version
 			MarkingInterface.seteMarkingVersion(emarkingversion);
+			// Active the chat interface
+			MarkingInterface.activateChat = chat;
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;
 
@@ -244,7 +246,6 @@ public class EMarkingWeb implements EntryPoint {
 			// Initialize eMarking's interface
 			markingInterface = new MarkingInterface();
 			markingInterface.setShowRubric(showRubric);
-			markingInterface.activateChat = chat;
 			
 			// Add eMarking to the browser
 			RootPanel.get(eMarkingDivId).clear();

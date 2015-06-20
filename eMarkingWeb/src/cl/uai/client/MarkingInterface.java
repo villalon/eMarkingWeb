@@ -1023,12 +1023,16 @@ public class MarkingInterface extends EMarkingComposite {
 			public void onSuccess(AjaxData result) {
 				//Check if values are ok
 				if(result.getError().equals("")) {
+					
 					// Clear interface (submission and rubric interfaces)
 					interfacePanel.clear();
+					
 					// Cancel timer, we don't need to ping again
 					timer.cancel();
+					
 					// Parse Json values
 					Map<String, String> value = AjaxRequest.getValueFromResult(result);
+					
 					// Assign Moodle session key
 					sessKey = value.get("sesskey");
 
@@ -1056,20 +1060,18 @@ public class MarkingInterface extends EMarkingComposite {
 					
 					logger.fine("Read only mode: " + readonly);
 
-					// Schedule heartbeat if configured as
-					if((value.get("heartbeat") != null && value.get("heartbeat").equals("1"))) {
-						// Every two minutes
-						heartBeatTimer.scheduleRepeating(2 * 60 * 1000);
-					}
-					
 					// Read the marking type
 					markingType = Integer.parseInt(value.get("markingtype"));
+					
+					logger.fine("Marking type: " + markingType);
 
 					// Link rubric colors if configured as
 					linkrubric = Integer.parseInt(value.get("linkrubric"));
 					
+					logger.fine("Link rubric: " + linkrubric);
+
 					//Give the Course Module of actual eMarking
-					coursemodule=Integer.parseInt(value.get("coursemodule"));
+					coursemodule=Integer.parseInt(value.get("cm"));
 					
 					// Collaborative features (chat, wall) if configured as
 					collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
@@ -1101,13 +1103,14 @@ public class MarkingInterface extends EMarkingComposite {
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
 					}
+					
 					if(activateChat==1){
 						NodeChat chat = new NodeChat();
-						chat.username=realUsername;
-						chat.userid=userID;
-						chat.coursemodule=coursemodule;
-						chat.userRole=userRole;
-						chat.submissionId=getSubmissionId();
+						NodeChat.username=realUsername;
+						NodeChat.userid=userID;
+						NodeChat.coursemodule=coursemodule;
+						NodeChat.userRole=userRole;
+						NodeChat.submissionId=getSubmissionId();
 						chat.moodleurl=AjaxRequest.moodleUrl;
 						chat.chatInterface();
 						chat.wallInterface();
@@ -1132,6 +1135,12 @@ public class MarkingInterface extends EMarkingComposite {
 					loadSubmissionData();
 					
 					focusPanel.getElement().focus();
+					
+					// Schedule heartbeat if configured as
+					if((value.get("heartbeat") != null && value.get("heartbeat").equals("1"))) {
+						// Every two minutes
+						heartBeatTimer.scheduleRepeating(2 * 60 * 1000);
+					}
 				} else {
 					// Keep trying if something fails every few seconds
 					timer.scheduleRepeating(1000);
