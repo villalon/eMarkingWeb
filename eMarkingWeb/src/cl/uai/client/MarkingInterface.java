@@ -133,6 +133,12 @@ public class MarkingInterface extends EMarkingComposite {
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);
 	private boolean showRubric = true;
+
+	/** Chat button **/
+	private HTML showChatButton = null;
+	private final Icon iconShowChat = new Icon(IconType.BEER);
+	
+	private NodeChat chat;
 	
 	/**
 	 * @return the eMarkingVersion
@@ -350,12 +356,16 @@ public class MarkingInterface extends EMarkingComposite {
 		showRubricButton = new HTML();
 		showRubricButton.addStyleName(Resources.INSTANCE.css().showrubricbutton());
 		
+		showChatButton = new HTML();
+		showChatButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
+		
 		
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
 		markingPanel.add(showRubricButton);
+		markingPanel.add(showChatButton);
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -848,6 +858,10 @@ public class MarkingInterface extends EMarkingComposite {
 		// Set show rubric button
 		showRubricButton.setHTML(iconShowRubric.toString());
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
+		
+		// Set show chat
+		showChatButton.setHTML(iconShowChat.toString());
+		markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
 
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
@@ -1105,14 +1119,13 @@ public class MarkingInterface extends EMarkingComposite {
 					}
 					
 					if(activateChat==1){
-						NodeChat chat = new NodeChat();
+						chat = new NodeChat();
 						NodeChat.username=realUsername;
 						NodeChat.userid=userID;
 						NodeChat.coursemodule=coursemodule;
 						NodeChat.userRole=userRole;
 						NodeChat.submissionId=getSubmissionId();
 						chat.moodleurl=AjaxRequest.moodleUrl;
-						chat.chatInterface();
 						chat.wallInterface();
 						chat.askHelpInterface();
 						chat.helpInterface();
@@ -1147,6 +1160,7 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
+		
 		// Implemented rubric icon
 		showRubricButton.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -1157,6 +1171,13 @@ public class MarkingInterface extends EMarkingComposite {
 					rubricInterface.setVisible(true);
 					showRubricButton.setVisible(false);
 				}
+			}
+		});
+		
+		showChatButton.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				chat.chatInterface();
 			}
 		});
 	}

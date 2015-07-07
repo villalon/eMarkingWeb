@@ -817,7 +817,7 @@ background-color: #0057D9;
 	line-height: 24px;
 }
 
-.showrubricbutton {
+.showrubricbutton, .showchatbutton  {
 	font-size:2em; 
 	background-color: #EAEAEA;
 	height:40px;

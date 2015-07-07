@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.Callback;
@@ -34,7 +33,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class NodeChat {
 	/** For logging purposes */
-	private static Logger logger = Logger.getLogger(EMarkingWeb.class.getName());
+	private static Logger logger = Logger.getLogger(NodeChat.class.getName());
 	private String path;
 	private VerticalPanel Vpanel;
 	private VerticalPanel wallVpanel;
@@ -214,8 +213,7 @@ public class NodeChat {
 
 	}
 
-	private void formatearSos(String username, int time, String comment, int source, int submissionId, int status){
-		HorizontalPanel hp = new HorizontalPanel();
+	private void formatearSos(String username, int time, String comment, int source, int submissionId, int status) {
 		VerticalPanel vp = new VerticalPanel();
 		Label name = new Label(username+":");
 		vp.add(name);
@@ -229,8 +227,6 @@ public class NodeChat {
 		HTML usersIcon = new HTML();
 		usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
 		helpVpanel.add(usersIcon);
-
-
 	}
 
 	private void formatearMensaje(int time,String name,String  mensaje,int color, int source)
@@ -320,62 +316,8 @@ public class NodeChat {
 
 	//interfaz del chat, creo que se puede seguir mejorando	
 	public void chatInterface(){
-		final DialogBox dlg=new DialogBox();
-		dlg.setAutoHideEnabled(true);
-		dlg.setAnimationEnabled(true);
-		dlg.setModal(true);
-
-		Vpanel= new VerticalPanel(); 
-		MessageVpanel= new VerticalPanel(); 
-
-		scrollPanel = new ScrollPanel(MessageVpanel);
-		scrollPanel.setSize("270px", "233px");
-
-		scrollPanel.scrollToBottom();
-
-		UsersHpanel= new HorizontalPanel();
-		UsersHpanel.setSize("200px", "47px");
-		message = new TextArea();
-
-		message.setWidth("258px");
-		message.setVisibleLines(2);
-		message.addStyleName(Resources.INSTANCE.css().chatTextarea());
-		message.addKeyDownHandler(new KeyDownHandler() {
-
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					onSendMessage(message.getText(),1);
-					message.setText("");
-				}
-			}
-		});
-
-		Vpanel.add(UsersHpanel);
-		Vpanel.add(scrollPanel);
-		Vpanel.add(message);
-
-		AbsolutePanel Apanel = new AbsolutePanel();
-		Apanel.setSize("270px", "337px");
-		Apanel.add(Vpanel);
-		dlg.add(Apanel);
-
-
-		Button btnchat=new Button("CHATEAR");
-		btnchat.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				dlg.center();
-				scrollPanel.scrollToBottom();
-			}
-		});
-
-		RootPanel.get("chat").add(btnchat);
-
-
-
+		ChatInterface chat = new ChatInterface();
+		chat.show();
 	}	
 	//interfaz del muro, creo que se puede seguir mejorando
 
