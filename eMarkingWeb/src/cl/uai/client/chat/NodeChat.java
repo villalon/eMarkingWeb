@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.HelpInterface;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.Callback;
@@ -322,144 +323,18 @@ public class NodeChat {
 	//interfaz del muro, creo que se puede seguir mejorando
 
 	public void wallInterface(){
-		final DialogBox dlgMuro=new DialogBox();
-		dlgMuro.setAutoHideEnabled(true);
-		dlgMuro.setAnimationEnabled(true);
-		dlgMuro.setModal(true);
-		//create scrollpanel with content
-		wallVpanel= new VerticalPanel(); 
-		wallMessageVpanel = new VerticalPanel(); 
-		scrollWallPanel = new ScrollPanel(wallMessageVpanel);
-		scrollWallPanel.setSize("270px", "233px");
-		scrollWallPanel.scrollToBottom();
-		wallMessage = new TextArea();
-		wallMessage.setWidth("258px");
-		wallMessage.setVisibleLines(2);
-		wallMessage.addStyleName(Resources.INSTANCE.css().chatTextarea());
-		wallMessage.addKeyDownHandler(new KeyDownHandler(){
-
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					onSendMessage(wallMessage.getText(),2);
-					wallMessage.setText("");
-				}
-			}
-		});
-		wallVpanel.add(scrollWallPanel);
-		if(userRole.equals("teacher")){
-			wallVpanel.add(wallMessage);
-		}
-		AbsolutePanel MuroApanel = new AbsolutePanel();
-		MuroApanel.setSize("270px", "337px");
-		//MuroApanel.add(scrollPanel);
-		MuroApanel.add(wallVpanel);
-		dlgMuro.add(MuroApanel);
-
-		Button btnmuro=new Button("MURO");
-		btnmuro.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				dlgMuro.center();
-
-			}
-		});
-
-		RootPanel.get("chat").add(btnmuro);
-
-
+		ChatInterface wall = new ChatInterface();
+		wall.show();
 	}
 	//interfaz del SOS (pedir ayuda), creo que se puede seguir mejorando
-	public void askHelpInterface(){
-
-		final DialogBox dlgSos=new DialogBox();
-		dlgSos.setAutoHideEnabled(true);
-		dlgSos.setAnimationEnabled(true);
-		dlgSos.setModal(true);
-
-		askSosVpanel = new VerticalPanel();
-
-		sosComent = new TextArea();
-		sosComent.addStyleName(Resources.INSTANCE.css().chatTextarea());
-		Label commentLbl = new Label("Comentario");
-		askSosVpanel.add(commentLbl);
-		askSosVpanel.add(sosComent);
-
-		final ListBox urgencyLevel = new ListBox();
-		urgencyLevel.addItem("1");
-		urgencyLevel.addItem("2");
-		urgencyLevel.addItem("3");
-		urgencyLevel.addItem("4");
-		urgencyLevel.addItem("5");
-		Label urgencyLbl = new Label("Nivel de urgencia");
-		askSosVpanel.add(urgencyLbl);
-		askSosVpanel.add(urgencyLevel);
-
-		Button sendButton=new Button("Enviar");
-		sendButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-
-				onSendSos(sosComent.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
-				dlgSos.hide();
-			}
-		}); 
-		askSosVpanel.add(sendButton);
-		AbsolutePanel sosApanel = new AbsolutePanel();
-		sosApanel.setSize("270px", "170px");
-		//MuroApanel.add(scrollPanel);
-		sosApanel.add(askSosVpanel);
-		dlgSos.add(sosApanel);
-		Button btnsos=new Button("SOS!");
-		btnsos.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				dlgSos.center();
-
-
-			}
-		});
-		RootPanel.get("chat").add(btnsos);
-
-
-
-	}
+	public void sosInterface(){
+		SosInterface sos = new SosInterface();
+		sos.show();
+}
 
 	public void helpInterface(){
-
-		final DialogBox dlg=new DialogBox();
-		dlg.setAutoHideEnabled(true);
-		dlg.setAnimationEnabled(true);
-		dlg.setModal(true);
-
-		helpVpanel = new VerticalPanel();
-		AbsolutePanel Apanel = new AbsolutePanel();
-		Apanel.setSize("450px", "450px");
-		//MuroApanel.add(scrollPanel);
-		
-		scrollPanel = new ScrollPanel(helpVpanel);
-		scrollPanel.setSize("449px", "449px");
-		scrollPanel.scrollToBottom();
-		Apanel.add(scrollPanel);
-		dlg.add(Apanel);
-		Button btnhelp=new Button("Ayudar");
-		btnhelp.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				dlg.center();
-
-
-			}
-		});
-		RootPanel.get("chat").add(btnhelp);
+		HelpInterface help = new HelpInterface();
+		help.show();
 
 	}
 

@@ -138,6 +138,18 @@ public class MarkingInterface extends EMarkingComposite {
 	private HTML showChatButton = null;
 	private final Icon iconShowChat = new Icon(IconType.BEER);
 	
+	/** Wall button **/
+	private HTML showWallButton = null;
+	private final Icon iconShowWall = new Icon(IconType.CAMERA_RETRO);
+	
+	/** Sos button **/
+	private HTML showSosButton = null;
+	private final Icon iconShowSos = new Icon(IconType.HOSPITAL);
+	
+	/** help button **/
+	private HTML showHelpButton = null;
+	private final Icon iconShowHelp = new Icon(IconType.HEART);
+	
 	private NodeChat chat;
 	
 	/**
@@ -359,6 +371,14 @@ public class MarkingInterface extends EMarkingComposite {
 		showChatButton = new HTML();
 		showChatButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
 		
+		showWallButton = new HTML();
+		showWallButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
+		
+		showSosButton = new HTML();
+		showSosButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
+		
+		showHelpButton = new HTML();
+		showHelpButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
 		
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
@@ -366,6 +386,9 @@ public class MarkingInterface extends EMarkingComposite {
 		markingPanel.add(interfacePanel);
 		markingPanel.add(showRubricButton);
 		markingPanel.add(showChatButton);
+		markingPanel.add(showWallButton);
+		markingPanel.add(showSosButton);
+		markingPanel.add(showHelpButton);
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -862,6 +885,18 @@ public class MarkingInterface extends EMarkingComposite {
 		// Set show chat
 		showChatButton.setHTML(iconShowChat.toString());
 		markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
+		
+		// Set show wall
+		showWallButton.setHTML(iconShowWall.toString());
+		markingPanel.setWidgetPosition(showWallButton,(int)(Window.getClientWidth()-40),80);
+
+		// Set show wall
+		showSosButton.setHTML(iconShowSos.toString());
+		markingPanel.setWidgetPosition(showSosButton,(int)(Window.getClientWidth()-40),120);
+		
+		// Set show wall
+		showHelpButton.setHTML(iconShowHelp.toString());
+		markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
 
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
@@ -1126,9 +1161,7 @@ public class MarkingInterface extends EMarkingComposite {
 						NodeChat.userRole=userRole;
 						NodeChat.submissionId=getSubmissionId();
 						chat.moodleurl=AjaxRequest.moodleUrl;
-						chat.wallInterface();
-						chat.askHelpInterface();
-						chat.helpInterface();
+
 						}
 					
 					
@@ -1177,10 +1210,33 @@ public class MarkingInterface extends EMarkingComposite {
 		showChatButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
+				
 				chat.chatInterface();
 			}
 		});
+		
+		showWallButton.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				chat.wallInterface();
+			}
+		});
+		
+		showSosButton.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				chat.sosInterface();
+			}
+		});
+		
+		showHelpButton.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				chat.helpInterface();
+			}
+		});
 	}
+	
 	
 	public void regradeMark(final RubricMark mark, final String comment, final int motive) {
 		
