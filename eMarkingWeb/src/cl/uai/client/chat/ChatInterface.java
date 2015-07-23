@@ -150,7 +150,7 @@ public class ChatInterface extends DialogBox {
 			break;
 		}
 		
-		String params= "&userid="++"=&room="+coursemodule+"&source=1";
+		String params= null;
 		AjaxRequest.ajaxRequest("action=getchathistory"+ params, new AsyncCallback<AjaxData>() {
 			@Override
 			public void onSuccess(AjaxData result) {
