@@ -6,61 +6,41 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.HelpInterface;
+import cl.uai.client.data.AjaxData;
+import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.ScriptInjector;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class NodeChat {
+	
+	public static int SOURCE_CHAT = 1;
+	public static int SOURCE_WALL = 2;
+	public static int SOURCE_SOS = 3;
+	
 	/** For logging purposes */
 	private static Logger logger = Logger.getLogger(NodeChat.class.getName());
-	private String path;
-	private VerticalPanel Vpanel;
-	private VerticalPanel wallVpanel;
-	private VerticalPanel wallMessageVpanel;
-	private VerticalPanel MessageVpanel;
-	private TextArea wallMessage;
-	private ScrollPanel scrollWallPanel;
-	private HorizontalPanel UsersHpanel;
-	private ScrollPanel scrollPanel;
-	private TextArea message;
+	private static String path;
 	public static String username = null;
 	public static int userid = 0;
 	public static int coursemodule = 0;
+	public static ChatInterface chat = null;
 	/** Connected users div**/
-	private Map<Integer, HTML> UserIcon = new HashMap<Integer, HTML>();
 	public static String userRole;
-	private VerticalPanel askSosVpanel;
-	public String moodleurl=null;
+	public static String moodleurl=null;
 	public static int submissionId=0;
-	private TextArea sosComent;
-	private ListBox urgencyLevel;
-	private VerticalPanel helpVpanel;
 
 
-	public NodeChat(){
-
+	public NodeChat() {
 		path="http://127.0.0.1:9091/";
 
 		GWT.log("RUTA NODE: "+ path);
@@ -77,17 +57,16 @@ public class NodeChat {
 			@Override
 			public void onFailure(Exception reason) {
 				// TODO Auto-generated method stub
-				Window.alert("Servicio Node.js en: \n "+path+"\n CAIDO !!!!");
+				Window.alert("Servicio de chat en: \n "+path+"\n CAIDO !!!!");
 			}
 		}).inject(); 
+
 	}
-
-
 	//////////////// CONEXIÓN CON EL SERVIDOR NODE /////////////////////////////
-	private native void loadNodeJS(String path, String Username, int coursemodule, int userid, int submissionId) /*-{
-	 //Utilzamos <websocket>,si la conexion falla entonces utiliza <xhr-polling>
-	 //la conexion  <xhr-polling> no controla el evento "disconnet",la conexion es mantenida unos 30 segundos
-	 //aparentemente es un error de OPENSHIFT!!!
+
+	private  native void loadNodeJS(String path, String Username, int coursemodule, int userid, int submissionId) /*-{
+
+
 	 $wnd.socket = io.connect(path);
 
 	 var tmp=this;
@@ -98,12 +77,11 @@ public class NodeChat {
 	       conectionData.userid=userid;
 	       conectionData.submissionId=submissionId
 	       $wnd.socket.emit("joinserver",JSON.stringify(conectionData));
-
 	       $wnd.socket.on('userJoin', function (data) {
 
 			      var obj=JSON.parse(data);
 
-				tmp.@cl.uai.client.chat.NodeChat::userJoin(Lcl/uai/client/chat/UserData;Lcom/google/gwt/core/client/JsArray;Lcom/google/gwt/core/client/JsArray;Lcom/google/gwt/core/client/JsArray;)(obj.user,obj.people,obj.chatHistory,obj.chatHistory); 
+				tmp.@cl.uai.client.chat.NodeChat::userJoin(Lcl/uai/client/chat/UserData;Lcom/google/gwt/core/client/JsArray;)(obj.user,obj.people); 
 			  });
 	     $wnd.socket.on('onRemoveChatUser', function (data) {
 
@@ -120,7 +98,7 @@ public class NodeChat {
 			      var data=JSON.parse(data);
 				 tmp.@cl.uai.client.chat.NodeChat::onCatchMesage(Lcl/uai/client/chat/Message;)(data); 
 			  });
-              $wnd.socket.on('onCatchSos', function (data) {
+             $wnd.socket.on('onCatchSos', function (data) {
 
 			      var data=JSON.parse(data);
 				 tmp.@cl.uai.client.chat.NodeChat::onCatchSos(Lcl/uai/client/chat/Sos;)(data); 
@@ -130,48 +108,48 @@ public class NodeChat {
 
 }-*/;
 
+	//////////////////////////////INTERFAZ/////////////////////////////////////////
+
+
+
 
 	/////////////////////////funciones para unir información node y gwt/////////////////
 
-	private void userJoin(UserData user, JsArray<UserData> people, JsArray<Message> chatHistory, JsArray<Sos> sosHistory){
-		for(int i=0;i<chatHistory.length();i++){
-			formatearMensaje(chatHistory.get(i).getTime(),chatHistory.get(i).getUser() ,chatHistory.get(i).getMessage(),0,chatHistory.get(i).getSource());
-			scrollPanel.scrollToBottom();
-		}
-		for(int i=0;i<sosHistory.length();i++){
-			formatearSos(
-					sosHistory.get(i).getUserName(),
-					sosHistory.get(i).getTime(),
-					sosHistory.get(i).getComment(),
-					3,
-					sosHistory.get(i).getSubmissionId(),
-					sosHistory.get(i).getStatus()
-					);
+	private void userJoin(UserData user, JsArray<UserData> people){
 
+		String params= "&ids2=&room="+coursemodule+"&source=1";
+		AjaxRequest.ajaxRequest("action=getchathistory"+ params, new AsyncCallback<AjaxData>() {
+			@Override
+			public void onSuccess(AjaxData result) {
+				logger.info("Heartbeat! ");
 
-		}
+				
+
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.warning("Failure on heartbeat");
+			}
+		});
+
 		for(int i=0;i<people.length();i++){
 			if(people.get(i).getName().equals(user.getName())|| people.get(i).getRoom()!=user.getRoom())continue;
-			adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()),people.get(i).getColor());
+			chat.adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()),people.get(i).getColor());
+
 		}
 
-		adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
+		chat.adduser(user.getName(),Integer.parseInt(user.getId()),1);
 	}
 
 	private void onBeginChatOther(UserData user){
 
-		adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
+		chat.adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
 
 	}
 
 	private void onRemoveChatUser(UserData user){
 
-		HTML userIcon = UserIcon.get(Integer.parseInt(user.getId()));
-
-		if(userIcon != null) {
-			UsersHpanel.remove(userIcon);
-			UserIcon.remove(Integer.parseInt(user.getId()));
-		}
+		chat.removeUser(Integer.parseInt(user.getId()));
 
 	}
 	public native void onSendMessage(String message, int source) /*-{
@@ -183,7 +161,7 @@ public class NodeChat {
 
 
 	}-*/;
-	public native void onSendSos(String comment, int urgencyLevel) /*-{
+	public  native void onSendSos(String comment, int urgencyLevel) /*-{
 	   var data={};
 	   data.urgencyLevel=urgencyLevel;
 	   data.comment=comment;
@@ -194,12 +172,12 @@ public class NodeChat {
 
 	private void onCatchMesage(Message message){
 
-		formatearMensaje(
-				message.getTime(),
-				message.getUser(),
-				message.getMessage(),
-				message.getColor(),
-				message.getSource());
+		//chat.formatearMensaje(
+		//	message.getTime(),
+		//message.getUser(),
+		//message.getMessage(),
+		//message.getColor(),
+		//message.getSource());
 	}
 
 	private void onCatchSos(Sos sos){
@@ -220,122 +198,17 @@ public class NodeChat {
 		vp.add(name);
 		Label text = new Label("\""+comment+"\"");
 		vp.add(text);
-		helpVpanel.add(vp);
+		//	helpVpanel.add(vp);
 		String url = moodleurl+"?action=emarking"+"&ids="+submissionId;
 		Anchor link = new Anchor("Link to bar", url);
 		link.setTarget("_blank");
-		helpVpanel.add(link);
+		//	helpVpanel.add(link);
 		HTML usersIcon = new HTML();
 		usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
-		helpVpanel.add(usersIcon);
-	}
-
-	private void formatearMensaje(int time,String name,String  mensaje,int color, int source)
-	{
-
-		long ltime = (long) (time/ .001);
-		Date today = new Date(ltime);
-		DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy h:mm");
-		String cad=name+":"+mensaje;
-		Label lbl = new Label(cad);
-		if(color > 0){
-			switch(color) {
-			case 1:  lbl.addStyleName(Resources.INSTANCE.css().color1()); break;
-			case 2:  lbl.addStyleName(Resources.INSTANCE.css().color2()); break;
-			case 3:  lbl.addStyleName(Resources.INSTANCE.css().color3()); break;
-			case 4:  lbl.addStyleName(Resources.INSTANCE.css().color4()); break;
-			case 5:  lbl.addStyleName(Resources.INSTANCE.css().color5()); break;
-			case 6:  lbl.addStyleName(Resources.INSTANCE.css().color6()); break;
-			case 7:  lbl.addStyleName(Resources.INSTANCE.css().color7()); break;
-			case 8:  lbl.addStyleName(Resources.INSTANCE.css().color8()); break;
-			case 9:  lbl.addStyleName(Resources.INSTANCE.css().color9()); break;
-			case 10:  lbl.addStyleName(Resources.INSTANCE.css().color10()); break;
-			case 11:  lbl.addStyleName(Resources.INSTANCE.css().color11()); break;
-			case 12:  lbl.addStyleName(Resources.INSTANCE.css().color12()); break;
-			case 13:  lbl.addStyleName(Resources.INSTANCE.css().color13()); break;
-			case 14:  lbl.addStyleName(Resources.INSTANCE.css().color14()); break;
-			case 15:  lbl.addStyleName(Resources.INSTANCE.css().color15()); break;
-			case 16:  lbl.addStyleName(Resources.INSTANCE.css().color16()); break;
-			case 17:  lbl.addStyleName(Resources.INSTANCE.css().color17()); break;
-			case 18:  lbl.addStyleName(Resources.INSTANCE.css().color18()); break;
-			case 19:  lbl.addStyleName(Resources.INSTANCE.css().color19()); break;
-			}	
-		}
-
-		lbl.setTitle(fmt.format(today));
-		switch(source) {
-
-		case 1: 
-			MessageVpanel.add(lbl);
-			scrollPanel.scrollToBottom();
-			break;
-		case 2:
-			wallVpanel.add(lbl);
-			scrollWallPanel.scrollToBottom();
-			break;
-		}
-	}
-	private void adduser(String userName,int id, int color){
-		String[] ary = userName.split("");
-
-		HTML usersIcon = new HTML();
-		usersIcon.setText(ary[1].toUpperCase());
-		usersIcon.addStyleName(Resources.INSTANCE.css().chatusers());
-		usersIcon.setTitle(userName);
-
-		switch(color) {
-		case 1:  usersIcon.addStyleName(Resources.INSTANCE.css().color1()); break;
-		case 2:  usersIcon.addStyleName(Resources.INSTANCE.css().color2()); break;
-		case 3:  usersIcon.addStyleName(Resources.INSTANCE.css().color3()); break;
-		case 4:  usersIcon.addStyleName(Resources.INSTANCE.css().color4()); break;
-		case 5:  usersIcon.addStyleName(Resources.INSTANCE.css().color5()); break;
-		case 6:  usersIcon.addStyleName(Resources.INSTANCE.css().color6()); break;
-		case 7:  usersIcon.addStyleName(Resources.INSTANCE.css().color7()); break;
-		case 8:  usersIcon.addStyleName(Resources.INSTANCE.css().color8()); break;
-		case 9:  usersIcon.addStyleName(Resources.INSTANCE.css().color9()); break;
-		case 10:  usersIcon.addStyleName(Resources.INSTANCE.css().color10()); break;
-		case 11:  usersIcon.addStyleName(Resources.INSTANCE.css().color11()); break;
-		case 12:  usersIcon.addStyleName(Resources.INSTANCE.css().color12()); break;
-		case 13:  usersIcon.addStyleName(Resources.INSTANCE.css().color13()); break;
-		case 14:  usersIcon.addStyleName(Resources.INSTANCE.css().color14()); break;
-		case 15:  usersIcon.addStyleName(Resources.INSTANCE.css().color15()); break;
-		case 16:  usersIcon.addStyleName(Resources.INSTANCE.css().color16()); break;
-		case 17:  usersIcon.addStyleName(Resources.INSTANCE.css().color17()); break;
-		case 18:  usersIcon.addStyleName(Resources.INSTANCE.css().color18()); break;
-		case 19:  usersIcon.addStyleName(Resources.INSTANCE.css().color19()); break;
-
-
-		}
-
-		this.UserIcon.put(id, usersIcon);
-		UsersHpanel.add(usersIcon);
-
+		//	helpVpanel.add(usersIcon);
 	}
 
 
-	//////////////////////////////INTERFAZ/////////////////////////////////////////
 
-	//interfaz del chat, creo que se puede seguir mejorando	
-	public void chatInterface(){
-		ChatInterface chat = new ChatInterface();
-		chat.show();
-	}	
-	//interfaz del muro, creo que se puede seguir mejorando
-
-	public void wallInterface(){
-		ChatInterface wall = new ChatInterface();
-		wall.show();
-	}
-	//interfaz del SOS (pedir ayuda), creo que se puede seguir mejorando
-	public void sosInterface(){
-		SosInterface sos = new SosInterface();
-		sos.show();
-}
-
-	public void helpInterface(){
-		HelpInterface help = new HelpInterface();
-		help.show();
-
-	}
 
 }

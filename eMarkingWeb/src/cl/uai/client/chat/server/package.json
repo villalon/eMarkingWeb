@@ -24,7 +24,6 @@
     "express": "~3.4.4",
 	"socket.io": "latest",
     "moment": "latest",
-    "mysql": "latest",
     "underscore": "latest"
   },
   "devDependencies": {},

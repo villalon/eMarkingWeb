@@ -5,8 +5,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class UserData extends JavaScriptObject{
 
 	protected UserData (){}
-		
-		
 		 public final native int getRoom() /*-{ 
 		 	return this.room;
 		 	 }-*/;

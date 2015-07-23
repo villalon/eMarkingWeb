@@ -23,6 +23,7 @@ package cl.uai.client;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import cl.uai.client.chat.NodeChat;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.page.MarkingPage;
 import cl.uai.client.resources.Resources;
@@ -45,6 +46,8 @@ public class EMarkingWeb implements EntryPoint {
 
 	/** Main marking interface **/
 	public static MarkingInterface markingInterface = null;
+	
+	public static NodeChat chatServer = null;
 	
 	/** JSNI function to close and reload a window **/
 	public static native boolean closeAndReload() /*-{

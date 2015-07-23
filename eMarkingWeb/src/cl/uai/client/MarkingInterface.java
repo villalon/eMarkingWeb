@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.chat.ChatInterface;
 import cl.uai.client.chat.NodeChat;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
@@ -150,7 +151,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private HTML showHelpButton = null;
 	private final Icon iconShowHelp = new Icon(IconType.HEART);
 	
-	private NodeChat chat;
+	private ChatInterface chat;
 	
 	/**
 	 * @return the eMarkingVersion
@@ -1154,14 +1155,17 @@ public class MarkingInterface extends EMarkingComposite {
 					}
 					
 					if(activateChat==1){
-						chat = new NodeChat();
+						
 						NodeChat.username=realUsername;
 						NodeChat.userid=userID;
 						NodeChat.coursemodule=coursemodule;
 						NodeChat.userRole=userRole;
 						NodeChat.submissionId=getSubmissionId();
-						chat.moodleurl=AjaxRequest.moodleUrl;
-
+						NodeChat.moodleurl=AjaxRequest.moodleUrl;
+						
+						EMarkingWeb.chatServer = new NodeChat();					
+						NodeChat.chat = new ChatInterface();
+						chat = NodeChat.chat;
 						}
 					
 					
@@ -1211,28 +1215,28 @@ public class MarkingInterface extends EMarkingComposite {
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				chat.chatInterface();
+				chat.show();
 			}
 		});
 		
 		showWallButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				chat.wallInterface();
+				//chat.wallInterface();
 			}
 		});
 		
 		showSosButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				chat.sosInterface();
+				//chat.sosInterface();
 			}
 		});
 		
 		showHelpButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				chat.helpInterface();
+				//chat.helpInterface();
 			}
 		});
 	}
