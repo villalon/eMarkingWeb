@@ -856,6 +856,20 @@ background-color: #0057D9;
 	line-height: 30px;
 	
 }
+.chaticonmessage{
+	position: static;
+	height:10px;
+	vertical-align: middle;
+	width: 10px;
+	border-radius: 50%;
+	display: table-cell;
+	line-height: 30px;
+	
+}
+.chatsendcolor{
+background-color: #c0c0c0;
+}
+
 .chatTextarea { 
     resize: none; 
 }
