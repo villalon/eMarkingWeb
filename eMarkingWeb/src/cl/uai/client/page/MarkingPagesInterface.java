@@ -164,16 +164,14 @@ public class MarkingPagesInterface extends EMarkingComposite {
 		EMarkingWeb.markingInterface.addLoading(false);
 		
 		// Ajax request to get the tab image and number of pages
-		AjaxRequest.ajaxRequest("action=getalltabs"
-				+ "&preferredwidth=" + Window.getClientWidth()
-				+ "&showrubric=" + (EMarkingWeb.markingInterface.isShowRubric() ? "1" : "0"), 
+		AjaxRequest.ajaxRequest("action=getalltabs", 
 				new AsyncCallback<AjaxData>() {			
 			@Override
 			public void onFailure(Throwable caught) {
 				logger.severe("Error getting tab info from Moodle!");
 				logger.severe(caught.getMessage());
 				Window.alert(caught.getMessage());
-				EMarkingWeb.markingInterface.finishLoading();				
+				EMarkingWeb.markingInterface.finishLoading();
 			}
 			
 			@Override

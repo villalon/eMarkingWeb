@@ -30,6 +30,7 @@ import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Navigator;
 import com.google.gwt.user.client.ui.Label;
@@ -141,7 +142,6 @@ public class EMarkingWeb implements EntryPoint {
 		int submissionId = 0;
 		int preferredWidth = 860;
 		boolean showRubric = true;
-		int chat = 0;
 
 		try {
 			// First try to read submissionId from emarking DIV tag
@@ -159,8 +159,11 @@ public class EMarkingWeb implements EntryPoint {
 				errors.add("Submission id must be a non negative integer.");
 			}
 			
-			// Third, we get the preferred width (if any)
-			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth") != null) {
+			String cookie_width = Cookies.getCookie("emarking_width");
+			
+			if(cookie_width != null) {
+				preferredWidth = Integer.parseInt(cookie_width); 				
+			} else if(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth") != null) {
 				preferredWidth = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth")); 
 			}
 			
@@ -168,7 +171,12 @@ public class EMarkingWeb implements EntryPoint {
 			if(preferredWidth <= 10) {
 				errors.add("Preferred width should be a positive integer greater than 10.");
 			}
+
+			String cookie_showrubric = Cookies.getCookie("emarking_showrubric");
 			
+			if(cookie_showrubric != null) {
+				showRubric = Integer.parseInt(cookie_showrubric) == 1;
+			} else
 			// Fourth, we get the show rubric setting
 			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric") != null) {
 				showRubric = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric")) == 1; 
@@ -177,11 +185,6 @@ public class EMarkingWeb implements EntryPoint {
 			// Validate that the preferredWidth is a positive integer greater than 10
 			if(preferredWidth <= 10) {
 				errors.add("Preferred width should be a positive integer greater than 10.");
-			}
-			
-			// Fifth, check if the chat is active
-			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("chat") != null && !RootPanel.get(eMarkingDivId).getElement().getAttribute("chat").equals("")) {
-				chat = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("chat"));
 			}
 			
 			logger.fine("ShowRubric: " + showRubric + " Preferred width:" + preferredWidth);
@@ -229,7 +232,8 @@ public class EMarkingWeb implements EntryPoint {
 			// eMarking version
 			MarkingInterface.seteMarkingVersion(emarkingversion);
 			// Active the chat interface
-			MarkingInterface.activateChat = chat;
+			MarkingInterface.activateChat = false;
+			MarkingInterface.showRubricOnLoad = showRubric;
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;
 
@@ -248,7 +252,6 @@ public class EMarkingWeb implements EntryPoint {
 
 			// Initialize eMarking's interface
 			markingInterface = new MarkingInterface();
-			markingInterface.setShowRubric(showRubric);
 			
 			// Add eMarking to the browser
 			RootPanel.get(eMarkingDivId).clear();

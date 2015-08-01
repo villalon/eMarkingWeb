@@ -21,14 +21,18 @@
  */
 package cl.uai.client.rubric;
 
+import java.util.Date;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 
 /**
@@ -83,10 +87,15 @@ public class RubricInterface extends EMarkingComposite {
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-
-		EMarkingWeb.markingInterface.setShowRubric(visible);
+		
+		Date oneyear = new Date();
+		CalendarUtil.addMonthsToDate(oneyear, 12);
+				
+		Cookies.setCookie("emarking_showrubric", visible ? "1" : "0", oneyear);
+		MarkingInterface.showRubricOnLoad = visible;
+		
 		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();
-		EMarkingWeb.markingInterface.setRubricVisible(visible);
+		EMarkingWeb.markingInterface.setShowRubricButtonVisible(visible);
 	}
 	
 	/**

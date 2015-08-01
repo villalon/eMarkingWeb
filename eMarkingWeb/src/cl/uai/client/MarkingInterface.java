@@ -61,6 +61,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -74,6 +75,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 
 /**
@@ -128,12 +130,13 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 	
 	/** Activate chat **/
-	public static int activateChat = 0;
+	public static boolean activateChat = false;
 	
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);
-	private boolean showRubric = true;
+	
+	public static boolean showRubricOnLoad = true;
 
 	/** Chat button **/
 	private HTML showChatButton = null;
@@ -225,9 +228,9 @@ public class MarkingInterface extends EMarkingComposite {
 	}
 	
 	/** If is enabled collaborativefeatures (Manuel's thesis) **/
-	private static int collaborativefeatures = 0;
+	private static boolean collaborativefeatures = false;
 	
-	public static int getCollaborativeFeatures(){
+	public static boolean getCollaborativeFeatures(){
 		return collaborativefeatures;
 	}
 	
@@ -332,6 +335,11 @@ public class MarkingInterface extends EMarkingComposite {
 				} else {					
 					// More than 200 ms, we accept no more resize is being done
 					resizeTimeout = false;
+					
+					Date oneyear = new Date();
+					CalendarUtil.addMonthsToDate(oneyear, 12);
+					
+					Cookies.setCookie("emarking_width", Integer.toString(Window.getClientWidth()), oneyear);
 					EMarkingWeb.markingInterface.loadSubmissionData();
 				}
 			}
@@ -903,8 +911,8 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.setCellWidth(rubricInterface, "40%");
 		
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
-		rubricInterface.setVisible(this.showRubric);
-
+		rubricInterface.setVisible(showRubricOnLoad);
+		
 		/** Codigo Implantado tesis **/
 		if(linkrubric == 1){
 			toolbar.getMarkingButtons().setCriterionList();
@@ -912,7 +920,7 @@ public class MarkingInterface extends EMarkingComposite {
 		/** FIN **/
 	}
 	
-	public void setRubricVisible(boolean visible) {
+	public void setShowRubricButtonVisible(boolean visible) {
 		showRubricButton.setVisible(!visible);
 		if(visible) {
 			interfacePanel.setCellWidth(markingPagesInterface, "60%");
@@ -923,12 +931,6 @@ public class MarkingInterface extends EMarkingComposite {
 		}
 	}
 	
-	public boolean isShowRubric() {
-		return showRubric;
-	}
-	public void setShowRubric(boolean _showRubric) {
-		this.showRubric = _showRubric;
-	}
 	/**
 	 * Loads submission data using global submission id
 	 */
@@ -1041,27 +1043,6 @@ public class MarkingInterface extends EMarkingComposite {
 	@Override
 	protected void onLoad() {
 		
-		//TODO add toastr script to head
-		//ScriptInjector.fromUrl("toastr/toastr.js");
-		/*
-		Element head = Document.get().getElementsByTagName("head").getItem(0);
-		ScriptElement toast = Document.get().createScriptElement();
-		toast.setSrc("toastr/toastr.js");
-		LinkElement link = Document.get().createLinkElement();
-		link.setRel("stylesheet");
-		link.setHref("toastr/toastr.css");
-		//Append toastr css and js
-		head.appendChild(link);
-		head.appendChild(toast);
-		
-		//Inject script for chat and walls notifications
-		ScriptElement loadToast = Document.get().createScriptElement();
-		loadToast.setType("text/javascript");
-		loadToast.setSrc("toastr/loadToast.js");
-		head.appendChild(loadToast);
-		*/
-		
-
 		// Ajax request to load submission data
 		AjaxRequest.ajaxRequest("action=ping", new AsyncCallback<AjaxData>() {
 			@Override
@@ -1124,7 +1105,7 @@ public class MarkingInterface extends EMarkingComposite {
 					coursemodule=Integer.parseInt(value.get("cm"));
 					
 					// Collaborative features (chat, wall) if configured as
-					collaborativefeatures = Integer.parseInt(value.get("collaborativefeatures"));
+					collaborativefeatures = value.get("collaborativefeatures").equals("1");
 					
 					/**
 					 * GET TOTAL MARKERS ARRAY OF AN eMarking.
@@ -1154,7 +1135,7 @@ public class MarkingInterface extends EMarkingComposite {
 						groupID = Integer.parseInt(value.get("groupID"));
 					}
 					
-					if(activateChat==1){
+					if(collaborativefeatures){
 						
 						NodeChat.username=realUsername;
 						NodeChat.userid=userID;

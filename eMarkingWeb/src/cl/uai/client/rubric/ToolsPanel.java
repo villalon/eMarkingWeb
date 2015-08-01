@@ -7,7 +7,6 @@ import cl.uai.client.MarkingInterface;
 
 import cl.uai.client.resources.Resources;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -26,11 +25,6 @@ public class ToolsPanel extends Composite {
 	private GeneralFeedbackInterface generalFeedback = null;
 	/** Sorting pages interfaces **/
 	private SortPagesInterface sortPages = null;
-	
-	/** Chat interface (just for collaborative features) **/
-	private ChatInterface chat = null;
-	/** Wall interface (just for collaborative features) **/
-	private WallInterface wall = null;
 	
 	private MarksSummaryInterface marksSummary = null;
 	
@@ -54,20 +48,6 @@ public class ToolsPanel extends Composite {
 	public ToolsPanel() {
 		toolsPanel = new TabPanel();
 		toolsPanel.addStyleName(Resources.INSTANCE.css().previouscomments());
-		
-		//Collaborative features
-		if(MarkingInterface.getCollaborativeFeatures()==1){
-			//Setting height
-			int height = Window.getClientHeight()*50/100;
-			//Chat
-			chat = new ChatInterface();
-			toolsPanel.add(chat, "Chat");
-			chat.setHeight(height+"px");
-			//Wall
-			wall = new WallInterface();
-			toolsPanel.add(wall, "Muro");
-			wall.setHeight(height+"px");
-		}
 		
 		// Marking tools
 		generalFeedback = new GeneralFeedbackInterface();
