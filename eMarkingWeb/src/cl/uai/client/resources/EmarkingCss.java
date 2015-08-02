@@ -202,4 +202,5 @@ public interface EmarkingCss extends CssResource {
 	String chaticonmessage();
 	String chatsendcolor();
 	String chatTextarea();
+	String markbuttons();
 }

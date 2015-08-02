@@ -97,7 +97,7 @@ public class CriterionHeader extends EMarkingComposite {
 		HorizontalPanel horizontal = new HorizontalPanel();
 		
 		//the square with the color
-		if(MarkingInterface.getLinkRubric() == 1){
+		if(MarkingInterface.isColoredRubric()){
 			Label lbl2 = new Label("");
 			lbl2.addStyleName(MarkingInterface.getMapCss().get("color"+idx));
 			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());

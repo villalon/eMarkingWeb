@@ -1,11 +1,7 @@
 package cl.uai.client.chat;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
-import cl.uai.client.HelpInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;

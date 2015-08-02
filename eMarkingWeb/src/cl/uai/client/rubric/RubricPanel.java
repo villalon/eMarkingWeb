@@ -20,6 +20,7 @@
  */
 package cl.uai.client.rubric;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -40,6 +41,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -49,6 +51,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 /**
  * 
@@ -132,6 +135,16 @@ public class RubricPanel extends EMarkingComposite {
 		rubricFilter.addItem(MarkingInterface.messages.HideRubric(), "hide");
 		rubricFilter.addStyleName(Resources.INSTANCE.css().rubricfilterselect());
 		rubricFilter.setSelectedIndex(0);
+		String cookieFilter = Cookies.getCookie("emarking_rubricfilter");
+		if(cookieFilter != null) {
+			if(cookieFilter.equals("unmarked")) {
+				rubricFilter.setSelectedIndex(1);
+			} else if(cookieFilter.equals("regrade")) {
+				rubricFilter.setSelectedIndex(2);
+			} else if(cookieFilter.equals("hide")) {
+				rubricFilter.setSelectedIndex(3);
+			}
+		}
 		rubricFilter.addChangeHandler(new RubricFilterListBoxValueChangeHandler());
 
 		closeButton = new HTML((new Icon(IconType.REMOVE)).toString());
@@ -239,7 +252,6 @@ public class RubricPanel extends EMarkingComposite {
 		rubricIndices = new HashMap<Integer, Integer>();
 		rubricTitle.setText(MarkingInterface.submissionData.getRubricname());
 
-		int rownumber = 0;
 		int index = 0;
 		for(int criterionSortId : MarkingInterface.submissionData.getSortedRubricfillings().keySet()) {
 			Criterion criterion = MarkingInterface.submissionData.getSortedRubricfillings().get(criterionSortId);
@@ -307,18 +319,12 @@ public class RubricPanel extends EMarkingComposite {
 
 			}
 
-			rownumber++;
 			if(criterionSelected) {
 				header.setMarkerVisible(!popupInterface);
 				rowPanel.addStyleName(getCriterionVisibilityCss(criterion));
-				if(isCriterionVisible(criterion))
-					rownumber--;
 			} else {
 				header.setMarkerVisible(false);
 				rowPanel.addStyleName(getCriterionVisibilityCss(criterion));						
-			}
-			if(rownumber %  2 == 0) {
-				rowPanel.addStyleName(Resources.INSTANCE.css().oddrow());						
 			}
 
 			rubricRows.put(criterion.getId(), rowPanel);
@@ -369,18 +375,17 @@ public class RubricPanel extends EMarkingComposite {
 			EMarkingWeb.markingInterface.getRubricInterface().resizeToolsPanel();
 			
 			// We have to update visibility
-			int rownumber = 0;
 			for(int criterionId : rubricRows.keySet()) {
 				Criterion criterion = MarkingInterface.submissionData.getRubricfillings().get(criterionId);
-				rownumber++;
 				HorizontalPanel hpanel = rubricRows.get(criterionId);
-				hpanel.removeStyleName(Resources.INSTANCE.css().oddrow());
-				if(rownumber % 2 == 0)
-					hpanel.addStyleName(Resources.INSTANCE.css().oddrow());
 				hpanel.removeStyleName(Resources.INSTANCE.css().rowCriterionSelectedHidden());
 				hpanel.removeStyleName(Resources.INSTANCE.css().rowCriterionSelected());
 				hpanel.addStyleName(getCriterionVisibilityCss(criterion));
 			}
+			
+			Date oneyear = new Date();
+			CalendarUtil.addMonthsToDate(oneyear, 12);					
+			Cookies.setCookie("emarking_rubricfilter", value, oneyear);
 		}		
 	}
 	/**

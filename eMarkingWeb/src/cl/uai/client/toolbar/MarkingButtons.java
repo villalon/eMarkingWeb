@@ -190,6 +190,11 @@ public class MarkingButtons extends EMarkingComposite {
 
 		buttons.get(selectedIndex).setValue(true);
 
+		criterionList = new ListBox();
+		criterionList.setVisible(true);
+		
+		mainPanel.add(criterionList);
+		mainPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
 
 		this.initWidget(mainPanel);
 	}
@@ -208,7 +213,7 @@ public class MarkingButtons extends EMarkingComposite {
 	public int getIndexSelectedCriterion(){
 		
 		int index = 0;
-		if(MarkingInterface.getLinkRubric() == 1)
+		if(MarkingInterface.isColoredRubric())
 			index = criterionList.getSelectedIndex();
 		
 		return index;
@@ -300,24 +305,12 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		
 	}
-	public void enableButtons(boolean bool){
-		for (int i = 1; i < buttons.size(); i++) {
-			buttons.get(i).setEnabled(bool);
-			if(buttons.get(i).isDown()){
-				buttons.get(i).setDown(false);
-				buttons.get(i).setValue(false);
-			}
-		}
-		selectedIndex = 0;
-	}
 	
 	
-	public void setCriterionList(){
+	public void loadSubmissionData(){
 		
-		criterionList = new ListBox();  
-		mainPanel.add(criterionList);
-		mainPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
-		criterionList.addItem("Selecciona un Criterio","0");
+		criterionList.clear();
+		criterionList.addItem(MarkingInterface.messages.NoCriterion(),"0");
 
 		for(int criterionId : MarkingInterface.submissionData.getRubricfillings().keySet()) {
 			Criterion c = MarkingInterface.submissionData.getRubricfillings().get(criterionId);
@@ -333,8 +326,6 @@ public class MarkingButtons extends EMarkingComposite {
 		     options.getItem(i).setClassName("criterion"+i);
 		}
 		
-		this.enableButtons(false);
-		
 		criterionList.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -343,15 +334,11 @@ public class MarkingButtons extends EMarkingComposite {
 			}
 		});
 		
+		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
 	}
 	
 	public void changeColorButtons(){
 		int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
-		if(c == 0){
-			EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(false);
-		}else{
-			EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().enableButtons(true);
-		}
 		
 		for (int i = 1; i < buttons.size(); i++) {
 			buttons.get(i).setStyleName("gwt-ToggleButton gwt-ToggleButton-up-hovering " + Resources.INSTANCE.css().rubricbutton()+ " " + MarkingInterface.getMapCss().get("criterion"+c));
@@ -359,7 +346,7 @@ public class MarkingButtons extends EMarkingComposite {
 		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
 	}
 
-	public void loadCustomMarksButtons(String customMarks) {
+	private void loadCustomMarksButtons(String customMarks) {
 		if(customMarks == null 
 				|| customMarks.trim().length() == 0 
 				|| buttons.size() >= Buttons.values().length)

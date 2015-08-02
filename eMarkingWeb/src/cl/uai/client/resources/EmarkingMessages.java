@@ -111,4 +111,8 @@ public interface EmarkingMessages extends Messages {
 	public String UnclearFeedback();
 	public String Published();
 	public String AgreeStatus();
+	public String DeleteMarkConfirm();
+	public String Requested();
+	public String Replied();
+	public String NoCriterion();
 }

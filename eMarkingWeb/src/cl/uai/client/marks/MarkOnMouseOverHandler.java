@@ -47,9 +47,19 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 		Mark mark = (Mark) event.getSource();
 		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
 
+		int topdiff = - 20;
+		int widthdiff = - 12;
+		
+		if(mark instanceof RubricMark) {
+			topdiff = 6;
+			widthdiff = - 20;
+		} else if(mark instanceof CommentMark) {
+			topdiff = 8;
+			widthdiff = - 20;
+		}
 		// Calculates basic left, top position for icons
-		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() - (20);
-		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth() - (12);
+		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() + (topdiff);
+		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
 
 		// Check if icons and popup are already added in the panel, if not adds them
 		if(abspanel.getWidgetIndex(Mark.editIcon) < 0)
@@ -61,11 +71,22 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 		if(abspanel.getWidgetIndex(Mark.regradeIcon) < 0)
 			abspanel.add(Mark.regradeIcon, left, top);
 
+		if(abspanel.getWidgetIndex(Mark.minimizeIcon) < 0)
+			abspanel.add(Mark.minimizeIcon, left, top);
+
 		// Make sure no other icons are left
 		Mark.hideIcons();
 
 		// If we are in grading mode, show delete and edit icons
 		if(!mark.isReadOnly()) {
+			
+			if(mark instanceof RubricMark) {
+				abspanel.setWidgetPosition(Mark.minimizeIcon, left, top);
+				Mark.minimizeIcon.setVisible(true);
+				Mark.minimizeIcon.setMark(mark);
+				left -= 15;
+			}
+			
 			// Edit icon is only for comments and rubrics
 			if(mark instanceof CommentMark || mark instanceof RubricMark) {
 				abspanel.setWidgetPosition(Mark.editIcon, left, top);

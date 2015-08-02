@@ -166,7 +166,7 @@ public class EditMarkDialog extends DialogBox {
 
 		// Position the dialog
 		this.setPopupPosition(posx, posy);
-
+		
 		if(this.levelId > 0) {
 
 			loadLevelsList();
@@ -209,7 +209,7 @@ public class EditMarkDialog extends DialogBox {
 
 		// The comment text box
 		TextArea txt = new TextArea();
-		txt.setVisibleLines(10);
+		txt.setVisibleLines(5);
 		txt.getElement().getStyle().setMarginBottom(5, Unit.PT);
 		txtComment = new SuggestBox(EMarkingWeb.markingInterface.previousCommentsOracle,
 				txt);
@@ -238,7 +238,7 @@ public class EditMarkDialog extends DialogBox {
 
 		// The regrade comment text box
 		txt = new TextArea();
-		txt.setVisibleLines(10);
+		txt.setVisibleLines(5);
 		txt.getElement().getStyle().setMarginBottom(5, Unit.PT);
 		txtRegradeComment = new SuggestBox(EMarkingWeb.markingInterface.previousCommentsOracle,
 				txt);
@@ -278,7 +278,7 @@ public class EditMarkDialog extends DialogBox {
 	public void show() {
 		super.show();
 
-		this.txtComment.setFocus(true);
+		this.txtComment.getValueBox().setFocus(true);
 	}
 	
 	/**

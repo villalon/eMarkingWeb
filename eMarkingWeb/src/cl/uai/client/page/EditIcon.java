@@ -59,6 +59,6 @@ public class EditIcon extends TrashIcon {
 
 		Mark mark = (Mark) icon.mark;
 		
-		mark.updateMark(event.getClientX(), event.getClientY());
+		mark.updateMark(mark.getAbsoluteLeft(), mark.getAbsoluteTop());
 	}
 }

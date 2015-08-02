@@ -78,7 +78,7 @@ public class MarkingToolBar extends EMarkingComposite {
 
 	private HorizontalPanel infoLabelPanel = null;
 	private HorizontalPanel buttonsPanel = null;
-	private Label studentSelector = null;
+	private Label studentName = null;
 	
 
 	/** Icon(arrow) to show and hide the middle of the toolbar, circle with statistical information **/
@@ -121,7 +121,7 @@ public class MarkingToolBar extends EMarkingComposite {
 	 * @return the studentSelector
 	 */
 	public Label getStudentSelector() {
-		return studentSelector;
+		return studentName;
 	}
 
 	private SubmissionGrade submissionGrade = null;
@@ -148,7 +148,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().loadingtoolbar());
 
-		studentSelector = new Label();
+		studentName = new Label();
 
 		submissionGrade = new SubmissionGrade();
 		notes = new SubmissionGradeMini();
@@ -185,9 +185,9 @@ public class MarkingToolBar extends EMarkingComposite {
 		activityStudent.setCellHorizontalAlignment(activityName, HasHorizontalAlignment.ALIGN_RIGHT);
 		divRight = new HTML("&ensp;");
 		activityStudent.add(divRight);
-		activityStudent.add(studentSelector);
-		activityStudent.setCellVerticalAlignment(studentSelector, HasVerticalAlignment.ALIGN_MIDDLE);
-		activityStudent.setCellHorizontalAlignment(studentSelector, HasHorizontalAlignment.ALIGN_LEFT);
+		activityStudent.add(studentName);
+		activityStudent.setCellVerticalAlignment(studentName, HasVerticalAlignment.ALIGN_MIDDLE);
+		activityStudent.setCellHorizontalAlignment(studentName, HasHorizontalAlignment.ALIGN_LEFT);
 		submissionPanel.add(activityStudent);
 		submissionPanel.add(lastSave);
 		
@@ -445,10 +445,10 @@ public class MarkingToolBar extends EMarkingComposite {
 		if(!MarkingInterface.isStudentAnonymous()) {
 			this.courseName.setText(sdata.getCoursename());
 			this.courseName.setTitle(sdata.getCourseshort());
-			studentSelector.setText(sdata.getLastname() + ", " + sdata.getFirstname());
+			studentName.setText(sdata.getLastname() + ", " + sdata.getFirstname());
 		} else {
 			this.courseName.setText(MarkingInterface.messages.AnonymousCourse());
-			studentSelector.setText(MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()));
+			studentName.setText(MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()));
 		}
 		this.activityName.setText(sdata.getActivityname());
 		
@@ -458,9 +458,8 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		this.submissionGrade.loadSubmissionData();
 		this.notes.loadSubmissionData();
+		this.markingButtons.loadSubmissionData();
 
-		markingButtons.loadCustomMarksButtons(sdata.getCustommarks());
-		
 		loadSubmissionTimeModified();
 		containerIcon.addStyleName(Resources.INSTANCE.css().iconArrow());
 		if(visibilityToolbar){

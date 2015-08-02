@@ -21,6 +21,7 @@
 package cl.uai.client.page;
 
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.resources.Resources;
 
@@ -28,6 +29,7 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 
 /**
@@ -52,6 +54,7 @@ public class TrashIcon extends HTML {
 			@Override
 			public void onClick(ClickEvent event) {				
 				event.stopPropagation();
+				// TODO: Add confirmation dialog when deleting
 				processCommand(event);
 			}
 		});
@@ -72,7 +75,9 @@ public class TrashIcon extends HTML {
 	 * @param event
 	 */
 	protected void processCommand(ClickEvent event) {
-		Mark.hideIcons();
-		EMarkingWeb.markingInterface.deleteMark((Mark) mark);
+		if(Window.confirm(MarkingInterface.messages.DeleteMarkConfirm())) {
+			EMarkingWeb.markingInterface.deleteMark((Mark) mark);
+			Mark.hideIcons();
+		}
 	}
 }

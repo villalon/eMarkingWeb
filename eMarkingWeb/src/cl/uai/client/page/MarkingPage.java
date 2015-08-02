@@ -112,7 +112,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		
 		for(Map<String, String> markMap : pageMarks) {
 			
-			if(MarkingInterface.getLinkRubric() == 0)
+			if(!MarkingInterface.isColoredRubric())
 				markMap.put("colour", "criterion0");
 			try {
 				int format = Integer.parseInt(markMap.get("format"));

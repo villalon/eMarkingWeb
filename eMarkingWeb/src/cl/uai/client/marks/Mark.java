@@ -32,12 +32,15 @@ import cl.uai.client.page.EditMarkDialog;
 import cl.uai.client.page.EditMarkMenu;
 import cl.uai.client.page.LoadingIcon;
 import cl.uai.client.page.MarkingPage;
+import cl.uai.client.page.MinimizeIcon;
 import cl.uai.client.page.RegradeIcon;
 import cl.uai.client.page.TrashIcon;
 import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -55,7 +58,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * @author Jorge Villalón <villalon@gmail.com>
  *
  */
-public abstract class Mark extends HTML implements ContextMenuHandler {
+public abstract class Mark extends HTML implements ContextMenuHandler, ClickHandler {
 
 	/** For logging purposes **/
 	protected static Logger logger = Logger.getLogger(Mark.class.getName());
@@ -83,6 +86,13 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 		editIcon = new EditIcon();
 	}
 	
+	/** The minimize icon **/
+	protected static MinimizeIcon minimizeIcon = null;
+
+	static {
+		minimizeIcon = new MinimizeIcon();
+	}
+	
 	public static LoadingIcon loadingIcon = null;
 	static {
 		loadingIcon = new LoadingIcon();
@@ -95,6 +105,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 		deleteIcon.setVisible(false);
 		editIcon.setVisible(false);
 		regradeIcon.setVisible(false);
+		minimizeIcon.setVisible(false);
 	}
 	
 	protected static EditMarkMenu editMenu = null;
@@ -160,6 +171,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 		this.addMouseOverHandler(new MarkOnMouseOverHandler());
 		this.addMouseOutHandler(new MarkOnMouseOutHandler());
 		this.addDomHandler(this, ContextMenuEvent.getType());
+		this.addDomHandler(this, ClickEvent.getType());
 	}
 	/**
 	 * @return the format
@@ -211,20 +223,23 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 	 * Sets the inner HTML according to an icon
 	 */
 	public void setMarkHTML() {
-		
 		// Starts with an empty HTML
 		String html = "";
+		boolean headerOnly = false;
 		
 		// If it's a RubricMark add score header and both rubric and criterion descriptions
 		if(this instanceof RubricMark) {
 			RubricMark rmark = (RubricMark) this;
+			headerOnly = rmark.isHeaderOnly();
+			
 			html += "<table style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
 					+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" 
 					+ rmark.getLevel().getCriterion().getDescription() + "</div></td>";
 			html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
 					+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
 					+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
-					+"</div></td></tr></table>";
+					+"</div></td><td class=\""+Resources.INSTANCE.css().markbuttons()+"\">&nbsp;&nbsp;</td></tr></table>";
+			if(!headerOnly)
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
 					+ "</div>";
 		}
@@ -237,23 +252,23 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 		}
 		
 		// If the inner comment contains something
-		if(this.getRawtext().trim().length() > 0) {
+		if(this.getRawtext().trim().length() > 0 && !headerOnly) {
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ iconhtml + "&nbsp;" + this.getRawtext() + "</div>";
 		}
 		
 		// Show the marker's name if the marking process is not anonymous
-		if(!MarkingInterface.isMarkerAnonymous()) {
+		if(!MarkingInterface.isMarkerAnonymous() && !headerOnly) {
 			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
 		}
 		
-		if(this instanceof RubricMark && ((RubricMark)this).getRegradeid() > 0) {
-			html += "<div style=\"background-color:yellow\">"+"Recorrección"
-					+ (((RubricMark)this).getRegradeaccepted() == 0 ? " solicitada" : " lista")
+		if(this instanceof RubricMark && ((RubricMark)this).getRegradeid() > 0 && !headerOnly) {
+			html += "<div style=\"background-color:yellow\">"+ MarkingInterface.messages.Regrade()
+					+ (((RubricMark)this).getRegradeaccepted() == 0 ? " " + MarkingInterface.messages.Requested() : " " + MarkingInterface.messages.Replied())
 					+"</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
-					+ "Motivo: " + ((RubricMark)this).getRegradeMotiveText() + "<hr>" 
-					+ "Comentario: " + ((RubricMark)this).getRegradecomment()
-					+ (((RubricMark)this).getRegradeaccepted() == 0 ? "" : "<hr>Respuesta: " + (((RubricMark)this).getRegrademarkercomment()))
+					+ MarkingInterface.messages.Motive() + ": " + ((RubricMark)this).getRegradeMotiveText() + "<hr>" 
+					+ MarkingInterface.messages.Comment() + ": " + ((RubricMark)this).getRegradecomment()
+					+ (((RubricMark)this).getRegradeaccepted() == 0 ? "" : "<hr>"+MarkingInterface.messages.RegradeReply()+": " + (((RubricMark)this).getRegrademarkercomment()))
 					+ "</div>";
 		}
 
@@ -475,6 +490,12 @@ public abstract class Mark extends HTML implements ContextMenuHandler {
 				event.getNativeEvent().getClientY());
 		editMenu.show();
 	}
+	
+	@Override
+	public void onClick(ClickEvent event) {
+		event.stopPropagation();
+	}
+	
 	public String getColour() {
 		return colour;
 	}

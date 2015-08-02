@@ -4,9 +4,11 @@
 package cl.uai.client.page;
 
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.Mark;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 
 /**
  * @author jorgevillalon
@@ -22,6 +24,8 @@ public class DeleteMarkCommand implements Command {
 	
 	@Override
 	public void execute() {
-		EMarkingWeb.markingInterface.deleteMark((Mark) this.mark);
+		if(Window.confirm(MarkingInterface.messages.DeleteMarkConfirm())) {
+			EMarkingWeb.markingInterface.deleteMark((Mark) this.mark);
+		}
 	}
 }

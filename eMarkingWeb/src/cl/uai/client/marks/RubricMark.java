@@ -48,6 +48,15 @@ public class RubricMark extends Mark {
 	private int regrademotive = 0;
 	private int regradeaccepted = 0;
 	private String regrademarkercomment = null;
+	private boolean headerOnly = false;
+
+	public boolean isHeaderOnly() {
+		return headerOnly;
+	}
+
+	public void setHeaderOnly(boolean headerOnly) {
+		this.headerOnly = headerOnly;
+	}
 
 	public String getRegrademarkercomment() {
 		return regrademarkercomment;

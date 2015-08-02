@@ -140,19 +140,19 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** Chat button **/
 	private HTML showChatButton = null;
-	private final Icon iconShowChat = new Icon(IconType.BEER);
+	private final Icon iconShowChat = new Icon(IconType.COMMENTS);
 	
 	/** Wall button **/
 	private HTML showWallButton = null;
-	private final Icon iconShowWall = new Icon(IconType.CAMERA_RETRO);
+	private final Icon iconShowWall = new Icon(IconType.COMMENT);
 	
 	/** Sos button **/
 	private HTML showSosButton = null;
-	private final Icon iconShowSos = new Icon(IconType.HOSPITAL);
+	private final Icon iconShowSos = new Icon(IconType.AMBULANCE);
 	
 	/** help button **/
 	private HTML showHelpButton = null;
-	private final Icon iconShowHelp = new Icon(IconType.HEART);
+	private final Icon iconShowHelp = new Icon(IconType.H_SIGN);
 	
 	private ChatInterface chat;
 	
@@ -221,10 +221,10 @@ public class MarkingInterface extends EMarkingComposite {
 	public MultiWordSuggestOracle previousCommentsOracle = new MultiWordSuggestOracle() ;
 
 	/** If is enabled linkrubric (Marcelo's thesis) **/
-	private static int linkrubric = 0;
+	private static boolean coloredRubric = false;
 	
-	public static int getLinkRubric() {
-		return linkrubric;
+	public static boolean isColoredRubric() {
+		return coloredRubric;
 	}
 	
 	/** If is enabled collaborativefeatures (Manuel's thesis) **/
@@ -394,10 +394,14 @@ public class MarkingInterface extends EMarkingComposite {
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
 		markingPanel.add(showRubricButton);
+		
+		if(MarkingInterface.getCollaborativeFeatures()) {
 		markingPanel.add(showChatButton);
 		markingPanel.add(showWallButton);
 		markingPanel.add(showSosButton);
 		markingPanel.add(showHelpButton);
+		}
+		
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -533,9 +537,11 @@ public class MarkingInterface extends EMarkingComposite {
 		
 		//por defecto el criterionid = 0 y la clase para el color es criterion0
 		int cid = 0;
-		if(MarkingInterface.linkrubric == 1){
+		if(MarkingInterface.coloredRubric){
 			Criterion c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
-			cid = c.getId();
+			if(c != null) {
+				cid = c.getId();
+			}
 		}
 
 		// Invokes the ajax Moodle interface to save the mark
@@ -741,7 +747,7 @@ public class MarkingInterface extends EMarkingComposite {
 								markingPagesInterface.addMarkWidget(mark, previd, page);
 								rubricInterface.getRubricPanel().addMarkToRubric(mark);
 								toolbar.getMarkingButtons().updateStats();
-								if(MarkingInterface.getLinkRubric() == 1)
+								if(MarkingInterface.coloredRubric)
 									toolbar.getMarkingButtons().changeColor(criterion.getId());
 								
 								EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
@@ -891,6 +897,8 @@ public class MarkingInterface extends EMarkingComposite {
 		showRubricButton.setHTML(iconShowRubric.toString());
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
 		
+		if(MarkingInterface.getCollaborativeFeatures()) {
+
 		// Set show chat
 		showChatButton.setHTML(iconShowChat.toString());
 		markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
@@ -906,17 +914,14 @@ public class MarkingInterface extends EMarkingComposite {
 		// Set show wall
 		showHelpButton.setHTML(iconShowHelp.toString());
 		markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
-
+		}
+		
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
 		
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(showRubricOnLoad);
 		
-		/** Codigo Implantado tesis **/
-		if(linkrubric == 1){
-			toolbar.getMarkingButtons().setCriterionList();
-		}
 		/** FIN **/
 	}
 	
@@ -1097,9 +1102,9 @@ public class MarkingInterface extends EMarkingComposite {
 					logger.fine("Marking type: " + markingType);
 
 					// Link rubric colors if configured as
-					linkrubric = Integer.parseInt(value.get("linkrubric"));
+					coloredRubric = value.get("linkrubric").equals("1");
 					
-					logger.fine("Link rubric: " + linkrubric);
+					logger.fine("Link rubric: " + coloredRubric);
 
 					//Give the Course Module of actual eMarking
 					coursemodule=Integer.parseInt(value.get("cm"));

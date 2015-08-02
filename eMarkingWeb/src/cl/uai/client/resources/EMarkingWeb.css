@@ -24,6 +24,13 @@
 	width: 100%;
 }
 
+.rubricrow {
+	border-bottom: 1px solid #ccc;
+}
+
+.markbuttons {
+	width: 50px;
+}
 
 .rubricinterface {
 	background-color: #fff;
@@ -192,8 +199,10 @@ to {
 }
 
 .criterionDescription,.previousComment {
-	margin: 5px;
+	margin: 2px;
 	padding: 2px;
+}
+.criterionDescription {
 }colorrionheader,.criterionheaderregrade,.criterionheaderregradeaccepted
 	{
 	font-weight: bold;
@@ -208,7 +217,9 @@ to {
 }
 
 .leveldesc {
-	
+    height: 100px;
+    overflow-y: auto;
+    min-width: 50px;
 }
 
 .regradecomment {
@@ -312,7 +323,7 @@ to {
 }
 
 .trashicon,.editicon,.loadingicon,.regradeicon {
-	z-index: 100;
+	z-index: 200;
 }
 
 .trashicon:hover,.editicon:hover,.rubriclabelclickable:hover,.regradeicon:hover
@@ -358,6 +369,7 @@ to {
 .levelpts {
 	color: #575;
 	white-space: nowrap;
+	text-align: right;
 }
 
 .markcrit,.markpts {
@@ -388,7 +400,7 @@ to {
 }
 
 .commentdialog {
-	z-index: 999;
+	z-index: 300;
 }
 
 .markmarkername,.markrawtext {
@@ -421,7 +433,7 @@ to {
 	border-color: #999;
 	border-radius: 3px;
 	padding: 3px;
-	z-index: 9000;
+	z-index: 100;
 }
 
 .markpopuppanel {
@@ -431,7 +443,6 @@ to {
 }
 
 .rubricmarkhover {
-	background-color: #ccc;
 }
 
 .criterionheader {
@@ -828,6 +839,7 @@ background-color: #0057D9;
 	display: table-cell;
 	line-height: 40px;
 	cursor: pointer;
+	box-shadow: 1px 1px 2px #444;
 }
 
 .closerubricbutton {
