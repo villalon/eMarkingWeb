@@ -6,6 +6,9 @@ public class Message extends JavaScriptObject{
 
 	protected Message(){}
 		
+		public final native int getId() /*-{ 
+	 	return this.id;
+	 	 }-*/;
 		 public final native String getMessage() /*-{ 
 		 	return this.message;
 		 	 }-*/;

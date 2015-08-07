@@ -28,8 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+
 import cl.uai.client.chat.ChatInterface;
 import cl.uai.client.chat.NodeChat;
+import cl.uai.client.chat.SosInterface;
+import cl.uai.client.chat.HelpInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
@@ -76,6 +79,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 
 /**
@@ -130,12 +134,13 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 	
 	/** Activate chat **/
-	public static boolean activateChat = false;
+	public static int activateChat = 0;
 	
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);
 	
+
 	public static boolean showRubricOnLoad = true;
 
 	/** Chat button **/
@@ -144,17 +149,23 @@ public class MarkingInterface extends EMarkingComposite {
 	
 	/** Wall button **/
 	private HTML showWallButton = null;
-	private final Icon iconShowWall = new Icon(IconType.COMMENT);
+	private final Icon iconShowWall = new Icon(IconType.INBOX);
 	
 	/** Sos button **/
 	private HTML showSosButton = null;
-	private final Icon iconShowSos = new Icon(IconType.AMBULANCE);
+	private final Icon iconShowSos = new Icon(IconType.BELL);
 	
 	/** help button **/
 	private HTML showHelpButton = null;
 	private final Icon iconShowHelp = new Icon(IconType.H_SIGN);
 	
 	private ChatInterface chat;
+	
+	private ChatInterface wall;
+	
+	private SosInterface sos;
+	
+	private HelpInterface help;
 	
 	/**
 	 * @return the eMarkingVersion
@@ -228,7 +239,7 @@ public class MarkingInterface extends EMarkingComposite {
 	}
 	
 	/** If is enabled collaborativefeatures (Manuel's thesis) **/
-	private static boolean collaborativefeatures = false;
+	public static boolean collaborativefeatures = false;
 	
 	public static boolean getCollaborativeFeatures(){
 		return collaborativefeatures;
@@ -1110,7 +1121,7 @@ public class MarkingInterface extends EMarkingComposite {
 					coursemodule=Integer.parseInt(value.get("cm"));
 					
 					// Collaborative features (chat, wall) if configured as
-					collaborativefeatures = value.get("collaborativefeatures").equals("1");
+					//collaborativefeatures = value.get(activateChat).equals("1");
 					
 					/**
 					 * GET TOTAL MARKERS ARRAY OF AN eMarking.
@@ -1140,18 +1151,32 @@ public class MarkingInterface extends EMarkingComposite {
 						groupID = Integer.parseInt(value.get("groupID"));
 					}
 					
-					if(collaborativefeatures){
+					if(getCollaborativeFeatures()){
+						
+						
 						
 						NodeChat.username=realUsername;
 						NodeChat.userid=userID;
 						NodeChat.coursemodule=coursemodule;
 						NodeChat.userRole=userRole;
-						NodeChat.submissionId=getSubmissionId();
+						NodeChat.draftid=getSubmissionId();
 						NodeChat.moodleurl=AjaxRequest.moodleUrl;
 						
 						EMarkingWeb.chatServer = new NodeChat();					
 						NodeChat.chat = new ChatInterface();
+						NodeChat.sos = new SosInterface();
+						NodeChat.wall = new ChatInterface();
+						NodeChat.help = new HelpInterface();
 						chat = NodeChat.chat;
+						chat.setSource(NodeChat.SOURCE_CHAT);
+						wall=NodeChat.wall;
+						wall.setSource(NodeChat.SOURCE_WALL);
+						sos = NodeChat.sos;
+						sos.setSource(NodeChat.SOURCE_SOS);
+						help=NodeChat.help;
+						help.setSource(NodeChat.SOURCE_HELP);
+						
+						
 						}
 					
 					
@@ -1208,21 +1233,21 @@ public class MarkingInterface extends EMarkingComposite {
 		showWallButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				//chat.wallInterface();
+				wall.show();
 			}
 		});
-		
+	
 		showSosButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				//chat.sosInterface();
+				sos.show();
 			}
 		});
 		
 		showHelpButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				//chat.helpInterface();
+				help.show();
 			}
 		});
 	}

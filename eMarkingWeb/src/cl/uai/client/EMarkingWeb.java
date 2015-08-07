@@ -50,6 +50,8 @@ public class EMarkingWeb implements EntryPoint {
 	
 	public static NodeChat chatServer = null;
 	
+
+	
 	/** JSNI function to close and reload a window **/
 	public static native boolean closeAndReload() /*-{
         var opener = null;
@@ -142,6 +144,7 @@ public class EMarkingWeb implements EntryPoint {
 		int submissionId = 0;
 		int preferredWidth = 860;
 		boolean showRubric = true;
+		boolean collaborativefeatures = false;
 
 		try {
 			// First try to read submissionId from emarking DIV tag
@@ -180,6 +183,12 @@ public class EMarkingWeb implements EntryPoint {
 			// Fourth, we get the show rubric setting
 			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric") != null) {
 				showRubric = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric")) == 1; 
+			}
+			
+			// Fifth, check if the chat is active
+			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("collaborativefeatures") != null && !RootPanel.get(eMarkingDivId).getElement().getAttribute("collaborativefeatures").equals("")) {
+				collaborativefeatures = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("collaborativefeatures")) == 1;
+				
 			}
 			
 			// Validate that the preferredWidth is a positive integer greater than 10
@@ -232,7 +241,7 @@ public class EMarkingWeb implements EntryPoint {
 			// eMarking version
 			MarkingInterface.seteMarkingVersion(emarkingversion);
 			// Active the chat interface
-			MarkingInterface.activateChat = false;
+			MarkingInterface.collaborativefeatures = collaborativefeatures;
 			MarkingInterface.showRubricOnLoad = showRubric;
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;
