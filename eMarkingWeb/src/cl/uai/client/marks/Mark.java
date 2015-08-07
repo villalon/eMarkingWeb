@@ -238,7 +238,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
 					+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
 					+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
-					+"</div></td><td class=\""+Resources.INSTANCE.css().markbuttons()+"\">&nbsp;&nbsp;</td></tr></table>";
+					+"</div></td></tr></table>";
 			if(!headerOnly)
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
 					+ "</div>";

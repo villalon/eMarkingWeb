@@ -51,10 +51,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 		int widthdiff = - 12;
 		
 		if(mark instanceof RubricMark) {
-			topdiff = 6;
-			widthdiff = - 20;
-		} else if(mark instanceof CommentMark) {
-			topdiff = 8;
+			topdiff = - 20;
 			widthdiff = - 20;
 		}
 		// Calculates basic left, top position for icons

@@ -191,7 +191,7 @@ public class MarkingButtons extends EMarkingComposite {
 		buttons.get(selectedIndex).setValue(true);
 
 		criterionList = new ListBox();
-		criterionList.setVisible(true);
+		criterionList.setVisible(MarkingInterface.isColoredRubric());
 		
 		mainPanel.add(criterionList);
 		mainPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
