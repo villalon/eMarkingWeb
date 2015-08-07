@@ -14,8 +14,8 @@ public class Sos extends JavaScriptObject{
  	return this.comment;
  	 }-*/;
 	
-	public final native int getSubmissionId() /*-{ 
- 	return this.submissionid;
+	public final native int getDraftId() /*-{ 
+ 	return this.draftid;
  	 }-*/;
 	
 	public final native int getUserId() /*-{ 
@@ -32,6 +32,10 @@ public class Sos extends JavaScriptObject{
 	
 	public final native String getUserName() /*-{ 
  	return this.username;
+ 	 }-*/;
+	
+	public final native int getUrgencyLevel() /*-{ 
+ 	return this.urgencylevel;
  	 }-*/;
 }
 

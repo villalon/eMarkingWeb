@@ -39,7 +39,7 @@ io.sockets.on("connection", function (socket) {
 		socket.room = conectionData.cm;
 		socket.userName=conectionData.Username;
 		socket.userid=conectionData.userid;
-		socket.submissionId=conectionData.submissionId;
+		socket.draftid=conectionData.draftid;
 		socket.color=color[0];
 		var index = color.indexOf(socket.color);
 		if (index > -1) {
@@ -54,7 +54,7 @@ io.sockets.on("connection", function (socket) {
 		user.username=socket.userName;
 		user.room=socket.room;
 		user.userid=socket.userid;
-		user.submissionid=socket.submissionId;
+		user.draftid=socket.draftid;
 		user.color=socket.color;
 		users.push(user);
 		obj={};
@@ -69,6 +69,7 @@ io.sockets.on("connection", function (socket) {
 		var data= JSON.parse(data);
 		var message=data.message;
 		var source =data.source;
+		var messageid=data.messageid;
 
 		var obj={};
 		obj.time=unixtime();
@@ -78,10 +79,11 @@ io.sockets.on("connection", function (socket) {
 		obj.username= socket.userName;
 		obj.color= socket.color;
 		obj.source=source;
-		obj.submissionid=socket.submissionId;
-
-		//socket.emit("onCatchMesage", JSON.stringify(obj));
-		//socket.broadcast.to(socket.room).emit("onCatchMesage",JSON.stringify(obj));//solo envia un mensaje
+		obj.draftid=socket.draftid;
+		obj.id=messageid;
+		console.log(obj);
+		socket.broadcast.to(socket.room).emit("onCatchMesage",JSON.stringify(obj));//solo envia un mensaje
+		socket.emit("onMessegeSent",JSON.stringify(obj));
 		console.log("["+logtime()+"] "+socket.userName +" en la sala "+socket.room+" ha enviado un mensaje: "+message);
 
 
@@ -93,7 +95,7 @@ io.sockets.on("connection", function (socket) {
 		obj.time=unixtime();
 		obj.comment=data.comment;
 		obj.urgencylevel=data.urgencyLevel;
-		obj.submissionid=socket.submissionId;
+		obj.draftid=socket.draftid;
 		obj.userid=socket.userid;
 		obj.room=socket.room;       
 		obj.status=1;
@@ -101,6 +103,7 @@ io.sockets.on("connection", function (socket) {
 
 		socket.emit("onCatchSos", JSON.stringify(obj));
 		socket.broadcast.to(socket.room).emit("onCatchSos",JSON.stringify(obj));//solo envia un mensaje
+		console.log(obj);
 
 
 	});

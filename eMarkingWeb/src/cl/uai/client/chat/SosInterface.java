@@ -1,10 +1,13 @@
 package cl.uai.client.chat;
 
+import cl.uai.client.EMarkingWeb;
+import cl.uai.client.data.AjaxData;
+import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
@@ -17,6 +20,7 @@ public class SosInterface extends DialogBox {
 	
 	private VerticalPanel vPanel;
 	private TextArea textArea;
+	private int source=0;
 	
 	public SosInterface(){
 
@@ -44,8 +48,9 @@ public class SosInterface extends DialogBox {
 		@Override
 		public void onClick(ClickEvent event) {
 			// TODO Auto-generated method stub
-
-			//onSendSos(textArea.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
+			createSos(textArea.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
+			EMarkingWeb.chatServer.onSendSos(textArea.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
+			textArea.setText("");
 			hide();
 		}
 	}); 
@@ -54,5 +59,30 @@ public class SosInterface extends DialogBox {
 	    this.add(vPanel);
 	     
 	}
+
+	public void setSource(int source){
+
+		this.source=source;
+
+	}
+	public void createSos(String message,int urgencyLevel){
+		
+		String params= "&message="+message+"&source="+source+"&userid="+NodeChat.userid+"&room="+NodeChat.coursemodule+"&draftid="+NodeChat.draftid+"&urgencylevel="+urgencyLevel+"&status=1";
+		AjaxRequest.ajaxRequest("action=addchatmessage"+ params, new AsyncCallback<AjaxData>() {
+			@Override
+			public void onSuccess(AjaxData result) {
+				
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+		
+		
+	}
+	
+	
+	
 
 }
