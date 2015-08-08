@@ -21,7 +21,6 @@ public class MinimizeIcon extends TrashIcon {
 	 * 
 	 */
 	public MinimizeIcon() {
-		// TODO Auto-generated constructor stub
 		super();
 		
 		// Sets inner HTML

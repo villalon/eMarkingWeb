@@ -29,6 +29,22 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 
+
+
+
+
+
+
+
+
+
+
+
+import cl.uai.client.buttons.ShowChatButton;
+import cl.uai.client.buttons.ShowHelpButton;
+import cl.uai.client.buttons.ShowRubricButton;
+import cl.uai.client.buttons.ShowSosButton;
+import cl.uai.client.buttons.ShowWallButton;
 import cl.uai.client.chat.ChatInterface;
 import cl.uai.client.chat.NodeChat;
 import cl.uai.client.chat.SosInterface;
@@ -49,11 +65,11 @@ import cl.uai.client.rubric.RubricInterface;
 import cl.uai.client.toolbar.MarkingToolBar;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.base.ProgressBarBase;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -133,34 +149,20 @@ public class MarkingInterface extends EMarkingComposite {
 	public static SubmissionGradeData submissionData = null;
 
 	/** Div contains rubric icon  **/
-	private HTML showRubricButton = null;
-	private final Icon iconShowRubric = new Icon(IconType.TH);
-
-
 	public static boolean showRubricOnLoad = true;
 
-	/** Chat button **/
-	private HTML showChatButton = null;
-	private final Icon iconShowChat = new Icon(IconType.COMMENTS);
+	public static String nodejspath;
 
-	/** Wall button **/
-	private HTML showWallButton = null;
-	private final Icon iconShowWall = new Icon(IconType.INBOX);
-
-	/** Sos button **/
-	private HTML showSosButton = null;
-	private final Icon iconShowSos = new Icon(IconType.BELL);
-
-	/** help button **/
-	private HTML showHelpButton = null;
-	private final Icon iconShowHelp = new Icon(IconType.H_SIGN);
+	/** Show buttons **/
+	private ShowRubricButton showRubricButton = null;
+	private ShowChatButton showChatButton = null;
+	private ShowWallButton showWallButton = null;
+	private ShowSosButton showSosButton = null;
+	private ShowHelpButton showHelpButton = null;
 
 	private ChatInterface chat;
-
 	private ChatInterface wall;
-
 	private SosInterface sos;
-
 	private HelpInterface help;
 
 	/**
@@ -385,33 +387,22 @@ public class MarkingInterface extends EMarkingComposite {
 
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
 
-		showRubricButton = new HTML();
-		showRubricButton.addStyleName(Resources.INSTANCE.css().showrubricbutton());
-
-		showChatButton = new HTML();
-		showChatButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-
-		showWallButton = new HTML();
-		showWallButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-
-		showSosButton = new HTML();
-		showSosButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-
-		showHelpButton = new HTML();
-		showHelpButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
+		showRubricButton = new ShowRubricButton();
+		showChatButton = new ShowChatButton();
+		showWallButton = new ShowWallButton();
+		showSosButton = new ShowSosButton();
+		showHelpButton = new ShowHelpButton();
 
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
-		markingPanel = new AbsolutePanel();
-		markingPanel.add(interfacePanel);
-		markingPanel.add(showRubricButton);
 
-		if(MarkingInterface.getCollaborativeFeatures()) {
-			markingPanel.add(showChatButton);
-			markingPanel.add(showWallButton);
-			markingPanel.add(showSosButton);
-			markingPanel.add(showHelpButton);
-		}
+		markingPanel = new AbsolutePanel();
+		markingPanel.add(interfacePanel);		
+		markingPanel.add(showRubricButton);
+		markingPanel.add(showChatButton);
+		markingPanel.add(showWallButton);
+		markingPanel.add(showSosButton);
+		markingPanel.add(showHelpButton);
 
 		mainPanel.add(markingPanel);
 
@@ -904,28 +895,17 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "60%");
 
-		// Set show rubric button
-		showRubricButton.setHTML(iconShowRubric.toString());
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
+		markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
+		markingPanel.setWidgetPosition(showWallButton,(int)(Window.getClientWidth()-40),80);
+		markingPanel.setWidgetPosition(showSosButton,(int)(Window.getClientWidth()-40),120);
+		markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
 
-		if(MarkingInterface.getCollaborativeFeatures()) {
-
-			// Set show chat
-			showChatButton.setHTML(iconShowChat.toString());
-			markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
-
-			// Set show wall
-			showWallButton.setHTML(iconShowWall.toString());
-			markingPanel.setWidgetPosition(showWallButton,(int)(Window.getClientWidth()-40),80);
-
-			// Set show wall
-			showSosButton.setHTML(iconShowSos.toString());
-			markingPanel.setWidgetPosition(showSosButton,(int)(Window.getClientWidth()-40),120);
-
-			// Set show wall
-			showHelpButton.setHTML(iconShowHelp.toString());
-			markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
-		}
+		showRubricButton.setVisible(!showRubricOnLoad);
+		showChatButton.setVisible(MarkingInterface.getCollaborativeFeatures());
+		showWallButton.setVisible(MarkingInterface.getCollaborativeFeatures());
+		showSosButton.setVisible(MarkingInterface.getCollaborativeFeatures());
+		showHelpButton.setVisible(MarkingInterface.getCollaborativeFeatures());
 
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
@@ -1061,6 +1041,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 		// Ajax request to load submission data
 		AjaxRequest.ajaxRequest("action=ping", new AsyncCallback<AjaxData>() {
+
 			@Override
 			public void onFailure(Throwable caught) {
 				// Keep trying if something fails every few seconds
@@ -1137,19 +1118,20 @@ public class MarkingInterface extends EMarkingComposite {
 					// Assign actual online username (firstname lastname)
 					username = value.get("username");
 
-					if(value.get("realUsername") != null){
-						//Assign actual online real username
-						realUsername = value.get("realUsername");
+					//Assign actual online real username
+					realUsername = value.get("realUsername");
 
-						//Assign actual online role
-						userRole = value.get("role");
+					//Assign actual online role
+					userRole = value.get("role");
 
-						//Assign actual online user
-						userID = Integer.parseInt(value.get("user"));
+					//Assign actual online user
+					userID = Integer.parseInt(value.get("user"));
 
-						//Assign actual group of online user (equals to emarking->id)
-						groupID = Integer.parseInt(value.get("groupID"));
-					}
+					//Assign actual group of online user (equals to emarking->id)
+					groupID = Integer.parseInt(value.get("groupID"));
+
+					// Obtain the nodejs path from Moodle configuration
+					nodejspath = value.get("nodejspath");
 
 					activateChat();
 
@@ -1228,28 +1210,42 @@ public class MarkingInterface extends EMarkingComposite {
 
 	private void activateChat() {
 
+		final String nodepath = nodejspath + "/socket.io/socket.io.js";
+		
 		if(getCollaborativeFeatures()) {
-			
-			EMarkingWeb.chatServer = 
-					new NodeChat(
-							realUsername,
-							userID,
-							coursemodule,
-							userRole,
-							getSubmissionId());					
-			
-			NodeChat.chat = new ChatInterface();
-			NodeChat.sos = new SosInterface();
-			NodeChat.wall = new ChatInterface();
-			NodeChat.help = new HelpInterface();
-			chat = NodeChat.chat;
-			chat.setSource(NodeChat.SOURCE_CHAT);
-			wall=NodeChat.wall;
-			wall.setSource(NodeChat.SOURCE_WALL);
-			sos = NodeChat.sos;
-			sos.setSource(NodeChat.SOURCE_SOS);
-			help=NodeChat.help;
-			help.setSource(NodeChat.SOURCE_HELP);
+
+			ScriptInjector.fromUrl(nodepath).setCallback(new Callback<Void, Exception>() {
+
+				@Override
+				public void onFailure(Exception reason) {
+					logger.severe("Could not find node server " + nodepath);
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					EMarkingWeb.chatServer = 
+							new NodeChat(
+									realUsername,
+									userID,
+									coursemodule,
+									userRole,
+									getSubmissionId());					
+
+					NodeChat.chat = new ChatInterface();
+					NodeChat.sos = new SosInterface();
+					NodeChat.wall = new ChatInterface();
+					NodeChat.help = new HelpInterface();
+					chat = NodeChat.chat;
+					chat.setSource(NodeChat.SOURCE_CHAT);
+					wall=NodeChat.wall;
+					wall.setSource(NodeChat.SOURCE_WALL);
+					sos = NodeChat.sos;
+					sos.setSource(NodeChat.SOURCE_SOS);
+					help=NodeChat.help;
+					help.setSource(NodeChat.SOURCE_HELP);
+				}
+			}).inject();
+
 		}
 	}
 

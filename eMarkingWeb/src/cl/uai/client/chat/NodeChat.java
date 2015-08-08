@@ -2,9 +2,9 @@ package cl.uai.client.chat;
 
 import java.util.logging.Logger;
 
-import com.google.gwt.core.client.Callback;
+import cl.uai.client.MarkingInterface;
+
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.ScriptInjector;
 
 /**
  * This class represents a connection to a NodeJS which should work with Moodle
@@ -14,38 +14,15 @@ import com.google.gwt.core.client.ScriptInjector;
  */
 public class NodeChat {
 
-	/**
-	 * Private class for Callback to simplify code in constructor
-	 * 
-	 * @author Jorge
-	 *
-	 */
-	private class NodeSetupCallback implements Callback<Void, Exception> {
-		@Override
-		public void onFailure(Exception reason) {
-			logger.severe("Could not find Nodejs server!");
-			working = false;
-		}
-
-		@Override
-		public void onSuccess(Void result) {
-			loadNodeJS(path, username, coursemodule,userid,draftid);			
-			working = true;
-		}
-	}
-	
 	/** Sources or rooms **/
 	public static int SOURCE_CHAT = 1;
 	public static int SOURCE_WALL = 2;
 	public static int SOURCE_SOS = 3;
 
-	public static int SOURCE_HELP= 3;
+	public static int SOURCE_HELP= 3; // TODO: Wtf?
 
 	/** For logging purposes */
 	private static Logger logger = Logger.getLogger(NodeChat.class.getName());
-
-	/** If the chat server is working **/
-	public static boolean working = false;
 
 	/** Interfaces **/
 	public static ChatInterface chat = null;
@@ -59,7 +36,6 @@ public class NodeChat {
 	private int coursemodule = 0;
 	private String userRole;
 	private int draftid=0;
-	private String path = "http://127.0.0.1:9091/";
 
 	/**
 	 * NodeChat constructor, representing a connection to the NodeJs server
@@ -77,14 +53,14 @@ public class NodeChat {
 		this.userRole = _userrole;
 		this.draftid = _draftid;
 
-		logger.info("Starting Node server in: "+ path);
+		logger.info("Starting Node server in: "+ MarkingInterface.nodejspath);
 		logger.info("Username: "+ this.username 
 				+ " User id: "+ this.userid
 				+ " Course module: "+ this.coursemodule
 				+ " User role: "+ this.userRole
 				+ " Draft id: "+ this.draftid);
 
-		ScriptInjector.fromUrl(path+"socket.io/socket.io.js").setCallback(new NodeSetupCallback()).inject();
+		loadNodeJS(MarkingInterface.nodejspath, username, coursemodule, userid, draftid);
 	}
 
 	public int getCoursemodule() {
@@ -92,9 +68,6 @@ public class NodeChat {
 	}
 	public int getDraftid() {
 		return draftid;
-	}
-	public String getPath() {
-		return path;
 	}
 	public int getUserid() {
 		return userid;
@@ -154,11 +127,11 @@ public class NodeChat {
 	 }); 
 
 }-*/;
-	private void onBeginChatOther(UserData user){
-
+	
+	private void onBeginChatOther(UserData user) {
 		chat.adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
-
 	}
+	
 	private void onCatchMessage(Message message){
 
 		switch(message.getSource()){
@@ -241,10 +214,6 @@ public class NodeChat {
 		this.draftid = draftid;
 	}
 	
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
 	public void setUserid(int userid) {
 		this.userid = userid;
 	}
@@ -257,7 +226,7 @@ public class NodeChat {
 		this.userRole = userRole;
 	}
 	
-	private void userJoin(UserData user, JsArray<UserData> people){
+	private void userJoin(UserData user, JsArray<UserData> people) {
 
 
 		chat.addHistoryMessages();
