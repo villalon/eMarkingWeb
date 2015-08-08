@@ -294,7 +294,6 @@ public class RubricPanel extends EMarkingComposite {
 				if(!popupInterface) {
 					if(!MarkingInterface.readonly) {
 						EMarkingWeb.markingInterface.dragController.makeDraggable(levelLabel);
-						logger.fine("Making level draggable " + levelLabel.getText());
 					}
 				} else if(this.getParent().getParent().getParent() instanceof AddMarkDialog) {
 					final AddMarkDialog dialog = (AddMarkDialog) this.getParent().getParent().getParent();

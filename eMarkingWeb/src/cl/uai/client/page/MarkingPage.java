@@ -182,12 +182,11 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		//The drag handler listens to the draw controller
 		MarkingPageDrawHandler drawHandler = new MarkingPageDrawHandler(absolutePanel, drawingArea, this);
 		drawController.addListener(drawHandler);
-		absolutePanel.add(drawingArea,0,0);
-		
+		absolutePanel.add(drawingArea,0,0);		
 		absolutePanel.add(pageImage);
+		
 		canvas = Canvas.createIfSupported();
 		if(canvas != null) {
-			logger.fine("Canvas added!");
 			canvas.setSize(width+"px", height+"px");
 			canvas.setCoordinateSpaceWidth(width);
 			canvas.setCoordinateSpaceHeight(height);

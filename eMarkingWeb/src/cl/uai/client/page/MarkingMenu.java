@@ -65,6 +65,11 @@ public class MarkingMenu extends PopupPanel {
 			item.setTitle(criterion.getDescription());
 		}
 		
+		if(MarkingInterface.getCollaborativeFeatures()) {
+			MenuItem item = menu.addItem("Ask for help", new AskForHelpCommand(null));
+			item.setTitle("Title");
+		}
+		
 		this.add(menu);
 	}
 }

@@ -4,6 +4,8 @@ import cl.uai.client.resources.Resources;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -42,9 +44,18 @@ public abstract class BubbleButton extends HTML {
 		this.top = _top;
 		
 		this.setVisible(false);
+		
+		this.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onButtonClick(event);
+			}
+		});
 	}
 	
 	public void updatePosition(AbsolutePanel panel) {
 		panel.setWidgetPosition(this, left, top);
 	}
+	
+	protected abstract void onButtonClick(ClickEvent event);
 }

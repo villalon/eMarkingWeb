@@ -21,7 +21,6 @@
  */
 package cl.uai.client.toolbar;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -40,23 +39,14 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -73,33 +63,8 @@ public class MarkingToolBar extends EMarkingComposite {
 
 	Logger logger = Logger.getLogger(MarkingToolBar.class.getName());
 	
-	/** Toolbar main panels, a vertical containing student selector and info **/
-	private VerticalPanel mainPanel = null;
-
-	private HorizontalPanel infoLabelPanel = null;
 	private HorizontalPanel buttonsPanel = null;
 	private Label studentName = null;
-	
-
-	/** Icon(arrow) to show and hide the middle of the toolbar, circle with statistical information **/
-	private HorizontalPanel containerInformation = null;
-	private boolean visibilityToolbar = false;
-	private HTML containerIcon = null;
-	private Icon iconArrowDown = null;
-	private Icon iconArrowUp = null;
-	private Image circleProgressCorrection = null;
-	private Image circleProgressPublished = null;
-	private Image circleAgreeStatus = null;
-	
-	/** Divs used in design **/
-	private HTML divLeft = null;
-	private HTML divMiddle = null;
-	private HTML divRight = null;
-	
-	/** Pop up to display statistical information  **/
-	private MyPopup popUpProgressCorrection = null;
-	private MyPopup popUpProgressPublished = null;
-	private MyPopup popUpAgreeStatus = null;
 	
 	/** Buttons to select commands **/
 	private MarkingButtons markingButtons = null;
@@ -117,109 +82,19 @@ public class MarkingToolBar extends EMarkingComposite {
 	
 	private ToggleButton chkContinue = null;
 
-	/**
-	 * @return the studentSelector
-	 */
-	public Label getStudentSelector() {
-		return studentName;
-	}
+	private DraftGrade grade = null;
 
-	private SubmissionGrade submissionGrade = null;
-	private SubmissionGradeMini notes = null;
-
-	/** Labels for submission info **/
-	private Label courseName = null;
-	private Label activityName = null;
-	private Label lastSave = null;
-	
-	/**
-	 * Popup with statistical data
-	 */
-	private static class MyPopup extends PopupPanel {
-	    public MyPopup() {
-	      super(true);
-	    }
-	  }	
-	
 	/**
 	 * Creates the interface
 	 */
 	public MarkingToolBar() {
-		mainPanel = new VerticalPanel();
-		mainPanel.addStyleName(Resources.INSTANCE.css().loadingtoolbar());
-
 		studentName = new Label();
 
-		submissionGrade = new SubmissionGrade();
-		notes = new SubmissionGradeMini();
+		grade = new DraftGrade();
 
 		markingButtons = new MarkingButtons();
 		markingButtons.setVisible(false);
 
-		courseName = new Label();
-		courseName.addStyleName(Resources.INSTANCE.css().coursename());
-		
-		HTML emarkingLogo = new HTML("eMarking");
-		emarkingLogo.addStyleName(Resources.INSTANCE.css().logo());
-		HTML buildnumber = new HTML("&nbsp;&nbsp;v" + MarkingInterface.geteMarkingVersion());
-		buildnumber.addStyleName(Resources.INSTANCE.css().lastsave());
-		HorizontalPanel hpanelLogo = new HorizontalPanel();
-		hpanelLogo.add(emarkingLogo);
-		hpanelLogo.add(buildnumber);
-		hpanelLogo.setCellVerticalAlignment(buildnumber, HasVerticalAlignment.ALIGN_BOTTOM);
-		
-		VerticalPanel coursenamePanel = new VerticalPanel();
-		coursenamePanel.add(hpanelLogo);
-		coursenamePanel.add(courseName);
-
-		activityName = new Label();
-		activityName.addStyleName(Resources.INSTANCE.css().activityname());
-
-		lastSave = new Label();
-		lastSave.addStyleName(Resources.INSTANCE.css().lastsave());
-
-		VerticalPanel submissionPanel = new VerticalPanel();
-		HorizontalPanel activityStudent = new HorizontalPanel();
-		activityStudent.add(activityName);
-		activityStudent.setCellVerticalAlignment(activityName, HasVerticalAlignment.ALIGN_MIDDLE);
-		activityStudent.setCellHorizontalAlignment(activityName, HasHorizontalAlignment.ALIGN_RIGHT);
-		divRight = new HTML("&ensp;");
-		activityStudent.add(divRight);
-		activityStudent.add(studentName);
-		activityStudent.setCellVerticalAlignment(studentName, HasVerticalAlignment.ALIGN_MIDDLE);
-		activityStudent.setCellHorizontalAlignment(studentName, HasHorizontalAlignment.ALIGN_LEFT);
-		submissionPanel.add(activityStudent);
-		submissionPanel.add(lastSave);
-		
-		infoLabelPanel = new HorizontalPanel();
-		infoLabelPanel.addStyleName(Resources.INSTANCE.css().toolbarinfo());
-		infoLabelPanel.setVisible(false);
-		infoLabelPanel.add(coursenamePanel);
-		infoLabelPanel.setCellHorizontalAlignment(coursenamePanel, HasHorizontalAlignment.ALIGN_CENTER);
-		infoLabelPanel.setCellWidth(coursenamePanel,"20%");
-		infoLabelPanel.add(submissionPanel);
-		infoLabelPanel.add(submissionGrade);
-		infoLabelPanel.setCellHorizontalAlignment(submissionGrade, HasHorizontalAlignment.ALIGN_RIGHT);
-		mainPanel.add(infoLabelPanel);
-		// Implement show and hide the middle of the rubric, capture event clic in the arrow
-		containerIcon = new HTML("");
-		containerIcon.addStyleName(Resources.INSTANCE.css().iconArrow());
-		iconArrowDown = new Icon(IconType.CHEVRON_DOWN);
-		iconArrowUp = new Icon(IconType.CHEVRON_UP);
-		containerIcon.addClickHandler(new ClickHandler(){
-			public void onClick(ClickEvent event){
-				if(infoLabelPanel.isVisible()){
-					infoLabelPanel.setVisible(false);
-					visibilityToolbar = false;
-					containerIcon.setHTML("<div>"+iconArrowDown.toString()+"</div>");
-			    }else{
-			    	visibilityToolbar = true;
-			    	infoLabelPanel.setVisible(true);
-			    	containerIcon.setHTML("<div>"+iconArrowUp.toString()+"</div>");
-				}
-			}
-		});
-		
 		Icon finishIcon = new Icon(IconType.CHECK);
 		finishMarkingButton = new PushButton();
 		finishMarkingButton.setHTML(finishIcon.toString());
@@ -361,52 +236,12 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.addStyleName(Resources.INSTANCE.css().buttonspanel());		
 		buttonsPanel.add(markingButtons);
 		buttonsPanel.setCellHorizontalAlignment(markingButtons, HasHorizontalAlignment.ALIGN_LEFT);
-		buttonsPanel.setCellWidth(markingButtons, "10%");
+		buttonsPanel.setCellWidth(markingButtons, "48%");
 		
-		buttonsPanel.add(containerIcon);
-		buttonsPanel.setCellHorizontalAlignment(containerIcon, HasHorizontalAlignment.ALIGN_CENTER);
-		buttonsPanel.setCellVerticalAlignment(containerIcon, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellWidth(containerIcon, "38%");
-		
-		containerInformation = new HorizontalPanel();
-		containerInformation.setHeight("24px");
-		circleProgressCorrection = new Image();
-		containerInformation.add(circleProgressCorrection);
-		containerInformation.setCellHorizontalAlignment(circleProgressCorrection, HasHorizontalAlignment.ALIGN_RIGHT);
-		containerInformation.setCellVerticalAlignment(circleProgressCorrection, HasVerticalAlignment.ALIGN_MIDDLE);
-		containerInformation.setCellWidth(circleProgressCorrection,"20%");
-		
-		divMiddle = new HTML("");
-		containerInformation.add(divMiddle);
-		containerInformation.setCellWidth(divMiddle,"20%");
-		
-		circleProgressPublished = new Image();
-		containerInformation.add(circleProgressPublished);
-		containerInformation.setCellHorizontalAlignment(circleProgressPublished, HasHorizontalAlignment.ALIGN_CENTER);
-		containerInformation.setCellVerticalAlignment(circleProgressPublished, HasVerticalAlignment.ALIGN_MIDDLE);
-		containerInformation.setCellWidth(circleProgressPublished,"20%");
-		
-		divLeft =  new HTML("");
-		divLeft.setVisible(false);
-		containerInformation.add(divLeft);
-		containerInformation.setCellWidth(divLeft,"20%");
-		
-		circleAgreeStatus = new Image();
-		circleAgreeStatus.setVisible(false);
-		containerInformation.add(circleAgreeStatus);
-		containerInformation.setCellHorizontalAlignment(circleAgreeStatus, HasHorizontalAlignment.ALIGN_LEFT);
-		containerInformation.setCellVerticalAlignment(circleAgreeStatus, HasVerticalAlignment.ALIGN_MIDDLE);
-		containerInformation.setCellWidth(circleAgreeStatus,"20%");
-		
-/*		buttonsPanel.add(containerInformation);
-		buttonsPanel.setCellHorizontalAlignment(containerInformation, HasHorizontalAlignment.ALIGN_CENTER);
-		buttonsPanel.setCellVerticalAlignment(containerInformation, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellWidth(containerInformation, "15%");
-*/
-		buttonsPanel.add(notes);
-		buttonsPanel.setCellVerticalAlignment(notes, HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsPanel.setCellHorizontalAlignment(notes, HasHorizontalAlignment.ALIGN_CENTER);
-		//buttonsPanel.setCellWidth(notes, "4%");
+		buttonsPanel.add(grade);
+		buttonsPanel.setCellVerticalAlignment(grade, HasVerticalAlignment.ALIGN_MIDDLE);
+		buttonsPanel.setCellHorizontalAlignment(grade, HasHorizontalAlignment.ALIGN_CENTER);
+		buttonsPanel.setCellWidth(grade, "2%");
 		
 		HorizontalPanel hpanel = new HorizontalPanel();		
 		hpanel.add(chkContinue);		
@@ -415,20 +250,16 @@ public class MarkingToolBar extends EMarkingComposite {
 				
 		buttonsPanel.add(hpanel);
 		buttonsPanel.setCellHorizontalAlignment(hpanel, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(finishMarkingButton, "5%");
+		buttonsPanel.setCellWidth(finishMarkingButton, "48%");
 		
-		mainPanel.add(buttonsPanel);		
-		this.initWidget(mainPanel);
+		this.initWidget(buttonsPanel);
 	}
 
 	/**
 	 * Loads submission data when changed
 	 */
 	public void loadSubmissionData() {
-		mainPanel.removeStyleName(Resources.INSTANCE.css().loadingtoolbar());
-		mainPanel.addStyleName(Resources.INSTANCE.css().toolbar());
 		
-		infoLabelPanel.setVisible(visibilityToolbar);
 		markingButtons.setVisible(true);
 		saveChangesButton.setVisible(true);
 		finishMarkingButton.setVisible(false);
@@ -438,156 +269,22 @@ public class MarkingToolBar extends EMarkingComposite {
 				
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
 		
-		//TODO onload set progress bars values
-		//progressId: progressBar, pId: progressBarNum
-		//agreeId: agreeBar, pId: agreeBarNum
-
 		if(!MarkingInterface.isStudentAnonymous()) {
-			this.courseName.setText(sdata.getCoursename());
-			this.courseName.setTitle(sdata.getCourseshort());
 			studentName.setText(sdata.getLastname() + ", " + sdata.getFirstname());
 		} else {
-			this.courseName.setText(MarkingInterface.messages.AnonymousCourse());
 			studentName.setText(MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()));
 		}
-		this.activityName.setText(sdata.getActivityname());
 		
 		if(MarkingInterface.supervisor && !MarkingInterface.submissionData.isQualitycontrol()) {
 			finishMarkingButton.setVisible(true);
 		}
 		
-		this.submissionGrade.loadSubmissionData();
-		this.notes.loadSubmissionData();
+		this.grade.loadSubmissionData();
 		this.markingButtons.loadSubmissionData();
-
-		loadSubmissionTimeModified();
-		containerIcon.addStyleName(Resources.INSTANCE.css().iconArrow());
-		if(visibilityToolbar){
-			containerIcon.setHTML("<div>"+iconArrowUp.toString()+"</div>");
-		}else{
-			containerIcon.setHTML("<div>"+iconArrowDown.toString()+"</div>");
-		}
-		
-		popUpProgressCorrection = new MyPopup();
-		implementStatisticalCircle(circleProgressCorrection, MarkingInterface.getGeneralProgress(), MarkingInterface.messages.StatusGrading(), popUpProgressCorrection, 0.62, 0.04);
-		
-		popUpProgressPublished = new MyPopup();
-		implementStatisticalCircle(circleProgressPublished, MarkingInterface.getPublishedProgress(), MarkingInterface.messages.Published(), popUpProgressPublished, 0.65, 0.04);
-
-		popUpAgreeStatus = new MyPopup();
-		implementStatisticalCircle(circleAgreeStatus, MarkingInterface.getGeneralAgree(), MarkingInterface.messages.AgreeStatus(), popUpAgreeStatus, 0.71, 0.04);
 		
 	}
 
-	/**
-	 * Loads the last modification time
-	 */
-	public void loadSubmissionTimeModified() {
-		Date lastSaveDate = null;
-
-		if(MarkingInterface.submissionData.getDatemodified() != null) {
-			lastSaveDate = MarkingInterface.submissionData.getDatemodified();
-		} else if(MarkingInterface.submissionData.getDatecreated() != null) {
-			lastSaveDate = MarkingInterface.submissionData.getDatecreated();
-		}
-
-		String message = null;
-		if(lastSaveDate == null) {
-			message = " " + MarkingInterface.messages.Never();
-		} else {
-			message = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(lastSaveDate);				
-		}
-		// Timer for pinging system
-		Timer timer = new Timer() {
-			@Override
-			public void run() {
-				lastSave.removeStyleName(Resources.INSTANCE.css().lastsaveanim());
-			}
-		};
-
-		lastSave.addStyleName(Resources.INSTANCE.css().lastsaveanim());
-		lastSave.setText(MarkingInterface.messages.LastSaved(message));
-		
-		timer.schedule(3000);
-	}
-	
 	public void setButtonPressed(int index) {
 		markingButtons.setButtonPressed(index, false);
-	}
-	public HorizontalPanel getInfoLabel(){
-		return infoLabelPanel;
-	}
-		/**
-		 * 	
-		 * @param circle: object Image
-		 * @param data: double with information statistical
-		 * @param text: String for MyPopup message
-		 * @param popUp: Object MyPopup for statistical circles
-		 * @param posx: int position axis x
-		 * @param posy: int position axis y
-		 */
-		private void implementStatisticalCircle(Image circle, double data, String text, final MyPopup popUp, final double posx, final double posy){
-			int percentageCircle = 0;
-			// Number tens
-			int tens = (int) (data - (int) (data/10)*10);
-			if(tens >= 5){
-				percentageCircle= (int) data - tens;
-			}else{
-				percentageCircle= (int) data - tens - 10;
-			}
-			
-			// Add image corresponding to the percentage
-			switch (percentageCircle){
-					
-				case 0:  circle.setResource(Resources.INSTANCE.percentage10());
-						break;
-				case 10: circle.setResource(Resources.INSTANCE.percentage20());
-						break;
-				case 20: circle.setResource(Resources.INSTANCE.percentage30());
-						break;
-				case 30: circle.setResource(Resources.INSTANCE.percentage40());
-						break;
-				case 40: circle.setResource(Resources.INSTANCE.percentage50());
-						break;
-				case 50: circle.setResource(Resources.INSTANCE.percentage60());
-						break;
-				case 60: circle.setResource(Resources.INSTANCE.percentage70());
-						break;
-				case 70: circle.setResource(Resources.INSTANCE.percentage80());
-						break;
-				case 80: circle.setResource(Resources.INSTANCE.percentage90());
-						break;
-				case 90: circle.setResource(Resources.INSTANCE.percentage100());
-						break;
-				case 100: circle.setResource(Resources.INSTANCE.percentage100());
-						break;
-				}
-				if(data == 0.00){
-					circle.setResource(Resources.INSTANCE.percentage0());
-				}
-				
-				circle.addStyleName(Resources.INSTANCE.css().statisticalCircle());
-				
-				int percentaje = (int) (data*100);
-				double dataPercentaje = (percentaje/100);
-				popUp.setWidget(new Label(text +": "+ dataPercentaje +"%"));
-				circle.addMouseMoveHandler(new MouseMoveHandler(){
-					public void onMouseMove(MouseMoveEvent event){
-						popUp.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-					          public void setPosition(int offsetWidth, int offsetHeight) {
-					            int left = (int) ((Window.getClientWidth() - offsetWidth) * posx);
-					            int top = (int) ((Window.getClientHeight() - offsetHeight) * posy);
-					            popUp.setPopupPosition(left, top);
-					          }
-					        });
-						popUp.show();
-					}
-				});
-				circle.addMouseOutHandler(new MouseOutHandler(){
-					 public void onMouseOut(MouseOutEvent event){
-						 popUp.hide();
-					 }
-				});
-		}
-	
+	}	
 }

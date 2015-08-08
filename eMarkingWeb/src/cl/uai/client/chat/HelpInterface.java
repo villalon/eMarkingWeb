@@ -16,15 +16,18 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class HelpInterface  extends DialogBox {
+public class HelpInterface extends DialogBox {
 	
 	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
+
 	private int source=0;
 	private VerticalPanel vpanel;
 	private ScrollPanel scrollMessagesPanel;
 	
 	
-	public HelpInterface(){
+	public HelpInterface() {
+		
+		this.source = NodeChat.SOURCE_HELP;
 		
 		// Dialog parameters
 		this.setAutoHideEnabled(true);

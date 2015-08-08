@@ -37,7 +37,7 @@ public class ChatInterface extends DialogBox {
 
 	/** For logging purposes */
 	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
-	private int source=0;
+	protected int source=0;
 	private VerticalPanel vpanel;
 	private VerticalPanel messagesPanel;
 	private ScrollPanel scrollMessagesPanel;
@@ -50,6 +50,8 @@ public class ChatInterface extends DialogBox {
 
 	public ChatInterface() {
 
+		this.source = NodeChat.SOURCE_CHAT;
+		
 		// Dialog parameters
 		this.setAutoHideEnabled(true);
 		this.setAnimationEnabled(true);
@@ -88,12 +90,6 @@ public class ChatInterface extends DialogBox {
 
 		this.add(vpanel);
 		addHistoryMessages();
-	}
-
-	public void setSource(int source){
-
-		this.source=source;
-
 	}
 
 	public void adduser(String userName,int id, int color){

@@ -37,17 +37,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author 
  *
  */
-public class SubmissionGradeMini extends EMarkingComposite {
+public class DraftGrade extends EMarkingComposite {
 
 	/** The main panel holding the submission's grade **/
 	private HorizontalPanel mainPanel = null;
 	private Label lblGrade = null;
-	//private Label lblScale = null;
 	
 	/**
 	 * Creates the interface
 	 */
-	public SubmissionGradeMini() {
+	public DraftGrade() {
 		this.mainPanel = new HorizontalPanel();
 
 		this.initWidget(mainPanel);
@@ -68,15 +67,10 @@ public class SubmissionGradeMini extends EMarkingComposite {
 		lblGrade = new Label(RubricMark.scoreFormat(sdata.getFinalgrade(), false)+"");
 		lblGrade.addStyleName(Resources.INSTANCE.css().mininota());
 		
-		//lblScale = new Label(RubricMark.scoreFormat(sdata.getGrademin(), false) + " / " + RubricMark.scoreFormat(sdata.getGrademax(), false));
-		//lblScale.addStyleName(Resources.INSTANCE.css().miniscale());
-		
 		VerticalPanel gradePanel = new VerticalPanel();
 		gradePanel.addStyleName(Resources.INSTANCE.css().minigradepanel());
 		gradePanel.add(lblGrade);
-		//gradePanel.add(lblScale);
 		gradePanel.setCellHorizontalAlignment(lblGrade, HasAlignment.ALIGN_CENTER);
-		//gradePanel.setCellHorizontalAlignment(lblScale, HasAlignment.ALIGN_RIGHT);
 		
 		mainPanel.add(gradePanel);		
 	}

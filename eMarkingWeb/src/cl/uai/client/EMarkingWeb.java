@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 
 import cl.uai.client.chat.NodeChat;
 import cl.uai.client.data.AjaxRequest;
-import cl.uai.client.page.MarkingPage;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -49,8 +48,6 @@ public class EMarkingWeb implements EntryPoint {
 	public static MarkingInterface markingInterface = null;
 	
 	public static NodeChat chatServer = null;
-	
-
 	
 	/** JSNI function to close and reload a window **/
 	public static native boolean closeAndReload() /*-{
@@ -82,28 +79,6 @@ public class EMarkingWeb implements EntryPoint {
 		}
 	}-*/;
 	
-	
-	public static native void notifyDelphi() /*-{
-		if($wnd.notifyDelphi){
-			$wnd.notifyDelphi();
-		}
-	}-*/;
-	
-	public static void notifyEmarking(final int page,final  int posx,final int posy,final int levelid,final float newbonus) { 
-		// If the tab contains a Label instead of a Page, load the page
-		
-		
-		MarkingPage mpage = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPageByIndex(page);
-		EMarkingWeb.markingInterface.setDialogNewBonus(newbonus);
-		EMarkingWeb.markingInterface.addRubricMark(levelid, posx, posy,mpage);
-		
-	}
-	public static native void exportStaticMethods() /*-{
-	$wnd.notifyEmarking =
-	$entry(@cl.uai.client.EMarkingWeb::notifyEmarking(IIIIF));
-	}-*/;
-	
-	
 	public static native int screenWidth() 
 	/*-{ 
 	      return screen.availWidth; 
@@ -120,7 +95,6 @@ public class EMarkingWeb implements EntryPoint {
 	public void onModuleLoad() {
 		// Pointer to CSS manager. It has to go first!
 		GWT.<Resources>create(Resources.class).css().ensureInjected();
-		exportStaticMethods();
 		// Log messages
 		logger.fine("Loading eMarkingWeb interface");
 		logger.fine(Navigator.getPlatform());
@@ -146,14 +120,9 @@ public class EMarkingWeb implements EntryPoint {
 		boolean showRubric = true;
 
 		try {
-			// First try to read submissionId from emarking DIV tag
-			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("submissionId") != null && !RootPanel.get(eMarkingDivId).getElement().getAttribute("submissionId").equals("")) {
-				submissionId = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("submissionId"));
-			}
-
-			// Second, if there's a URL parameter, replace the value
-			if(Window.Location.getParameter("ids") != null) {
-				submissionId = Integer.parseInt(Window.Location.getParameter("ids")); 
+			// First, if there's a URL parameter, replace the value
+			if(Window.Location.getParameter("id") != null) {
+				submissionId = Integer.parseInt(Window.Location.getParameter("id")); 
 			}
 			
 			// Validate that the submission id is a positive integer
@@ -165,8 +134,6 @@ public class EMarkingWeb implements EntryPoint {
 			
 			if(cookie_width != null) {
 				preferredWidth = Integer.parseInt(cookie_width); 				
-			} else if(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth") != null) {
-				preferredWidth = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("preferredwidth")); 
 			}
 			
 			// Validate that the preferredWidth is a positive integer greater than 10
@@ -174,19 +141,15 @@ public class EMarkingWeb implements EntryPoint {
 				errors.add("Preferred width should be a positive integer greater than 10.");
 			}
 
+			// Validate that the preferredWidth is a positive integer greater than 10
+			if(preferredWidth <= 10) {
+				errors.add("Preferred width should be a positive integer greater than 10.");
+			}
+			
 			String cookie_showrubric = Cookies.getCookie("emarking_showrubric");
 			
 			if(cookie_showrubric != null) {
 				showRubric = Integer.parseInt(cookie_showrubric) == 1;
-			} else
-			// Fourth, we get the show rubric setting
-			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric") != null) {
-				showRubric = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("showrubric")) == 1; 
-			}
-			
-			// Validate that the preferredWidth is a positive integer greater than 10
-			if(preferredWidth <= 10) {
-				errors.add("Preferred width should be a positive integer greater than 10.");
 			}
 			
 			logger.fine("ShowRubric: " + showRubric + " Preferred width:" + preferredWidth);
@@ -204,18 +167,6 @@ public class EMarkingWeb implements EntryPoint {
 		if(moodleurl == null)
 			errors.add("Invalid Moodle ajax url");
 
-		// Read div attribute for readonly
-		int emarkingversion = 0;
-		if(RootPanel.get(eMarkingDivId).getElement().getAttribute("version") != null) {
-			try {
-				emarkingversion = Integer.parseInt(RootPanel.get(eMarkingDivId).getElement().getAttribute("version"));
-			} catch(Exception e){}
-		}
-		logger.fine("eMarking version: " + emarkingversion);
-
-		if(emarkingversion == 0)
-			errors.add("Invalid eMarking version");
-
 		// If there are errors die with a configuration message
 		if(errors.size() > 0) {
 			Label errorsLabel = new Label();
@@ -231,9 +182,9 @@ public class EMarkingWeb implements EntryPoint {
 		} else {
 			// Set eMarking's main interface submission id according to HTML
 			MarkingInterface.setSubmissionId(submissionId);
-			// eMarking version
-			MarkingInterface.seteMarkingVersion(emarkingversion);
+
 			MarkingInterface.showRubricOnLoad = showRubric;
+
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;
 

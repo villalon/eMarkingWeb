@@ -22,24 +22,13 @@
 package cl.uai.client;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-
-
-
-
-
-
-
-
-
-
-
-
+import cl.uai.client.buttons.BubbleButton;
 import cl.uai.client.buttons.ShowChatButton;
 import cl.uai.client.buttons.ShowHelpButton;
 import cl.uai.client.buttons.ShowRubricButton;
@@ -63,7 +52,6 @@ import cl.uai.client.resources.EmarkingMessages;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.rubric.RubricInterface;
 import cl.uai.client.toolbar.MarkingToolBar;
-
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.base.ProgressBarBase;
@@ -71,8 +59,6 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -154,14 +140,10 @@ public class MarkingInterface extends EMarkingComposite {
 	public static String nodejspath;
 
 	/** Show buttons **/
-	private ShowRubricButton showRubricButton = null;
-	private ShowChatButton showChatButton = null;
-	private ShowWallButton showWallButton = null;
-	private ShowSosButton showSosButton = null;
-	private ShowHelpButton showHelpButton = null;
-
+	private List<BubbleButton> bubbleButtons = null;
+	
 	public ChatInterface chat;
-	public ChatInterface wall;
+	public WallInterface wall;
 	public SosInterface sos;
 	public HelpInterface help;
 
@@ -324,8 +306,9 @@ public class MarkingInterface extends EMarkingComposite {
 	}
 
 	public HTML getShowRubricButton() {
-		return this.showRubricButton;
+		return this.bubbleButtons.get(0);
 	}
+	
 	/** Get Course Module of actual eMarking **/
 	private static int coursemodule = 0;
 	/**
@@ -387,22 +370,23 @@ public class MarkingInterface extends EMarkingComposite {
 
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
 
-		showRubricButton = new ShowRubricButton(Window.getClientWidth()-40, 0);
-		showChatButton = new ShowChatButton(Window.getClientWidth()-40, 40);
-		showWallButton = new ShowWallButton(Window.getClientWidth()-40, 80);
-		showSosButton = new ShowSosButton(Window.getClientWidth()-40, 120);
-		showHelpButton = new ShowHelpButton(Window.getClientWidth()-40, 160);
+		bubbleButtons = new ArrayList<BubbleButton>();
+		
+		bubbleButtons.add(new ShowRubricButton(Window.getClientWidth()-40, 0));
+		bubbleButtons.add(new ShowChatButton(Window.getClientWidth()-40, 40));
+		bubbleButtons.add(new ShowWallButton(Window.getClientWidth()-40, 80));
+		bubbleButtons.add(new ShowSosButton(Window.getClientWidth()-40, 120));
+		bubbleButtons.add(new ShowHelpButton(Window.getClientWidth()-40, 160));
 
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 
 		markingPanel = new AbsolutePanel();
-		markingPanel.add(interfacePanel);		
-		markingPanel.add(showRubricButton);
-		markingPanel.add(showChatButton);
-		markingPanel.add(showWallButton);
-		markingPanel.add(showSosButton);
-		markingPanel.add(showHelpButton);
+		markingPanel.add(interfacePanel);
+		
+		for(BubbleButton b : bubbleButtons) {
+			markingPanel.add(b);
+		}
 
 		mainPanel.add(markingPanel);
 
@@ -895,17 +879,15 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "60%");
 
-		showRubricButton.updatePosition(markingPanel);
-		showChatButton.updatePosition(markingPanel);
-		showWallButton.updatePosition(markingPanel);
-		showSosButton.updatePosition(markingPanel);
-		showHelpButton.updatePosition(markingPanel);
-		
-		showRubricButton.setVisible(!showRubricOnLoad);
-		showChatButton.setVisible(MarkingInterface.getCollaborativeFeatures());
-		showWallButton.setVisible(MarkingInterface.getCollaborativeFeatures());
-		showSosButton.setVisible(MarkingInterface.getCollaborativeFeatures());
-		showHelpButton.setVisible(MarkingInterface.getCollaborativeFeatures());
+		for(BubbleButton b : bubbleButtons) {
+			b.setLeft(Window.getClientWidth()-40);
+			b.updatePosition(markingPanel);
+			if(b instanceof ShowRubricButton) {
+				b.setVisible(!showRubricOnLoad);
+			} else {
+				b.setVisible(MarkingInterface.getCollaborativeFeatures());
+			}
+		}		
 
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
@@ -917,7 +899,7 @@ public class MarkingInterface extends EMarkingComposite {
 	}
 
 	public void setShowRubricButtonVisible(boolean visible) {
-		showRubricButton.setVisible(!visible);
+		bubbleButtons.get(0).setVisible(!visible);
 		if(visible) {
 			interfacePanel.setCellWidth(markingPagesInterface, "60%");
 			interfacePanel.setCellWidth(rubricInterface, "40%");
@@ -1021,6 +1003,8 @@ public class MarkingInterface extends EMarkingComposite {
 					Window.alert(messages.InvalidSubmissionData());
 				}
 
+				Window.setTitle("e-marking " + submissionData.getCoursename() + " " + submissionData.getActivityname());
+
 				finishLoading();
 				Window.addResizeHandler(new ResizeHandler() {			
 					@Override
@@ -1080,6 +1064,9 @@ public class MarkingInterface extends EMarkingComposite {
 
 					// Gets the user id of the person in front of the interface
 					markerid = Integer.parseInt(value.get("user"));
+
+					// Gets the version of the Moodle module
+					eMarkingVersion = Integer.parseInt(value.get("version"));
 
 					int student = Integer.parseInt(value.get("student"));
 
@@ -1150,7 +1137,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 					// Load submission data
 					loadSubmissionData();
-
+					
 					focusPanel.getElement().focus();
 
 					// Schedule heartbeat if configured as
@@ -1162,48 +1149,6 @@ public class MarkingInterface extends EMarkingComposite {
 					// Keep trying if something fails every few seconds
 					timer.scheduleRepeating(1000);
 				}
-			}
-		});
-
-		// Implemented rubric icon
-		showRubricButton.addClickHandler(new ClickHandler(){
-			public void onClick(ClickEvent event){
-				if(rubricInterface.isVisible()){
-					rubricInterface.setVisible(false);
-					showRubricButton.setVisible(true);
-				}else{
-					rubricInterface.setVisible(true);
-					showRubricButton.setVisible(false);
-				}
-			}
-		});
-
-		showChatButton.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-
-				chat.show();
-			}
-		});
-
-		showWallButton.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				wall.show();
-			}
-		});
-
-		showSosButton.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				sos.show();
-			}
-		});
-
-		showHelpButton.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				help.show();
 			}
 		});
 	}
@@ -1219,6 +1164,12 @@ public class MarkingInterface extends EMarkingComposite {
 				@Override
 				public void onFailure(Exception reason) {
 					logger.severe("Could not find node server " + nodepath);
+					
+					for(BubbleButton b : bubbleButtons) {
+						if(!(b instanceof ShowRubricButton)) {
+							b.setVisible(false);
+						}
+					}
 				}
 
 				@Override
@@ -1232,19 +1183,14 @@ public class MarkingInterface extends EMarkingComposite {
 									getSubmissionId());					
 
 					chat = new ChatInterface();
-					chat.setSource(NodeChat.SOURCE_CHAT);
-					wall=new ChatInterface();
-					wall.setSource(NodeChat.SOURCE_WALL);
+					wall = new WallInterface();
 					sos = new SosInterface();
-					sos.setSource(NodeChat.SOURCE_SOS);
-					help=new HelpInterface();
-					help.setSource(NodeChat.SOURCE_HELP);
+					help = new HelpInterface();
 				}
 			}).inject();
 
 		}
 	}
-
 
 	public void regradeMark(final RubricMark mark, final String comment, final int motive) {
 
@@ -1348,7 +1294,6 @@ public class MarkingInterface extends EMarkingComposite {
 		this.setTimemodified(timemodified);
 		toolbar.loadSubmissionData();
 		focusPanel.getElement().focus();
-		EMarkingWeb.notifyDelphi();
 	}
 
 	/**
@@ -1359,8 +1304,6 @@ public class MarkingInterface extends EMarkingComposite {
 	 */
 	public void setTimemodified(long timemodified) {
 		submissionData.setDatemodified(timemodified);
-
-		toolbar.loadSubmissionTimeModified();
 	}
 	private float setBonus = -1;
 	//Sets a preset bonus for the next time the addrubric dialog is opened (used in delphi)

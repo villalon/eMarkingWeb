@@ -24,10 +24,12 @@ public class SosInterface extends DialogBox {
 	
 	public SosInterface(){
 
+		this.source = NodeChat.SOURCE_SOS;
 
 	vPanel = new VerticalPanel();
 	textArea = new TextArea();
 	textArea.addStyleName(Resources.INSTANCE.css().chatTextarea());
+	
 	Label commentLbl = new Label("Comentario");
 	vPanel.add(commentLbl);
 	vPanel.add(textArea);
@@ -58,12 +60,6 @@ public class SosInterface extends DialogBox {
 		this.setAutoHideEnabled(true);
 	    this.add(vPanel);
 	     
-	}
-
-	public void setSource(int source){
-
-		this.source=source;
-
 	}
 	
 	public void createSos(String message,int urgencyLevel) {
