@@ -2,6 +2,7 @@ package cl.uai.client.chat;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 
 import com.google.gwt.core.client.JsArray;
@@ -23,12 +24,6 @@ public class NodeChat {
 
 	/** For logging purposes */
 	private static Logger logger = Logger.getLogger(NodeChat.class.getName());
-
-	/** Interfaces **/
-	public static ChatInterface chat = null;
-	public static SosInterface sos = null;
-	public static ChatInterface wall = null;
-	public static HelpInterface help = null;
 
 	/** Data for a client to work **/
 	private String username = null;
@@ -129,7 +124,7 @@ public class NodeChat {
 }-*/;
 	
 	private void onBeginChatOther(UserData user) {
-		chat.adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
+		EMarkingWeb.markingInterface.chat.adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
 	}
 	
 	private void onCatchMessage(Message message){
@@ -137,10 +132,10 @@ public class NodeChat {
 		switch(message.getSource()){
 
 		case 1:
-			chat.addReceivedMessage(message.getTime(), message.getUser(), message.getMessage(), message.getColor());
+			EMarkingWeb.markingInterface.chat.addReceivedMessage(message.getTime(), message.getUser(), message.getMessage(), message.getColor());
 			break;
 		case 2:
-			wall.addReceivedMessage(message.getTime(), message.getUser(), message.getMessage(), message.getColor());
+			EMarkingWeb.markingInterface.wall.addReceivedMessage(message.getTime(), message.getUser(), message.getMessage(), message.getColor());
 			break;
 		}
 
@@ -149,7 +144,7 @@ public class NodeChat {
 
 
 
-		help.addReceivedSos(sos.getUserName(),
+		EMarkingWeb.markingInterface.help.addReceivedSos(sos.getUserName(),
 				sos.getTime(),
 				sos.getComment(),
 				sos.getDraftId(),
@@ -164,10 +159,10 @@ public class NodeChat {
 		switch(message.getSource()){
 
 		case 1:
-			chat.mensajeEnvidoCorrectamente(message.getId());
+			EMarkingWeb.markingInterface.chat.mensajeEnvidoCorrectamente(message.getId());
 			break;
 		case 2:
-			wall.mensajeEnvidoCorrectamente(message.getId());
+			EMarkingWeb.markingInterface.wall.mensajeEnvidoCorrectamente(message.getId());
 			break;
 		}
 
@@ -175,7 +170,7 @@ public class NodeChat {
 
 	private void onRemoveChatUser(UserData user){
 
-		chat.removeUser(Integer.parseInt(user.getId()));
+		EMarkingWeb.markingInterface.chat.removeUser(Integer.parseInt(user.getId()));
 
 	}
 
@@ -229,17 +224,17 @@ public class NodeChat {
 	private void userJoin(UserData user, JsArray<UserData> people) {
 
 
-		chat.addHistoryMessages();
-		wall.addHistoryMessages();
-		help.addHistorySos();
+		EMarkingWeb.markingInterface.chat.addHistoryMessages();
+		EMarkingWeb.markingInterface.wall.addHistoryMessages();
+		EMarkingWeb.markingInterface.help.addHistorySos();
 
 		for(int i=0;i<people.length();i++){
 			if(people.get(i).getName().equals(user.getName())|| people.get(i).getRoom()!=user.getRoom())continue;
-			chat.adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()),people.get(i).getColor());
+			EMarkingWeb.markingInterface.chat.adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()),people.get(i).getColor());
 
 		}
 
-		chat.adduser(user.getName(),Integer.parseInt(user.getId()),1);
+		EMarkingWeb.markingInterface.chat.adduser(user.getName(),Integer.parseInt(user.getId()),1);
 	}
 
 

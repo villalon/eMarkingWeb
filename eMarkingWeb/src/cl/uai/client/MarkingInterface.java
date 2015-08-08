@@ -160,10 +160,10 @@ public class MarkingInterface extends EMarkingComposite {
 	private ShowSosButton showSosButton = null;
 	private ShowHelpButton showHelpButton = null;
 
-	private ChatInterface chat;
-	private ChatInterface wall;
-	private SosInterface sos;
-	private HelpInterface help;
+	public ChatInterface chat;
+	public ChatInterface wall;
+	public SosInterface sos;
+	public HelpInterface help;
 
 	/**
 	 * @return the eMarkingVersion
@@ -387,11 +387,11 @@ public class MarkingInterface extends EMarkingComposite {
 
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
 
-		showRubricButton = new ShowRubricButton();
-		showChatButton = new ShowChatButton();
-		showWallButton = new ShowWallButton();
-		showSosButton = new ShowSosButton();
-		showHelpButton = new ShowHelpButton();
+		showRubricButton = new ShowRubricButton(Window.getClientWidth()-40, 0);
+		showChatButton = new ShowChatButton(Window.getClientWidth()-40, 40);
+		showWallButton = new ShowWallButton(Window.getClientWidth()-40, 80);
+		showSosButton = new ShowSosButton(Window.getClientWidth()-40, 120);
+		showHelpButton = new ShowHelpButton(Window.getClientWidth()-40, 160);
 
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
@@ -895,12 +895,12 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "60%");
 
-		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
-		markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
-		markingPanel.setWidgetPosition(showWallButton,(int)(Window.getClientWidth()-40),80);
-		markingPanel.setWidgetPosition(showSosButton,(int)(Window.getClientWidth()-40),120);
-		markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
-
+		showRubricButton.updatePosition(markingPanel);
+		showChatButton.updatePosition(markingPanel);
+		showWallButton.updatePosition(markingPanel);
+		showSosButton.updatePosition(markingPanel);
+		showHelpButton.updatePosition(markingPanel);
+		
 		showRubricButton.setVisible(!showRubricOnLoad);
 		showChatButton.setVisible(MarkingInterface.getCollaborativeFeatures());
 		showWallButton.setVisible(MarkingInterface.getCollaborativeFeatures());
@@ -1231,17 +1231,13 @@ public class MarkingInterface extends EMarkingComposite {
 									userRole,
 									getSubmissionId());					
 
-					NodeChat.chat = new ChatInterface();
-					NodeChat.sos = new SosInterface();
-					NodeChat.wall = new ChatInterface();
-					NodeChat.help = new HelpInterface();
-					chat = NodeChat.chat;
+					chat = new ChatInterface();
 					chat.setSource(NodeChat.SOURCE_CHAT);
-					wall=NodeChat.wall;
+					wall=new ChatInterface();
 					wall.setSource(NodeChat.SOURCE_WALL);
-					sos = NodeChat.sos;
+					sos = new SosInterface();
 					sos.setSource(NodeChat.SOURCE_SOS);
-					help=NodeChat.help;
+					help=new HelpInterface();
 					help.setSource(NodeChat.SOURCE_HELP);
 				}
 			}).inject();
