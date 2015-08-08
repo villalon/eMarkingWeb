@@ -72,7 +72,7 @@ public class ChatInterface extends DialogBox {
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					sendMessage(NodeChat.username,message.getText());
+					sendMessage(EMarkingWeb.chatServer.getUsername(), message.getText());
 					message.setText("");
 					
 				}
@@ -105,7 +105,7 @@ public class ChatInterface extends DialogBox {
 
 		color(color,usersIcon);
 
-		this.iconHashMap.put(NodeChat.userid, usersIcon);
+		this.iconHashMap.put(EMarkingWeb.chatServer.getUserid(), usersIcon);
 		usersHpanel.add(usersIcon);
 
 	}
@@ -143,26 +143,31 @@ public class ChatInterface extends DialogBox {
 		messagesPanel.add(messageIconPanel);
 		scrollMessagesPanel.scrollToBottom();
 
-
-		String params= "&message="+message+"&source="+source+"&userid="+NodeChat.userid+"&room="+NodeChat.coursemodule+"&draftid="+NodeChat.draftid;
+		String params = "&message=" + message + 
+				"&source=" + source + 
+				"&userid=" + EMarkingWeb.chatServer.getUserid() + 
+				"&room=" + EMarkingWeb.chatServer.getCoursemodule() + 
+				"&draftid=" + EMarkingWeb.chatServer.getDraftid();
+		
+		// TODO: A callback without code makes no sense
 		AjaxRequest.ajaxRequest("action=addchatmessage"+ params, new AsyncCallback<AjaxData>() {
 			@Override
 			public void onSuccess(AjaxData result) {
-
 			}
 			@Override
 			public void onFailure(Throwable caught) {
-
 			}
 		});
+		
 		EMarkingWeb.chatServer.onSendMessage(message, source,messageId);
-
-
 	}
 
 	public void addHistoryMessages(){
 
-		String params= "&ids"+NodeChat.draftid+"=&room="+NodeChat.coursemodule+"&source="+source;
+		String params= "&ids="+ EMarkingWeb.chatServer.getDraftid() +
+				"&room=" + EMarkingWeb.chatServer.getCoursemodule() + 
+				"&source=" + source;
+		
 		AjaxRequest.ajaxRequest("action=getchathistory"+ params, new AsyncCallback<AjaxData>() {
 			@Override
 			public void onSuccess(AjaxData result) {

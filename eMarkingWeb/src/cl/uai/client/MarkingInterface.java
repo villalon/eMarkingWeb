@@ -79,7 +79,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 
 /**
@@ -93,19 +92,19 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** For logging purposes */
 	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
-	
+
 	/** Static resource for i18n messages **/
 	public static EmarkingMessages messages = GWT.create(EmarkingMessages.class);
 
 	/** eMarking version according to Moodle for debugging information **/
 	private static int eMarkingVersion = 0;
-	
+
 	/** Submission id to obtain from HTML **/
 	private static int submissionId = -1;
 
 	/** Wait dialog to make sure some things occur linearly **/
 	private static DialogBox waitDialog = null;
-	
+
 	/** Counter for how many interfaces are currently loading simultaneously **/
 	private int loading=0;
 
@@ -117,56 +116,53 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** Indicates if the marking interface is in read only mode **/
 	public static boolean readonly = true;
-	
+
 	/** Indicates if the user is a supervisor (editingteacher) **/
 	public static boolean supervisor = false;
-	
+
 	/** The id of the marker.**/
 	public static int markerid=0;
-	
+
 	/** Indicates if the user owns the submission **/
 	public static boolean ownSubmission = false;
-	
+
 	/** Moodle session key for posting to marking ajax interface **/
 	public static String sessKey = null;
 
 	/** Submission data (student, course, grade, marker) **/
 	public static SubmissionGradeData submissionData = null;
-	
-	/** Activate chat **/
-	public static int activateChat = 0;
-	
+
 	/** Div contains rubric icon  **/
 	private HTML showRubricButton = null;
 	private final Icon iconShowRubric = new Icon(IconType.TH);
-	
+
 
 	public static boolean showRubricOnLoad = true;
 
 	/** Chat button **/
 	private HTML showChatButton = null;
 	private final Icon iconShowChat = new Icon(IconType.COMMENTS);
-	
+
 	/** Wall button **/
 	private HTML showWallButton = null;
 	private final Icon iconShowWall = new Icon(IconType.INBOX);
-	
+
 	/** Sos button **/
 	private HTML showSosButton = null;
 	private final Icon iconShowSos = new Icon(IconType.BELL);
-	
+
 	/** help button **/
 	private HTML showHelpButton = null;
 	private final Icon iconShowHelp = new Icon(IconType.H_SIGN);
-	
+
 	private ChatInterface chat;
-	
+
 	private ChatInterface wall;
-	
+
 	private SosInterface sos;
-	
+
 	private HelpInterface help;
-	
+
 	/**
 	 * @return the eMarkingVersion
 	 */
@@ -188,7 +184,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public static boolean isMarkerAnonymous() {
 		return markerAnonymous;
 	}
-	
+
 	/**
 	 * @param eMarkingVersion the eMarkingVersion to set
 	 */
@@ -207,7 +203,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	private FocusPanel focusPanel = null;
 	private HTML loadingMessage = null;
-	
+
 	/** Main eMarking interfaces **/
 	private MarkingToolBar toolbar = null;
 	private MarkingPagesInterface markingPagesInterface = null;
@@ -219,13 +215,13 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Timer related variables **/
 	private Timer timer = null;
 	private int timerWaitingTurns = 1;
-	
+
 	private Timer resizeTimer = null;
 	private Date resizeTime = new Date();
 	private boolean resizeTimeout = false;
-	
+
 	private Timer heartBeatTimer = null;
-	
+
 	private int ticksUntilTrying = 0;
 
 	/** Suggester for previous comments **/
@@ -233,60 +229,64 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** If is enabled linkrubric (Marcelo's thesis) **/
 	private static boolean coloredRubric = false;
-	
+
 	public static boolean isColoredRubric() {
 		return coloredRubric;
 	}
-	
+
 	/** If is enabled collaborativefeatures (Manuel's thesis) **/
-	public static boolean collaborativefeatures = false;
-	
+	private static boolean collaborativefeatures = false;
+
 	public static boolean getCollaborativeFeatures(){
 		return collaborativefeatures;
 	}
-	
+
+	public static void setCollaborativeFeatures(boolean _collaborative) {
+		collaborativefeatures = _collaborative;
+	}
+
 	/** Get array of markers for the chat and wall collaborative features **/
 	private List<Map<String, String>> markers = null;
-	
+
 	public List<Map<String, String>> getMarkers(){
 		return markers;
 	}
-	
+
 	/** Get username (firstname lastname) of actual online user data for the chat and wall collaborative features **/
 	private static String username = null;
-	
+
 	public static String getUsername(){
 		return username;
 	}
-	
+
 	/** Get user username (real username) of actual online user for the chat and wall collaborative features **/
 	private static String realUsername = null;
-	
+
 	public static String getRealUsername(){
 		return realUsername;
 	}
-	
+
 	/** Get role of actual online user for the chat and wall collaborative features **/
 	private static String userRole = null;
-	
+
 	public static String getUserRole(){
 		return userRole;
 	}
-	
+
 	/** Get user id of actual online user for the chat and wall collaborative features **/
 	private static int userID = 0;
-	
+
 	public static int getUserID(){
 		return userID;
 	}
-	
+
 	/** Get user id of actual online user for the chat and wall collaborative features **/
 	private static int groupID = 0;
-	
+
 	public static int getGroupID(){
 		return groupID;
 	}
-	
+
 	/** Get indicators for progress bar of collaborative features **/
 	private static int inProgressTests = 0;
 	private static int publishedTests = 0;
@@ -294,7 +294,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private static double generalProgress = 0.0;
 	private static double publishedProgress = 0.0;
 	private static int markingType = 0;
-	
+
 	public static double getGeneralProgress(){
 		return generalProgress;
 	}
@@ -303,24 +303,24 @@ public class MarkingInterface extends EMarkingComposite {
 	}
 	/** Get indicators for agree bar of collaborative features **/
 	private static double generalAgree = 0.0;
-	
+
 	public static double getGeneralAgree(){
 		return generalAgree;
 	}
-	
+
 	private List<Map<String, String>> actualTestAgree = null;
-	
+
 	public List<Map<String, String>> getActualTestAgree(){
 		return actualTestAgree;
 	}
-	
+
 	//TODO
 	public static Map<String, String> MapCss = new HashMap<String, String>();
-	
+
 	public static Map<String, String> getMapCss(){
 		return MapCss;
 	}
-	
+
 	public HTML getShowRubricButton() {
 		return this.showRubricButton;
 	}
@@ -346,16 +346,16 @@ public class MarkingInterface extends EMarkingComposite {
 				} else {					
 					// More than 200 ms, we accept no more resize is being done
 					resizeTimeout = false;
-					
+
 					Date oneyear = new Date();
 					CalendarUtil.addMonthsToDate(oneyear, 12);
-					
+
 					Cookies.setCookie("emarking_width", Integer.toString(Window.getClientWidth()), oneyear);
 					EMarkingWeb.markingInterface.loadSubmissionData();
 				}
 			}
 		};
-				
+
 		// Focus panel to catch key events
 		focusPanel = new FocusPanel();
 		focusPanel.addKeyDownHandler(new KeyDownHandler() {
@@ -368,13 +368,13 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
-		
+
 		// Main panel has two rows: Toolbar and Marking panel
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().interfaceMainPanel());
 
 		focusPanel.setWidget(mainPanel);
-		
+
 		// Toolbar goes up
 		toolbar = new MarkingToolBar();
 		mainPanel.add(toolbar);
@@ -384,35 +384,35 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.addStyleName(Resources.INSTANCE.css().interfacepanel());
 
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
-		
+
 		showRubricButton = new HTML();
 		showRubricButton.addStyleName(Resources.INSTANCE.css().showrubricbutton());
-		
+
 		showChatButton = new HTML();
 		showChatButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-		
+
 		showWallButton = new HTML();
 		showWallButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-		
+
 		showSosButton = new HTML();
 		showSosButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-		
+
 		showHelpButton = new HTML();
 		showHelpButton.addStyleName(Resources.INSTANCE.css().showchatbutton());
-		
+
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
 		markingPanel.add(showRubricButton);
-		
+
 		if(MarkingInterface.getCollaborativeFeatures()) {
-		markingPanel.add(showChatButton);
-		markingPanel.add(showWallButton);
-		markingPanel.add(showSosButton);
-		markingPanel.add(showHelpButton);
+			markingPanel.add(showChatButton);
+			markingPanel.add(showWallButton);
+			markingPanel.add(showSosButton);
+			markingPanel.add(showHelpButton);
 		}
-		
+
 		mainPanel.add(markingPanel);
 
 		// Timer for pinging system
@@ -432,7 +432,7 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		};
-		
+
 		heartBeatTimer = new  Timer() {
 			@Override
 			public void run() {
@@ -452,7 +452,7 @@ public class MarkingInterface extends EMarkingComposite {
 				});
 			}
 		};
-		
+
 		MapCss.put("criterion0", Resources.INSTANCE.css().criterion0());
 		MapCss.put("criterion1", Resources.INSTANCE.css().criterion1());
 		MapCss.put("criterion2", Resources.INSTANCE.css().criterion2());
@@ -478,7 +478,7 @@ public class MarkingInterface extends EMarkingComposite {
 		MapCss.put("criterion22", Resources.INSTANCE.css().criterion22());
 		MapCss.put("criterion23", Resources.INSTANCE.css().criterion23());
 		MapCss.put("criterion25", Resources.INSTANCE.css().criterion24());
-		
+
 		MapCss.put("color1", Resources.INSTANCE.css().color1());
 		MapCss.put("color2", Resources.INSTANCE.css().color2());
 		MapCss.put("color3", Resources.INSTANCE.css().color3());
@@ -507,7 +507,7 @@ public class MarkingInterface extends EMarkingComposite {
 		// Drag and Drop controller attached to marking panel
 		dragController = new PickupDragController(markingPanel, false);
 		dragController.addDragHandler(new MarkingInterfaceDragHandler());
-		
+
 		waitDialog = new DialogBox(false, true);
 		waitDialog.setGlassEnabled(true);
 		waitDialog.addStyleName(Resources.INSTANCE.css().commentdialog());
@@ -522,7 +522,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	public void addLoading(boolean saving) {
 		this.loading++;
-		
+
 		if(this.loading > 0) {
 			if(saving) {
 				waitDialog.setHTML(MarkingInterface.messages.Saving());
@@ -539,13 +539,13 @@ public class MarkingInterface extends EMarkingComposite {
 	 * @param mark the mark to add
 	 */
 	public void addMark(final Mark mark, final MarkingPage page) {
-		
+
 		RootPanel.get().getElement().getStyle().setCursor(Cursor.WAIT);
-		
+
 		Mark.loadingIcon.removeFromParent();
 		page.getAbsolutePanel().add(Mark.loadingIcon, mark.getPosx(), mark.getPosy());
 		Mark.loadingIcon.setVisible(true);
-		
+
 		//por defecto el criterionid = 0 y la clase para el color es criterion0
 		int cid = 0;
 		if(MarkingInterface.coloredRubric){
@@ -582,7 +582,7 @@ public class MarkingInterface extends EMarkingComposite {
 			@Override
 			public void onSuccess(AjaxData result) {
 				Mark.loadingIcon.setVisible(false);
-				
+
 				Map<String, String> values = AjaxRequest.getValueFromResult(result);
 
 				// Parse json results and check if there was an error
@@ -603,7 +603,7 @@ public class MarkingInterface extends EMarkingComposite {
 				} else {
 					newgrade = MarkingInterface.submissionData.getFinalgrade();
 				}
-				
+
 				// Sets the values for the new mark
 				mark.setId(id);
 				mark.setMarkerid(markerid);
@@ -612,18 +612,18 @@ public class MarkingInterface extends EMarkingComposite {
 
 				// Adds the mark to the marking interface
 				markingPagesInterface.addMarkWidget(mark, -1, page);
-				
+
 				// If it is a comment And to the rubric interface
 				toolbar.getMarkingButtons().updateStats();
-				
+
 				if(!(mark instanceof CustomMark) && mark.getFormat() != 5) {
 					EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
-						getPreviousComments().addMarkAsCommentToInterface(mark);
+					getPreviousComments().addMarkAsCommentToInterface(mark);
 				}
-				
+
 				// Updates toolbar
 				setTimemodified(timemodified);
-				
+
 				// Update the marking interface with the final grade and time
 				EMarkingWeb.markingInterface.setFinalgrade(newgrade, timemodified);
 
@@ -632,7 +632,7 @@ public class MarkingInterface extends EMarkingComposite {
 		});
 
 	}
-	
+
 	/**
 	 * Adds a mark to current submission.
 	 * 
@@ -642,135 +642,135 @@ public class MarkingInterface extends EMarkingComposite {
 	 */
 	public void addRubricMark(final int level, final int posx, final int posy, final MarkingPage page) {
 
-			// Shows comment dialog
-			// 0 for regradeid as we are creating a mark
-			final EditMarkDialog dialog = new EditMarkDialog(posx, posy, level, 0);
-			if(this.setBonus>=0){
-				dialog.setBonus(this.setBonus);
-				this.setBonus=-1;
-			}
-			dialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
+		// Shows comment dialog
+		// 0 for regradeid as we are creating a mark
+		final EditMarkDialog dialog = new EditMarkDialog(posx, posy, level, 0);
+		if(this.setBonus>=0){
+			dialog.setBonus(this.setBonus);
+			this.setBonus=-1;
+		}
+		dialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
 
-					// If dialog was not cancelled and contains a comment, try to add the mark
-					if(!dialog.isCancelled()) {
+				// If dialog was not cancelled and contains a comment, try to add the mark
+				if(!dialog.isCancelled()) {
 
-						// Calculate parameters for adding mark
-						final String comment = dialog.getTxtComment(); // Comment from dialog
-						final float bonus = dialog.getBonus();
-						final int levelid = dialog.getLevelId();
-						// TODO: Check if coordinates can be calculated better (as a page percentage?)
+					// Calculate parameters for adding mark
+					final String comment = dialog.getTxtComment(); // Comment from dialog
+					final float bonus = dialog.getBonus();
+					final int levelid = dialog.getLevelId();
+					// TODO: Check if coordinates can be calculated better (as a page percentage?)
 
-						// Ajax URL for adding mark
-						String url = "action=addmark"+
-								"&level="+levelid+
-								"&posx="+posx+
-								"&posy="+posy+
-								"&pageno="+(page.getPageNumber())+
-								"&sesskey="+sessKey+
-								"&bonus="+bonus+
-								"&comment="+URL.encode(comment) +
-								"&windowswidth=" + page.getWidth() +
-								"&windowsheight=" + page.getHeight();
+					// Ajax URL for adding mark
+					String url = "action=addmark"+
+							"&level="+levelid+
+							"&posx="+posx+
+							"&posy="+posy+
+							"&pageno="+(page.getPageNumber())+
+							"&sesskey="+sessKey+
+							"&bonus="+bonus+
+							"&comment="+URL.encode(comment) +
+							"&windowswidth=" + page.getWidth() +
+							"&windowsheight=" + page.getHeight();
 
-						// Add loading icon
-						Mark.loadingIcon.removeFromParent();
-						page.getAbsolutePanel().add(Mark.loadingIcon, posx, posy);
-						Mark.loadingIcon.setVisible(true);
-						
-						rubricInterface.getRubricPanel().loadingRubricCriterion(levelid);
-						
-						// Make Ajax request 
-						AjaxRequest.ajaxRequest(url, 
-								new AsyncCallback<AjaxData>() {
+					// Add loading icon
+					Mark.loadingIcon.removeFromParent();
+					page.getAbsolutePanel().add(Mark.loadingIcon, posx, posy);
+					Mark.loadingIcon.setVisible(true);
 
-							@Override
-							public void onFailure(Throwable caught) {
+					rubricInterface.getRubricPanel().loadingRubricCriterion(levelid);
+
+					// Make Ajax request 
+					AjaxRequest.ajaxRequest(url, 
+							new AsyncCallback<AjaxData>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Mark.loadingIcon.setVisible(false);
+							rubricInterface.getRubricPanel().finishloadingRubricCriterion(levelid);
+
+							logger.severe("Error adding mark to Moodle!");
+							logger.severe(caught.getMessage());
+							Window.alert(caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(AjaxData result) {
+							Mark.loadingIcon.setVisible(false);
+							rubricInterface.getRubricPanel().finishloadingRubricCriterion(levelid);
+							Mark.hideIcons();
+
+							// Parse Json values
+							Map<String, String> values = AjaxRequest.getValueFromResult(result);
+
+							if(!values.get("error").equals("")) {
 								Mark.loadingIcon.setVisible(false);
 								rubricInterface.getRubricPanel().finishloadingRubricCriterion(levelid);
 
 								logger.severe("Error adding mark to Moodle!");
-								logger.severe(caught.getMessage());
-								Window.alert(caught.getMessage());
+								Window.alert(MarkingInterface.messages.ErrorAddingMark());
+								return;
 							}
 
-							@Override
-							public void onSuccess(AjaxData result) {
-								Mark.loadingIcon.setVisible(false);
-								rubricInterface.getRubricPanel().finishloadingRubricCriterion(levelid);
-								Mark.hideIcons();
-								
-								// Parse Json values
-								Map<String, String> values = AjaxRequest.getValueFromResult(result);
+							// Get main values
+							int previd = Integer.parseInt(values.get("replaceid"));
+							int newid = Integer.parseInt(values.get("id"));
+							float newgrade = Float.parseFloat(values.get("grade"));
+							long timemodified = Long.parseLong(values.get("timemodified"));
+							String markername = values.get("markername");
+							int pageno = page.getPageNumber();
+							int regradeid = Integer.parseInt(values.get("regradeid"));
+							int regradeaccepted = Integer.parseInt(values.get("regradeaccepted"));
+							int regrademotive = Integer.parseInt(values.get("regrademotive"));
+							String regradecomment = values.get("regradecomment");
+							String regrademarkercomment = values.get("regrademarkercomment");
+							String colour = values.get("colour");
 
-								if(!values.get("error").equals("")) {
-									Mark.loadingIcon.setVisible(false);
-									rubricInterface.getRubricPanel().finishloadingRubricCriterion(levelid);
-
-									logger.severe("Error adding mark to Moodle!");
-									Window.alert(MarkingInterface.messages.ErrorAddingMark());
-									return;
-								}
-								
-								// Get main values
-								int previd = Integer.parseInt(values.get("replaceid"));
-								int newid = Integer.parseInt(values.get("id"));
-								float newgrade = Float.parseFloat(values.get("grade"));
-								long timemodified = Long.parseLong(values.get("timemodified"));
-								String markername = values.get("markername");
-								int pageno = page.getPageNumber();
-								int regradeid = Integer.parseInt(values.get("regradeid"));
-								int regradeaccepted = Integer.parseInt(values.get("regradeaccepted"));
-								int regrademotive = Integer.parseInt(values.get("regrademotive"));
-								String regradecomment = values.get("regradecomment");
-								String regrademarkercomment = values.get("regrademarkercomment");
-								String colour = values.get("colour");
-
-								// If there was a previous mark with the same level, remove it
-								if(previd > 0) {
-									page.deleteMarkWidget(previd);
-								}
-
-								long unixtime = System.currentTimeMillis() / 1000L;
-								
-								// Add mark to marking pages interface
-								RubricMark mark = new RubricMark(
-										posx, 
-										posy,
-										pageno,
-										MarkingInterface.markerid, 
-										dialog.getLevelId(),
-										unixtime,
-										colour); 
-								mark.setId(newid);
-								mark.setRawtext(comment);
-								mark.setMarkername(markername);
-								mark.setRegradeid(regradeid);
-								mark.setRegradeaccepted(regradeaccepted);
-								mark.setRegradecomment(regradecomment);
-								mark.setRegrademarkercomment(regrademarkercomment);
-								mark.setRegrademotive(regrademotive);
-								
-								Criterion criterion = MarkingInterface.submissionData.getLevelById(mark.getLevelId()).getCriterion();
-								criterion.setSelectedLevel(mark.getLevelId());
-								criterion.setBonus(bonus);
-								markingPagesInterface.addMarkWidget(mark, previd, page);
-								rubricInterface.getRubricPanel().addMarkToRubric(mark);
-								toolbar.getMarkingButtons().updateStats();
-								if(MarkingInterface.coloredRubric)
-									toolbar.getMarkingButtons().changeColor(criterion.getId());
-								
-								EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
-								getPreviousComments().addMarkAsCommentToInterface(mark);							
-
-								setFinalgrade(newgrade, timemodified);
+							// If there was a previous mark with the same level, remove it
+							if(previd > 0) {
+								page.deleteMarkWidget(previd);
 							}
-						});
-					}
+
+							long unixtime = System.currentTimeMillis() / 1000L;
+
+							// Add mark to marking pages interface
+							RubricMark mark = new RubricMark(
+									posx, 
+									posy,
+									pageno,
+									MarkingInterface.markerid, 
+									dialog.getLevelId(),
+									unixtime,
+									colour); 
+							mark.setId(newid);
+							mark.setRawtext(comment);
+							mark.setMarkername(markername);
+							mark.setRegradeid(regradeid);
+							mark.setRegradeaccepted(regradeaccepted);
+							mark.setRegradecomment(regradecomment);
+							mark.setRegrademarkercomment(regrademarkercomment);
+							mark.setRegrademotive(regrademotive);
+
+							Criterion criterion = MarkingInterface.submissionData.getLevelById(mark.getLevelId()).getCriterion();
+							criterion.setSelectedLevel(mark.getLevelId());
+							criterion.setBonus(bonus);
+							markingPagesInterface.addMarkWidget(mark, previd, page);
+							rubricInterface.getRubricPanel().addMarkToRubric(mark);
+							toolbar.getMarkingButtons().updateStats();
+							if(MarkingInterface.coloredRubric)
+								toolbar.getMarkingButtons().changeColor(criterion.getId());
+
+							EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
+							getPreviousComments().addMarkAsCommentToInterface(mark);							
+
+							setFinalgrade(newgrade, timemodified);
+						}
+					});
 				}
-			});
-			dialog.center();
+			}
+		});
+		dialog.center();
 	}
 
 	/**
@@ -802,7 +802,7 @@ public class MarkingInterface extends EMarkingComposite {
 			url = "action=deletemark"+
 					"&level="+ rubricMark.getLevelId() +
 					"&sesskey="+sessKey;
-			
+
 			rubricInterface.getRubricPanel().loadingRubricCriterion(rubricMark.getLevelId());
 		}
 
@@ -826,7 +826,7 @@ public class MarkingInterface extends EMarkingComposite {
 			public void onSuccess(AjaxData result) {
 				// Parse Json values
 				Map<String, String> values = AjaxRequest.getValueFromResult(result);
-				
+
 				if(rubricMark != null)
 					rubricInterface.getRubricPanel().finishloadingRubricCriterion(rubricMark.getLevelId());
 
@@ -848,9 +848,9 @@ public class MarkingInterface extends EMarkingComposite {
 					markingPagesInterface.deleteMarkWidget(mark.getId());
 					setTimemodified(timemodified);
 				}
-				
+
 				toolbar.getMarkingButtons().updateStats();
-				
+
 				EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().loadSumissionData();
 
 				RootPanel.get().getElement().getStyle().setCursor(Cursor.AUTO);
@@ -900,42 +900,42 @@ public class MarkingInterface extends EMarkingComposite {
 
 		markingPagesInterface = new MarkingPagesInterface();
 		rubricInterface = new RubricInterface();
-		
+
 		interfacePanel.add(markingPagesInterface);
 		interfacePanel.setCellWidth(markingPagesInterface, "60%");
 
 		// Set show rubric button
 		showRubricButton.setHTML(iconShowRubric.toString());
 		markingPanel.setWidgetPosition(showRubricButton,(int)(Window.getClientWidth()-40),0);
-		
+
 		if(MarkingInterface.getCollaborativeFeatures()) {
 
-		// Set show chat
-		showChatButton.setHTML(iconShowChat.toString());
-		markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
-		
-		// Set show wall
-		showWallButton.setHTML(iconShowWall.toString());
-		markingPanel.setWidgetPosition(showWallButton,(int)(Window.getClientWidth()-40),80);
+			// Set show chat
+			showChatButton.setHTML(iconShowChat.toString());
+			markingPanel.setWidgetPosition(showChatButton,(int)(Window.getClientWidth()-40),40);
 
-		// Set show wall
-		showSosButton.setHTML(iconShowSos.toString());
-		markingPanel.setWidgetPosition(showSosButton,(int)(Window.getClientWidth()-40),120);
-		
-		// Set show wall
-		showHelpButton.setHTML(iconShowHelp.toString());
-		markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
+			// Set show wall
+			showWallButton.setHTML(iconShowWall.toString());
+			markingPanel.setWidgetPosition(showWallButton,(int)(Window.getClientWidth()-40),80);
+
+			// Set show wall
+			showSosButton.setHTML(iconShowSos.toString());
+			markingPanel.setWidgetPosition(showSosButton,(int)(Window.getClientWidth()-40),120);
+
+			// Set show wall
+			showHelpButton.setHTML(iconShowHelp.toString());
+			markingPanel.setWidgetPosition(showHelpButton,(int)(Window.getClientWidth()-40),160);
 		}
-		
+
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
-		
+
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(showRubricOnLoad);
-		
+
 		/** FIN **/
 	}
-	
+
 	public void setShowRubricButtonVisible(boolean visible) {
 		showRubricButton.setVisible(!visible);
 		if(visible) {
@@ -946,7 +946,7 @@ public class MarkingInterface extends EMarkingComposite {
 			interfacePanel.setCellWidth(rubricInterface, "0%");
 		}
 	}
-	
+
 	/**
 	 * Loads submission data using global submission id
 	 */
@@ -957,7 +957,7 @@ public class MarkingInterface extends EMarkingComposite {
 			return;
 
 		addLoading(false);
-		
+
 		// Ajax requesto to submission data
 		AjaxRequest.ajaxRequest("action=getsubmission", new AsyncCallback<AjaxData>() {
 
@@ -1040,7 +1040,7 @@ public class MarkingInterface extends EMarkingComposite {
 					logger.severe("Error parsing submission data!");
 					Window.alert(messages.InvalidSubmissionData());
 				}
-				
+
 				finishLoading();
 				Window.addResizeHandler(new ResizeHandler() {			
 					@Override
@@ -1058,7 +1058,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	@Override
 	protected void onLoad() {
-		
+
 		// Ajax request to load submission data
 		AjaxRequest.ajaxRequest("action=ping", new AsyncCallback<AjaxData>() {
 			@Override
@@ -1070,59 +1070,59 @@ public class MarkingInterface extends EMarkingComposite {
 			public void onSuccess(AjaxData result) {
 				//Check if values are ok
 				if(result.getError().equals("")) {
-					
+
 					// Clear interface (submission and rubric interfaces)
 					interfacePanel.clear();
-					
+
 					// Cancel timer, we don't need to ping again
 					timer.cancel();
-					
+
 					// Parse Json values
 					Map<String, String> value = AjaxRequest.getValueFromResult(result);
-					
+
 					// Assign Moodle session key
 					sessKey = value.get("sesskey");
 
 					// Assign if the student is anonymous
 					studentAnonymous = value.get("studentanonymous").equals("true");
-					
+
 					// Assign if the marker is anonymous
 					markerAnonymous =  value.get("markeranonymous").equals("true");
-					
+
 					logger.fine("Anonymous mode - student:" + studentAnonymous + " marker:" + markerAnonymous);
-					
+
 					// Assign if the assignment is anonymous
 					readonly = (value.get("hascapability") != null && value.get("hascapability").equals("false"));
-					
+
 					// Assign if the user is supervisor
 					supervisor = (value.get("supervisor") != null && value.get("supervisor").equals("true"));
-					
+
 					// Gets the user id of the person in front of the interface
 					markerid = Integer.parseInt(value.get("user"));
-					
+
 					int student = Integer.parseInt(value.get("student"));
-					
+
 					// Indicates if the user owns the current submission
 					ownSubmission = markerid == student;
-					
+
 					logger.fine("Read only mode: " + readonly);
 
 					// Read the marking type
 					markingType = Integer.parseInt(value.get("markingtype"));
-					
+
 					logger.fine("Marking type: " + markingType);
 
 					// Link rubric colors if configured as
 					coloredRubric = value.get("linkrubric").equals("1");
-					
+
 					logger.fine("Link rubric: " + coloredRubric);
 
 					//Give the Course Module of actual eMarking
 					coursemodule=Integer.parseInt(value.get("cm"));
-					
+
 					// Collaborative features (chat, wall) if configured as
-					//collaborativefeatures = value.get(activateChat).equals("1");
-					
+					collaborativefeatures = value.get("collaborativefeatures").equals("1");
+
 					/**
 					 * GET TOTAL MARKERS ARRAY OF AN eMarking.
 					 * This saves all markers of a group (each group has a different room for chat and wall).
@@ -1130,63 +1130,37 @@ public class MarkingInterface extends EMarkingComposite {
 					//Get the json_encode() PHP format string
 					//logger.severe("the value is :" + value.get("markers"));
 					String preMarkersJsonString = value.get("markers");
-		
+
 					//Parse json string to a List<Map<String, String>> markers
 					markers = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers");
-					
+
 					// Assign actual online username (firstname lastname)
 					username = value.get("username");
-					
+
 					if(value.get("realUsername") != null){
 						//Assign actual online real username
 						realUsername = value.get("realUsername");
-						
+
 						//Assign actual online role
 						userRole = value.get("role");
-						
+
 						//Assign actual online user
 						userID = Integer.parseInt(value.get("user"));
-						
+
 						//Assign actual group of online user (equals to emarking->id)
 						groupID = Integer.parseInt(value.get("groupID"));
 					}
-					
-					if(getCollaborativeFeatures()){
-						
-						
-						
-						NodeChat.username=realUsername;
-						NodeChat.userid=userID;
-						NodeChat.coursemodule=coursemodule;
-						NodeChat.userRole=userRole;
-						NodeChat.draftid=getSubmissionId();
-						NodeChat.moodleurl=AjaxRequest.moodleUrl;
-						
-						EMarkingWeb.chatServer = new NodeChat();					
-						NodeChat.chat = new ChatInterface();
-						NodeChat.sos = new SosInterface();
-						NodeChat.wall = new ChatInterface();
-						NodeChat.help = new HelpInterface();
-						chat = NodeChat.chat;
-						chat.setSource(NodeChat.SOURCE_CHAT);
-						wall=NodeChat.wall;
-						wall.setSource(NodeChat.SOURCE_WALL);
-						sos = NodeChat.sos;
-						sos.setSource(NodeChat.SOURCE_SOS);
-						help=NodeChat.help;
-						help.setSource(NodeChat.SOURCE_HELP);
-						
-						
-						}
-					
-					
+
+					activateChat();
+
+
 					//Get progress marking status
 					totalTests = Integer.parseInt(value.get("totalTests"));
 					inProgressTests = Integer.parseInt(value.get("inProgressTests"));
 					publishedTests = Integer.parseInt(value.get("publishedTests"));
 					generalProgress = (double)100*inProgressTests/totalTests;
 					publishedProgress = (double)100*publishedTests/totalTests;
-					
+
 					//Get agree level for collaborative preassure
 					if(value.get("agreeLevel") != null){
 						generalAgree = Double.parseDouble(value.get("agreeLevel"));
@@ -1194,9 +1168,9 @@ public class MarkingInterface extends EMarkingComposite {
 
 					// Load submission data
 					loadSubmissionData();
-					
+
 					focusPanel.getElement().focus();
-					
+
 					// Schedule heartbeat if configured as
 					if((value.get("heartbeat") != null && value.get("heartbeat").equals("1"))) {
 						// Every two minutes
@@ -1208,7 +1182,7 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
-		
+
 		// Implemented rubric icon
 		showRubricButton.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -1221,29 +1195,29 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 			}
 		});
-		
+
 		showChatButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				chat.show();
 			}
 		});
-		
+
 		showWallButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
 				wall.show();
 			}
 		});
-	
+
 		showSosButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
 				sos.show();
 			}
 		});
-		
+
 		showHelpButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1251,10 +1225,37 @@ public class MarkingInterface extends EMarkingComposite {
 			}
 		});
 	}
-	
-	
+
+	private void activateChat() {
+
+		if(getCollaborativeFeatures()) {
+			
+			EMarkingWeb.chatServer = 
+					new NodeChat(
+							realUsername,
+							userID,
+							coursemodule,
+							userRole,
+							getSubmissionId());					
+			
+			NodeChat.chat = new ChatInterface();
+			NodeChat.sos = new SosInterface();
+			NodeChat.wall = new ChatInterface();
+			NodeChat.help = new HelpInterface();
+			chat = NodeChat.chat;
+			chat.setSource(NodeChat.SOURCE_CHAT);
+			wall=NodeChat.wall;
+			wall.setSource(NodeChat.SOURCE_WALL);
+			sos = NodeChat.sos;
+			sos.setSource(NodeChat.SOURCE_SOS);
+			help=NodeChat.help;
+			help.setSource(NodeChat.SOURCE_HELP);
+		}
+	}
+
+
 	public void regradeMark(final RubricMark mark, final String comment, final int motive) {
-		
+
 		RootPanel.get().getElement().getStyle().setCursor(Cursor.WAIT);
 
 		final MarkingPage page = markingPagesInterface.getPageByIndex(mark.getPageno());
@@ -1281,7 +1282,7 @@ public class MarkingInterface extends EMarkingComposite {
 			@Override
 			public void onSuccess(AjaxData result) {
 				Mark.loadingIcon.setVisible(false);
-				
+
 				Map<String, String> values = AjaxRequest.getValueFromResult(result);
 
 				// Parse json results and check if there was an error
@@ -1294,7 +1295,7 @@ public class MarkingInterface extends EMarkingComposite {
 				// Parses important values from result
 				int regradeid = Integer.parseInt(values.get("regradeid"));
 				long timemodified = Long.parseLong(values.get("timemodified"));
-				
+
 				// Sets the values for the new mark
 				mark.setRegradeid(regradeid);
 				mark.setRegradecomment(comment);
@@ -1303,15 +1304,15 @@ public class MarkingInterface extends EMarkingComposite {
 				// Add the mark to the rubric so it updates the information in the rubric panel
 				EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(mark);
 				mark.setMarkHTML();
-				
+
 				// Updates toolbar
 				setTimemodified(timemodified);
-				
+
 				RootPanel.get().getElement().getStyle().setCursor(Cursor.AUTO);
 			}
 		});
 	}
-	
+
 	/**
 	 * Reloads main interface for a new submission
 	 * 
@@ -1329,7 +1330,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 		reloadPage();
 	}
-	
+
 	public void reloadPage() {
 		String madeURL = Window.Location.getProtocol()+"//"+Window.Location.getHost()+Window.Location.getPath()+"?";
 		for(String key : Window.Location.getParameterMap().keySet()) {
@@ -1343,7 +1344,7 @@ public class MarkingInterface extends EMarkingComposite {
 		}
 		Window.Location.replace(madeURL);
 	}
-	
+
 	/**
 	 * A new grade was assigned through marking
 	 * 
@@ -1357,7 +1358,7 @@ public class MarkingInterface extends EMarkingComposite {
 		focusPanel.getElement().focus();
 		EMarkingWeb.notifyDelphi();
 	}
-	
+
 	/**
 	 * A new grade was assigned through marking
 	 * 
@@ -1380,9 +1381,9 @@ public class MarkingInterface extends EMarkingComposite {
 	public static int getMarkingType() {
 		return markingType;
 	}
-	
+
 	public static boolean isStudentAnonymous() {
 		return studentAnonymous;
 	}
-	
+
 }

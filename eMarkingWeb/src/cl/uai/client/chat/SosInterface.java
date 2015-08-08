@@ -65,21 +65,24 @@ public class SosInterface extends DialogBox {
 		this.source=source;
 
 	}
-	public void createSos(String message,int urgencyLevel){
+	
+	public void createSos(String message,int urgencyLevel) {
+		String params= "&message=" + message + 
+				"&source=" + source + 
+				"&userid=" + EMarkingWeb.chatServer.getUserid() + 
+				"&room=" + EMarkingWeb.chatServer.getCoursemodule() + 
+				"&draftid=" + EMarkingWeb.chatServer.getDraftid() + 
+				"&urgencylevel=" + urgencyLevel + 
+				"&status=1";
 		
-		String params= "&message="+message+"&source="+source+"&userid="+NodeChat.userid+"&room="+NodeChat.coursemodule+"&draftid="+NodeChat.draftid+"&urgencylevel="+urgencyLevel+"&status=1";
 		AjaxRequest.ajaxRequest("action=addchatmessage"+ params, new AsyncCallback<AjaxData>() {
 			@Override
-			public void onSuccess(AjaxData result) {
-				
+			public void onSuccess(AjaxData result) {				
 			}
 			@Override
 			public void onFailure(Throwable caught) {
-				
 			}
 		});
-		
-		
 	}
 	
 	

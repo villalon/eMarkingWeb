@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
-import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -22,7 +21,6 @@ public class HelpInterface  extends DialogBox {
 	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
 	private int source=0;
 	private VerticalPanel vpanel;
-	private VerticalPanel messagesPanel;
 	private ScrollPanel scrollMessagesPanel;
 	
 	
@@ -55,9 +53,13 @@ public class HelpInterface  extends DialogBox {
 		this.source=source;
 
 	}
-	public void addHistorySos(){
+	
+	public void addHistorySos() {
 
-		String params= "&ids"+NodeChat.draftid+"=&room="+NodeChat.coursemodule+"&source="+source;
+		String params= "&ids=" + EMarkingWeb.chatServer.getDraftid() + 
+				"&room=" + EMarkingWeb.chatServer.getCoursemodule() + 
+				"&source=" + source;
+		
 		AjaxRequest.ajaxRequest("action=getchathistory"+ params, new AsyncCallback<AjaxData>() {
 			@Override
 			public void onSuccess(AjaxData result) {
