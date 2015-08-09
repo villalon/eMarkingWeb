@@ -1,19 +1,42 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   eMarking
+ * @copyright 2015-onwards Jorge Villalón <villalon@gmail.com>
+ * 				   Francisco García <francisco.garcia.ralph@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 package cl.uai.client.chat;
 
+import java.util.Date;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.SubmissionGradeData;
 
 import com.google.gwt.core.client.JsArray;
 
 /**
  * This class represents a connection to a NodeJS which should work with Moodle
- * 
- * @author Francisco García
- *
  */
 public class NodeChat {
+
+	/** For logging purposes */
+	private static Logger logger = Logger.getLogger(NodeChat.class.getName());
 
 	/** Sources or rooms **/
 	public static int SOURCE_CHAT = 1;
@@ -22,223 +45,145 @@ public class NodeChat {
 
 	public static int SOURCE_HELP= 3; // TODO: Wtf?
 
-	/** For logging purposes */
-	private static Logger logger = Logger.getLogger(NodeChat.class.getName());
-
-	/** Data for a client to work **/
-	private String username = null;
-	private int userid = 0;
-	private int coursemodule = 0;
-	private String userRole;
-	private int draftid=0;
 
 	/**
 	 * NodeChat constructor, representing a connection to the NodeJs server
-	 * 
-	 * @param _username
-	 * @param _userid
-	 * @param _coursemodule
-	 * @param _userrole
-	 * @param _draftid
 	 */
-	public NodeChat(String _username, int _userid, int _coursemodule, String _userrole, int _draftid) {
-		this.username = _username;
-		this.userid = _userid;
-		this.coursemodule = _coursemodule;
-		this.userRole = _userrole;
-		this.draftid = _draftid;
-
-		logger.info("Starting Node server in: "+ MarkingInterface.nodejspath);
-		logger.info("Username: "+ this.username 
-				+ " User id: "+ this.userid
-				+ " Course module: "+ this.coursemodule
-				+ " User role: "+ this.userRole
-				+ " Draft id: "+ this.draftid);
-
-		loadNodeJS(MarkingInterface.nodejspath, username, coursemodule, userid, draftid);
-	}
-
-	public int getCoursemodule() {
-		return coursemodule;
-	}
-	public int getDraftid() {
-		return draftid;
-	}
-	public int getUserid() {
-		return userid;
-	}
-	public String getUsername() {
-		return username;
-	}
-
-	public String getUserRole() {
-		return userRole;
-	}
-
-	//////////////// CONEXIÓN CON EL SERVIDOR NODE /////////////////////////////
-	private  native void loadNodeJS(String path, String Username, int coursemodule, int userid, int submissionId) /*-{
-	 $wnd.socket = io.connect(path);
-
-	 var tmp=this;
-	 $wnd.socket.on('connect', function () {
-		   var conectionData={};
-	       conectionData.Username=Username;
-	       conectionData.cm=coursemodule;
-	       conectionData.userid=userid;
-	       conectionData.submissionId=submissionId
-	       $wnd.socket.emit("joinserver",JSON.stringify(conectionData));
-	       $wnd.socket.on('userJoin', function (data) {
-
-			      var obj=JSON.parse(data);
-
-				tmp.@cl.uai.client.chat.NodeChat::userJoin(Lcl/uai/client/chat/UserData;Lcom/google/gwt/core/client/JsArray;)(obj.user,obj.people); 
-			  });
-	     $wnd.socket.on('onRemoveChatUser', function (data) {
-
-			      var data=JSON.parse(data);
-				 tmp.@cl.uai.client.chat.NodeChat::onRemoveChatUser(Lcl/uai/client/chat/UserData;)(data); 
-			  });
-	  $wnd.socket.on('onBeginChatOther', function (data) {
-
-			      var data=JSON.parse(data);
-				 tmp.@cl.uai.client.chat.NodeChat::onBeginChatOther(Lcl/uai/client/chat/UserData;)(data); 
-			  });
-	  $wnd.socket.on('onCatchMesage', function (data) {
-
-			      var data=JSON.parse(data);
-				 tmp.@cl.uai.client.chat.NodeChat::onCatchMessage(Lcl/uai/client/chat/Message;)(data); 
-			  });
-             $wnd.socket.on('onCatchSos', function (data) {
-
-			      var data=JSON.parse(data);
-				 tmp.@cl.uai.client.chat.NodeChat::onCatchSos(Lcl/uai/client/chat/Sos;)(data); 
-			  });
-			   $wnd.socket.on('onMessegeSent', function (data) {
-
-			      var data=JSON.parse(data);
-				 tmp.@cl.uai.client.chat.NodeChat::onMessageSent(Lcl/uai/client/chat/Message;)(data); 
-			  });
-
-	 }); 
-
-}-*/;
-	
-	private void onBeginChatOther(UserData user) {
-		EMarkingWeb.markingInterface.chat.adduser(user.getName(),Integer.parseInt(user.getId()),user.getColor());
-	}
-	
-	private void onCatchMessage(Message message){
-
-		switch(message.getSource()){
-
-		case 1:
-			EMarkingWeb.markingInterface.chat.addReceivedMessage(message.getTime(), message.getUser(), message.getMessage(), message.getColor());
-			break;
-		case 2:
-			EMarkingWeb.markingInterface.wall.addReceivedMessage(message.getTime(), message.getUser(), message.getMessage(), message.getColor());
-			break;
+	public NodeChat() throws Exception {
+		// Submission data has all the info we need
+		SubmissionGradeData sdata = MarkingInterface.submissionData;
+		
+		// But if it is null, the chat is being created too soon
+		if(sdata == null) {
+			throw new Exception("Invalid data to start NodeJs server. Submission data must be loaded first.");
 		}
+		
+		logger.info("Attempting to connect to Node server in: "+ MarkingInterface.nodejspath);
 
-	}
-	private void onCatchSos(Sos sos){
-
-
-
-		EMarkingWeb.markingInterface.help.addReceivedSos(sos.getUserName(),
-				sos.getTime(),
-				sos.getComment(),
-				sos.getDraftId(),
-				sos.getStatus(),
-				sos.getUrgencyLevel()
-				);
-
+		// Let's try to connect to Node
+		loadNodeJS(MarkingInterface.nodejspath, 
+				sdata.getMarkerfirstname(), 
+				sdata.getMarkerlastname(), 
+				sdata.getMarkeremail(), 
+				sdata.getCoursemoduleid(), 
+				sdata.getMarkerid());
 	}
 
-	private void onMessageSent(Message message){
+	/**
+	 * This method tries to connect the GWT client with NodeJS
+	 * 
+	 * @param path URL of the Node server
+	 * @param firstname Current user first name
+	 * @param lastname Current user last name
+	 * @param email Current user email
+	 * @param coursemodule Course module (used as room)
+	 * @param userid Current user id
+	 */
+	private  native void loadNodeJS(String path, String firstname, String lastname, String email, int coursemodule, int userid) /*-{
+		$wnd.socket = io.connect(path);
 
-		switch(message.getSource()){
+	 	var tmp=this;
+	 	
+	 	// When the socket connects successfully
+	 	$wnd.socket.on('connect', function () {
 
-		case 1:
-			EMarkingWeb.markingInterface.chat.mensajeEnvidoCorrectamente(message.getId());
-			break;
-		case 2:
-			EMarkingWeb.markingInterface.wall.mensajeEnvidoCorrectamente(message.getId());
-			break;
+	 		// Listen to joinserver events
+	    	$wnd.socket.on('onJoinServer', function (data) {
+				var data=JSON.parse(data);
+				tmp.@cl.uai.client.chat.NodeChat::onJoinServer(Lcom/google/gwt/core/client/JsArray;)(data); 
+			});
+	 		// Listen to disconnection events
+	    	$wnd.socket.on('onDisconnect', function (data) {
+            	var data=JSON.parse(data);
+				tmp.@cl.uai.client.chat.NodeChat::onDisconnect(Lcl/uai/client/chat/UserData;)(data); 
+			});
+			// Listen to messages events
+	    	$wnd.socket.on('onSendMessage', function (data) {
+				var data=JSON.parse(data);
+				tmp.@cl.uai.client.chat.NodeChat::onSendMessage(Lcl/uai/client/chat/Message;)(data); 
+			});
+			
+	 		// We create the object with data
+			var conectionData={};
+	    	conectionData.first=firstname;
+	    	conectionData.last=lastname;
+	    	conectionData.email=email;
+	    	conectionData.cm=coursemodule;
+	    	conectionData.userid=userid;
+
+	    	// We emit a joinserver event with the connection data
+	    	$wnd.socket.emit("joinserver", JSON.stringify(conectionData));	
+	 	}); 
+	}-*/;
+
+	/**
+	 * This event is linked to the userJoin (emit)
+	 * @param connectedUsers a collection of one UserData per connected user
+	 */
+	private void onJoinServer(JsArray<UserData> connectedUsers) {
+		// Add every user to the interface
+		for(int i=0;i<connectedUsers.length();i++) {
+			EMarkingWeb.markingInterface.chat.addUser(connectedUsers.get(i));
 		}
-
+		// Load previous messages
+		EMarkingWeb.markingInterface.chat.loadHistoryMessages();
 	}
 
-	private void onRemoveChatUser(UserData user){
-
-		EMarkingWeb.markingInterface.chat.removeUser(Integer.parseInt(user.getId()));
-
+	/**
+	 * Called if a message was sent to our room in NodeJS
+	 * 
+	 * @param message Message object
+	 */
+	private void onSendMessage(Message message) {
+		Date today = dateFromUnixTime(message.getTime());
+		EMarkingWeb.markingInterface.chat.addMessage(today, Integer.parseInt(message.getUserId()), message.getMessage());
 	}
 
-	public native void onSendMessage(String message, int source, int messageid) /*-{
+	/**
+	 * This event is linked to the disconnect from NodeJs
+	 * @param user
+	 */
+	private void onDisconnect(UserData user) {
+		EMarkingWeb.markingInterface.chat.removeUser(user);
+	}
+
+	/**
+	 * Sends a message to NodeJS
+	 * @param userid the user sending the message
+	 * @param message the message
+	 * @param source the subroom to where it belongs (wall, sos or chat)
+	 */
+	public native void sendMessage(int userid, String message, int source) /*-{
 	   var msn={};
+	   msn.userid=userid;
 	   msn.source=source;
 	   msn.message=message;
-	   msn.messageid=messageid;
 
-	   $wnd.socket.emit("onSendMessage",JSON.stringify(msn));
-
-
+	   $wnd.socket.emit("sendmessage", JSON.stringify(msn));
 	}-*/;
 
-	//////////////////////////////INTERFAZ/////////////////////////////////////////
-
-
-
-
-	/////////////////////////funciones para unir información node y gwt/////////////////
-
-	public  native void onSendSos(String comment, int urgencyLevel) /*-{
-	   var data={};
-	   data.urgencyLevel=urgencyLevel;
-	   data.comment=comment;
-	   $wnd.socket.emit("onSendSos",JSON.stringify(data));
-
-
-	}-*/;
-
-	public void setCoursemodule(int coursemodule) {
-		this.coursemodule = coursemodule;
+	/**
+	 * Converts a sting containing a unix time to Date
+	 * 
+	 * @param unixtime
+	 * @return
+	 */
+	public static Date dateFromUnixTime(String unixtime) {
+		int timeCreated= Integer.parseInt(unixtime);
+		return dateFromUnixTime(timeCreated);
 	}
 
-	public void setDraftid(int draftid) {
-		this.draftid = draftid;
+	/**
+	 * Converts an int containing a unix time to Date
+	 * 
+	 * @param unixtime
+	 * @return
+	 */
+	public static Date dateFromUnixTime(int unixtime) {
+		long unixTime = (long) (unixtime/.001);
+		Date today = new Date(unixTime);
+		return today;
 	}
-	
-	public void setUserid(int userid) {
-		this.userid = userid;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
-	}
-	
-	private void userJoin(UserData user, JsArray<UserData> people) {
-
-
-		EMarkingWeb.markingInterface.chat.addHistoryMessages();
-		EMarkingWeb.markingInterface.wall.addHistoryMessages();
-		EMarkingWeb.markingInterface.help.addHistorySos();
-
-		for(int i=0;i<people.length();i++){
-			if(people.get(i).getName().equals(user.getName())|| people.get(i).getRoom()!=user.getRoom())continue;
-			EMarkingWeb.markingInterface.chat.adduser(people.get(i).getName(),Integer.parseInt(people.get(i).getId()),people.get(i).getColor());
-
-		}
-
-		EMarkingWeb.markingInterface.chat.adduser(user.getName(),Integer.parseInt(user.getId()),1);
-	}
-
-
-
 
 
 }

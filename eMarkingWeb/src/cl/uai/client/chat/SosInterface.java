@@ -1,6 +1,7 @@
 package cl.uai.client.chat;
 
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;
@@ -51,7 +52,7 @@ public class SosInterface extends DialogBox {
 		public void onClick(ClickEvent event) {
 			// TODO Auto-generated method stub
 			createSos(textArea.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
-			EMarkingWeb.chatServer.onSendSos(textArea.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
+			EMarkingWeb.chatServer.sendMessage(MarkingInterface.submissionData.getMarkerid(), textArea.getText(), Integer.parseInt(urgencyLevel.getSelectedItemText()));
 			textArea.setText("");
 			hide();
 		}
@@ -65,9 +66,9 @@ public class SosInterface extends DialogBox {
 	public void createSos(String message,int urgencyLevel) {
 		String params= "&message=" + message + 
 				"&source=" + source + 
-				"&userid=" + EMarkingWeb.chatServer.getUserid() + 
-				"&room=" + EMarkingWeb.chatServer.getCoursemodule() + 
-				"&draftid=" + EMarkingWeb.chatServer.getDraftid() + 
+				"&userid=" + MarkingInterface.submissionData.getMarkerid() + 
+				"&room=" + MarkingInterface.submissionData.getCoursemoduleid() + 
+				"&draftid=" + MarkingInterface.getSubmissionId() + 
 				"&urgencylevel=" + urgencyLevel + 
 				"&status=1";
 		

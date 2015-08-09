@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
 import cl.uai.client.buttons.BubbleButton;
 import cl.uai.client.buttons.ShowChatButton;
 import cl.uai.client.buttons.ShowHelpButton;
@@ -38,6 +39,7 @@ import cl.uai.client.chat.ChatInterface;
 import cl.uai.client.chat.NodeChat;
 import cl.uai.client.chat.SosInterface;
 import cl.uai.client.chat.HelpInterface;
+import cl.uai.client.chat.WallInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
@@ -52,6 +54,7 @@ import cl.uai.client.resources.EmarkingMessages;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.rubric.RubricInterface;
 import cl.uai.client.toolbar.MarkingToolBar;
+
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.base.ProgressBarBase;
@@ -141,7 +144,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** Show buttons **/
 	private List<BubbleButton> bubbleButtons = null;
-	
+
 	public ChatInterface chat;
 	public WallInterface wall;
 	public SosInterface sos;
@@ -308,9 +311,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public HTML getShowRubricButton() {
 		return this.bubbleButtons.get(0);
 	}
-	
-	/** Get Course Module of actual eMarking **/
-	private static int coursemodule = 0;
+
 	/**
 	/**
 	 * 
@@ -371,7 +372,7 @@ public class MarkingInterface extends EMarkingComposite {
 		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
 
 		bubbleButtons = new ArrayList<BubbleButton>();
-		
+
 		bubbleButtons.add(new ShowRubricButton(Window.getClientWidth()-40, 0));
 		bubbleButtons.add(new ShowChatButton(Window.getClientWidth()-40, 40));
 		bubbleButtons.add(new ShowWallButton(Window.getClientWidth()-40, 80));
@@ -383,7 +384,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
-		
+
 		for(BubbleButton b : bubbleButtons) {
 			markingPanel.add(b);
 		}
@@ -892,6 +893,10 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
 
+		if(MarkingInterface.getCollaborativeFeatures()) {
+			activateChat();
+		}
+
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(showRubricOnLoad);
 
@@ -960,6 +965,7 @@ public class MarkingInterface extends EMarkingComposite {
 					submissionData.setFeedback(values.get("feedback"));
 					submissionData.setCustommarks(values.get("custommarks"));
 					submissionData.setQualitycontrol(values.get("qualitycontrol").equals("1"));
+					submissionData.setCoursemoduleid(Integer.parseInt(values.get("coursemodule")));
 				} catch(Exception e) {
 					// If something goes wrong, data is invalid and we can't work with it
 					logger.severe("Exception parsing submission data.");
@@ -1085,9 +1091,6 @@ public class MarkingInterface extends EMarkingComposite {
 
 					logger.fine("Link rubric: " + coloredRubric);
 
-					//Give the Course Module of actual eMarking
-					coursemodule=Integer.parseInt(value.get("cm"));
-
 					// Collaborative features (chat, wall) if configured as
 					collaborativefeatures = value.get("collaborativefeatures").equals("1");
 
@@ -1120,9 +1123,6 @@ public class MarkingInterface extends EMarkingComposite {
 					// Obtain the nodejs path from Moodle configuration
 					nodejspath = value.get("nodejspath");
 
-					activateChat();
-
-
 					//Get progress marking status
 					totalTests = Integer.parseInt(value.get("totalTests"));
 					inProgressTests = Integer.parseInt(value.get("inProgressTests"));
@@ -1137,7 +1137,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 					// Load submission data
 					loadSubmissionData();
-					
+
 					focusPanel.getElement().focus();
 
 					// Schedule heartbeat if configured as
@@ -1156,40 +1156,44 @@ public class MarkingInterface extends EMarkingComposite {
 	private void activateChat() {
 
 		final String nodepath = nodejspath + "/socket.io/socket.io.js";
-		
-		if(getCollaborativeFeatures()) {
 
-			ScriptInjector.fromUrl(nodepath).setCallback(new Callback<Void, Exception>() {
+		ScriptInjector.fromUrl(nodepath).setCallback(new Callback<Void, Exception>() {
 
-				@Override
-				public void onFailure(Exception reason) {
-					logger.severe("Could not find node server " + nodepath);
-					
+			@Override
+			public void onFailure(Exception reason) {
+				logger.severe("Could not find node server " + nodepath);
+
+				MarkingInterface.setCollaborativeFeatures(false);
+				for(BubbleButton b : bubbleButtons) {
+					if(!(b instanceof ShowRubricButton)) {
+						b.setVisible(false);
+					}
+				}
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				try {
+					chat = new ChatInterface();
+					wall = new WallInterface();
+					sos = new SosInterface();
+					help = new HelpInterface();
+
+					EMarkingWeb.chatServer = 
+							new NodeChat();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.severe("Fatal error trying to load NodeJS. Disabling collaborative features.");
+					MarkingInterface.setCollaborativeFeatures(false);
 					for(BubbleButton b : bubbleButtons) {
 						if(!(b instanceof ShowRubricButton)) {
 							b.setVisible(false);
 						}
 					}
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					EMarkingWeb.chatServer = 
-							new NodeChat(
-									realUsername,
-									userID,
-									coursemodule,
-									userRole,
-									getSubmissionId());					
-
-					chat = new ChatInterface();
-					wall = new WallInterface();
-					sos = new SosInterface();
-					help = new HelpInterface();
-				}
-			}).inject();
-
-		}
+				}					
+			}
+		}).inject();
 	}
 
 	public void regradeMark(final RubricMark mark, final String comment, final int motive) {

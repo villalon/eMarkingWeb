@@ -858,15 +858,18 @@ background-color: #0057D9;
  	line-height: 20px;
 }
 .chatusers{
-	font-size:2em; 
+	font-size:16px;
+	font-weight: bold; 
+	
 	height:30px;
+    width: 30px;
+    
 	text-align: center;
 	vertical-align: middle;
-	width: 30px;
 	border-radius: 50%;
-	display: table-cell;
 	line-height: 30px;
-	
+	box-shadow: 1px 1px 5px #888888;
+	text-shadow: rgba(255, 255, 255, .5) 0 1px 0;
 }
 .chaticonmessage{
 	position: static;
@@ -884,4 +887,44 @@ background-color: #c0c0c0;
 
 .chatTextarea { 
     resize: none; 
+}
+
+.chatauthor {
+    font-size: 10px;
+    /* font-weight: bold; */
+    width: 20px;
+    margin: 6px 2px 3px 2px;
+    text-align: center;
+    border-radius: 50%;
+    box-shadow: 1px 1px 5px #888888
+}
+
+.chatmessage {
+    font-size: 10px;
+    border: 1px solid #557;
+    padding: 1px;
+    max-width: 140px;
+    margin: 2px 2px 3px 2px;
+    border-radius: 2px;
+    color: #373e4d;
+    text-shadow: rgba(255, 255, 255, .5) 0 1px 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.chatownmessage {
+    background-color: #dbedfe;
+    background-image: -webkit-linear-gradient(bottom, #c7defe, #e7f1fe);
+}
+
+.chatothersmessage {
+    background-color: #f6f7f8;
+}
+.chatmessages {
+    width: 100%;
+}
+
+.chatdialog {
+    padding: 0px;
+    background-color: #eee;
 }

@@ -6,28 +6,16 @@ public class Message extends JavaScriptObject{
 
 	protected Message(){}
 		
-		public final native int getId() /*-{ 
-	 	return this.id;
-	 	 }-*/;
 		 public final native String getMessage() /*-{ 
 		 	return this.message;
-		 	 }-*/;
-		 public final native String getUser() /*-{ 
-		 	return this.username; 
-		 	}-*/;
-		 public final native int getRoom() /*-{ 
-		 	return this.room; 
-		 	}-*/;
+		 }-*/;
+		 public final native String getUserId() /*-{ 
+		 	return this.userid; 
+		 }-*/;
 		 public final native int getTime() /*-{ 
 		 	return this.time;
-		 	 }-*/;
-		 public final native int getColor() /*-{ 
-		 	return this.color;
-		 	 }-*/;
+		 }-*/;
 		 public final native int getSource() /*-{ 
 		 	return this.source;
-		 	 }-*/;
-		 
-		
-	
+		 }-*/;
 }

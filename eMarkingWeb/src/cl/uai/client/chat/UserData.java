@@ -4,21 +4,25 @@ import com.google.gwt.core.client.JavaScriptObject;
 
 public class UserData extends JavaScriptObject{
 
-	protected UserData (){}
-		 public final native int getRoom() /*-{ 
-		 	return this.room;
-		 	 }-*/;
-		 public final native String getName() /*-{ 
-		 	return this.username; 
-		 	}-*/;
-		 public final native String getId() /*-{ 
-		 	return this.userid; 
-		 	}-*/;
-		 public final native int getColor() /*-{ 
-		 	return this.color; 
-		 	}-*/;
-	}
-
-
+	protected UserData() {}
 	
+	public final native String getFirstName() /*-{ 
+	 	return this.first; 
+	}-*/;
+	
+	public final native String getLastName() /*-{ 
+ 		return this.last; 
+ 	}-*/;
+	
+	public final native String getEmail() /*-{ 
+ 		return this.email; 
+ 	}-*/;
+	
+	public final native String getId() /*-{ 
+		return this.userid; 
+	}-*/;
+}
+
+
+
 

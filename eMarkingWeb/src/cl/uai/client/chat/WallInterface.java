@@ -1,7 +1,5 @@
-package cl.uai.client;
+package cl.uai.client.chat;
 
-import cl.uai.client.chat.ChatInterface;
-import cl.uai.client.chat.NodeChat;
 
 public class WallInterface extends ChatInterface {
 

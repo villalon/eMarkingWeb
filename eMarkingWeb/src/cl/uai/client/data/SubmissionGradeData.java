@@ -43,8 +43,21 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class SubmissionGradeData {
 
-	Logger logger = Logger.getLogger(SubmissionGradeData.class.getName());
+	public static String getRegradeMotiveText(int motiveid) {
+		switch(motiveid) {
+		case 1:
+			return MarkingInterface.messages.MissassignedScore();
+		case 2:
+			return MarkingInterface.messages.UnclearFeedback();
+		case 3:
+			return MarkingInterface.messages.StatementProblem();
+		case 10:
+		default:
+			return MarkingInterface.messages.Other();
+		}
+	}
 	
+	Logger logger = Logger.getLogger(SubmissionGradeData.class.getName());
 	private int id;
 	private float finalgrade;
 	private float grademin;
@@ -62,103 +75,66 @@ public class SubmissionGradeData {
 	private String markerlastname;
 	private String markeremail;
 	private String activityname;
+	private int coursemoduleid;
 	private String feedback;
+
 	private String rubricname;
+
 	private String custommarks;
 	private boolean supervisor;
 	private boolean qualitycontrol;
-
-	public boolean isSupervisor() {
-		return supervisor;
-	}
-
-	public void setSupervisor(boolean supervisor) {
-		this.supervisor = supervisor;
-	}
 	private Date datecreated;
+
 	private Date datemodified;
 
 	private boolean regraderestrictdates;
 	private Date regradeopendate;
-	
-	public boolean isRegradingAllowed() {
-		if(!regraderestrictdates)
-			return true;
-		
-		Date now = new Date();
-		if(regradeopendate.before(now) && regradeclosedate.after(now))
-			return true;
-		
-		return false;
-	}
-	
-	/**
-	 * @return the regraderestrictdates
-	 */
-	public boolean isRegraderestrictdates() {
-		return regraderestrictdates;
-	}
-	
-	/**
-	 * @param regraderestrictdates the regraderestrictdates to set
-	 */
-	public void setRegraderestrictdates(boolean regraderestrictdates) {
-		this.regraderestrictdates = regraderestrictdates;
-	}
-	
-	/**
-	 * @return the regradeopendate
-	 */
-	public Date getRegradeopendate() {
-		return regradeopendate;
-	}
-	
-	/**
-	 * @param regradeopendate the regradeopendate to set
-	 */
-	public void setRegradeopendate(Date regradeopendate) {
-		this.regradeopendate = regradeopendate;
-	}
-	
-	/**
-	 * @return the regradeclosedate
-	 */
-	public Date getRegradeclosedate() {
-		return regradeclosedate;
-	}
-	
-	/**
-	 * @param regradeclosedate the regradeclosedate to set
-	 */
-	public void setRegradeclosedate(Date regradeclosedate) {
-		this.regradeclosedate = regradeclosedate;
-	}
-	private Date regradeclosedate;	
+	private Date regradeclosedate;
 
 	/** Rubric definition **/
 	private SortedMap<Integer, Criterion> rubricdefinition = null;
-
 	public String getActivityname() {
 		return activityname;
 	}
+	
 	public int getCourseid() {
 		return courseid;
 	}
+	
+	public int getCoursemoduleid() {
+		return coursemoduleid;
+	}
+	
 	public String getCoursename() {
 		return coursename;
 	}
+	
 	public String getCourseshort() {
 		return courseshort;
 	}
+	
+	public String getCustommarks() {
+		return custommarks;
+	}
+	
 	public Date getDatecreated() {
 		return datecreated;
 	}
+	
 	public Date getDatemodified() {
 		return datemodified;
 	}
 	public String getEmail() {
 		return email;
+	}	
+
+	/**
+	 * @return the feedback
+	 */
+	public String getFeedback() {
+		return feedback;
 	}
+
 	public float getFinalgrade() {
 		return finalgrade;
 	}
@@ -177,6 +153,15 @@ public class SubmissionGradeData {
 	public String getLastname() {
 		return lastname;
 	}
+	public Level getLevelById(int lvlid) {
+		for(Criterion criterion : rubricdefinition.values()) {
+			for(Level lvl : criterion.getLevels().values()) {
+				if(lvl.getId() == lvlid)
+					return lvl;
+			}
+		}
+		return null;
+	}
 	public String getMarkeremail() {
 		return markeremail;
 	}
@@ -189,8 +174,26 @@ public class SubmissionGradeData {
 	public String getMarkerlastname() {
 		return markerlastname;
 	}
+	/**
+	 * @return the regradeclosedate
+	 */
+	public Date getRegradeclosedate() {
+		return regradeclosedate;
+	}
+	/**
+	 * @return the regradeopendate
+	 */
+	public Date getRegradeopendate() {
+		return regradeopendate;
+	}
 	public Map<Integer, Criterion> getRubricfillings() {
 		return rubricdefinition;
+	}
+	/**
+	 * @return the rubricname
+	 */
+	public String getRubricname() {
+		return rubricname;
 	}
 	public Map<Integer, Criterion> getSortedRubricfillings() {
 		SortedMap<Integer, Criterion> map = new TreeMap<Integer, Criterion>();
@@ -206,6 +209,32 @@ public class SubmissionGradeData {
 	public boolean isIsgraded() {
 		return isgraded;
 	}
+	/**
+	 * @return the qualitycontrol
+	 */
+	public boolean isQualitycontrol() {
+		return qualitycontrol;
+	}
+	/**
+	 * @return the regraderestrictdates
+	 */
+	public boolean isRegraderestrictdates() {
+		return regraderestrictdates;
+	}
+	public boolean isRegradingAllowed() {
+		if(!regraderestrictdates)
+			return true;
+		
+		Date now = new Date();
+		if(regradeopendate.before(now) && regradeclosedate.after(now))
+			return true;
+		
+		return false;
+	}
+	public boolean isSupervisor() {
+		return supervisor;
+	}
+	
 	public void loadRubricFromMap() {
 
 		EMarkingWeb.markingInterface.addLoading(false);
@@ -293,27 +322,23 @@ public class SubmissionGradeData {
 			}
 		});
 	}
-	
-	public Level getLevelById(int lvlid) {
-		for(Criterion criterion : rubricdefinition.values()) {
-			for(Level lvl : criterion.getLevels().values()) {
-				if(lvl.getId() == lvlid)
-					return lvl;
-			}
-		}
-		return null;
-	}
 	public void setActivityname(String activityname) {
 		this.activityname = activityname;
 	}
 	public void setCourseid(int courseid) {
 		this.courseid = courseid;
 	}
+	public void setCoursemoduleid(int coursemoduleid) {
+		this.coursemoduleid = coursemoduleid;
+	}
 	public void setCoursename(String coursename) {
 		this.coursename = coursename;
 	}
 	public void setCourseshort(String courseshort) {
 		this.courseshort = courseshort;
+	}
+	public void setCustommarks(String custommarks) {
+		this.custommarks = custommarks;
 	}
 	public void setDatecreated(long datecreated) {
 		this.datecreated = new Date(datecreated * 1000);
@@ -323,6 +348,12 @@ public class SubmissionGradeData {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	/**
+	 * @param feedback the feedback to set
+	 */
+	public void setFeedback(String feedback) {
+		this.feedback = feedback;
 	}
 	public void setFinalgrade(float finalgrade) {
 		this.finalgrade = finalgrade;
@@ -336,9 +367,11 @@ public class SubmissionGradeData {
 	public void setGrademin(float grademin) {
 		this.grademin = grademin;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public void setIsgraded(boolean isgraded) {
 		this.isgraded = isgraded;
 	}
@@ -356,72 +389,48 @@ public class SubmissionGradeData {
 	public void setMarkerid(int markerid) {
 		this.markerid = markerid;
 	}
-
 	public void setMarkerlastname(String markerlastname) {
 		this.markerlastname = markerlastname;
 	}
-
-	public void setStudentid(int studentid) {
-		this.studentid = studentid;
+	/**
+	 * @param qualitycontrol the qualitycontrol to set
+	 */
+	public void setQualitycontrol(boolean qualitycontrol) {
+		this.qualitycontrol = qualitycontrol;
 	}
 	/**
-	 * @return the feedback
+	 * @param regradeclosedate the regradeclosedate to set
 	 */
-	public String getFeedback() {
-		return feedback;
+	public void setRegradeclosedate(Date regradeclosedate) {
+		this.regradeclosedate = regradeclosedate;
 	}
+	
 	/**
-	 * @param feedback the feedback to set
+	 * @param regradeopendate the regradeopendate to set
 	 */
-	public void setFeedback(String feedback) {
-		this.feedback = feedback;
+	public void setRegradeopendate(Date regradeopendate) {
+		this.regradeopendate = regradeopendate;
 	}
+	
 	/**
-	 * @return the rubricname
+	 * @param regraderestrictdates the regraderestrictdates to set
 	 */
-	public String getRubricname() {
-		return rubricname;
+	public void setRegraderestrictdates(boolean regraderestrictdates) {
+		this.regraderestrictdates = regraderestrictdates;
 	}
+	
 	/**
 	 * @param rubricname the rubricname to set
 	 */
 	public void setRubricname(String rubricname) {
 		this.rubricname = rubricname;
 	}
-	
-	public String getCustommarks() {
-		return custommarks;
-	}
-	
-	public void setCustommarks(String custommarks) {
-		this.custommarks = custommarks;
-	}
-	
-	public static String getRegradeMotiveText(int motiveid) {
-		switch(motiveid) {
-		case 1:
-			return MarkingInterface.messages.MissassignedScore();
-		case 2:
-			return MarkingInterface.messages.UnclearFeedback();
-		case 3:
-			return MarkingInterface.messages.StatementProblem();
-		case 10:
-		default:
-			return MarkingInterface.messages.Other();
-		}
+
+	public void setStudentid(int studentid) {
+		this.studentid = studentid;
 	}
 
-	/**
-	 * @return the qualitycontrol
-	 */
-	public boolean isQualitycontrol() {
-		return qualitycontrol;
-	}
-
-	/**
-	 * @param qualitycontrol the qualitycontrol to set
-	 */
-	public void setQualitycontrol(boolean qualitycontrol) {
-		this.qualitycontrol = qualitycontrol;
+	public void setSupervisor(boolean supervisor) {
+		this.supervisor = supervisor;
 	}
 }

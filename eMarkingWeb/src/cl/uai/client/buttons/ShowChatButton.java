@@ -13,6 +13,7 @@ public class ShowChatButton extends BubbleButton {
 	
 	@Override
 	public void onButtonClick(ClickEvent event) {
+		EMarkingWeb.markingInterface.chat.center();
 		EMarkingWeb.markingInterface.chat.show();
 	}
 }

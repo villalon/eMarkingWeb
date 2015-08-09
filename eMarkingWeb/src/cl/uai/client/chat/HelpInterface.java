@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
@@ -59,8 +58,8 @@ public class HelpInterface extends DialogBox {
 	
 	public void addHistorySos() {
 
-		String params= "&ids=" + EMarkingWeb.chatServer.getDraftid() + 
-				"&room=" + EMarkingWeb.chatServer.getCoursemodule() + 
+		String params= "&ids=" + MarkingInterface.getSubmissionId() + 
+				"&room=" + MarkingInterface.submissionData.getCoursemoduleid() + 
 				"&source=" + source;
 		
 		AjaxRequest.ajaxRequest("action=getchathistory"+ params, new AsyncCallback<AjaxData>() {
