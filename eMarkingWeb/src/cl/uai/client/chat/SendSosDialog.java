@@ -1,14 +1,10 @@
 package cl.uai.client.chat;
 
 import cl.uai.client.EMarkingWeb;
-import cl.uai.client.MarkingInterface;
-import cl.uai.client.data.AjaxData;
-import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
@@ -17,15 +13,12 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
-public class SosInterface extends DialogBox {
+public class SendSosDialog extends DialogBox {
 	
 	private VerticalPanel vPanel;
 	private TextArea textArea;
-	private int source=0;
 	
-	public SosInterface(){
-
-		this.source = NodeChat.SOURCE_SOS;
+	public SendSosDialog(){
 
 	vPanel = new VerticalPanel();
 	textArea = new TextArea();
@@ -50,10 +43,8 @@ public class SosInterface extends DialogBox {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			// TODO Auto-generated method stub
-			createSos(textArea.getText(),Integer.parseInt(urgencyLevel.getSelectedItemText()));
-			EMarkingWeb.chatServer.sendMessage(MarkingInterface.submissionData.getMarkerid(), textArea.getText(), Integer.parseInt(urgencyLevel.getSelectedItemText()));
-			textArea.setText("");
+			EMarkingWeb.markingInterface.help.sendMessage(textArea.getValue(), Integer.parseInt(urgencyLevel.getSelectedValue()), 1);
+			textArea.setValue(null);
 			hide();
 		}
 	}); 
@@ -61,28 +52,5 @@ public class SosInterface extends DialogBox {
 		this.setAutoHideEnabled(true);
 	    this.add(vPanel);
 	     
-	}
-	
-	public void createSos(String message,int urgencyLevel) {
-		String params= "&message=" + message + 
-				"&source=" + source + 
-				"&userid=" + MarkingInterface.submissionData.getMarkerid() + 
-				"&room=" + MarkingInterface.submissionData.getCoursemoduleid() + 
-				"&draftid=" + MarkingInterface.getSubmissionId() + 
-				"&urgencylevel=" + urgencyLevel + 
-				"&status=1";
-		
-		AjaxRequest.ajaxRequest("action=addchatmessage"+ params, new AsyncCallback<AjaxData>() {
-			@Override
-			public void onSuccess(AjaxData result) {				
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
-	}
-	
-	
-	
-
+	}	
 }

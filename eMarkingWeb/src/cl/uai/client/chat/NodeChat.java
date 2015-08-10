@@ -43,9 +43,6 @@ public class NodeChat {
 	public static int SOURCE_WALL = 2;
 	public static int SOURCE_SOS = 3;
 
-	public static int SOURCE_HELP= 3; // TODO: Wtf?
-
-
 	/**
 	 * NodeChat constructor, representing a connection to the NodeJs server
 	 */
@@ -124,19 +121,33 @@ public class NodeChat {
 		// Add every user to the interface
 		for(int i=0;i<connectedUsers.length();i++) {
 			EMarkingWeb.markingInterface.chat.addUser(connectedUsers.get(i));
+			EMarkingWeb.markingInterface.wall.addUser(connectedUsers.get(i));
+			EMarkingWeb.markingInterface.help.addUser(connectedUsers.get(i));
 		}
 		// Load previous messages
 		EMarkingWeb.markingInterface.chat.loadHistoryMessages();
+		EMarkingWeb.markingInterface.wall.loadHistoryMessages();
+		EMarkingWeb.markingInterface.help.loadHistoryMessages();
 	}
 
 	/**
 	 * Called if a message was sent to our room in NodeJS
 	 * 
 	 * @param message Message object
+	 * @throws Exception 
 	 */
-	private void onSendMessage(Message message) {
+	private void onSendMessage(Message message) throws Exception {
 		Date today = dateFromUnixTime(message.getTime());
-		EMarkingWeb.markingInterface.chat.addMessage(today, Integer.parseInt(message.getUserId()), message.getMessage());
+		int userid = Integer.parseInt(message.getUserId());
+		if(message.getSource() == NodeChat.SOURCE_CHAT) {
+			EMarkingWeb.markingInterface.chat.addMessage(today, userid, message.getMessage());
+		} else if(message.getSource() == NodeChat.SOURCE_WALL) {
+			EMarkingWeb.markingInterface.wall.addMessage(today, Integer.parseInt(message.getUserId()), message.getMessage());
+		} else if(message.getSource() == NodeChat.SOURCE_SOS) {
+			EMarkingWeb.markingInterface.help.addMessage(today, userid, message.getMessage(), message.getDraftId(), message.getStatus(), message.getUrgency());
+		} else {
+			logger.severe("Something is very wrong");
+		}
 	}
 
 	/**
@@ -152,12 +163,18 @@ public class NodeChat {
 	 * @param userid the user sending the message
 	 * @param message the message
 	 * @param source the subroom to where it belongs (wall, sos or chat)
+	 * @param draftid draft id
+	 * @param status the help status
+	 * @param urgency the urgency level
 	 */
-	public native void sendMessage(int userid, String message, int source) /*-{
+	public native void sendMessage(int userid, String message, int source, int draftid, int status, int urgency) /*-{
 	   var msn={};
 	   msn.userid=userid;
 	   msn.source=source;
 	   msn.message=message;
+	   msn.draftid=draftid;
+	   msn.status=status;
+	   msn.urgency=urgency;
 
 	   $wnd.socket.emit("sendmessage", JSON.stringify(msn));
 	}-*/;

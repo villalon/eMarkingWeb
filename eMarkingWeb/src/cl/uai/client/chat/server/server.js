@@ -82,19 +82,19 @@ io.sockets.on("connection", function (socket) {
 	socket.on("sendmessage", function(data) {
 		var data= JSON.parse(data);
 		
-		var message=data.message;
-		var source =data.source;
-
 		var obj={};
-		obj.time=unixtime();
-		obj.message=message;
-		obj.userid=socket.userid;
-		obj.source=source;
+		obj.time=unixtime();		// Always
+		obj.userid=socket.userid;	// Since connected
+		obj.message=data.message;	// Per message, all messages have it
+		obj.source=data.source;		// Per message, all messages have it
+		obj.draftid=data.draftid;	// Only SOS have it
+		obj.status=data.status;		// Only SOS have it
+		obj.urgency=data.urgency;	// Only SOS have it
 
 		// Broadcast to the room
 		io.to(socket.room).emit("onSendMessage", JSON.stringify(obj));//solo envia un mensaje
 		
-		console.log(logtime() + socket.first + " " + socket.last + " in room " + socket.room + " has sent message: " + message);
+		console.log(logtime() + socket.first + " " + socket.last + " in room " + socket.room + " has sent message: " + data.message);
 
 
 	});

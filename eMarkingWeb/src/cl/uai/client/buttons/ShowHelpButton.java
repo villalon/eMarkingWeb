@@ -13,6 +13,7 @@ public class ShowHelpButton extends BubbleButton {
 	
 	@Override
 	public void onButtonClick(ClickEvent event) {
+		EMarkingWeb.markingInterface.help.center();
 		EMarkingWeb.markingInterface.help.show();
 	}
 }

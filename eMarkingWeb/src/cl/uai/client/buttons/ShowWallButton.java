@@ -13,6 +13,7 @@ public class ShowWallButton extends BubbleButton {
 	
 	@Override
 	public void onButtonClick(ClickEvent event) {
+		EMarkingWeb.markingInterface.wall.center();
 		EMarkingWeb.markingInterface.wall.show();
 	}
 }

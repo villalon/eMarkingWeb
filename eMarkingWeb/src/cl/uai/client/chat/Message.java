@@ -18,4 +18,13 @@ public class Message extends JavaScriptObject{
 		 public final native int getSource() /*-{ 
 		 	return this.source;
 		 }-*/;
+		 public final native int getDraftId() /*-{ 
+		 	return this.draftid;
+		 }-*/;
+		 public final native int getUrgency() /*-{ 
+		 	return this.urgency;
+		 }-*/;
+		 public final native int getStatus() /*-{ 
+		 	return this.status;
+		 }-*/;
 }

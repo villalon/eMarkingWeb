@@ -209,4 +209,6 @@ public interface EmarkingCss extends CssResource {
 	String chatmessages();
 	String chatownmessage();
 	String chatothersmessage();
+	String chatscrollmessages();
+	String chatmainpanel();
 }

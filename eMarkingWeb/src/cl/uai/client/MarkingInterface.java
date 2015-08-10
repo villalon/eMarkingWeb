@@ -33,11 +33,10 @@ import cl.uai.client.buttons.BubbleButton;
 import cl.uai.client.buttons.ShowChatButton;
 import cl.uai.client.buttons.ShowHelpButton;
 import cl.uai.client.buttons.ShowRubricButton;
-import cl.uai.client.buttons.ShowSosButton;
 import cl.uai.client.buttons.ShowWallButton;
 import cl.uai.client.chat.ChatInterface;
 import cl.uai.client.chat.NodeChat;
-import cl.uai.client.chat.SosInterface;
+import cl.uai.client.chat.SendSosDialog;
 import cl.uai.client.chat.HelpInterface;
 import cl.uai.client.chat.WallInterface;
 import cl.uai.client.data.AjaxData;
@@ -147,7 +146,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	public ChatInterface chat;
 	public WallInterface wall;
-	public SosInterface sos;
+	public SendSosDialog sos;
 	public HelpInterface help;
 
 	/**
@@ -374,10 +373,9 @@ public class MarkingInterface extends EMarkingComposite {
 		bubbleButtons = new ArrayList<BubbleButton>();
 
 		bubbleButtons.add(new ShowRubricButton(Window.getClientWidth()-40, 0));
-		bubbleButtons.add(new ShowChatButton(Window.getClientWidth()-40, 40));
-		bubbleButtons.add(new ShowWallButton(Window.getClientWidth()-40, 80));
-		bubbleButtons.add(new ShowSosButton(Window.getClientWidth()-40, 120));
-		bubbleButtons.add(new ShowHelpButton(Window.getClientWidth()-40, 160));
+		bubbleButtons.add(new ShowChatButton(Window.getClientWidth()-40, 45));
+		bubbleButtons.add(new ShowWallButton(Window.getClientWidth()-40, 90));
+		bubbleButtons.add(new ShowHelpButton(Window.getClientWidth()-40, 135));
 
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
@@ -893,10 +891,6 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.add(rubricInterface);
 		interfacePanel.setCellWidth(rubricInterface, "40%");
 
-		if(MarkingInterface.getCollaborativeFeatures()) {
-			activateChat();
-		}
-
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(showRubricOnLoad);
 
@@ -1010,6 +1004,10 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 
 				Window.setTitle("e-marking " + submissionData.getCoursename() + " " + submissionData.getActivityname());
+
+				if(MarkingInterface.getCollaborativeFeatures()) {
+					activateChat();
+				}
 
 				finishLoading();
 				Window.addResizeHandler(new ResizeHandler() {			
@@ -1174,9 +1172,13 @@ public class MarkingInterface extends EMarkingComposite {
 			@Override
 			public void onSuccess(Void result) {
 				try {
+					
+					if(EMarkingWeb.chatServer != null)
+						return;
+					
 					chat = new ChatInterface();
 					wall = new WallInterface();
-					sos = new SosInterface();
+					sos = new SendSosDialog();
 					help = new HelpInterface();
 
 					EMarkingWeb.chatServer = 

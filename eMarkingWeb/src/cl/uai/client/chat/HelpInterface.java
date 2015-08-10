@@ -1,118 +1,57 @@
 package cl.uai.client.chat;
 
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
+import java.util.Date;
 
-import cl.uai.client.MarkingInterface;
-import cl.uai.client.data.AjaxData;
-import cl.uai.client.data.AjaxRequest;
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-public class HelpInterface extends DialogBox {
+public class HelpInterface extends ChatInterface {
 	
-	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
-
-	private int source=0;
-	private VerticalPanel vpanel;
-	private ScrollPanel scrollMessagesPanel;
+	private Icon[] urgencyIcons = {
+			new Icon(IconType.FIRE),
+			new Icon(IconType.FIRE),
+			new Icon(IconType.UMBRELLA),
+			new Icon(IconType.TINT),
+			new Icon(IconType.TINT),
+	};
 	
+	private Icon[] statusIcons = {
+			new Icon(IconType.CHECK),
+			new Icon(IconType.CHECK_EMPTY),
+	};
 	
 	public HelpInterface() {
+		super();
 		
-		this.source = NodeChat.SOURCE_HELP;
-		
-		// Dialog parameters
-		this.setAutoHideEnabled(true);
-		this.setAnimationEnabled(true);
-		this.setModal(true);
-
-		
-
-		// Vertical panel that contains everything
-		vpanel = new VerticalPanel(); 
-		
-
-		scrollMessagesPanel = new ScrollPanel(vpanel);
-		scrollMessagesPanel.setSize("270px", "233px");
-		scrollMessagesPanel.scrollToBottom();
-
-		
-		this.add(vpanel);
-		
-		
-		
+		this.source = NodeChat.SOURCE_SOS;
+		this.sendMessageTextArea.setVisible(false);
 	}
 	
-	public void setSource(int source){
-
-		this.source=source;
-
+	@Override
+	public HorizontalPanel addMessage(Date date, int userid, String message) throws Exception {
+		throw new Exception("Invalid call");
 	}
 	
-	public void addHistorySos() {
-
-		String params= "&ids=" + MarkingInterface.getSubmissionId() + 
-				"&room=" + MarkingInterface.submissionData.getCoursemoduleid() + 
-				"&source=" + source;
+	public HorizontalPanel addMessage(Date date, int userid, String message, int draftid, int status, int urgency) throws Exception {
+		HorizontalPanel hpanel = super.addMessage(date, userid, message);
 		
-		AjaxRequest.ajaxRequest("action=getchathistory"+ params, new AsyncCallback<AjaxData>() {
-			@Override
-			public void onSuccess(AjaxData result) {
+		// draft id
+		Icon icon = new Icon(IconType.SIGNIN);
+		hpanel.add(new HTML("<a href=\"#\">"+icon.toString()+"</a>")); ;
+		// status
+		Icon iconStatus = statusIcons[status];
+		hpanel.add(new HTML(iconStatus.toString()));
+		// urgency level
+		Icon iconUrgency = urgencyIcons[urgency];
+		hpanel.add(new HTML(iconUrgency.toString()));
 
-
-				VerticalPanel vp = new VerticalPanel();
-				List<Map<String, String>> sosHistory = AjaxRequest.getValuesFromResult(result);
-				for(Map<String, String> help : sosHistory) {
-				
-				
-				Label status = new Label("Estado: "+help.get("status"));
-				Label name = new Label(help.get("firstname")+" "+help.get("lastname"));
-				Label text = new Label("\""+help.get("message")+"\"");
-				Label urgencyLevel = new Label("Nivel de urgencia: "+help.get("urgencylevel"));
-				String url =help.get("url")+"?&id="+help.get("draftid");
-				Anchor link = new Anchor("Link a la prueba", url);
-				link.setTarget("_blank");
-				
-				vp.add(status);
-				vp.add(name);
-				vp.add(text);
-				vp.add(urgencyLevel);
-				vp.add(link);
-
-				vpanel.add(vp);
-				}
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.warning("WTF ERROR");
-			}
-		});
+		return hpanel;		
 	}
-	public void addReceivedSos(String username, int time, String message, int draftid, int status, int urgencylevel) {
-		
-		
-		VerticalPanel vp = new VerticalPanel();
-		Label statusLabel = new Label("Estado: "+status);
-		Label name = new Label(username);
-		Label text = new Label(message);
-		Label urgencyLevel = new Label("Nivel de urgencia: " +urgencylevel);
-		//String url =help.get("url")+"?&id="+help.get("draftid");
-		//Anchor link = new Anchor("Link a la prueba", url);
-		//	link.setTarget("_blank");
-		
-		vp.add(statusLabel);
-		vp.add(name);
-		vp.add(text);
-		vp.add(urgencyLevel);
-		//vp.add(link);
-
-		vpanel.add(vp);
+	
+	@Override
+	protected void sendMessage(String message) {
+		super.sendMessage(message);
 	}
 }

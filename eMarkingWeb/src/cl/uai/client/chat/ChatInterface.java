@@ -56,7 +56,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ChatInterface extends DialogBox {
 
 	/** For logging purposes */
-	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
+	protected static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
 
 	/** The source (SOS, Wall or Chat) **/
 	protected int source=0;
@@ -71,7 +71,7 @@ public class ChatInterface extends DialogBox {
 	/** Panel that shows what users are currently connected **/
 	private HorizontalPanel usersConnectedPanel;
 	/** TextArea to send a new message **/
-	private TextArea sendMessageTextArea;
+	protected TextArea sendMessageTextArea;
 
 	/** A list with all currently connected users **/
 	private Map<Integer, HTML> connectedUsers = new HashMap<Integer, HTML>();
@@ -101,6 +101,7 @@ public class ChatInterface extends DialogBox {
 		messagesPanel.addStyleName(Resources.INSTANCE.css().chatmessages());
 
 		scrollMessagesPanel = new ScrollPanel(messagesPanel);
+		scrollMessagesPanel.addStyleName(Resources.INSTANCE.css().chatscrollmessages());
 		scrollMessagesPanel.scrollToBottom();
 
 		usersConnectedPanel = new HorizontalPanel();
@@ -114,16 +115,18 @@ public class ChatInterface extends DialogBox {
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					sendMessage(sendMessageTextArea.getText());
-					sendMessageTextArea.setText("");;
+					sendMessage(sendMessageTextArea.getValue());
+					sendMessageTextArea.setValue("");
 				}
 			}
 		});
 
 		// Vertical panel that contains everything
 		mainPanel = new VerticalPanel(); 
+		mainPanel.addStyleName(Resources.INSTANCE.css().chatmainpanel());
 
 		mainPanel.add(usersConnectedPanel);
+		mainPanel.setCellHorizontalAlignment(usersConnectedPanel, HasAlignment.ALIGN_CENTER);
 		mainPanel.add(scrollMessagesPanel);
 		mainPanel.add(sendMessageTextArea);
 
@@ -180,26 +183,35 @@ public class ChatInterface extends DialogBox {
 	 * Sends a message to the node server
 	 * @param message the message
 	 */
-	private void sendMessage(String  message) {
+	protected void sendMessage(String  message) {
+		sendMessage(message, 0, 0);
+	}
+
+	/**
+	 * Sends a message to the node server
+	 * @param message the message
+	 */
+	protected void sendMessage(String  message, int urgency, int status) {
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
 
 		String params = "&message=" + message + 
 				"&source=" + source + 
 				"&userid=" + sdata.getMarkerid() + 
 				"&room=" + sdata.getCoursemoduleid() + 
+				"&status=" + status +
+				"&urgencylevel=" + urgency + 
 				"&draftid=" + MarkingInterface.getSubmissionId();
 
 		AjaxRequest.ajaxRequest("action=addchatmessage"+ params, new AsyncCallback<AjaxData>() {
 			@Override
 			public void onSuccess(AjaxData result) {
-				// TODO: Change css for message as it was actually saved
 			}
 			@Override
 			public void onFailure(Throwable caught) {
 			}
 		});
 
-		EMarkingWeb.chatServer.sendMessage(sdata.getMarkerid(), message, source);
+		EMarkingWeb.chatServer.sendMessage(sdata.getMarkerid(), message, source, MarkingInterface.getSubmissionId(), status, urgency);
 	}
 
 	/**
@@ -233,10 +245,23 @@ public class ChatInterface extends DialogBox {
 
 					addUserToChatHistory(userid, abbreviation, firstname + " " + lastname);
 
-					addMessage(today, userid, msg);
+					try {
+						if(source == NodeChat.SOURCE_SOS) {
+							int draftid = Integer.parseInt(message.get("draftid"));
+							int status = Integer.parseInt(message.get("status"));
+							int urgency = Integer.parseInt(message.get("urgencylevel"));
+							EMarkingWeb.markingInterface.help.addMessage(today, userid, msg, draftid, status, urgency);
+						} else {
+							addMessage(today, userid, msg);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						logger.severe(e.getLocalizedMessage());
+					}
 				}
 
 				historyLoaded = true;
+				scrollMessagesPanel.scrollToBottom();
 			}
 
 			@Override
@@ -266,13 +291,14 @@ public class ChatInterface extends DialogBox {
 	 * @param author
 	 * @param message
 	 */
-	public void addMessage(Date date, int userid, String message) {
+	public HorizontalPanel addMessage(Date date, int userid, String message) throws Exception {
 
 		boolean ownMessage = userid == MarkingInterface.submissionData.getMarkerid();
 
 		// The message panel
 		HorizontalPanel hpanel = new HorizontalPanel();
-
+		hpanel.addStyleName(Resources.INSTANCE.css().chatmessage());
+		
 		// Author with date as title
 		Label authorLabel = new Label(allUsersAbbreviations.get(userid));
 		authorLabel.addStyleName(Resources.INSTANCE.css().chatauthor());
@@ -285,16 +311,15 @@ public class ChatInterface extends DialogBox {
 		authorLabel.setTitle(fullname + " " + fmt.format(date));
 
 		// Message
-		Label lblMessage = new Label(message);
-		lblMessage.addStyleName(Resources.INSTANCE.css().chatmessage());
+		HTML lblMessage = new HTML("<span style=\"font-weight:bold;\">" + allUsersAbbreviations.get(userid) + "</span>: " + message);
 
 		if(!ownMessage) {
-			hpanel.add(authorLabel);
+//			hpanel.add(authorLabel);
 			hpanel.add(lblMessage);
 			lblMessage.addStyleName(Resources.INSTANCE.css().chatothersmessage());
 		} else {
 			hpanel.add(lblMessage);
-			hpanel.add(authorLabel);
+//			hpanel.add(authorLabel);
 			lblMessage.addStyleName(Resources.INSTANCE.css().chatownmessage());
 		}
 
@@ -304,6 +329,8 @@ public class ChatInterface extends DialogBox {
 		messagesPanel.add(hpanel);
 		messagesPanel.setCellHorizontalAlignment(hpanel, ownMessage ? HasAlignment.ALIGN_RIGHT : HasAlignment.ALIGN_LEFT);
 		scrollMessagesPanel.scrollToBottom();
+		
+		return hpanel;
 	}
 
 	/**
