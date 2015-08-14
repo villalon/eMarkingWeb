@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.chat.messages.ChatMessage;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.SubmissionGradeData;
@@ -37,13 +38,11 @@ import cl.uai.client.resources.Resources;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -62,6 +61,7 @@ public class ChatInterface extends DialogBox {
 	protected int source=0;
 	/** If the history was already loaded **/
 	protected boolean historyLoaded = false;
+
 	/** Main panel contains the whole chat **/
 	private VerticalPanel mainPanel;
 	/** Panel that contains the messages **/
@@ -74,13 +74,13 @@ public class ChatInterface extends DialogBox {
 	protected TextArea sendMessageTextArea;
 
 	/** A list with all currently connected users **/
-	private Map<Integer, HTML> connectedUsers = new HashMap<Integer, HTML>();
+	protected Map<Integer, HTML> connectedUsers = new HashMap<Integer, HTML>();
 	/** All users with messages or connected with their abbreviated names **/
-	private Map<Integer, String> allUsersAbbreviations = new HashMap<Integer, String>();
+	protected Map<Integer, String> allUsersAbbreviations = new HashMap<Integer, String>();
 	/** All users with messages or connected with their abbreviated names **/
-	private Map<Integer, String> allUsersFullnames = new HashMap<Integer, String>();
+	protected Map<Integer, String> allUsersFullnames = new HashMap<Integer, String>();
 	/** A list with all colors assigned to users **/
-	private Map<Integer, Integer> allUsersColors = new HashMap<Integer, Integer>();
+	protected Map<Integer, Integer> allUsersColors = new HashMap<Integer, Integer>();
 
 	/**
 	 * Creates a new chat interface
@@ -291,46 +291,34 @@ public class ChatInterface extends DialogBox {
 	 * @param author
 	 * @param message
 	 */
-	public HorizontalPanel addMessage(Date date, int userid, String message) throws Exception {
-
-		boolean ownMessage = userid == MarkingInterface.submissionData.getMarkerid();
-
-		// The message panel
-		HorizontalPanel hpanel = new HorizontalPanel();
-		hpanel.addStyleName(Resources.INSTANCE.css().chatmessage());
-		
-		// Author with date as title
-		Label authorLabel = new Label(allUsersAbbreviations.get(userid));
-		authorLabel.addStyleName(Resources.INSTANCE.css().chatauthor());
-
-		int color = allUsersColors.get(userid);
-		addColorCSStoWidget(color, authorLabel);
-
-		String fullname = allUsersFullnames.get(userid);
-		DateTimeFormat fmt = DateTimeFormat.getFormat("YYYY/MM/dd HH:MM");
-		authorLabel.setTitle(fullname + " " + fmt.format(date));
-
-		// Message
-		HTML lblMessage = new HTML("<span style=\"font-weight:bold;\">" + allUsersAbbreviations.get(userid) + "</span>: " + message);
-
-		if(!ownMessage) {
-//			hpanel.add(authorLabel);
-			hpanel.add(lblMessage);
-			lblMessage.addStyleName(Resources.INSTANCE.css().chatothersmessage());
-		} else {
-			hpanel.add(lblMessage);
-//			hpanel.add(authorLabel);
-			lblMessage.addStyleName(Resources.INSTANCE.css().chatownmessage());
-		}
-
-		hpanel.setCellVerticalAlignment(authorLabel, HasAlignment.ALIGN_TOP);
+	public void addMessage(ChatMessage msg) throws Exception {
 
 		// Panel is added and interface scrolled to the bottom
-		messagesPanel.add(hpanel);
-		messagesPanel.setCellHorizontalAlignment(hpanel, ownMessage ? HasAlignment.ALIGN_RIGHT : HasAlignment.ALIGN_LEFT);
+		messagesPanel.add(msg);
+		messagesPanel.setCellHorizontalAlignment(msg, msg.isOwnMessage() 
+				? HasAlignment.ALIGN_RIGHT : HasAlignment.ALIGN_LEFT);
 		scrollMessagesPanel.scrollToBottom();
-		
-		return hpanel;
+	}
+
+	/**
+	 * Adds a message to the interface
+	 * 
+	 * @param date
+	 * @param author
+	 * @param message
+	 */
+	public void addMessage(Date date, int userid, String message) throws Exception {
+
+		// The message panel
+		ChatMessage chatMessage = new ChatMessage(
+				userid, 
+				date,
+				allUsersAbbreviations.get(userid), 
+				allUsersFullnames.get(userid),
+				message,
+				allUsersColors.get(userid));
+
+		addMessage(chatMessage);
 	}
 
 	/**
@@ -338,7 +326,7 @@ public class ChatInterface extends DialogBox {
 	 * @param sequence sequence
 	 * @param widget the widget to be painted
 	 */
-	public void addColorCSStoWidget(int sequence, Widget widget) {
+	public static void addColorCSStoWidget(int sequence, Widget widget) {
 
 		switch(sequence) {
 		case 1:  widget.addStyleName(Resources.INSTANCE.css().color1()); break;

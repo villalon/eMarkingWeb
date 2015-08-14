@@ -2,25 +2,9 @@ package cl.uai.client.chat;
 
 import java.util.Date;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import cl.uai.client.chat.messages.SosMessage;
 
 public class HelpInterface extends ChatInterface {
-	
-	private Icon[] urgencyIcons = {
-			new Icon(IconType.FIRE),
-			new Icon(IconType.FIRE),
-			new Icon(IconType.UMBRELLA),
-			new Icon(IconType.TINT),
-			new Icon(IconType.TINT),
-	};
-	
-	private Icon[] statusIcons = {
-			new Icon(IconType.CHECK),
-			new Icon(IconType.CHECK_EMPTY),
-	};
 	
 	public HelpInterface() {
 		super();
@@ -30,24 +14,25 @@ public class HelpInterface extends ChatInterface {
 	}
 	
 	@Override
-	public HorizontalPanel addMessage(Date date, int userid, String message) throws Exception {
+	public void addMessage(Date date, int userid, String message) throws Exception {
 		throw new Exception("Invalid call");
 	}
 	
-	public HorizontalPanel addMessage(Date date, int userid, String message, int draftid, int status, int urgency) throws Exception {
-		HorizontalPanel hpanel = super.addMessage(date, userid, message);
-		
-		// draft id
-		Icon icon = new Icon(IconType.SIGNIN);
-		hpanel.add(new HTML("<a href=\"#\">"+icon.toString()+"</a>")); ;
-		// status
-		Icon iconStatus = statusIcons[status];
-		hpanel.add(new HTML(iconStatus.toString()));
-		// urgency level
-		Icon iconUrgency = urgencyIcons[urgency];
-		hpanel.add(new HTML(iconUrgency.toString()));
+	public void addMessage(Date date, int userid, String message, int draftid, int status, int urgency) throws Exception {
 
-		return hpanel;		
+		// The message panel
+		SosMessage chatMessage = new SosMessage(
+				userid, 
+				date,
+				allUsersAbbreviations.get(userid), 
+				allUsersFullnames.get(userid),
+				message,
+				allUsersColors.get(userid), 
+				draftid, 
+				status, 
+				urgency);
+
+		addMessage(chatMessage);
 	}
 	
 	@Override
