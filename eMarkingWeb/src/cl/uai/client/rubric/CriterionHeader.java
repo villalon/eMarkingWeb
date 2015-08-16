@@ -26,6 +26,7 @@ import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -99,7 +100,7 @@ public class CriterionHeader extends EMarkingComposite {
 		//the square with the color
 		if(MarkingInterface.isColoredRubric()){
 			Label lbl2 = new Label("");
-			lbl2.addStyleName(MarkingInterface.getMapCss().get("color"+idx));
+			Color.setWidgetBackgroundHueColor(cid, lbl2);
 			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());
 			lbl2.setTitle(String.valueOf(idx));
 			//lbl2.addStyleName(MarkingInterface.getMapCss().get("colorsquare"));

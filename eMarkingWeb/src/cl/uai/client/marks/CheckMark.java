@@ -22,10 +22,8 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 
 /**
@@ -42,27 +40,25 @@ public class CheckMark extends Mark {
 	 * @param pageno the page number (1 to N)
 	 */
 	public CheckMark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
 			long timecreated,
-			String colour
+			int criterionid,
+			String markername,
+			String rawtext
 			) {
-		super(posx, posy, pageno, markerid, timecreated, colour);
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 		
 		this.format = 3;
+		this.iconType = IconType.OK;
+		this.iconOnly = true;
 
 		this.addStyleName(Resources.INSTANCE.css().checkmark());
 	}
 
-	@Override
-	public void setMarkHTML() {
-		Icon icon = new Icon(IconType.OK);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+ MarkingInterface.getMapCss().get(colour) +"\">"+icon.toString()+"</div>";
-		this.setHTML(html);		
-	}
-	
 	/**
 	 * Creates a CheckMark from a Hash with Strings as key value pairs,
 	 * parsing the values in the map and casting them to the proper
@@ -73,16 +69,16 @@ public class CheckMark extends Mark {
 	 */
 	public static CheckMark createFromMap(Map<String, String> markMap) {
 		CheckMark commentobj = new CheckMark(				 
+				Integer.parseInt(markMap.get("id")),
 				Integer.parseInt(markMap.get("posx")), 
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
 				Long.parseLong(markMap.get("timecreated")),
-				String.valueOf(markMap.get("colour")));
-
-		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
-		commentobj.setRawtext(markMap.get("rawtext"));
-		commentobj.setMarkername(markMap.get("markername"));
+				Integer.parseInt(markMap.get("criterionid")),
+				markMap.get("markername"),
+				markMap.get("rawtext")
+				);
 
 		return commentobj;
 	}	

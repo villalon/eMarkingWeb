@@ -54,7 +54,6 @@ public class TrashIcon extends HTML {
 			@Override
 			public void onClick(ClickEvent event) {				
 				event.stopPropagation();
-				// TODO: Add confirmation dialog when deleting
 				processCommand(event);
 			}
 		});

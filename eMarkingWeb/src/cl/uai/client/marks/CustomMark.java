@@ -22,7 +22,6 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
 /**
@@ -41,25 +40,22 @@ public class CustomMark extends Mark {
 	 * @param pageno the page number (1 to N)
 	 */
 	public CustomMark(
+			int id,
 			String title,
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
 			long timecreated,
-			String colour) {
-		super(posx, posy, pageno, markerid, timecreated, colour);
+			int criterionid,
+			String markername,
+			String rawtext) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 		
 		this.format = 1000;
 		this.title = title;
 
 		this.addStyleName(Resources.INSTANCE.css().checkmark());
-	}
-
-	@Override
-	public void setMarkHTML() {
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+ MarkingInterface.getMapCss().get(colour) +"\">"+this.getTitle()+"</div>";
-		this.setHTML(html);		
 	}
 	
 	/**
@@ -74,17 +70,17 @@ public class CustomMark extends Mark {
 		String title = markMap.get("rawtext").split(":")[0];
 		
 		CustomMark commentobj = new CustomMark(
+				Integer.parseInt(markMap.get("id")),
 				title,
 				Integer.parseInt(markMap.get("posx")), 
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
 				Long.parseLong(markMap.get("timecreated")),
-				String.valueOf(markMap.get("colour")));
-
-		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
-		commentobj.setRawtext(markMap.get("rawtext"));
-		commentobj.setMarkername(markMap.get("markername"));
+				Integer.parseInt(markMap.get("criterionid")),
+				markMap.get("markername"),
+				markMap.get("rawtext")
+				);
 
 		return commentobj;
 	}

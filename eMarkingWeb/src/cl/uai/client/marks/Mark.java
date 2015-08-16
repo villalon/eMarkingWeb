@@ -36,6 +36,7 @@ import cl.uai.client.page.MinimizeIcon;
 import cl.uai.client.page.RegradeIcon;
 import cl.uai.client.page.TrashIcon;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -66,14 +67,23 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	/** The delete icon **/
 	protected static TrashIcon deleteIcon = null;
 
+	/** Criterion to which this mark is associated (if any) **/
+	protected int criterionid = 0;
 	
 	static {
 		deleteIcon = new TrashIcon();
 	}
 
+	public int getCriterionid() {
+		return criterionid;
+	}
+
 	/** The regrade icon **/
 	protected static RegradeIcon regradeIcon = null;
 
+	protected boolean iconOnly = false;
+	
+	protected IconType iconType = null;
 	
 	static {
 		regradeIcon = new RegradeIcon();
@@ -133,8 +143,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 
 	private long timecreated;
 
-	protected String colour;
-
 	/**
 	 * @return the pageno
 	 */
@@ -148,31 +156,38 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	 * @param pageno the page number (1 to N)
 	 */
 	public Mark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
 			int markerId,
 			long timecreated,
-			String colour
+			int criterionid,
+			String markername,
+			String rawtext
 			) {
         this.markerid = markerId;
 		this.posx = posx;
 		this.posy = posy;        
 		this.pageno = pageno;
 		this.timecreated = timecreated;
-		
-		this.colour = colour;
+		this.criterionid = criterionid;
+		this.markername = markername;
+		this.rawtext = rawtext;
+		this.id = id;
 		
 		this.addStyleName(Resources.INSTANCE.css().mark());
 
 		this.addHandlers();
 	}
+	
 	protected void addHandlers(){
 		this.addMouseOverHandler(new MarkOnMouseOverHandler());
 		this.addMouseOutHandler(new MarkOnMouseOutHandler());
 		this.addDomHandler(this, ContextMenuEvent.getType());
 		this.addDomHandler(this, ClickEvent.getType());
 	}
+	
 	/**
 	 * @return the format
 	 */
@@ -223,53 +238,34 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	 * Sets the inner HTML according to an icon
 	 */
 	public void setMarkHTML() {
+		
 		// Starts with an empty HTML
-		String html = "";
-		boolean headerOnly = false;
-		
-		// If it's a RubricMark add score header and both rubric and criterion descriptions
-		if(this instanceof RubricMark) {
-			RubricMark rmark = (RubricMark) this;
-			headerOnly = rmark.isHeaderOnly();
-			
-			html += "<table style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
-					+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" 
-					+ rmark.getLevel().getCriterion().getDescription() + "</div></td>";
-			html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
-					+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
-					+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
-					+"</div></td></tr></table>";
-			if(!headerOnly)
-			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
-					+ "</div>";
-		}
-		
+		String html = "";		
 		String iconhtml = "";
-		
-		if(this instanceof CommentMark) {
-			Icon icon = new Icon(IconType.COMMENT);
+
+		// Create the icon string if any
+		if(this.iconType != null) {
+			Icon icon = new Icon(this.iconType);
 			iconhtml = icon.toString();
 		}
-		
-		// If the inner comment contains something
-		if(this.getRawtext().trim().length() > 0 && !headerOnly) {
-			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ iconhtml + "&nbsp;" + this.getRawtext() + "</div>";
+
+		String markername = MarkingInterface.isMarkerAnonymous() ? MarkingInterface.messages.MarkerDetails(MarkingInterface.messages.Anonymous())
+				: MarkingInterface.messages.MarkerDetails(this.getMarkername());
+		String styleColor = "";
+
+		// If the mark has a color, we use the background to color it
+		if(this.criterionid > 0 && this.iconOnly) {
+			styleColor = "style=\"color:" + Color.getCSSHueColor(criterionid) + "\"";
 		}
 		
-		// Show the marker's name if the marking process is not anonymous
-		if(!MarkingInterface.isMarkerAnonymous() && !headerOnly) {
-			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
-		}
-		
-		if(this instanceof RubricMark && ((RubricMark)this).getRegradeid() > 0 && !headerOnly) {
-			html += "<div style=\"background-color:yellow\">"+ MarkingInterface.messages.Regrade()
-					+ (((RubricMark)this).getRegradeaccepted() == 0 ? " " + MarkingInterface.messages.Requested() : " " + MarkingInterface.messages.Replied())
-					+"</div>";
-			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
-					+ MarkingInterface.messages.Motive() + ": " + ((RubricMark)this).getRegradeMotiveText() + "<hr>" 
-					+ MarkingInterface.messages.Comment() + ": " + ((RubricMark)this).getRegradecomment()
-					+ (((RubricMark)this).getRegradeaccepted() == 0 ? "" : "<hr>"+MarkingInterface.messages.RegradeReply()+": " + (((RubricMark)this).getRegrademarkercomment()))
-					+ "</div>";
+		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" title=\""+ markername +"\" " + styleColor + ">" + iconhtml + "</div>";
+		// If the mark is an icon
+		if(!this.iconOnly && this.getRawtext().trim().length() > 0) {
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+			// Show the marker's name if the marking process is not anonymous
+			if(!MarkingInterface.isMarkerAnonymous()) {
+				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ markername + "</div>";
+			}
 		}
 
 		this.setHTML(html);		
@@ -494,9 +490,5 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	@Override
 	public void onClick(ClickEvent event) {
 		event.stopPropagation();
-	}
-	
-	public String getColour() {
-		return colour;
 	}
 }

@@ -24,7 +24,6 @@ package cl.uai.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -231,13 +230,6 @@ public class MarkingInterface extends EMarkingComposite {
 		collaborativefeatures = _collaborative;
 	}
 
-	/** Get array of markers for the chat and wall collaborative features **/
-	private List<Map<String, String>> markers = null;
-
-	public List<Map<String, String>> getMarkers(){
-		return markers;
-	}
-
 	/** Get username (firstname lastname) of actual online user data for the chat and wall collaborative features **/
 	private static String username = null;
 
@@ -298,13 +290,6 @@ public class MarkingInterface extends EMarkingComposite {
 
 	public List<Map<String, String>> getActualTestAgree(){
 		return actualTestAgree;
-	}
-
-	//TODO
-	public static Map<String, String> MapCss = new HashMap<String, String>();
-
-	public static Map<String, String> getMapCss(){
-		return MapCss;
 	}
 
 	public HTML getShowRubricButton() {
@@ -372,10 +357,10 @@ public class MarkingInterface extends EMarkingComposite {
 
 		bubbleButtons = new ArrayList<BubbleButton>();
 
-		bubbleButtons.add(new ShowRubricButton(Window.getClientWidth()-40, 0));
-		bubbleButtons.add(new ShowChatButton(Window.getClientWidth()-40, 45));
-		bubbleButtons.add(new ShowWallButton(Window.getClientWidth()-40, 90));
-		bubbleButtons.add(new ShowHelpButton(Window.getClientWidth()-40, 135));
+		bubbleButtons.add(new ShowRubricButton(Window.getClientWidth()-40, 0, 0));
+		bubbleButtons.add(new ShowChatButton(Window.getClientWidth()-40, 45, NodeChat.SOURCE_CHAT));
+		bubbleButtons.add(new ShowWallButton(Window.getClientWidth()-40, 90, NodeChat.SOURCE_WALL));
+		bubbleButtons.add(new ShowHelpButton(Window.getClientWidth()-40, 135, NodeChat.SOURCE_SOS));
 
 		interfacePanel.add(loadingMessage);
 		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
@@ -426,58 +411,6 @@ public class MarkingInterface extends EMarkingComposite {
 				});
 			}
 		};
-
-		MapCss.put("criterion0", Resources.INSTANCE.css().criterion0());
-		MapCss.put("criterion1", Resources.INSTANCE.css().criterion1());
-		MapCss.put("criterion2", Resources.INSTANCE.css().criterion2());
-		MapCss.put("criterion3", Resources.INSTANCE.css().criterion3());
-		MapCss.put("criterion4", Resources.INSTANCE.css().criterion4());
-		MapCss.put("criterion5", Resources.INSTANCE.css().criterion5());
-		MapCss.put("criterion6", Resources.INSTANCE.css().criterion6());
-		MapCss.put("criterion7", Resources.INSTANCE.css().criterion7());
-		MapCss.put("criterion8", Resources.INSTANCE.css().criterion8());
-		MapCss.put("criterion9", Resources.INSTANCE.css().criterion9());
-		MapCss.put("criterion10", Resources.INSTANCE.css().criterion10());
-		MapCss.put("criterion11", Resources.INSTANCE.css().criterion11());
-		MapCss.put("criterion12", Resources.INSTANCE.css().criterion12());
-		MapCss.put("criterion13", Resources.INSTANCE.css().criterion13());
-		MapCss.put("criterion14", Resources.INSTANCE.css().criterion14());
-		MapCss.put("criterion15", Resources.INSTANCE.css().criterion15());
-		MapCss.put("criterion16", Resources.INSTANCE.css().criterion16());
-		MapCss.put("criterion17", Resources.INSTANCE.css().criterion17());
-		MapCss.put("criterion18", Resources.INSTANCE.css().criterion18());
-		MapCss.put("criterion19", Resources.INSTANCE.css().criterion19());
-		MapCss.put("criterion20", Resources.INSTANCE.css().criterion20());
-		MapCss.put("criterion21", Resources.INSTANCE.css().criterion21());
-		MapCss.put("criterion22", Resources.INSTANCE.css().criterion22());
-		MapCss.put("criterion23", Resources.INSTANCE.css().criterion23());
-		MapCss.put("criterion25", Resources.INSTANCE.css().criterion24());
-
-		MapCss.put("color1", Resources.INSTANCE.css().color1());
-		MapCss.put("color2", Resources.INSTANCE.css().color2());
-		MapCss.put("color3", Resources.INSTANCE.css().color3());
-		MapCss.put("color4", Resources.INSTANCE.css().color4());
-		MapCss.put("color5", Resources.INSTANCE.css().color5());
-		MapCss.put("color6", Resources.INSTANCE.css().color6());
-		MapCss.put("color7", Resources.INSTANCE.css().color7());
-		MapCss.put("color8", Resources.INSTANCE.css().color8());
-		MapCss.put("color9", Resources.INSTANCE.css().color9());
-		MapCss.put("color10", Resources.INSTANCE.css().color10());
-		MapCss.put("color11", Resources.INSTANCE.css().color11());
-		MapCss.put("color12", Resources.INSTANCE.css().color12());
-		MapCss.put("color13", Resources.INSTANCE.css().color13());
-		MapCss.put("color14", Resources.INSTANCE.css().color14());
-		MapCss.put("color15", Resources.INSTANCE.css().color15());
-		MapCss.put("color16", Resources.INSTANCE.css().color16());
-		MapCss.put("color17", Resources.INSTANCE.css().color17());
-		MapCss.put("color18", Resources.INSTANCE.css().color18());
-		MapCss.put("color19", Resources.INSTANCE.css().color19());
-		MapCss.put("color20", Resources.INSTANCE.css().color20());
-		MapCss.put("color21", Resources.INSTANCE.css().color21());
-		MapCss.put("color22", Resources.INSTANCE.css().color22());
-		MapCss.put("color23", Resources.INSTANCE.css().color23());
-		MapCss.put("color25", Resources.INSTANCE.css().color24());
-
 		// Drag and Drop controller attached to marking panel
 		dragController = new PickupDragController(markingPanel, false);
 		dragController.addDragHandler(new MarkingInterfaceDragHandler());
@@ -522,7 +455,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 		//por defecto el criterionid = 0 y la clase para el color es criterion0
 		int cid = 0;
-		if(MarkingInterface.coloredRubric){
+		if(MarkingInterface.isColoredRubric()) {
 			Criterion c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 			if(c != null) {
 				cid = c.getId();
@@ -539,7 +472,7 @@ public class MarkingInterface extends EMarkingComposite {
 				"&format=" + mark.getFormat() +
 				"&pageno=" + mark.getPageno() +
 				"&criterionid="+cid + 
-				"&colour="+mark.getColour() +
+				"&colour="+mark.getCriterionid() +
 				"&windowswidth=" + page.getWidth() +
 				"&windowsheight=" + page.getHeight()
 				, new AsyncCallback<AjaxData>() {
@@ -634,7 +567,6 @@ public class MarkingInterface extends EMarkingComposite {
 					final String comment = dialog.getTxtComment(); // Comment from dialog
 					final float bonus = dialog.getBonus();
 					final int levelid = dialog.getLevelId();
-					// TODO: Check if coordinates can be calculated better (as a page percentage?)
 
 					// Ajax URL for adding mark
 					String url = "action=addmark"+
@@ -699,7 +631,7 @@ public class MarkingInterface extends EMarkingComposite {
 							int regrademotive = Integer.parseInt(values.get("regrademotive"));
 							String regradecomment = values.get("regradecomment");
 							String regrademarkercomment = values.get("regrademarkercomment");
-							String colour = values.get("colour");
+							int criterionId = Integer.parseInt(values.get("criterionid"));
 
 							// If there was a previous mark with the same level, remove it
 							if(previd > 0) {
@@ -710,16 +642,17 @@ public class MarkingInterface extends EMarkingComposite {
 
 							// Add mark to marking pages interface
 							RubricMark mark = new RubricMark(
+									newid,
 									posx, 
 									posy,
 									pageno,
 									MarkingInterface.markerid, 
 									dialog.getLevelId(),
 									unixtime,
-									colour); 
-							mark.setId(newid);
-							mark.setRawtext(comment);
-							mark.setMarkername(markername);
+									criterionId,
+									markername,
+									comment); 
+
 							mark.setRegradeid(regradeid);
 							mark.setRegradeaccepted(regradeaccepted);
 							mark.setRegradecomment(regradecomment);
@@ -732,8 +665,9 @@ public class MarkingInterface extends EMarkingComposite {
 							markingPagesInterface.addMarkWidget(mark, previd, page);
 							rubricInterface.getRubricPanel().addMarkToRubric(mark);
 							toolbar.getMarkingButtons().updateStats();
-							if(MarkingInterface.coloredRubric)
+							if(MarkingInterface.isColoredRubric()) {
 								toolbar.getMarkingButtons().changeColor(criterion.getId());
+							}
 
 							EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
 							getPreviousComments().addMarkAsCommentToInterface(mark);							
@@ -868,6 +802,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public void loadInterface() {
 
 		toolbar.loadSubmissionData();
+		toolbar.getMarkingButtons().loadSubmissionData();
 
 		dragController.unregisterDropControllers();
 		interfacePanel.clear();
@@ -1092,17 +1027,6 @@ public class MarkingInterface extends EMarkingComposite {
 					// Collaborative features (chat, wall) if configured as
 					collaborativefeatures = value.get("collaborativefeatures").equals("1");
 
-					/**
-					 * GET TOTAL MARKERS ARRAY OF AN eMarking.
-					 * This saves all markers of a group (each group has a different room for chat and wall).
-					 */
-					//Get the json_encode() PHP format string
-					//logger.severe("the value is :" + value.get("markers"));
-					String preMarkersJsonString = value.get("markers");
-
-					//Parse json string to a List<Map<String, String>> markers
-					markers = AjaxRequest.getValuesFromJsonString(preMarkersJsonString, "markers");
-
 					// Assign actual online username (firstname lastname)
 					username = value.get("username");
 
@@ -1321,6 +1245,22 @@ public class MarkingInterface extends EMarkingComposite {
 	 */
 	public static int getMarkingType() {
 		return markingType;
+	}
+	
+	public void addNotificationToBubbleButton(int source) {
+		for(BubbleButton btn : this.bubbleButtons) {
+			if(btn.getSource() == source) {
+				btn.addNotification();
+			}
+		}
+	}
+
+	public void removeNotificationToBubbleButton(int source) {
+		for(BubbleButton btn : this.bubbleButtons) {
+			if(btn.getSource() == source) {
+				btn.removeNotification();
+			}
+		}
 	}
 
 	public static boolean isStudentAnonymous() {

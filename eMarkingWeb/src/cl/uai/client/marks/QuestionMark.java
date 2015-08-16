@@ -24,7 +24,6 @@ import java.util.Map;
 
 import cl.uai.client.resources.Resources;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 
 /**
@@ -41,24 +40,22 @@ public class QuestionMark extends Mark {
 	 * @param pageno the page number (1 to N)
 	 */
 	public QuestionMark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
 			long timecreated,
-			String colour) {
-		super(posx, posy, pageno, markerid, timecreated, colour);
+			int criterionid,
+			String markername,
+			String rawtext) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 		
 		this.format = 6;
-
+		this.iconOnly = true;
+		this.iconType = IconType.QUESTION_SIGN;
+		
 		this.addStyleName(Resources.INSTANCE.css().checkmark());
-	}
-
-	@Override
-	public void setMarkHTML() {
-		Icon icon = new Icon(IconType.QUESTION_SIGN);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+" "+colour+"\">"+icon.toString()+"</div>";
-		this.setHTML(html);		
 	}
 	
 	/**
@@ -71,16 +68,16 @@ public class QuestionMark extends Mark {
 	 */
 	public static QuestionMark createFromMap(Map<String, String> markMap) {
 		QuestionMark commentobj = new QuestionMark(				 
+				Integer.parseInt(markMap.get("id")),
 				Integer.parseInt(markMap.get("posx")), 
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
 				Long.parseLong(markMap.get("timecreated")),
-				String.valueOf(markMap.get("colour")));
-
-		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
-		commentobj.setRawtext(markMap.get("rawtext"));
-		commentobj.setMarkername(markMap.get("markername"));
+				Integer.parseInt(markMap.get("criterionid")),
+				markMap.get("markername"),
+				markMap.get("rawtext")
+				);
 
 		return commentobj;
 	}	

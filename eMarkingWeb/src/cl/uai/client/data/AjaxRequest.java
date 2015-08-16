@@ -160,8 +160,7 @@ public class AjaxRequest {
 		
 		return getValuesFromResult(values);
 		
-	}	
-	//TODO: "on construction" function for parsing Json strings coming from json_encode() PHP format.
+	}
 	
 	/**
 	 * Assuming a json string (PHP json_encode() format), it transforms the string to a JSONObject.

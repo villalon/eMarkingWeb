@@ -22,6 +22,8 @@
 package cl.uai.client.chat;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
@@ -42,6 +44,9 @@ public class NodeChat {
 	public static int SOURCE_CHAT = 1;
 	public static int SOURCE_WALL = 2;
 	public static int SOURCE_SOS = 3;
+	
+	/** To store the date of the last messages as they arrive **/
+	public static Map<Integer, Date> lastMessages = new HashMap<Integer, Date>();
 
 	/**
 	 * NodeChat constructor, representing a connection to the NodeJs server
@@ -92,12 +97,12 @@ public class NodeChat {
 	 		// Listen to disconnection events
 	    	$wnd.socket.on('onDisconnect', function (data) {
             	var data=JSON.parse(data);
-				tmp.@cl.uai.client.chat.NodeChat::onDisconnect(Lcl/uai/client/chat/UserData;)(data); 
+				tmp.@cl.uai.client.chat.NodeChat::onDisconnect(Lcl/uai/client/chat/UserJS;)(data); 
 			});
 			// Listen to messages events
 	    	$wnd.socket.on('onSendMessage', function (data) {
 				var data=JSON.parse(data);
-				tmp.@cl.uai.client.chat.NodeChat::onSendMessage(Lcl/uai/client/chat/Message;)(data); 
+				tmp.@cl.uai.client.chat.NodeChat::onSendMessage(Lcl/uai/client/chat/MessageJS;)(data); 
 			});
 			
 	 		// We create the object with data
@@ -117,12 +122,12 @@ public class NodeChat {
 	 * This event is linked to the userJoin (emit)
 	 * @param connectedUsers a collection of one UserData per connected user
 	 */
-	private void onJoinServer(JsArray<UserData> connectedUsers) {
+	private void onJoinServer(JsArray<UserJS> connectedUsers) {
 		// Add every user to the interface
 		for(int i=0;i<connectedUsers.length();i++) {
-			EMarkingWeb.markingInterface.chat.addUser(connectedUsers.get(i));
-			EMarkingWeb.markingInterface.wall.addUser(connectedUsers.get(i));
-			EMarkingWeb.markingInterface.help.addUser(connectedUsers.get(i));
+			EMarkingWeb.markingInterface.chat.getUsersConnectedPanel().addUser(connectedUsers.get(i));
+			EMarkingWeb.markingInterface.wall.getUsersConnectedPanel().addUser(connectedUsers.get(i));
+			EMarkingWeb.markingInterface.help.getUsersConnectedPanel().addUser(connectedUsers.get(i));
 		}
 		// Load previous messages
 		EMarkingWeb.markingInterface.chat.loadHistoryMessages();
@@ -136,14 +141,26 @@ public class NodeChat {
 	 * @param message Message object
 	 * @throws Exception 
 	 */
-	private void onSendMessage(Message message) throws Exception {
+	private void onSendMessage(MessageJS message) throws Exception {
 		Date today = dateFromUnixTime(message.getTime());
 		int userid = Integer.parseInt(message.getUserId());
 		if(message.getSource() == NodeChat.SOURCE_CHAT) {
+			if(lastMessages.containsKey(NodeChat.SOURCE_CHAT)) {
+				lastMessages.remove(NodeChat.SOURCE_CHAT);
+			}
+			lastMessages.put(NodeChat.SOURCE_CHAT, today);
 			EMarkingWeb.markingInterface.chat.addMessage(today, userid, message.getMessage());
 		} else if(message.getSource() == NodeChat.SOURCE_WALL) {
+			if(lastMessages.containsKey(NodeChat.SOURCE_WALL)) {
+				lastMessages.remove(NodeChat.SOURCE_WALL);
+			}
+			lastMessages.put(NodeChat.SOURCE_WALL, today);
 			EMarkingWeb.markingInterface.wall.addMessage(today, Integer.parseInt(message.getUserId()), message.getMessage());
 		} else if(message.getSource() == NodeChat.SOURCE_SOS) {
+			if(lastMessages.containsKey(NodeChat.SOURCE_SOS)) {
+				lastMessages.remove(NodeChat.SOURCE_SOS);
+			}
+			lastMessages.put(NodeChat.SOURCE_SOS, today);
 			EMarkingWeb.markingInterface.help.addMessage(today, userid, message.getMessage(), message.getDraftId(), message.getStatus(), message.getUrgency());
 		} else {
 			logger.severe("Something is very wrong");
@@ -154,8 +171,8 @@ public class NodeChat {
 	 * This event is linked to the disconnect from NodeJs
 	 * @param user
 	 */
-	private void onDisconnect(UserData user) {
-		EMarkingWeb.markingInterface.chat.removeUser(user);
+	private void onDisconnect(UserJS user) {
+		EMarkingWeb.markingInterface.chat.getUsersConnectedPanel().removeUser(user);
 	}
 
 	/**

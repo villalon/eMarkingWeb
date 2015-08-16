@@ -22,10 +22,8 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 
 /**
@@ -44,27 +42,24 @@ public class CrossMark extends Mark {
 	 * @param pageno the page number (1 to N)
 	 */
 	public CrossMark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
 			long timecreated,
-			String colour) {
-		super(posx, posy, pageno, markerid, timecreated, colour);
+			int criterionid,
+			String markername,
+			String rawtext) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 		
 		this.format = 4;
-
+		this.iconType = IconType.REMOVE;
+		this.iconOnly = true;
+		
 		this.addStyleName(Resources.INSTANCE.css().crossmark());
 	}
 
-	@Override
-	public void setMarkHTML() {
-		//int indexSelected = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
-		Icon icon = new Icon(IconType.REMOVE);
-		String html = "<div class=\""+Resources.INSTANCE.css().innercomment()+ " " + MarkingInterface.getMapCss().get(colour) + "\">"+icon.toString()+"</div>";
-		this.setHTML(html);		
-	}
-	
 	/**
 	 * Creates a CrossMark from a Hash with Strings as key value pairs,
 	 * parsing the values in the map and casting them to the proper
@@ -75,16 +70,16 @@ public class CrossMark extends Mark {
 	 */
 	public static CrossMark createFromMap(Map<String, String> markMap) {
 		CrossMark commentobj = new CrossMark(				 
+				Integer.parseInt(markMap.get("id")),
 				Integer.parseInt(markMap.get("posx")), 
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
 				Long.parseLong(markMap.get("timecreated")),
-				String.valueOf(markMap.get("colour")));
-
-		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
-		commentobj.setRawtext(markMap.get("rawtext"));
-		commentobj.setMarkername(markMap.get("markername"));
+				Integer.parseInt(markMap.get("criterionid")),
+				markMap.get("markername"),
+				markMap.get("rawtext")
+				);
 
 		return commentobj;
 	}	

@@ -31,21 +31,17 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.google.gwt.dom.client.OptionElement;
-import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 
 /**
@@ -73,10 +69,11 @@ public class MarkingButtons extends EMarkingComposite {
 
 	/** Selected index **/
 	private int selectedIndex = 0;
+	/** The criterion selection list box **/
+	private CriterionListBox criterionList = null;
 	
-	private ListBox criterionList = null;
 	public void changeCriterionList(int index){
-		criterionList.setItemSelected(index, true);
+		criterionList.setSelectedIndex(index);
 		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
 	}
 
@@ -190,7 +187,7 @@ public class MarkingButtons extends EMarkingComposite {
 
 		buttons.get(selectedIndex).setValue(true);
 
-		criterionList = new ListBox();
+		criterionList = new CriterionListBox();
 		criterionList.setVisible(MarkingInterface.isColoredRubric());
 		
 		mainPanel.add(criterionList);
@@ -209,16 +206,6 @@ public class MarkingButtons extends EMarkingComposite {
 		return MarkingInterface.submissionData.getRubricfillings().get(id);
 	}
 	
-	
-	public int getIndexSelectedCriterion(){
-		
-		int index = 0;
-		if(MarkingInterface.isColoredRubric())
-			index = criterionList.getSelectedIndex();
-		
-		return index;
-	}
-
 	/**
 	 * Handles when a button was clicked, selecting it and deselecting others in the toolbar
 	 * 
@@ -306,42 +293,23 @@ public class MarkingButtons extends EMarkingComposite {
 		
 	}
 	
-	
-	public void loadSubmissionData(){
-		
-		criterionList.clear();
-		criterionList.addItem(MarkingInterface.messages.NoCriterion(),"0");
-
-		for(int criterionId : MarkingInterface.submissionData.getRubricfillings().keySet()) {
-			Criterion c = MarkingInterface.submissionData.getRubricfillings().get(criterionId);
-			criterionList.addItem(c.getDescription(), Integer.toString(criterionId));
-		}
-		
-		//assign color
-		SelectElement selectElement = SelectElement.as(criterionList.getElement());
-		com.google.gwt.dom.client.NodeList<OptionElement> options = selectElement.getOptions();
-		
-		for (int i = 0; i < options.getLength(); i++) {	
-			 options.getItem(i).setAttribute("index", Integer.toString(i));;
-		     options.getItem(i).setClassName("criterion"+i);
-		}
-		
-		criterionList.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
-			}
-		});
+	public void loadSubmissionData(){		
+		criterionList.loadSubmissionData();
+		criterionList.setVisible(MarkingInterface.isColoredRubric());
 		
 		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
 	}
 	
-	public void changeColorButtons(){
-		int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
+	public void changeColorButtons() {
+		Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+		int c = crit == null ? 0 : crit.getId();
 		
-		for (int i = 1; i < buttons.size(); i++) {
-			buttons.get(i).setStyleName("gwt-ToggleButton gwt-ToggleButton-up-hovering " + Resources.INSTANCE.css().rubricbutton()+ " " + MarkingInterface.getMapCss().get("criterion"+c));
+		for (int i = 0; i < buttons.size(); i++) {
+			if(c > 0) {
+				Color.setWidgetFontHueColor(c, buttons.get(i));
+			} else {
+				buttons.get(i).getElement().removeAttribute("style");
+			}
 		}
 		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
 	}
@@ -441,16 +409,12 @@ public class MarkingButtons extends EMarkingComposite {
 	}
 
 	public void changeColor(int id) {
-		// TODO Auto-generated method stub
-		
 		for (int i = 0; i < criterionList.getItemCount(); i++) {
 			if(Integer.parseInt(criterionList.getValue(i)) == id){
 				criterionList.setSelectedIndex(i);
 				changeColorButtons();
 			}
-		}
-		
-		
+		}		
 	}
 }
 

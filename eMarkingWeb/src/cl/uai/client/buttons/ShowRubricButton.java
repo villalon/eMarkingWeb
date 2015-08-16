@@ -7,8 +7,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 
 public class ShowRubricButton extends BubbleButton {
 
-	public ShowRubricButton(int _left, int _top) {
-		super(IconType.TH, _left, _top);
+	public ShowRubricButton(int _left, int _top, int _source) {
+		super(IconType.TH, _left, _top, _source);
 	}
 	
 	@Override

@@ -280,8 +280,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		}
 		
 		this.grade.loadSubmissionData();
-		this.markingButtons.loadSubmissionData();
-		
 	}
 
 	public void setButtonPressed(int index) {

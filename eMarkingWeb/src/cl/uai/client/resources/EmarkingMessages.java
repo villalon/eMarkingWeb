@@ -115,4 +115,5 @@ public interface EmarkingMessages extends Messages {
 	public String Requested();
 	public String Replied();
 	public String NoCriterion();
+	public String Close();
 }

@@ -120,8 +120,6 @@ public class RubricPanel extends EMarkingComposite {
 	public RubricPanel() {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricpanel());
-		//TODO: Cambio redimension
-		// mainPanel.setWidth((Window.getClientWidth()*0.35)	+"px");
 
 		// Adds the title
 		rubricTitle = new Label();
@@ -232,7 +230,6 @@ public class RubricPanel extends EMarkingComposite {
 		// If we are in the popup interface we hide the close button
 		closeButton.setVisible(!popupInterface);
 
-		//TODO
 		// Once loaded, we know all sizes
 		scrollPanel.setWidth("100%");
 		int height = Window.getClientHeight() - scrollPanel.getAbsoluteTop();

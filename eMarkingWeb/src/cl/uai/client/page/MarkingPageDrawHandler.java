@@ -73,7 +73,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 		int left = 11000;
 		int right = -1;
 		int bottom = -1;
-		selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
+		selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion().getId();
 		
 		int x = this.currentPath.getX();
 		int y = this.currentPath.getY();
@@ -93,6 +93,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 		int pageno = this.parentPage.getPageNumber();
 		
 		PathMark mark = new PathMark(
+				0,
 				left,
 				top,
 				pageno,
@@ -100,7 +101,8 @@ public class MarkingPageDrawHandler implements DrawHandler {
 				right-left,bottom-top, 
 				this.currentPath.getElement().getAttribute("d"),
 				unixtime,
-				"criterion"+selectedCriterion);
+				selectedCriterion,
+				MarkingInterface.submissionData.getMarkerfirstname());
 
 		EMarkingWeb.markingInterface.addMark(mark, this.parentPage);
 		//currentPath.setY(event.getClientY()-absolutePanel.getAbsoluteTop()+20);

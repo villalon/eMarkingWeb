@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.CheckMark;
 import cl.uai.client.marks.CommentMark;
 import cl.uai.client.marks.CrossMark;
@@ -73,7 +74,8 @@ public class MarkingPageClickHandler implements ClickHandler {
 
 		final long unixtime = System.currentTimeMillis() / 1000L;
 		
-		final int selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
+		Criterion criterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+		final int selectedCriterion = criterion == null ? 0 : criterion.getId();
 
 		// Switches over the selected button in the rubric interface, to know what mark to add
 		switch(EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedButton()) {
@@ -95,14 +97,16 @@ public class MarkingPageClickHandler implements ClickHandler {
 					}
 
 					CommentMark mark = new CommentMark(
+							0,
 							newposx, 
 							newposy, 
 							pageno,
 							MarkingInterface.markerid,
 							unixtime,
-							"criterion"+ selectedCriterion
+							selectedCriterion,
+							"Not set",
+							dialog.getTxtComment()
 							);
-					mark.setRawtext(dialog.getTxtComment());
 					EMarkingWeb.markingInterface.addMark(mark, parentPage);
 				}
 			});
@@ -111,12 +115,15 @@ public class MarkingPageClickHandler implements ClickHandler {
 			// A cross
 		case BUTTON_CROSS:
 			CrossMark crmark = new CrossMark(
+					0,
 					newposx, 
 					newposy, 
 					pageno,
 					MarkingInterface.markerid, 
 					unixtime,
-					"criterion"+ selectedCriterion);
+					selectedCriterion,
+					MarkingInterface.submissionData.getMarkerfirstname(),
+					"");
 			EMarkingWeb.markingInterface.addMark(crmark, parentPage);
 			break;
 			// A pen
@@ -132,27 +139,34 @@ public class MarkingPageClickHandler implements ClickHandler {
 			// A check mark
 		case BUTTON_TICK:
 			CheckMark cmark = new CheckMark(
+					0,
 					newposx, 
 					newposy, 
 					pageno,
 					MarkingInterface.markerid,
 					unixtime,
-					"criterion"+ selectedCriterion);
+					selectedCriterion,
+					MarkingInterface.submissionData.getMarkerfirstname(),
+					"");
 			EMarkingWeb.markingInterface.addMark(cmark, parentPage);
 			break;
 			// A check mark
 		case BUTTON_QUESTION:
 			QuestionMark qmark = new QuestionMark(
+					0,
 					newposx, 
 					newposy, 
 					pageno,
 					MarkingInterface.markerid,
 					unixtime,
-					"criterion"+ selectedCriterion);
+					selectedCriterion,
+					MarkingInterface.submissionData.getMarkerfirstname(),
+					"");
 			EMarkingWeb.markingInterface.addMark(qmark, parentPage);
 			break;
 		case BUTTON_CUSTOM:
 			CustomMark custommark = new CustomMark(
+					0,
 					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
 					.getSelectedButtonLabel(),
 					newposx, 
@@ -160,7 +174,9 @@ public class MarkingPageClickHandler implements ClickHandler {
 					pageno,
 					MarkingInterface.markerid,
 					unixtime,
-					"criterion"+ selectedCriterion);
+					selectedCriterion,
+					MarkingInterface.submissionData.getMarkerfirstname(),
+					"");
 			custommark.setRawtext(
 					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
 						.getSelectedButtonLabel() + ": "

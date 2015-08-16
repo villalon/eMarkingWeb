@@ -28,7 +28,10 @@ import cl.uai.client.data.Criterion;
 import cl.uai.client.data.Level;
 import cl.uai.client.data.SubmissionGradeData;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.i18n.client.NumberFormat;
 
 /**
@@ -38,7 +41,7 @@ import com.google.gwt.i18n.client.NumberFormat;
  * @author Jorge Villalón <villalon@gmail.com>
  *
  */
-public class RubricMark extends Mark {
+public class RubricMark extends Mark { 
 
 	/** The rubric level indicating its criterion and level in the rubric **/
 	private int levelid = 0;
@@ -75,23 +78,78 @@ public class RubricMark extends Mark {
 	 * @param rubricLevel the rubric level indicating criterion and level in the rubric
 	 */
 	public RubricMark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
 			int lvlid,
-			long timecreated, 
-			String colour) {
-		super(posx, posy, pageno, markerid, timecreated, colour);
+			long timecreated,
+			int criterionid,
+			String markername,
+			String rawtext) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 		
 		// Rubric marks have format 2
 		this.format = 2;
+		this.iconType = IconType.TH;
 
 		this.addStyleName(Resources.INSTANCE.css().markpopup());
 		
 		this.setLevelId(lvlid);
 	}
 
+	@Override
+	public void setMarkHTML() {
+		
+			// Starts with an empty HTML
+			String html = "";
+			boolean headerOnly = false;
+			
+				RubricMark rmark = (RubricMark) this;
+				headerOnly = rmark.isHeaderOnly();
+				
+				Icon icon = new Icon(this.iconType);
+				
+				html += "<table class=\"markrubricheader\" style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
+						+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markicon()+"\">" 
+						+ icon.toString() + "</div></td><td><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" + rmark.getLevel().getCriterion().getDescription() + "</div></td>";
+				html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
+						+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
+						+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
+						+"</div></td></tr></table>";
+				if(!headerOnly)
+				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
+						+ "</div>";
+			
+			if(!headerOnly) {
+				html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+				// Show the marker's name if the marking process is not anonymous
+				if(!MarkingInterface.isMarkerAnonymous()) {
+					html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
+				}
+			}
+			
+			
+			if(this.getRegradeid() > 0 && !headerOnly) {
+				html += "<div style=\"background-color:yellow\">"+ MarkingInterface.messages.Regrade()
+						+ (((RubricMark)this).getRegradeaccepted() == 0 ? " " + MarkingInterface.messages.Requested() : " " + MarkingInterface.messages.Replied())
+						+"</div>";
+				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
+						+ MarkingInterface.messages.Motive() + ": " + this.getRegradeMotiveText() + "<hr>" 
+						+ MarkingInterface.messages.Comment() + ": " + this.getRegradecomment()
+						+ (this.getRegradeaccepted() == 0 ? "" : "<hr>"+MarkingInterface.messages.RegradeReply()+": " + this.getRegrademarkercomment())
+						+ "</div>";
+			}
+			
+			// If the mark has a color, we use the background to color it
+			if(this.criterionid > 0) {
+				Color.setWidgetBackgroundHueColor(this.criterionid, this);
+			}
+			
+			this.setHTML(html);		
+		}
+	
 	/**
 	 * Gets the rubric level of the RubricMark
 	 * @return a rubric level
@@ -133,17 +191,18 @@ public class RubricMark extends Mark {
 	 */
 	public static RubricMark createFromMap(Map<String, String> mark) {
 		RubricMark markobj = new RubricMark(
+				Integer.parseInt(mark.get("id")),
 				Integer.parseInt(mark.get("posx")), 
 				Integer.parseInt(mark.get("posy")), 
 				Integer.parseInt(mark.get("pageno")),
 				Integer.parseInt(mark.get("markerid")),
 				Integer.parseInt(mark.get("levelid")),
 				Long.parseLong(mark.get("timecreated")),
-				String.valueOf(mark.get("colour")));
+				Integer.parseInt(mark.get("criterionid")),
+				mark.get("markername"),
+				mark.get("rawtext")
+				);
 		
-		markobj.setId(Integer.parseInt(mark.get("id"))); 
-		markobj.setRawtext(mark.get("rawtext"));
-		markobj.setMarkername(mark.get("markername"));
 		markobj.setRegradeid(Integer.parseInt(mark.get("regradeid")));
 		markobj.setRegradecomment(mark.get("regradecomment"));
 		markobj.setRegrademotive(Integer.parseInt(mark.get("motive")));

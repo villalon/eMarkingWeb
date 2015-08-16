@@ -15,7 +15,13 @@ public abstract class BubbleButton extends HTML {
 	protected Icon icon = null;
 	protected int left = Window.getClientWidth()-40;
 	protected int top = 0;
+	protected int source = 0;
+	protected Icon notificationIcon;
 	
+	public int getSource() {
+		return source;
+	}
+
 	public int getLeft() {
 		return left;
 	}
@@ -32,7 +38,7 @@ public abstract class BubbleButton extends HTML {
 		this.top = top;
 	}
 
-	public BubbleButton(IconType _type, int _left, int _top) {
+	public BubbleButton(IconType _type, int _left, int _top, int _source) {
 		super();
 
 		this.addStyleName(Resources.INSTANCE.css().showrubricbutton());
@@ -40,8 +46,13 @@ public abstract class BubbleButton extends HTML {
 		this.icon = new Icon(_type);
 		this.setHTML(icon.toString());
 		
+		this.notificationIcon = new Icon(IconType.BELL_ALT);
+		this.notificationIcon.addStyleName(Resources.INSTANCE.css().bubblenotification());
+		this.notificationIcon.setVisible(false);
+		
 		this.left = _left;
 		this.top = _top;
+		this.source = _source;
 		
 		this.setVisible(false);
 		
@@ -52,10 +63,22 @@ public abstract class BubbleButton extends HTML {
 			}
 		});
 	}
-	
+
 	public void updatePosition(AbsolutePanel panel) {
 		panel.setWidgetPosition(this, left, top);
+		if(panel.getWidgetIndex(notificationIcon) < 0) {
+			panel.add(notificationIcon);
+		}
+		panel.setWidgetPosition(notificationIcon, left + 25, top);
 	}
 	
 	protected abstract void onButtonClick(ClickEvent event);
+
+	public void addNotification() {
+		this.notificationIcon.setVisible(true);
+	}
+
+	public void removeNotification() {
+		this.notificationIcon.setVisible(false);
+	}
 }

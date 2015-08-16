@@ -2,9 +2,9 @@ package cl.uai.client.chat;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class UserData extends JavaScriptObject{
+public class UserJS extends JavaScriptObject{
 
-	protected UserData() {}
+	protected UserJS() {}
 	
 	public final native String getFirstName() /*-{ 
 	 	return this.first; 

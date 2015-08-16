@@ -35,6 +35,7 @@ public class Criterion {
 	private int selectedLevel = 0;
 	private float maxscore;
 	private int regradeid = 0;
+	private int hueColor = 0;
 	private boolean markerIsAssigned = true;
 	public boolean isMarkerIsAssigned() {
 		return markerIsAssigned;
@@ -197,5 +198,19 @@ public class Criterion {
 
 	public void setRegradeMarkerComment(String regrademarkercomment) {
 		this.regradeMarkerComment = regrademarkercomment;
+	}
+
+	/**
+	 * @return the hueColor
+	 */
+	public int getHueColor() {
+		return hueColor;
+	}
+
+	/**
+	 * @param hueColor the hueColor to set
+	 */
+	public void setHueColor(int hueColor) {
+		this.hueColor = hueColor;
 	}
 }

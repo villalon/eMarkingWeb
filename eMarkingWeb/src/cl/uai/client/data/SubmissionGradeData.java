@@ -302,6 +302,7 @@ public class SubmissionGradeData {
 							}
 						}
 
+						criteriondata.setHueColor(definition.size());
 						definition.put(criteriondata.getId(), criteriondata);
 					}
 

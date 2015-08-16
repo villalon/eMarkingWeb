@@ -7,8 +7,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 
 public class ShowChatButton extends BubbleButton {
 
-	public ShowChatButton(int _left, int _top) {
-		super(IconType.COMMENTS, _left, _top);
+	public ShowChatButton(int _left, int _top, int _source) {
+		super(IconType.COMMENTS, _left, _top, _source);
 	}
 	
 	@Override

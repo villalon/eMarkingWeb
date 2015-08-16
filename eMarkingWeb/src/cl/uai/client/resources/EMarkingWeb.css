@@ -18,6 +18,7 @@
  				   Hans C. Jeria <hansj@live.cl>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+ 
 /** Main interfaces **/
 .interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable, .rubricpanel, .rubricinterface
 	{
@@ -241,6 +242,23 @@ to {
 
 .mark {
 	z-index: 100;
+	font-size: 2vw;
+	text-shadow: 1px 1px 2px #666;
+}
+
+.mark i {
+	font-size: 2vw;
+}
+
+.criterionlistbox {
+	max-width: 100%;
+}
+
+.markrubricheader {
+	-webkit-border-top-left-radius: 3px; 
+	-webkit-border-top-right-radius: 3px; 
+	border-top-left-radius: 3px; 
+	border-top-right-radius: 3px;
 }
 
 .mark:hover {
@@ -256,7 +274,6 @@ to {
 
 .checkmark,.crossmark {
 	color: #ff0000;
-	font-size: 12pt;
 	font-weight: 100;
 }
 
@@ -293,9 +310,10 @@ to {
 
 .markpts,.rubrictitle,.prevcommentstitle {
 	margin-left: 10px;
+    margin-right: 3px;
 }
 
-.activityname,.rubrictitle,.prevcommentstitle {
+.activityname,.rubrictitle,.prevcommentstitle, .criterionlistbox {
 	font-size: 12pt;
 	font-weight: bold;
 }
@@ -403,14 +421,26 @@ to {
 	z-index: 300;
 }
 
-.markmarkername,.markrawtext {
+.bubblenotification {
+	color:red;
+	font-size: 12pt;
+	   text-shadow: 1px 1px 2px #666;
+}
+
+.markmarkername, .markrawtext {
 	width: 100%;
 	font-size: 8pt;
-	color: #999;
+	color: #000;
+	padding: 0px 2px 0px 2px;
 }
 
 .markmarkername {
-	border-top: dashed 1px #999;
+	color: #666;
+	text-decoration: underline;
+}
+
+.markicon {
+	max-width: 2vw;
 }
 
 .oddrow {
@@ -428,12 +458,9 @@ to {
 .markpopup,.markpopup:hover {
 	max-width: 400px;
 	background-color: #fff;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #999;
 	border-radius: 3px;
-	padding: 3px;
 	z-index: 100;
+	box-shadow: 1px 1px 2px #666;
 }
 
 .markpopuppanel {
@@ -634,180 +661,6 @@ to {
 @sprite .othermarker100 {
 	gwt-image: "othermarker100";
 }
-.criterion0{
-color: red;
-stroke: red;
-}
-.criterion1{
-color: #33E6D9;
-stroke: #33E6D9;
-}
-.criterion2{
-color: #FFA600;
-stroke: #FFA600;
-}
-.criterion3{
-color: #A64B00;
-stroke: #A64B00;
-}
-.criterion4{
-color: #8CCCF2;
-stroke: #8CCCF2;
-}
-.criterion5{
-color: #ED0000;
-stroke: #ED0000;
-}
-.criterion6{
-color: #A6FF00;
-stroke: #A6FF00;
-}
-.criterion7{
-color: #8C19A3;
-stroke: #8C19A3;
-}
-.criterion8{
-color: #00AAE6;
-stroke: #00AAE6;
-}
-.criterion9{
-color: #5CF22C;
-stroke: #5CF22C;
-}
-.criterion10{
-color: #FF6600;
-stroke: #FF6600;
-}
-.criterion11{
-color: #806600;
-stroke: #806600;
-}
-.criterion12{
-color: #0057D9;
-stroke: #0057D9;
-}
-.criterion13{
-color: #33E6D9;
-stroke: #33E6D9;
-}
-.criterion14{
-color: #FFA600;
-stroke: #FFA600;
-}
-.criterion15{
-color: #A64B00;
-stroke: #A64B00;
-}
-.criterion16{
-color: #8CCCF2;
-stroke: #8CCCF2;
-}
-.criterion17{
-color: #ED0000;
-stroke: #ED0000;
-}
-.criterion18{
-color: #A6FF00;
-stroke: #A6FF00;
-}
-.criterion19{
-color: #8C19A3;
-stroke: #8C19A3;
-}
-.criterion20{
-color: #00AAE6;
-stroke: #00AAE6;
-}
-.criterion21{
-color: #5CF22C;
-stroke: #5CF22C;
-}
-.criterion22{
-color: #FF6600;
-stroke: #FF6600;
-}
-.criterion23{
-color: #806600;
-stroke: #806600;
-}
-.criterion24{
-color: #0057D9;
-stroke: #0057D9;
-}
-
-
-.color1{
-background-color: #33E6D9;
-}
-.color2{
-background-color: #FFA600;
-}
-.color3{
-background-color: #A64B00;
-}
-.color4{
-background-color: #8CCCF2;
-}
-.color5{
-background-color: #ED0000;
-}
-.color6{
-background-color: #A6FF00;
-}
-.color7{
-background-color: #8C19A3;
-}
-.color8{
-background-color: #00AAE6;
-}
-.color9{
-background-color: #5CF22C;
-}
-.color10{
-background-color: #FF6600;
-}
-.color11{
-background-color: #806600;
-}
-.color12{
-background-color: #0057D9;
-}
-.color13{
-background-color: #33E6D9;
-}
-.color14{
-background-color: #FFA600;
-}
-.color15{
-background-color: #A64B00;
-}
-.color16{
-background-color: #8CCCF2;
-}
-.color17{
-background-color: #ED0000;
-}
-.color18{
-background-color: #A6FF00;
-}
-.color19{
-background-color: #8C19A3;
-}
-.color20{
-background-color: #00AAE6;
-}
-.color21{
-background-color: #5CF22C;
-}
-.color22{
-background-color: #FF6600;
-}
-.color23{
-background-color: #806600;
-}
-.color24{
-background-color: #0057D9;
-}
 .colorsquare{
 	width:20px;
 	height:20px;
@@ -860,7 +713,7 @@ background-color: #0057D9;
 .chatusers{
 	font-size:16px;
 	font-weight: bold; 
-	
+	margin-left: 4px;
 	height:30px;
     width: 30px;
     margin-bottom: 4px;

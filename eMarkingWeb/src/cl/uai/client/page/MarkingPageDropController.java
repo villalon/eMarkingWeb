@@ -81,16 +81,19 @@ public class MarkingPageDropController extends SimpleDropController {
 		} else if(context.draggable instanceof PreviousCommentLabel) {
 			// If it is a previous comment then add a mark
 			int pageno = parentPage.getPageNumber();
+			int selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion().getId();
 			PreviousCommentLabel lbl = (PreviousCommentLabel) context.draggable;
 			long unixtime = System.currentTimeMillis() / 1000L;
 			CommentMark mark = new CommentMark(
+					0,
 					posx, 
 					posy, 
 					pageno,
 					MarkingInterface.markerid,
 					unixtime,
-					"");
-			mark.setRawtext(lbl.getText());
+					selectedCriterion,
+					MarkingInterface.submissionData.getMarkerfirstname(),
+					lbl.getText());
 			EMarkingWeb.markingInterface.addMark(mark, parentPage);
 		}
 		

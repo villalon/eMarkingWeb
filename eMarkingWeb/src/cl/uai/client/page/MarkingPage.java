@@ -30,7 +30,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingWeb;
-import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.CheckMark;
 import cl.uai.client.marks.CommentMark;
 import cl.uai.client.marks.CrossMark;
@@ -112,8 +112,6 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		
 		for(Map<String, String> markMap : pageMarks) {
 			
-			if(!MarkingInterface.isColoredRubric())
-				markMap.put("colour", "criterion0");
 			try {
 				int format = Integer.parseInt(markMap.get("format"));
 				fixPositions(markMap, width, height);
@@ -155,7 +153,6 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 				logger.severe("Exception creating mark from DB. " + markMap.toString() + " Error:"+e.getMessage());
 			}
 		}
-
 		
 		mainPanel = new FocusPanel();
 		absolutePanel = new AbsolutePanel();
@@ -171,7 +168,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		// Initialize drag and drop controller, attached to the absolute panel
 		dragController = new PickupDragController(absolutePanel, true);
 		dragController.setBehaviorDragStartSensitivity(1);
-		dragController.setBehaviorScrollIntoView(false); // TODO: Check this parameter
+		dragController.setBehaviorScrollIntoView(false);
 		MarkingPageDragHandler dragHandler = new MarkingPageDragHandler(absolutePanel, this);
 		dragController.addDragHandler(dragHandler);
 
@@ -255,11 +252,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 				stats.remove(format);
 			}
 			
-			int c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getIndexSelectedCriterion();
-			String criterionid = "criterion"+c;
-			if(c == 0){
+			Criterion selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+			if(selectedCriterion  == null){
 				newvalue++;
-			}else if(mark.getColour().equals(criterionid)){
+			} else if(mark.getCriterionid() == selectedCriterion.getId()){
 				newvalue++;
 			}
 			stats.put(format, newvalue);
@@ -277,11 +273,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		//TODO: Ancho de la prueba
 		// Once loaded, we know all sizes
-		int i= (int)(Window.getClientWidth());
-		String ancho = String.valueOf(i);
-		mainPanel.setWidth(ancho);
+		int i = (int)(Window.getClientWidth());
+		String strWidth = String.valueOf(i);
+		mainPanel.setWidth(strWidth);
 		mainPanel.addStyleName(Resources.INSTANCE.css().pagescroll());
 		loadInterface();
 	}
@@ -315,40 +310,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		if(!(mark instanceof PathMark)) {
 			dragController.makeDraggable(mark);
 		}
+		
 		absolutePanel.add(mark, mark.getPosx(), mark.getPosy());
 
-		// drawCommentLine(mark);
-
 		return mark;
-	}
-
-	// TODO: Add free lines on canvas
-	/**
-	 * Draws a line from the mark to the right end of the page panel
-	 * 
-	 * @param mark the mark
-	 */
-	@SuppressWarnings("unused")
-	private void drawCommentLine(Mark mark) {
-		if(this.canvas != null) {
-			
-			// Calculate coordinates for both points
-			int x = mark.getPosx() + mark.getOffsetWidth();
-			int y = mark.getPosy() + (int) ((float) mark.getOffsetHeight() / 2);
-			int x2 = this.canvas.getCoordinateSpaceWidth();
-			int y2 = y;
-
-			logger.fine("Drawing line from " + x + "," + y + " to " + x2 + "," + y2);
-
-			// Draw the line
-			this.canvas.getContext2d().setLineWidth(0.2d);
-			this.canvas.getContext2d().setShadowColor("#fff");
-			this.canvas.getContext2d().setStrokeStyle("#ff0000");
-			this.canvas.getContext2d().moveTo(x, y);
-			this.canvas.getContext2d().lineTo(x2, y2);
-			this.canvas.getContext2d().stroke();
-			this.canvas.getContext2d().save();
-		}
 	}
 
 	/**

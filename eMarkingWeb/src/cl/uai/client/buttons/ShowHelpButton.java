@@ -7,8 +7,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 
 public class ShowHelpButton extends BubbleButton {
 
-	public ShowHelpButton(int _left, int _top) {
-		super(IconType.H_SIGN, _left, _top);
+	public ShowHelpButton(int _left, int _top, int _source) {
+		super(IconType.H_SIGN, _left, _top, _source);
 	}
 	
 	@Override

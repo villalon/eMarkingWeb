@@ -2,9 +2,9 @@ package cl.uai.client.chat;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class Message extends JavaScriptObject{
+public class MessageJS extends JavaScriptObject{
 
-	protected Message(){}
+	protected MessageJS(){}
 		
 		 public final native String getMessage() /*-{ 
 		 	return this.message;

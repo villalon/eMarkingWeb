@@ -22,7 +22,10 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import com.github.gwtbootstrap.client.ui.constants.IconType;
+
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
 /**
  * 
@@ -38,15 +41,19 @@ public class CommentMark extends Mark {
 	 * @param pageno the page number (1 to N)
 	 */
 	public CommentMark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
 			int markerid,
 			long timecreated,
-			String colour) {
-		super(posx, posy, pageno, markerid, timecreated, colour);
+			int criterionid,
+			String markername,
+			String rawtext) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 		
 		this.format = 1;
+		this.iconType = IconType.COMMENT;
 
 		this.addStyleName(Resources.INSTANCE.css().commentmark());
 		this.addStyleName(Resources.INSTANCE.css().markpopup());
@@ -61,18 +68,27 @@ public class CommentMark extends Mark {
 	 * @return a CommentMark object
 	 */
 	public static CommentMark createFromMap(Map<String, String> markMap) {
-		CommentMark commentobj = new CommentMark(				 
+		CommentMark commentobj = new CommentMark(
+				Integer.parseInt(markMap.get("id")),
 				Integer.parseInt(markMap.get("posx")), 
 				Integer.parseInt(markMap.get("posy")), 
 				Integer.parseInt(markMap.get("pageno")),
 				Integer.parseInt(markMap.get("markerid")),
 				Long.parseLong(markMap.get("timecreated")),
-				String.valueOf(markMap.get("colour")));
-
-		commentobj.setId(Integer.parseInt(markMap.get("id"))); 
-		commentobj.setRawtext(markMap.get("rawtext"));
-		commentobj.setMarkername(markMap.get("markername"));
+				Integer.parseInt(markMap.get("criterionid")),
+				markMap.get("markername"),
+				markMap.get("rawtext")
+				);
 
 		return commentobj;
-	}	
+	}
+	
+	@Override
+	public void setMarkHTML() {
+		super.setMarkHTML();
+		
+		if(this.criterionid > 0) {
+			Color.setWidgetBackgroundHueColor(this.criterionid, this);
+		}
+	}
 }

@@ -5,6 +5,8 @@ package cl.uai.client.chat.messages;
 
 import java.util.Date;
 
+import cl.uai.client.chat.User;
+
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.user.client.ui.HTML;
@@ -33,10 +35,9 @@ public class SosMessage extends ChatMessage {
 	private int status;
 	private int urgency;
 	
-	public SosMessage(int userid, Date date, String userAbbreviation,
-			String userFullname, String message, int color, 
+	public SosMessage(User user, Date date, String message, 
 			int draftid, int status, int urgency) {
-		super(userid, date, userAbbreviation, userFullname, message, color);
+		super(user, date, message);
 		
 		this.draftid = draftid;
 		this.status = status;
@@ -47,10 +48,10 @@ public class SosMessage extends ChatMessage {
 		Icon icon = new Icon(IconType.SIGNIN);
 		mainPanel.add(new HTML("<a href=\"#?id="+this.draftid+"\">"+icon.toString()+"</a>")); ;
 		// status
-		Icon iconStatus = statusIcons[this.status];
+		Icon iconStatus = statusIcons[this.status-1];
 		mainPanel.add(new HTML(iconStatus.toString()));
 		// urgency level
-		Icon iconUrgency = urgencyIcons[this.urgency];
+		Icon iconUrgency = urgencyIcons[this.urgency-1];
 		mainPanel.add(new HTML(iconUrgency.toString()));
 	}
 }

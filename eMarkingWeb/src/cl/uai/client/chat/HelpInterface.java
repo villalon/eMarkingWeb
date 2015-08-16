@@ -22,12 +22,9 @@ public class HelpInterface extends ChatInterface {
 
 		// The message panel
 		SosMessage chatMessage = new SosMessage(
-				userid, 
+				ConnectedUsersPanel.allUsers.get(userid),
 				date,
-				allUsersAbbreviations.get(userid), 
-				allUsersFullnames.get(userid),
-				message,
-				allUsersColors.get(userid), 
+				message, 
 				draftid, 
 				status, 
 				urgency);

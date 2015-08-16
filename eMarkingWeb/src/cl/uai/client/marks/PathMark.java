@@ -22,8 +22,8 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
-import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
 /**
  * 
@@ -40,6 +40,7 @@ public class PathMark extends Mark{
 	 * @param data the path data
 	 */
 	public PathMark(
+			int id,
 			int posx,
 			int posy,
 			int pageno,
@@ -47,11 +48,11 @@ public class PathMark extends Mark{
 			int width,
 			int height,
 			String data,
-			long timecreated, 
-			String colour) {
-		super(posx, posy, pageno, markerid, timecreated,colour);
+			long timecreated,
+			int criterionid,
+			String markername) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, data);
 		this.format = 5;
-		this.setRawtext(data);
 		this.width = width;
 		this.height = height;
 		this.setWidth(width+"px");
@@ -60,14 +61,6 @@ public class PathMark extends Mark{
 
 	}
 
-
-	@Override
-	public void setMarkHTML() {
-		String html = 
-				"<svg style=\"overflow:visible;\"><path class=\""+ MarkingInterface.getMapCss().get(colour) + "\" stroke-width=\"2\" fill=\"none\" d=\""+this.getRawtext()+"\"></path></svg>";
-		this.setHTML(html);
-	}
-	
 	/**
 	 * Creates a PathMark from a Hash with Strings as key value pairs,
 	 * parsing the values in the map and casting them to the proper
@@ -78,31 +71,43 @@ public class PathMark extends Mark{
 	 */
 	public static PathMark createFromMap(Map<String, String> markMap) {
 		PathMark pathobj = null;
-		
-		try {
-		String pathData = markMap.get("rawtext");
-		
-		pathobj = new PathMark(				 
-				Integer.parseInt(markMap.get("posx")), 
-				Integer.parseInt(markMap.get("posy")), 
-				Integer.parseInt(markMap.get("pageno")),
-				Integer.parseInt(markMap.get("markerid")),
-				Integer.parseInt(markMap.get("width")), 
-				Integer.parseInt(markMap.get("height")), 
-				pathData,
-				Long.parseLong(markMap.get("timecreated")),
-				String.valueOf(markMap.get("colour"))
-				);
 
-		pathobj.setId(Integer.parseInt(markMap.get("id"))); 
-		pathobj.setRawtext(markMap.get("rawtext"));
-		pathobj.setMarkername(markMap.get("markername"));
+		try {
+			String pathData = markMap.get("rawtext");
+
+			pathobj = new PathMark(
+					Integer.parseInt(markMap.get("id")), 
+					Integer.parseInt(markMap.get("posx")), 
+					Integer.parseInt(markMap.get("posy")), 
+					Integer.parseInt(markMap.get("pageno")),
+					Integer.parseInt(markMap.get("markerid")),
+					Integer.parseInt(markMap.get("width")), 
+					Integer.parseInt(markMap.get("height")), 
+					pathData,
+					Long.parseLong(markMap.get("timecreated")), 
+					Integer.parseInt(markMap.get("criterionid")),
+					markMap.get("markername")
+					);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe(e.getMessage());
 		}
-		
+
 		return pathobj;
 	}
 
+	@Override
+	public void setMarkHTML() {
+
+		String color = "red";
+		if(this.criterionid > 0) {
+			color = Color.getCSSHueColor(criterionid);
+		}
+
+		String html = 
+				"<svg style=\"overflow:visible;\"><path title=\"" + this.markername + "\" style=\"stroke:" + color 
+				+ "\" stroke-width=\"2\" fill=\"none\" d=\"" + this.rawtext + "\"></path></svg>";
+
+		this.setHTML(html);
+	}
 }

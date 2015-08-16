@@ -6,15 +6,13 @@ package cl.uai.client.chat.messages;
 import java.util.Date;
 
 import cl.uai.client.MarkingInterface;
-import cl.uai.client.chat.ChatInterface;
+import cl.uai.client.chat.User;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 
 /**
  * @author Jorge Villalón
@@ -22,54 +20,38 @@ import com.google.gwt.user.client.ui.Label;
  */
 public class ChatMessage extends Composite {
 
-	int userid;
-	Date date;
-	String userAbbreviation;
-	String userFullname;
-	String message;
-	int color;
+	private Date date;
+	private String message;
+	private User user;
 	
-	HorizontalPanel mainPanel = null;
+	protected HorizontalPanel mainPanel = null;
 	private boolean ownMessage;
 
 	/**
 	 * Chat message constructor
-	 * 
-	 * @param userid
+	 *
+	 * @param user
 	 * @param date
-	 * @param userAbbreviation
-	 * @param userFullname
 	 * @param message
-	 * @param color
 	 */
-	public ChatMessage(int userid, Date date, String userAbbreviation,
-			String userFullname, String message, int color) {
+	public ChatMessage(User user, Date date, String message) {
 		super();
-		this.userid = userid;
+		this.user = user;
 		this.date = date;
-		this.userAbbreviation = userAbbreviation;
-		this.userFullname = userFullname;
 		this.message = message;
-		this.color = color;
 		
-		ownMessage = userid == MarkingInterface.submissionData.getMarkerid();
+		ownMessage = user.getId() == MarkingInterface.submissionData.getMarkerid();
 
 		mainPanel = new HorizontalPanel();
 
 		mainPanel.addStyleName(Resources.INSTANCE.css().chatmessage());
 		
-		// Author with date as title
-		Label authorLabel = new Label(this.userAbbreviation);
-		authorLabel.addStyleName(Resources.INSTANCE.css().chatauthor());
-
-		ChatInterface.addColorCSStoWidget(color, authorLabel);
-
-		DateTimeFormat fmt = DateTimeFormat.getFormat("YYYY/MM/dd HH:MM");
-		authorLabel.setTitle(userFullname + " " + fmt.format(date));
+		DateTimeFormat fmt = DateTimeFormat.getFormat("YY/MM/dd HH:MM");
 
 		// Message
-		HTML lblMessage = new HTML("<span style=\"font-weight:bold;\">" + this.userAbbreviation 
-				+ "</span>: " + message);
+		HTML lblMessage = new HTML("<span style=\"font-weight:bold;\">" + this.user.getNickname() 
+				+ "</span>: " + this.message);
+		lblMessage.setTitle(this.user.getFullname() + " - " + fmt.format(this.date));
 
 		mainPanel.add(lblMessage);
 
@@ -79,8 +61,6 @@ public class ChatMessage extends Composite {
 			lblMessage.addStyleName(Resources.INSTANCE.css().chatownmessage());
 		}
 
-		mainPanel.setCellVerticalAlignment(authorLabel, HasAlignment.ALIGN_TOP);
-		
 		initWidget(mainPanel);
 	}
 

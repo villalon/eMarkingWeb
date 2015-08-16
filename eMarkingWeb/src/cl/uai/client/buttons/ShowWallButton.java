@@ -7,8 +7,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 
 public class ShowWallButton extends BubbleButton {
 
-	public ShowWallButton(int _left, int _top) {
-		super(IconType.INBOX, _left, _top);
+	public ShowWallButton(int _left, int _top, int _source) {
+		super(IconType.INBOX, _left, _top, _source);
 	}
 	
 	@Override
