@@ -6,6 +6,7 @@ package cl.uai.client.chat.messages;
 import java.util.Date;
 
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.chat.ConnectedUsersPanel;
 import cl.uai.client.chat.User;
 import cl.uai.client.resources.Resources;
 
@@ -44,21 +45,29 @@ public class ChatMessage extends Composite {
 
 		mainPanel = new HorizontalPanel();
 
-		mainPanel.addStyleName(Resources.INSTANCE.css().chatmessage());
-		
-		DateTimeFormat fmt = DateTimeFormat.getFormat("YY/MM/dd HH:MM");
+		DateTimeFormat fmt = DateTimeFormat.getFormat("dd MMM HH:MM");
 
 		// Message
-		HTML lblMessage = new HTML("<span style=\"font-weight:bold;\">" + this.user.getNickname() 
-				+ "</span>: " + this.message);
-		lblMessage.setTitle(this.user.getFullname() + " - " + fmt.format(this.date));
+		HTML lblMessage = new HTML();
+		String html = (ownMessage ? "<div class=\"talk-bubble tri-right round border right-top\">" :
+				  	  "<div class=\"talk-bubble tri-right round border left-top\">" ) +
+					  "  <div class=\"talktext\">" +
+					  "    <p>" + this.message + "</p>" +
+					  "  </div>" +
+					  "</div>";
+		lblMessage.setHTML(html);
+		lblMessage.setTitle(fmt.format(this.date));
 
-		mainPanel.add(lblMessage);
+		HTML lblAuthor = ConnectedUsersPanel.createUserIcon(this.user);
+		lblAuthor.removeStyleName(Resources.INSTANCE.css().chatusers());
+		lblAuthor.addStyleName(Resources.INSTANCE.css().chatuserssmall());
 
-		if(!ownMessage) {
-			lblMessage.addStyleName(Resources.INSTANCE.css().chatothersmessage());
+		if(ownMessage) {
+			mainPanel.add(lblMessage);
+			mainPanel.add(lblAuthor);
 		} else {
-			lblMessage.addStyleName(Resources.INSTANCE.css().chatownmessage());
+			mainPanel.add(lblAuthor);
+			mainPanel.add(lblMessage);			
 		}
 
 		initWidget(mainPanel);

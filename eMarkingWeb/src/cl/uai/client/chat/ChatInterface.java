@@ -87,6 +87,7 @@ public class ChatInterface extends DialogBox {
 		this.lastOpen = new Date();
 		EMarkingWeb.markingInterface.removeNotificationToBubbleButton(this.source);
 		scrollMessagesPanel.scrollToBottom();
+		sendMessageTextArea.setFocus(true);
 	}
 	
 	/**
@@ -119,15 +120,19 @@ public class ChatInterface extends DialogBox {
 
 		// KeyDown for text area for sending message
 		sendMessageTextArea.addKeyDownHandler(new KeyDownHandler() {
+			
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					sendMessage(sendMessageTextArea.getValue());
-					sendMessageTextArea.setValue("");
+					event.stopPropagation();
+					String msg = sendMessageTextArea.getValue();
+					msg = msg.replace("\n", "");
+					sendMessage(msg);
+					sendMessageTextArea.setValue(null);
 				}
 			}
 		});
-
+		
 		// Vertical panel that contains everything
 		mainPanel = new VerticalPanel(); 
 		mainPanel.addStyleName(Resources.INSTANCE.css().chatmainpanel());

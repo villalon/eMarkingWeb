@@ -61,18 +61,23 @@ public class ConnectedUsersPanel extends HorizontalPanel {
 		if(connectedUsers.containsKey(user.getId()))
 			return;
 
-		HTML userConnectedIcon = new HTML();
-		userConnectedIcon.setText(user.getNickname());
-		userConnectedIcon.addStyleName(Resources.INSTANCE.css().chatusers());
-		userConnectedIcon.setTitle(userdata.getFirstName() + " " + userdata.getLastName());
-
-		Color.setWidgetBackgroundHueColor(user.getColor(), userConnectedIcon);
+		HTML userConnectedIcon = createUserIcon(user);
 
 		// We add the user to the list
 		connectedUsers.put(user.getId(), userConnectedIcon);
 		
 		// Add the icon
 		this.add(userConnectedIcon);
+	}
+	
+	public static HTML createUserIcon(User user) {
+		HTML userConnectedIcon = new HTML();
+		userConnectedIcon.setText(user.getNickname());
+		userConnectedIcon.addStyleName(Resources.INSTANCE.css().chatusers());
+		userConnectedIcon.setTitle(user.getFullname());
+
+		Color.setWidgetBackgroundHueColor(user.getColor(), userConnectedIcon);
+		return userConnectedIcon;
 	}
 
 	
