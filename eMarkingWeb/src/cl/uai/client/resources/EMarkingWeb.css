@@ -807,7 +807,7 @@ background-color: #c0c0c0;
 /************ BUBBLES **********************/
 /* CSS talk bubble */
 .talk-bubble {
-    margin: 10px 8px 0px;
+    margin: 0px 5px 0px;
   display: inline-block;
   position: relative;
     height: auto;
@@ -818,8 +818,8 @@ background-color: #c0c0c0;
 }
 .round{
   border-radius: 10px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
 
 }
 /* Right triangle placed top right flush. */
@@ -883,4 +883,8 @@ background-color: #c0c0c0;
     bottom: auto;
     border: 8px solid;
     border-color: lightyellow transparent transparent transparent;
+}
+.chatelapsedtime {
+	font-size:7pt;
+	width:100%;
 }

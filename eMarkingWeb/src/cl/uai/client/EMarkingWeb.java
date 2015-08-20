@@ -183,7 +183,7 @@ public class EMarkingWeb implements EntryPoint {
 			// Set eMarking's main interface submission id according to HTML
 			MarkingInterface.setSubmissionId(submissionId);
 
-			MarkingInterface.showRubricOnLoad = showRubric;
+			EMarkingConfiguration.setShowRubricOnLoad(showRubric);
 
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;

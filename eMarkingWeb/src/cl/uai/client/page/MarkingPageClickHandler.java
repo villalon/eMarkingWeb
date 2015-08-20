@@ -22,6 +22,7 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
@@ -57,7 +58,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 	public void onClick(ClickEvent event) {
 
 		// If interface is in readonly mode no popups should be allowed.
-		if(MarkingInterface.readonly) {
+		if(EMarkingConfiguration.isReadonly()) {
 			return;
 		}
 		
@@ -101,7 +102,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 							newposx, 
 							newposy, 
 							pageno,
-							MarkingInterface.markerid,
+							EMarkingConfiguration.getMarkerId(),
 							unixtime,
 							selectedCriterion,
 							"Not set",
@@ -119,7 +120,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposx, 
 					newposy, 
 					pageno,
-					MarkingInterface.markerid, 
+					EMarkingConfiguration.getMarkerId(), 
 					unixtime,
 					selectedCriterion,
 					MarkingInterface.submissionData.getMarkerfirstname(),
@@ -143,7 +144,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposx, 
 					newposy, 
 					pageno,
-					MarkingInterface.markerid,
+					EMarkingConfiguration.getMarkerId(),
 					unixtime,
 					selectedCriterion,
 					MarkingInterface.submissionData.getMarkerfirstname(),
@@ -157,7 +158,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposx, 
 					newposy, 
 					pageno,
-					MarkingInterface.markerid,
+					EMarkingConfiguration.getMarkerId(),
 					unixtime,
 					selectedCriterion,
 					MarkingInterface.submissionData.getMarkerfirstname(),
@@ -172,7 +173,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					newposx, 
 					newposy, 
 					pageno,
-					MarkingInterface.markerid,
+					EMarkingConfiguration.getMarkerId(),
 					unixtime,
 					selectedCriterion,
 					MarkingInterface.submissionData.getMarkerfirstname(),

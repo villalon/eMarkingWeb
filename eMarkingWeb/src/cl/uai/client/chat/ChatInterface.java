@@ -39,6 +39,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -72,6 +73,9 @@ public class ChatInterface extends DialogBox {
 	private ScrollPanel scrollMessagesPanel;
 	/** Close button **/
 	private HTML closeButton;
+	
+	/** Timer to update dates in the chat **/
+	private Timer timer = null;
 	
 	/** Panel that shows what users are currently connected **/
 	private ConnectedUsersPanel usersConnectedPanel;
@@ -153,6 +157,20 @@ public class ChatInterface extends DialogBox {
 		mainPanel.add(closeButton);
 		mainPanel.setCellHorizontalAlignment(closeButton, HasAlignment.ALIGN_RIGHT);
 
+		timer = new Timer() {
+			@Override
+			public void run() {
+				for(int i=0; i<messagesPanel.getWidgetCount();i++) {
+					if(messagesPanel.getWidget(i) instanceof ChatMessage) {
+						ChatMessage chatMessage = (ChatMessage) messagesPanel.getWidget(i);
+						chatMessage.updateElapsedTime();
+					}
+				}
+			}
+		};
+		
+		timer.scheduleRepeating(1000 * 60); // Every minute
+		
 		this.add(mainPanel);
 	}
 	

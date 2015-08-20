@@ -168,4 +168,5 @@ public interface EmarkingCss extends CssResource {
 	String bubblenotification();
 	String markicon();
 	String chatuserssmall();
+	String chatelapsedtime();
 }

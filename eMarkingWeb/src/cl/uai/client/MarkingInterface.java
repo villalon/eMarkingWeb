@@ -99,9 +99,6 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Static resource for i18n messages **/
 	public static EmarkingMessages messages = GWT.create(EmarkingMessages.class);
 
-	/** eMarking version according to Moodle for debugging information **/
-	private static int eMarkingVersion = 0;
-
 	/** Submission id to obtain from HTML **/
 	private static int submissionId = -1;
 
@@ -111,70 +108,24 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Counter for how many interfaces are currently loading simultaneously **/
 	private int loading=0;
 
-	/** Indicates if the marking interface will include student anonymous information **/
-	private static boolean studentAnonymous = true;
-
-	/** Indicates if the marking interface will include marker anonymous information **/
-	private static boolean markerAnonymous = true;
-
-	/** Indicates if the marking interface is in read only mode **/
-	public static boolean readonly = true;
-
-	/** Indicates if the user is a supervisor (editingteacher) **/
-	public static boolean supervisor = false;
-
-	/** The id of the marker.**/
-	public static int markerid=0;
-
-	/** Indicates if the user owns the submission **/
-	public static boolean ownSubmission = false;
-
-	/** Moodle session key for posting to marking ajax interface **/
-	public static String sessKey = null;
-
 	/** Submission data (student, course, grade, marker) **/
 	public static SubmissionGradeData submissionData = null;
-
-	/** Div contains rubric icon  **/
-	public static boolean showRubricOnLoad = true;
-
-	public static String nodejspath;
 
 	/** Show buttons **/
 	private List<BubbleButton> bubbleButtons = null;
 
-	public ChatInterface chat;
-	public WallInterface wall;
-	public SendSosDialog sos;
-	public HelpInterface help;
+	/** Chat intefaces **/
+	public ChatInterface chat = null;
+	public WallInterface wall = null;
+	public SendSosDialog sos = null;
+	public HelpInterface help = null;
 
-	/**
-	 * @return the eMarkingVersion
-	 */
-	public static int geteMarkingVersion() {
-		return eMarkingVersion;
-	}
 	/**
 	 * The id of the submission the interface is working with
 	 * @return
 	 */
 	public static int getSubmissionId() {
 		return submissionId;
-	}
-	/**
-	 * Indicates if the marking process is anonymous
-	 * 
-	 * @return true if the marking is anonymous
-	 */
-	public static boolean isMarkerAnonymous() {
-		return markerAnonymous;
-	}
-
-	/**
-	 * @param eMarkingVersion the eMarkingVersion to set
-	 */
-	public static void seteMarkingVersion(int _eMarkingVersion) {
-		eMarkingVersion = _eMarkingVersion;
 	}
 
 	public static void setSubmissionId(int subid) {
@@ -211,86 +162,6 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** Suggester for previous comments **/
 	public MultiWordSuggestOracle previousCommentsOracle = new MultiWordSuggestOracle() ;
-
-	/** If is enabled linkrubric (Marcelo's thesis) **/
-	private static boolean coloredRubric = false;
-
-	public static boolean isColoredRubric() {
-		return coloredRubric;
-	}
-
-	/** If is enabled collaborativefeatures (Manuel's thesis) **/
-	private static boolean collaborativefeatures = false;
-
-	public static boolean getCollaborativeFeatures(){
-		return collaborativefeatures;
-	}
-
-	public static void setCollaborativeFeatures(boolean _collaborative) {
-		collaborativefeatures = _collaborative;
-	}
-
-	/** Get username (firstname lastname) of actual online user data for the chat and wall collaborative features **/
-	private static String username = null;
-
-	public static String getUsername(){
-		return username;
-	}
-
-	/** Get user username (real username) of actual online user for the chat and wall collaborative features **/
-	private static String realUsername = null;
-
-	public static String getRealUsername(){
-		return realUsername;
-	}
-
-	/** Get role of actual online user for the chat and wall collaborative features **/
-	private static String userRole = null;
-
-	public static String getUserRole(){
-		return userRole;
-	}
-
-	/** Get user id of actual online user for the chat and wall collaborative features **/
-	private static int userID = 0;
-
-	public static int getUserID(){
-		return userID;
-	}
-
-	/** Get user id of actual online user for the chat and wall collaborative features **/
-	private static int groupID = 0;
-
-	public static int getGroupID(){
-		return groupID;
-	}
-
-	/** Get indicators for progress bar of collaborative features **/
-	private static int inProgressTests = 0;
-	private static int publishedTests = 0;
-	private static int totalTests = 0;
-	private static double generalProgress = 0.0;
-	private static double publishedProgress = 0.0;
-	private static int markingType = 0;
-
-	public static double getGeneralProgress(){
-		return generalProgress;
-	}
-	public static double getPublishedProgress(){
-		return publishedProgress;
-	}
-	/** Get indicators for agree bar of collaborative features **/
-	private static double generalAgree = 0.0;
-
-	public static double getGeneralAgree(){
-		return generalAgree;
-	}
-
-	private List<Map<String, String>> actualTestAgree = null;
-
-	public List<Map<String, String>> getActualTestAgree(){
-		return actualTestAgree;
-	}
 
 	public HTML getShowRubricButton() {
 		return this.bubbleButtons.get(0);
@@ -455,7 +326,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 		//por defecto el criterionid = 0 y la clase para el color es criterion0
 		int cid = 0;
-		if(MarkingInterface.isColoredRubric()) {
+		if(EMarkingConfiguration.isColoredRubric()) {
 			Criterion c = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 			if(c != null) {
 				cid = c.getId();
@@ -574,7 +445,7 @@ public class MarkingInterface extends EMarkingComposite {
 							"&posx="+posx+
 							"&posy="+posy+
 							"&pageno="+(page.getPageNumber())+
-							"&sesskey="+sessKey+
+							"&sesskey="+EMarkingConfiguration.getSessKey()+
 							"&bonus="+bonus+
 							"&comment="+URL.encode(comment) +
 							"&windowswidth=" + page.getWidth() +
@@ -646,7 +517,7 @@ public class MarkingInterface extends EMarkingComposite {
 									posx, 
 									posy,
 									pageno,
-									MarkingInterface.markerid, 
+									EMarkingConfiguration.getMarkerId(), 
 									dialog.getLevelId(),
 									unixtime,
 									criterionId,
@@ -665,7 +536,7 @@ public class MarkingInterface extends EMarkingComposite {
 							markingPagesInterface.addMarkWidget(mark, previd, page);
 							rubricInterface.getRubricPanel().addMarkToRubric(mark);
 							toolbar.getMarkingButtons().updateStats();
-							if(MarkingInterface.isColoredRubric()) {
+							if(EMarkingConfiguration.isColoredRubric()) {
 								toolbar.getMarkingButtons().changeColor(criterion.getId());
 							}
 
@@ -704,12 +575,12 @@ public class MarkingInterface extends EMarkingComposite {
 			// Ajax URL for deleting comment
 			url = "action=deletecomment"+
 					"&id="+mark.getId()+
-					"&sesskey="+sessKey;
+					"&sesskey="+EMarkingConfiguration.getSessKey();
 		} else {
 			// Ajax URL for deleting mark
 			url = "action=deletemark"+
 					"&level="+ rubricMark.getLevelId() +
-					"&sesskey="+sessKey;
+					"&sesskey="+EMarkingConfiguration.getSessKey();
 
 			rubricInterface.getRubricPanel().loadingRubricCriterion(rubricMark.getLevelId());
 		}
@@ -817,9 +688,9 @@ public class MarkingInterface extends EMarkingComposite {
 			b.setLeft(Window.getClientWidth()-40);
 			b.updatePosition(markingPanel);
 			if(b instanceof ShowRubricButton) {
-				b.setVisible(!showRubricOnLoad);
+				b.setVisible(!EMarkingConfiguration.isShowRubricOnLoad());
 			} else {
-				b.setVisible(MarkingInterface.getCollaborativeFeatures());
+				b.setVisible(EMarkingConfiguration.isChatEnabled());
 			}
 		}		
 
@@ -827,7 +698,7 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.setCellWidth(rubricInterface, "40%");
 
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
-		rubricInterface.setVisible(showRubricOnLoad);
+		rubricInterface.setVisible(EMarkingConfiguration.isShowRubricOnLoad());
 
 		/** FIN **/
 	}
@@ -940,7 +811,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 				Window.setTitle("e-marking " + submissionData.getCoursename() + " " + submissionData.getActivityname());
 
-				if(MarkingInterface.getCollaborativeFeatures()) {
+				if(EMarkingConfiguration.isChatEnabled()) {
 					activateChat();
 				}
 
@@ -975,87 +846,22 @@ public class MarkingInterface extends EMarkingComposite {
 				//Check if values are ok
 				if(result.getError().equals("")) {
 
+					// Parse Json values
+					Map<String, String> value = AjaxRequest.getValueFromResult(result);
+
+					try {
+						EMarkingConfiguration.readConfiguration(value);
+					} catch (Exception e) {
+						e.printStackTrace();
+						Window.alert(MarkingInterface.messages.ErrorLoadingSubmission());
+						return;
+					}
+
 					// Clear interface (submission and rubric interfaces)
 					interfacePanel.clear();
 
 					// Cancel timer, we don't need to ping again
 					timer.cancel();
-
-					// Parse Json values
-					Map<String, String> value = AjaxRequest.getValueFromResult(result);
-
-					// Assign Moodle session key
-					sessKey = value.get("sesskey");
-
-					// Assign if the student is anonymous
-					studentAnonymous = value.get("studentanonymous").equals("true");
-
-					// Assign if the marker is anonymous
-					markerAnonymous =  value.get("markeranonymous").equals("true");
-
-					logger.fine("Anonymous mode - student:" + studentAnonymous + " marker:" + markerAnonymous);
-
-					// Assign if the assignment is anonymous
-					readonly = (value.get("hascapability") != null && value.get("hascapability").equals("false"));
-
-					// Assign if the user is supervisor
-					supervisor = (value.get("supervisor") != null && value.get("supervisor").equals("true"));
-
-					// Gets the user id of the person in front of the interface
-					markerid = Integer.parseInt(value.get("user"));
-
-					// Gets the version of the Moodle module
-					eMarkingVersion = Integer.parseInt(value.get("version"));
-
-					int student = Integer.parseInt(value.get("student"));
-
-					// Indicates if the user owns the current submission
-					ownSubmission = markerid == student;
-
-					logger.fine("Read only mode: " + readonly);
-
-					// Read the marking type
-					markingType = Integer.parseInt(value.get("markingtype"));
-
-					logger.fine("Marking type: " + markingType);
-
-					// Link rubric colors if configured as
-					coloredRubric = value.get("linkrubric").equals("1");
-
-					logger.fine("Link rubric: " + coloredRubric);
-
-					// Collaborative features (chat, wall) if configured as
-					collaborativefeatures = value.get("collaborativefeatures").equals("1");
-
-					// Assign actual online username (firstname lastname)
-					username = value.get("username");
-
-					//Assign actual online real username
-					realUsername = value.get("realUsername");
-
-					//Assign actual online role
-					userRole = value.get("role");
-
-					//Assign actual online user
-					userID = Integer.parseInt(value.get("user"));
-
-					//Assign actual group of online user (equals to emarking->id)
-					groupID = Integer.parseInt(value.get("groupID"));
-
-					// Obtain the nodejs path from Moodle configuration
-					nodejspath = value.get("nodejspath");
-
-					//Get progress marking status
-					totalTests = Integer.parseInt(value.get("totalTests"));
-					inProgressTests = Integer.parseInt(value.get("inProgressTests"));
-					publishedTests = Integer.parseInt(value.get("publishedTests"));
-					generalProgress = (double)100*inProgressTests/totalTests;
-					publishedProgress = (double)100*publishedTests/totalTests;
-
-					//Get agree level for collaborative preassure
-					if(value.get("agreeLevel") != null){
-						generalAgree = Double.parseDouble(value.get("agreeLevel"));
-					}
 
 					// Load submission data
 					loadSubmissionData();
@@ -1077,7 +883,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	private void activateChat() {
 
-		final String nodepath = nodejspath + "/socket.io/socket.io.js";
+		final String nodepath = EMarkingConfiguration.getNodejspath() + "/socket.io/socket.io.js";
 
 		ScriptInjector.fromUrl(nodepath).setCallback(new Callback<Void, Exception>() {
 
@@ -1085,7 +891,7 @@ public class MarkingInterface extends EMarkingComposite {
 			public void onFailure(Exception reason) {
 				logger.severe("Could not find node server " + nodepath);
 
-				MarkingInterface.setCollaborativeFeatures(false);
+				EMarkingConfiguration.setChatEnabled(false);
 				for(BubbleButton b : bubbleButtons) {
 					if(!(b instanceof ShowRubricButton)) {
 						b.setVisible(false);
@@ -1111,7 +917,7 @@ public class MarkingInterface extends EMarkingComposite {
 				} catch (Exception e) {
 					e.printStackTrace();
 					logger.severe("Fatal error trying to load NodeJS. Disabling collaborative features.");
-					MarkingInterface.setCollaborativeFeatures(false);
+					EMarkingConfiguration.setChatEnabled(false);
 					for(BubbleButton b : bubbleButtons) {
 						if(!(b instanceof ShowRubricButton)) {
 							b.setVisible(false);
@@ -1240,12 +1046,6 @@ public class MarkingInterface extends EMarkingComposite {
 	public void setDialogNewBonus(float bonus){
 		this.setBonus = bonus;
 	}
-	/**
-	 * @return the markingType
-	 */
-	public static int getMarkingType() {
-		return markingType;
-	}
 	
 	public void addNotificationToBubbleButton(int source) {
 		for(BubbleButton btn : this.bubbleButtons) {
@@ -1262,9 +1062,4 @@ public class MarkingInterface extends EMarkingComposite {
 			}
 		}
 	}
-
-	public static boolean isStudentAnonymous() {
-		return studentAnonymous;
-	}
-
 }

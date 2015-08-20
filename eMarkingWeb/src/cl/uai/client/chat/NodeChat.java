@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.SubmissionGradeData;
@@ -60,10 +61,10 @@ public class NodeChat {
 			throw new Exception("Invalid data to start NodeJs server. Submission data must be loaded first.");
 		}
 		
-		logger.info("Attempting to connect to Node server in: "+ MarkingInterface.nodejspath);
+		logger.info("Attempting to connect to Node server in: "+ EMarkingConfiguration.getNodejspath());
 
 		// Let's try to connect to Node
-		loadNodeJS(MarkingInterface.nodejspath, 
+		loadNodeJS(EMarkingConfiguration.getNodejspath(), 
 				sdata.getMarkerfirstname(), 
 				sdata.getMarkerlastname(), 
 				sdata.getMarkeremail(), 

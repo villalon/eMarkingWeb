@@ -22,6 +22,7 @@ package cl.uai.client.marks;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 
@@ -75,7 +76,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 		Mark.hideIcons();
 
 		// If we are in grading mode, show delete and edit icons
-		if(!mark.isReadOnly()) {
+		if(!EMarkingConfiguration.isReadonly()) {
 			
 			if(mark instanceof RubricMark) {
 				abspanel.setWidgetPosition(Mark.minimizeIcon, left, top);
@@ -100,7 +101,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 		}
 		
 		// If the user owns the submission and the dates are ok we show the regrade icon
-		if(MarkingInterface.ownSubmission && MarkingInterface.submissionData.isRegradingAllowed()) {
+		if(EMarkingConfiguration.isOwnDraft() && MarkingInterface.submissionData.isRegradingAllowed()) {
 			// Edit icon is only for comments and rubrics
 			if(mark instanceof RubricMark) {
 				abspanel.setWidgetPosition(Mark.regradeIcon, left, top);

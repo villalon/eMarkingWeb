@@ -4,6 +4,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Path;
 import org.vaadin.gwtgraphics.client.shape.path.LineTo;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.PathMark;
@@ -97,7 +98,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 				left,
 				top,
 				pageno,
-				MarkingInterface.markerid,
+				EMarkingConfiguration.getMarkerId(),
 				right-left,bottom-top, 
 				this.currentPath.getElement().getAttribute("d"),
 				unixtime,

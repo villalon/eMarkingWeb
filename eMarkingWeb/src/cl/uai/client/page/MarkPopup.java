@@ -22,6 +22,7 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
@@ -88,7 +89,7 @@ public class MarkPopup extends HTML {
 		}
 		
 		// Show the marker's name if the marking process is not anonymous
-		if(!MarkingInterface.isMarkerAnonymous()) {
+		if(!EMarkingConfiguration.isMarkerAnonymous()) {
 			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.mark.getMarkername()) + "</div>";
 		}
 		

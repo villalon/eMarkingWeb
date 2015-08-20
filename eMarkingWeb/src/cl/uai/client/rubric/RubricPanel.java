@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
@@ -235,7 +236,7 @@ public class RubricPanel extends EMarkingComposite {
 		int height = Window.getClientHeight() - scrollPanel.getAbsoluteTop();
 		if(popupInterface)
 			height = (Window.getClientHeight() * 35) / 100;
-		else if(!MarkingInterface.readonly)
+		else if(!EMarkingConfiguration.isReadonly())
 			height = (Window.getClientHeight() * 35) / 100;
 		else
 			height = (Window.getClientHeight() * 35) / 100;
@@ -289,7 +290,7 @@ public class RubricPanel extends EMarkingComposite {
 				}
 
 				if(!popupInterface) {
-					if(!MarkingInterface.readonly) {
+					if(!EMarkingConfiguration.isReadonly()) {
 						EMarkingWeb.markingInterface.dragController.makeDraggable(levelLabel);
 					}
 				} else if(this.getParent().getParent().getParent() instanceof AddMarkDialog) {

@@ -81,7 +81,6 @@ public class SubmissionGradeData {
 	private String rubricname;
 
 	private String custommarks;
-	private boolean supervisor;
 	private boolean qualitycontrol;
 	private Date datecreated;
 
@@ -230,9 +229,6 @@ public class SubmissionGradeData {
 			return true;
 		
 		return false;
-	}
-	public boolean isSupervisor() {
-		return supervisor;
 	}
 	
 	public void loadRubricFromMap() {
@@ -429,9 +425,5 @@ public class SubmissionGradeData {
 
 	public void setStudentid(int studentid) {
 		this.studentid = studentid;
-	}
-
-	public void setSupervisor(boolean supervisor) {
-		this.supervisor = supervisor;
 	}
 }

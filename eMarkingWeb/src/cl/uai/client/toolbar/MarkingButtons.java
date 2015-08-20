@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
@@ -188,7 +189,7 @@ public class MarkingButtons extends EMarkingComposite {
 		buttons.get(selectedIndex).setValue(true);
 
 		criterionList = new CriterionListBox();
-		criterionList.setVisible(MarkingInterface.isColoredRubric());
+		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
 		
 		mainPanel.add(criterionList);
 		mainPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
@@ -295,7 +296,7 @@ public class MarkingButtons extends EMarkingComposite {
 	
 	public void loadSubmissionData(){		
 		criterionList.loadSubmissionData();
-		criterionList.setVisible(MarkingInterface.isColoredRubric());
+		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
 		
 		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
 	}

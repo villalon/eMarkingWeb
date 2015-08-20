@@ -5,6 +5,7 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.data.Level;
@@ -65,7 +66,7 @@ public class MarkingMenu extends PopupPanel {
 			item.setTitle(criterion.getDescription());
 		}
 		
-		if(MarkingInterface.getCollaborativeFeatures()) {
+		if(EMarkingConfiguration.isChatEnabled()) {
 			MenuItem item = menu.addItem("Ask for help", new AskForHelpCommand(null));
 			item.setTitle("Title");
 		}

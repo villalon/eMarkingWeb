@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
@@ -103,12 +104,12 @@ public class StudentSelector extends EMarkingComposite {
 				int index=0;
 				for(Map<String, String> value : values) {
 					String studentname = MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()+" "+(index+1));
-					if(!MarkingInterface.isStudentAnonymous()) {
+					if(!EMarkingConfiguration.isStudentAnonymous()) {
 						studentname = value.get("lastname") + ", " + value.get("firstname");
 					}
 					studentname += "\t\t["+getStringFromStatus(value.get("status")) + "]";
 					int studentId = Integer.parseInt(value.get("studentid"));
-					if(!MarkingInterface.readonly || studentId == MarkingInterface.submissionData.getStudentid()) {
+					if(!EMarkingConfiguration.isReadonly() || studentId == MarkingInterface.submissionData.getStudentid()) {
 						students.addItem(studentname, value.get("id"));
 						if(studentId == MarkingInterface.submissionData.getStudentid()) {
 							students.setSelectedIndex(index);

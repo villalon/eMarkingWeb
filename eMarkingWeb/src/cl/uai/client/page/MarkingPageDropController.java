@@ -20,6 +20,7 @@
  */
 package cl.uai.client.page;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.marks.CommentMark;
@@ -59,7 +60,7 @@ public class MarkingPageDropController extends SimpleDropController {
 		super.onPreviewDrop(context);
 		
 		// If we are in readonly mode we shouldn't accept new marks in the interface
-		if(MarkingInterface.readonly) {
+		if(EMarkingConfiguration.isReadonly()) {
 			throw new VetoDragException();
 		}
 
@@ -89,7 +90,7 @@ public class MarkingPageDropController extends SimpleDropController {
 					posx, 
 					posy, 
 					pageno,
-					MarkingInterface.markerid,
+					EMarkingConfiguration.getMarkerId(),
 					unixtime,
 					selectedCriterion,
 					MarkingInterface.submissionData.getMarkerfirstname(),

@@ -13,7 +13,9 @@ import cl.uai.client.resources.Resources;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * @author Jorge Villalón
@@ -26,7 +28,8 @@ public class ChatMessage extends Composite {
 	private User user;
 	
 	protected HorizontalPanel mainPanel = null;
-	private boolean ownMessage;
+	private boolean ownMessage = false;
+	private HTML elapsedTimeWidget = null;
 
 	/**
 	 * Chat message constructor
@@ -61,13 +64,20 @@ public class ChatMessage extends Composite {
 		HTML lblAuthor = ConnectedUsersPanel.createUserIcon(this.user);
 		lblAuthor.removeStyleName(Resources.INSTANCE.css().chatusers());
 		lblAuthor.addStyleName(Resources.INSTANCE.css().chatuserssmall());
-
+		
+		VerticalPanel vpanel = new VerticalPanel();
+		vpanel.add(lblMessage);
+		this.elapsedTimeWidget = new HTML();
+		vpanel.add(elapsedTimeWidget);
+		vpanel.setCellHorizontalAlignment(elapsedTimeWidget, this.isOwnMessage() ? HasAlignment.ALIGN_RIGHT : HasAlignment.ALIGN_LEFT);
+		updateElapsedTime();
+		
 		if(ownMessage) {
-			mainPanel.add(lblMessage);
+			mainPanel.add(vpanel);
 			mainPanel.add(lblAuthor);
 		} else {
 			mainPanel.add(lblAuthor);
-			mainPanel.add(lblMessage);			
+			mainPanel.add(vpanel);			
 		}
 
 		initWidget(mainPanel);
@@ -76,5 +86,40 @@ public class ChatMessage extends Composite {
 	public boolean isOwnMessage() {
 		return ownMessage;
 	}
+	
+	/**
+	 * Calculates the elapsed time between a specific date and now and
+	 * creates an HTML widget showing the info
+	 * 
+	 * @param date
+	 * @return
+	 */
+	private void updateTimeElapsedTime(Date date) {
+		HTML html = this.elapsedTimeWidget;
+		html.addStyleName(Resources.INSTANCE.css().chatelapsedtime());
+		
+		Date today = new Date();
+		long elapsed = today.getTime() - date.getTime();
+		elapsed = elapsed / 1000; // From millis to seconds
+		if(elapsed < 60) {
+			html.setHTML(MarkingInterface.messages.JustNow());
+		}
+		if(elapsed < 60 * 60) { // Less than an hour
+			elapsed = (long) Math.floor((double) elapsed / 60);
+			html.setHTML(elapsed + " " + (elapsed == 1 ? MarkingInterface.messages.MinuteAgo() : MarkingInterface.messages.MinutesAgo()));
+		} else if(elapsed < 60 * 60 * 24) { // Less than a day
+			elapsed = (long) Math.floor((double) elapsed / (60 * 60));
+			html.setHTML(elapsed + " " + (elapsed == 1 ? MarkingInterface.messages.HourAgo() : MarkingInterface.messages.HoursAgo()));
+		} else if(elapsed < 60 * 60 * 24 * 7) {
+			elapsed = (long) Math.floor((double) elapsed / (60 * 60 * 24));
+			html.setHTML(elapsed + " " + (elapsed == 1 ? MarkingInterface.messages.DayAgo() : MarkingInterface.messages.DaysAgo()));
+		} else {
+			DateTimeFormat fmt = DateTimeFormat.getFormat("dd MMM HH:MM");
+			html.setHTML(fmt.format(date));
+		}
+	}
 
+	public void updateElapsedTime() {
+		updateTimeElapsedTime(date);
+	}
 }

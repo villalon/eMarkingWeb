@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
@@ -141,7 +142,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 
 		Collections.sort(previousComments, Comment.CommentTextComparator);
 		for(Comment c : previousComments) {
-			if(c.getMarkerId() == MarkingInterface.markerid) {
+			if(c.getMarkerId() == EMarkingConfiguration.getMarkerId()) {
 				addCommentLabelToInterface(c, previousCommentsMine);
 			}
 			addCommentLabelToInterface(c, previousCommentsAll);
@@ -195,7 +196,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 				long unixTime = System.currentTimeMillis() / 1000L;
 				prevComment.setLastUsed(unixTime);
 				prevComment.setTimesUsed(prevComment.getTimesUsed()+1);
-				prevComment.setMarkerId(MarkingInterface.markerid);
+				prevComment.setMarkerId(EMarkingConfiguration.getMarkerId());
 		} else {		
 			Comment newComment = new Comment(
 					mark.getId(), 

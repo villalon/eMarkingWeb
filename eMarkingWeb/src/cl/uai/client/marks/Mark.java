@@ -23,6 +23,7 @@ package cl.uai.client.marks;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
@@ -249,7 +250,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			iconhtml = icon.toString();
 		}
 
-		String markername = MarkingInterface.isMarkerAnonymous() ? MarkingInterface.messages.MarkerDetails(MarkingInterface.messages.Anonymous())
+		String markername = EMarkingConfiguration.isMarkerAnonymous() ? MarkingInterface.messages.MarkerDetails(MarkingInterface.messages.Anonymous())
 				: MarkingInterface.messages.MarkerDetails(this.getMarkername());
 		String styleColor = "";
 
@@ -263,7 +264,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		if(!this.iconOnly && this.getRawtext().trim().length() > 0) {
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
 			// Show the marker's name if the marking process is not anonymous
-			if(!MarkingInterface.isMarkerAnonymous()) {
+			if(!EMarkingConfiguration.isMarkerAnonymous()) {
 				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ markername + "</div>";
 			}
 		}
@@ -460,10 +461,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		return this.previousText;
 	}
 	
-	public boolean isReadOnly() {
-		return MarkingInterface.readonly;		
-	}
-
 	public int getMarkerId() {
 		return markerid;
 	}

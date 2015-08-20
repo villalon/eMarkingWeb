@@ -21,6 +21,7 @@
 package cl.uai.client.rubric;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
@@ -98,7 +99,7 @@ public class CriterionHeader extends EMarkingComposite {
 		HorizontalPanel horizontal = new HorizontalPanel();
 		
 		//the square with the color
-		if(MarkingInterface.isColoredRubric()){
+		if(EMarkingConfiguration.isColoredRubric()){
 			Label lbl2 = new Label("");
 			Color.setWidgetBackgroundHueColor(cid, lbl2);
 			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());

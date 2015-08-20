@@ -116,4 +116,11 @@ public interface EmarkingMessages extends Messages {
 	public String Replied();
 	public String NoCriterion();
 	public String Close();
+	public String JustNow();
+	public String MinuteAgo();
+	public String MinutesAgo();
+	public String HoursAgo();
+	public String HourAgo();
+	public String DayAgo();
+	public String DaysAgo();
 }

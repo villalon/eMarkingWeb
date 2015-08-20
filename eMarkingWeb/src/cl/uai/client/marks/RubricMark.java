@@ -22,6 +22,7 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
@@ -125,7 +126,7 @@ public class RubricMark extends Mark {
 			if(!headerOnly) {
 				html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
 				// Show the marker's name if the marking process is not anonymous
-				if(!MarkingInterface.isMarkerAnonymous()) {
+				if(!EMarkingConfiguration.isMarkerAnonymous()) {
 					html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
 				}
 			}

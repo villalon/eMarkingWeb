@@ -3,8 +3,8 @@
  */
 package cl.uai.client.rubric;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
-
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -53,15 +53,15 @@ public class ToolsPanel extends Composite {
 		generalFeedback = new GeneralFeedbackInterface();
 
 		previousComments = new PreviousCommentsInterface();
-		previousComments.setVisible(!MarkingInterface.readonly);
+		previousComments.setVisible(!EMarkingConfiguration.isReadonly());
 
-		if(!MarkingInterface.readonly) {
+		if(!EMarkingConfiguration.isReadonly()) {
 			toolsPanel.add(previousComments, MarkingInterface.messages.PreviousComments());
 			toolsPanel.add(generalFeedback, MarkingInterface.messages.GeneralFeedback());
 		}
 
 		// Sorting pages
-		if(MarkingInterface.supervisor) {
+		if(EMarkingConfiguration.isSupervisor()) {
 			sortPages = new SortPagesInterface();
 			toolsPanel.add(sortPages, MarkingInterface.messages.SortPages());
 		}

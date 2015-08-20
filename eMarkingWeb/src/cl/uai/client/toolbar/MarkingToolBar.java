@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.page.MarkingPage;
 import cl.uai.client.MarkingInterface;
@@ -265,17 +266,17 @@ public class MarkingToolBar extends EMarkingComposite {
 		finishMarkingButton.setVisible(false);
 		chkContinue.setVisible(true);
 		
-		buttonsPanel.setVisible(!MarkingInterface.readonly);
+		buttonsPanel.setVisible(!EMarkingConfiguration.isReadonly());
 				
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
 		
-		if(!MarkingInterface.isStudentAnonymous()) {
+		if(!EMarkingConfiguration.isStudentAnonymous()) {
 			studentName.setText(sdata.getLastname() + ", " + sdata.getFirstname());
 		} else {
 			studentName.setText(MarkingInterface.messages.StudentN(MarkingInterface.messages.Anonymous()));
 		}
 		
-		if(MarkingInterface.supervisor && !MarkingInterface.submissionData.isQualitycontrol()) {
+		if(EMarkingConfiguration.isSupervisor() && !MarkingInterface.submissionData.isQualitycontrol()) {
 			finishMarkingButton.setVisible(true);
 		}
 		
