@@ -231,16 +231,12 @@ public class RubricPanel extends EMarkingComposite {
 		// If we are in the popup interface we hide the close button
 		closeButton.setVisible(!popupInterface);
 
-		// Once loaded, we know all sizes
-		scrollPanel.setWidth("100%");
-		int height = Window.getClientHeight() - scrollPanel.getAbsoluteTop();
-		if(popupInterface)
-			height = (Window.getClientHeight() * 35) / 100;
-		else if(!EMarkingConfiguration.isReadonly())
-			height = (Window.getClientHeight() * 35) / 100;
-		else
-			height = (Window.getClientHeight() * 35) / 100;
+		int height = (Window.getClientHeight() * 35) / 100;
 		scrollPanel.setHeight(height+"px");
+		
+		int width = this.getOffsetWidth();
+		scrollPanel.setWidth(width+"px");
+		
 		scrollPanel.setStyleName("rubricscroll");
 		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");
 
