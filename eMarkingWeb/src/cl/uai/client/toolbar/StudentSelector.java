@@ -86,7 +86,7 @@ public class StudentSelector extends EMarkingComposite {
 		super.onLoad();
 
 		// If no submission id is set, no sense to do this. Same if it was already loaded.
-		if(MarkingInterface.getSubmissionId() <= 0 || loaded || MarkingInterface.submissionData == null)
+		if(MarkingInterface.getDraftId() <= 0 || loaded || MarkingInterface.submissionData == null)
 			return;
 
 		AjaxRequest.ajaxRequest("action=getstudents", new AsyncCallback<AjaxData>() {

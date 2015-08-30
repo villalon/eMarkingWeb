@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import org.vaadin.gwtgraphics.client.DrawingArea;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.CheckMark;
@@ -377,6 +378,11 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
+		
+		if(EMarkingConfiguration.isReadonly()) {
+			return;
+		}
+		
 		event.getNativeEvent().stopPropagation();
         event.getNativeEvent().preventDefault();
         

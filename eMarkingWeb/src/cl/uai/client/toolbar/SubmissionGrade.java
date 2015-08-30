@@ -79,12 +79,4 @@ public class SubmissionGrade extends EMarkingComposite {
 		
 		mainPanel.add(gradePanel);		
 	}
-	/*
-	public void setGradecss(){
-		lblGrade.removeStyleName(Resources.INSTANCE.css().grade());
-		lblGrade.addStyleName(Resources.INSTANCE.css().mininota());
-	}/*
-	public void setScalecss(){
-		lblScale.addStyleName(Resources.INSTANCE.css().miniescala());
-	}*/
 }

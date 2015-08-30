@@ -50,6 +50,13 @@ public class EMarkingConfiguration {
 	/** If is enabled linkrubric (Marcelo's thesis) **/
 	private static boolean coloredRubric = false;
 
+	/**
+	 * @param coloredRubric the coloredRubric to set
+	 */
+	public static void setColoredRubric(boolean coloredRubric) {
+		EMarkingConfiguration.coloredRubric = coloredRubric;
+	}
+
 	/** The marking type (normal, markers training, etc) **/
 	private static int markingType = 0;
 

@@ -35,6 +35,10 @@ public class MarkingMenu extends PopupPanel {
 		
 		menu = new MenuBar(true);
 		
+		// Calculate basic position and page number to add a Mark
+		final int newposx = x - page.getAbsolutePanel().getAbsoluteLeft();
+		final int newposy = y - page.getAbsolutePanel().getAbsoluteTop();
+
 		for(int criterionid : MarkingInterface.submissionData.getRubricfillings().keySet()) {
 			Criterion criterion = MarkingInterface.submissionData.getRubricfillings().get(criterionid);
 			
@@ -44,7 +48,7 @@ public class MarkingMenu extends PopupPanel {
 			
 			MenuBar criterion1 = new MenuBar(true);
 			for(Level lvl : criterion.getLevels().values()) {
-				MarkingCommand cmd = new MarkingCommand(lvl, x, y, page) {			
+				MarkingCommand cmd = new MarkingCommand(lvl, newposx, newposy, page) {			
 					@Override
 					public void execute() {
 						super.execute();

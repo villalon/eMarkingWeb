@@ -19,7 +19,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  /* CSS talk bubble */
-@external .talk-bubble, .border, .round, .tri-right, .right-top, .talktext, .left-top;
+@external .talk-bubble, .border, .round, .tri-right, .right-top, .talktext, 
+    .left-top, .gwt-TabPanelBottom, .gwt-TabBarItem, .gwt-TabBarFirst-wrapper, 
+    .gwt-TabBarRest-wrapper, .gwt-TabBarItem-wrapper, .gwt-TabBar, .gwt-TabBarItem-selected,
+    .gwt-TabBarItem-wrapper-selected, .gwt-ToggleButton, .gwt-PushButton, .gwt-TabPanelBottom,
+    .gwt-ToggleButton-down, .gwt-ToggleButton-up, .gwt-PushButton-up, .gwt-PushButton-down,
+    .gwt-ToggleButton-down-hovering, .gwt-ToggleButton-up-hovering, .gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering;
 
 /** Main interfaces **/
 .interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable, .rubricpanel, .rubricinterface
@@ -46,7 +51,7 @@
 }
 
 .interfacepanel,.buttonspanel {
-	background-color: #ccc;
+	background-color: #fff;
 }
 
 .jumptonext label {
@@ -93,9 +98,13 @@
 	
 }
 
+.gwt-TabBar {
+	background-color: #fff;
+}
+
 .buttonspanel{
-	opacity: 0.80;
 	margin-left: 0px;
+	border-bottom: 1px solid #ccc;	
 }
 
 .tabbar {
@@ -155,6 +164,7 @@ to {
 	font-size: 32px;
 	font-weight: bold;
 	line-height: 36px;
+	margin-right: 20px;
 }
 
 .coursename {
@@ -483,6 +493,67 @@ to {
 	
 }
 
+
+.tabbuttons .gwt-TabPanelBottom {
+	padding:0px;
+}
+
+.tabbuttons .gwt-TabBarItem {
+	padding:0px 8px;
+    border-radius: 0px;
+    background-color: #fff;
+    color: #8e8e8e;
+}
+
+.tabbuttons .gwt-ToggleButton-up, .tabbuttons .gwt-PushButton-up  {
+	background-color: #fff;
+	background-image: none;
+}
+
+.tabbuttons .gwt-PushButton, .tabbuttons .gwt-ToggleButton {
+	border: 0px;
+	border-radius: 0px;
+}
+
+.buttonshpanel {
+	width: inherit;
+}
+
+.tabbuttons .gwt-ToggleButton-down, .tabbuttons .gwt-PushButton-down,
+    .tabbuttons .gwt-ToggleButton-down-hovering, .tabbuttons .gwt-ToggleButton-up-hovering
+    , .tabbuttons .gwt-PushButton-up-hovering, .tabbuttons .gwt-PushButton-down-hovering {
+    background-color: #ff6f6f;
+    background-image: none;
+}
+
+.tabbuttons .gwt-TabBarItem-wrapper, .tabbuttons .gwt-TabBarFirst-wrapper, .tabbuttons .gwt-TabBarRest-wrapper {
+    border-bottom: 1px solid #8E8E8E;
+}
+
+.tabbuttons .gwt-TabBarItem {
+	margin-left: 0px;
+	font-family: Tahoma;
+}
+
+.tabbuttons .gwt-TabPanelBottom {
+	border: 0px;
+}
+.tabbuttons .gwt-TabBarItem-selected {
+	color: #fa3c45;
+	font-weight: normal;
+    border-top: 1px solid #8E8E8E;
+    border-left: 1px solid #8E8E8E;
+    border-right: 1px solid #8E8E8E;    
+}
+
+.tabbuttons .gwt-TabBarItem-wrapper-selected, .tabbuttons .gwt-TabBarItem-selected {
+    border-bottom: 1px solid #fff;
+}
+
+.tabbuttons .gwt-PushButton, .tabbuttons .gwt-ToggleButton {
+	border: 0px;
+}
+
 .criterionrow .rubricmark {
 	cursor: pointer;
 }
@@ -498,6 +569,7 @@ to {
 	min-width: 21px;
 	font-weight: bolder;
 	text-shadow: 1px 1px 2px #666;
+	margin-left: 5px;
 }
 
 .rubricbuttoncustom {
@@ -670,12 +742,7 @@ to {
 	height:20px;
 	border:1px solid #000;
 }
-.mininota{
-	font-size: 2.2em;
-	font-weight: bold;
-	line-height: 24x;
-	margin-top: 1px;
-}
+
 .miniscale{
 	font-size: 0.6em;
 }

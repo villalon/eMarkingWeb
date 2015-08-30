@@ -58,7 +58,7 @@ public class AjaxRequest {
 	 */
 	public static void ajaxRequest(String params, AsyncCallback<AjaxData> callback) {
 		
-		final String url = moodleUrl + "?ids=" + MarkingInterface.getSubmissionId() + "&" + params;
+		final String url = moodleUrl + "?ids=" + MarkingInterface.getDraftId() + "&" + params;
 		
 		logger.fine(url);
 

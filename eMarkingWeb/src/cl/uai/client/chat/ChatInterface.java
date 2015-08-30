@@ -104,9 +104,10 @@ public class ChatInterface extends DialogBox {
 		this.addStyleName(Resources.INSTANCE.css().chatdialog());
 
 		// Dialog parameters
-		this.setAutoHideEnabled(true);
+		this.setAutoHideEnabled(false);
 		this.setAnimationEnabled(true);
-		this.setModal(true);
+		this.setModal(false);
+		this.setHTML(MarkingInterface.messages.Chat());
 
 		// Initialize interfaces and assign css
 		messagesPanel = new VerticalPanel();
@@ -171,7 +172,7 @@ public class ChatInterface extends DialogBox {
 		
 		timer.scheduleRepeating(1000 * 60); // Every minute
 		
-		this.add(mainPanel);
+		this.setWidget(mainPanel);
 	}
 	
 	/**
@@ -225,7 +226,7 @@ public class ChatInterface extends DialogBox {
 		if(historyLoaded)
 			return;
 
-		String params= "&ids="+ MarkingInterface.getSubmissionId() +
+		String params= "&ids="+ MarkingInterface.getDraftId() +
 				"&room=" + MarkingInterface.submissionData.getCoursemoduleid() + 
 				"&source=" + source;
 
@@ -290,7 +291,7 @@ public class ChatInterface extends DialogBox {
 				"&room=" + sdata.getCoursemoduleid() + 
 				"&status=" + status +
 				"&urgencylevel=" + urgency + 
-				"&draftid=" + MarkingInterface.getSubmissionId();
+				"&draftid=" + MarkingInterface.getDraftId();
 
 		AjaxRequest.ajaxRequest("action=addchatmessage"+ params, new AsyncCallback<AjaxData>() {
 			@Override
@@ -301,6 +302,6 @@ public class ChatInterface extends DialogBox {
 			}
 		});
 
-		EMarkingWeb.chatServer.sendMessage(sdata.getMarkerid(), message, source, MarkingInterface.getSubmissionId(), status, urgency);
+		EMarkingWeb.chatServer.sendMessage(sdata.getMarkerid(), message, source, MarkingInterface.getDraftId(), status, urgency);
 	}
 }

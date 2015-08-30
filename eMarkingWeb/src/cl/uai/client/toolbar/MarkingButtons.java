@@ -55,7 +55,7 @@ public class MarkingButtons extends EMarkingComposite {
 	private static Logger logger = Logger.getLogger(MarkingButtons.class.getName());
 
 	/** Main panel holding the buttons **/
-	private HorizontalPanel mainPanel = null;
+	private HorizontalPanel markingButtonsPanel = null;
 
 	/** The buttons **/
 	private List<ToggleButton> buttons = null;
@@ -104,7 +104,7 @@ public class MarkingButtons extends EMarkingComposite {
 		IconType.OK,
 		IconType.REMOVE,
 		IconType.PENCIL,
-		IconType.QUESTION_SIGN,
+		IconType.QUESTION,
 	};
 	
 	/**
@@ -152,9 +152,10 @@ public class MarkingButtons extends EMarkingComposite {
 	 * Creates the rubric buttons interface
 	 */
 	public MarkingButtons() {
+		
 		// main panel contains all buttons
-		mainPanel = new HorizontalPanel();
-		mainPanel.addStyleName(Resources.INSTANCE.css().toolbarbuttons());
+		markingButtonsPanel = new HorizontalPanel();
+		markingButtonsPanel.addStyleName(Resources.INSTANCE.css().toolbarbuttons());
 
 		// Initialize the array
 		buttons = new ArrayList<ToggleButton>();
@@ -191,10 +192,17 @@ public class MarkingButtons extends EMarkingComposite {
 		criterionList = new CriterionListBox();
 		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
 		
-		mainPanel.add(criterionList);
-		mainPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
+		markingButtonsPanel.add(criterionList);
+		markingButtonsPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
 
-		this.initWidget(mainPanel);
+		this.initWidget(markingButtonsPanel);
+	}
+	
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		
+		this.markingButtonsPanel.setWidth("0px");
 	}
 	
 	public Criterion getSelectedCriterion(){
@@ -391,8 +399,8 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);
-		vpanel.add(lblstat, 19, 2);
-		mainPanel.add(vpanel);	
+		vpanel.add(lblstat, 23, 2);
+		markingButtonsPanel.add(vpanel);	
 	}
 
 	public String getSelectedButtonLabel() {

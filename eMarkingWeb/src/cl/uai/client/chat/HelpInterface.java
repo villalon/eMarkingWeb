@@ -2,6 +2,7 @@ package cl.uai.client.chat;
 
 import java.util.Date;
 
+import cl.uai.client.MarkingInterface;
 import cl.uai.client.chat.messages.SosMessage;
 
 public class HelpInterface extends ChatInterface {
@@ -10,6 +11,8 @@ public class HelpInterface extends ChatInterface {
 		super();
 		
 		this.source = NodeChat.SOURCE_SOS;
+		this.setHTML(MarkingInterface.messages.SOS());
+
 		this.sendMessageTextArea.setVisible(false);
 	}
 	

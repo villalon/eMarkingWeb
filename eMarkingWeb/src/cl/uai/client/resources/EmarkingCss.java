@@ -139,7 +139,6 @@ public interface EmarkingCss extends CssResource {
 
 	String colorsquare();
 	
-	String mininota();
 	String miniscale();
 	String minigradepanel();
 	String showrubricbutton();
@@ -169,4 +168,6 @@ public interface EmarkingCss extends CssResource {
 	String markicon();
 	String chatuserssmall();
 	String chatelapsedtime();
+	String tabbuttons();
+	String buttonshpanel();
 }

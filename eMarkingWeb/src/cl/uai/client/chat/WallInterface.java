@@ -1,6 +1,7 @@
 package cl.uai.client.chat;
 
 import cl.uai.client.EMarkingConfiguration;
+import cl.uai.client.MarkingInterface;
 
 /**
  * The Wall allows supervisors (teacher or admin) to post messages that all markers
@@ -15,6 +16,7 @@ public class WallInterface extends ChatInterface {
 		super();
 		
 		this.source = NodeChat.SOURCE_WALL;
+		this.setHTML(MarkingInterface.messages.Wall());
 		
 		if(!EMarkingConfiguration.isSupervisor()) {
 			this.sendMessageTextArea.setVisible(false);

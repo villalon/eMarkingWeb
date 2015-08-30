@@ -99,8 +99,8 @@ public class MarkingInterface extends EMarkingComposite {
 	/** Static resource for i18n messages **/
 	public static EmarkingMessages messages = GWT.create(EmarkingMessages.class);
 
-	/** Submission id to obtain from HTML **/
-	private static int submissionId = -1;
+	/** Id of the draft to visualize **/
+	private static int draftId = -1;
 
 	/** Wait dialog to make sure some things occur linearly **/
 	private static DialogBox waitDialog = null;
@@ -124,12 +124,12 @@ public class MarkingInterface extends EMarkingComposite {
 	 * The id of the submission the interface is working with
 	 * @return
 	 */
-	public static int getSubmissionId() {
-		return submissionId;
+	public static int getDraftId() {
+		return draftId;
 	}
 
-	public static void setSubmissionId(int subid) {
-		submissionId = subid;
+	public static void setDraftId(int draftid) {
+		draftId = draftid;
 	}
 	/** Main panels for layout **/
 	private VerticalPanel mainPanel = null;
@@ -162,10 +162,6 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** Suggester for previous comments **/
 	public MultiWordSuggestOracle previousCommentsOracle = new MultiWordSuggestOracle() ;
-
-	public HTML getShowRubricButton() {
-		return this.bubbleButtons.get(0);
-	}
 
 	/**
 	/**
@@ -667,6 +663,17 @@ public class MarkingInterface extends EMarkingComposite {
 		return toolbar;
 	}
 
+	public void setColoredRubric(boolean colored) {
+		
+		Date oneyear = new Date();
+		CalendarUtil.addMonthsToDate(oneyear, 12);
+				
+		Cookies.setCookie("emarking_showcolors", colored ? "1" : "0", oneyear);
+		EMarkingConfiguration.setColoredRubric(colored);
+		
+		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();
+	}
+
 	/**
 	 * Loads marking interface according to current submission
 	 */
@@ -692,6 +699,8 @@ public class MarkingInterface extends EMarkingComposite {
 			} else {
 				b.setVisible(EMarkingConfiguration.isChatEnabled());
 			}
+			
+			b.setVisible(false);
 		}		
 
 		interfacePanel.add(rubricInterface);
@@ -704,7 +713,7 @@ public class MarkingInterface extends EMarkingComposite {
 	}
 
 	public void setShowRubricButtonVisible(boolean visible) {
-		bubbleButtons.get(0).setVisible(!visible);
+		bubbleButtons.get(0).setVisible(false);
 		if(visible) {
 			interfacePanel.setCellWidth(markingPagesInterface, "60%");
 			interfacePanel.setCellWidth(rubricInterface, "40%");
@@ -720,7 +729,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public void loadSubmissionData() {
 
 		// Checks that global submission id is valid
-		if(MarkingInterface.submissionId <= 0)
+		if(MarkingInterface.draftId <= 0)
 			return;
 
 		addLoading(false);
@@ -996,11 +1005,11 @@ public class MarkingInterface extends EMarkingComposite {
 
 		// Validate new submission id value
 		if(newSubmissionId < 0) {
-			Window.alert("Invalid submission id value " + submissionId);
+			Window.alert("Invalid submission id value " + draftId);
 			return;
 		}
 
-		submissionId = newSubmissionId;
+		draftId = newSubmissionId;
 
 		reloadPage();
 	}
@@ -1010,7 +1019,7 @@ public class MarkingInterface extends EMarkingComposite {
 		for(String key : Window.Location.getParameterMap().keySet()) {
 			String value = Window.Location.getParameterMap().get(key).get(0);
 			if(key.equals("ids")) {
-				value = submissionId+"";
+				value = draftId+"";
 			}
 			madeURL += key + "=";
 			madeURL += value;
@@ -1053,6 +1062,7 @@ public class MarkingInterface extends EMarkingComposite {
 				btn.addNotification();
 			}
 		}
+		getToolbar().getChatButtons().addNotification(source);
 	}
 
 	public void removeNotificationToBubbleButton(int source) {
@@ -1061,5 +1071,6 @@ public class MarkingInterface extends EMarkingComposite {
 				btn.removeNotification();
 			}
 		}
+		getToolbar().getChatButtons().removeNotification(source);
 	}
 }

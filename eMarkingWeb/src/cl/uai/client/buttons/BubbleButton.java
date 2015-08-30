@@ -75,7 +75,7 @@ public abstract class BubbleButton extends HTML {
 	protected abstract void onButtonClick(ClickEvent event);
 
 	public void addNotification() {
-		this.notificationIcon.setVisible(true);
+		this.notificationIcon.setVisible(false);
 	}
 
 	public void removeNotification() {

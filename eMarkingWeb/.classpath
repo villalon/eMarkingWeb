@@ -5,9 +5,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/eMarkingWeb/war/WEB-INF/lib/gwt-bootstrap-2.2.1.0.jar"/>
 	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/eMarkingWeb/war/WEB-INF/lib/gwt-dnd-3.3.0.jar"/>
 	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/eMarkingWeb/war/WEB-INF/lib/gwt-graphics-1.0.0.jar"/>
 	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/eMarkingWeb/war/WEB-INF/lib/gwt-charts-0.9.10.jar"/>
+	<classpathentry kind="var" path="GIT_BASE/eMarkingWeb/eMarkingWeb/war/WEB-INF/lib/gwt-bootstrap-2.3.2.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

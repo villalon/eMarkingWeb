@@ -96,6 +96,7 @@ public class RubricInterface extends EMarkingComposite {
 		
 		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();
 		EMarkingWeb.markingInterface.setShowRubricButtonVisible(visible);
+		EMarkingWeb.markingInterface.getToolbar().getViewButtons().setRubricVisibility(visible);
 	}
 	
 	/**

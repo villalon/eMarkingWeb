@@ -123,4 +123,16 @@ public interface EmarkingMessages extends Messages {
 	public String HourAgo();
 	public String DayAgo();
 	public String DaysAgo();
+	public String Mark();
+	public String Exam();
+	public String View();
+	public String ShowWall();
+	public String ShowChat();
+	public String ShowHelp();
+	public String Chat();
+	public String NoChatAvailable(String url);
+	public String SOS();
+	public String Wall();
+	public String Collaboration();
+	public String ShowColors();
 }

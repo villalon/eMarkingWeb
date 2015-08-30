@@ -115,18 +115,18 @@ public class EMarkingWeb implements EntryPoint {
 		
 		RootPanel.get(eMarkingDivId).add(new Label("Loading"));		
 
-		int submissionId = 0;
+		int draftId = 0;
 		int preferredWidth = 860;
 		boolean showRubric = true;
 
 		try {
 			// First, if there's a URL parameter, replace the value
 			if(Window.Location.getParameter("id") != null) {
-				submissionId = Integer.parseInt(Window.Location.getParameter("id")); 
+				draftId = Integer.parseInt(Window.Location.getParameter("id")); 
 			}
 			
 			// Validate that the submission id is a positive integer
-			if(submissionId <= 0) {
+			if(draftId <= 0) {
 				errors.add("Submission id must be a non negative integer.");
 			}
 			
@@ -181,7 +181,7 @@ public class EMarkingWeb implements EntryPoint {
 			RootPanel.get(eMarkingDivId).add(errorsLabel);
 		} else {
 			// Set eMarking's main interface submission id according to HTML
-			MarkingInterface.setSubmissionId(submissionId);
+			MarkingInterface.setDraftId(draftId);
 
 			EMarkingConfiguration.setShowRubricOnLoad(showRubric);
 

@@ -65,7 +65,7 @@ public class DraftGrade extends EMarkingComposite {
 		
 		
 		lblGrade = new Label(RubricMark.scoreFormat(sdata.getFinalgrade(), false)+"");
-		lblGrade.addStyleName(Resources.INSTANCE.css().mininota());
+		lblGrade.addStyleName(Resources.INSTANCE.css().grade());
 		
 		VerticalPanel gradePanel = new VerticalPanel();
 		gradePanel.addStyleName(Resources.INSTANCE.css().minigradepanel());

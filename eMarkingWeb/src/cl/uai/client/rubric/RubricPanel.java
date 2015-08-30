@@ -152,7 +152,6 @@ public class RubricPanel extends EMarkingComposite {
 			@Override
 			public void onClick(ClickEvent event) {
 				EMarkingWeb.markingInterface.getRubricInterface().setVisible(false);
-				EMarkingWeb.markingInterface.getShowRubricButton().setVisible(true);
 			}
 		});
 		
