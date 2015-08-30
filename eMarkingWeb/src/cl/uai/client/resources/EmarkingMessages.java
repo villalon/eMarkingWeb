@@ -141,7 +141,7 @@ public interface EmarkingMessages extends Messages {
 	public String Priority();
 	public String Help();
 	public String AboutEmarking();
-	public String AboutEmarkingDetail();
+	public String AboutEmarkingDetail(String version);
 	public String Tutorials();
 	public String HowToWhatIsEMarking();
 	public String HowToPrintAnExam();	

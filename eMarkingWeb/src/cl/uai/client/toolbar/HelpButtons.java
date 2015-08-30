@@ -5,6 +5,7 @@ package cl.uai.client.toolbar;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
@@ -50,7 +51,7 @@ public class HelpButtons extends Composite {
 				dbox.setAutoHideEnabled(true);
 				dbox.setWidth("300px");
 				dbox.setHTML(MarkingInterface.messages.AboutEmarking());
-				dbox.setWidget(new HTML(MarkingInterface.messages.AboutEmarkingDetail()));
+				dbox.setWidget(new HTML(MarkingInterface.messages.AboutEmarkingDetail(""+EMarkingConfiguration.geteMarkingVersion())));
 				dbox.center();
 			}
 		});
