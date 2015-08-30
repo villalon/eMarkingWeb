@@ -50,6 +50,10 @@ public class AjaxRequest {
 	/** Moodle base ajax url **/
 	public static String moodleUrl = null;
 
+	public static String getMoodleBaseUrl() {
+		return moodleUrl.replaceAll("mod/emarking/ajax/a.php", "");
+	}
+	
 	/**
 	 * Performs a request to Moodle
 	 * 

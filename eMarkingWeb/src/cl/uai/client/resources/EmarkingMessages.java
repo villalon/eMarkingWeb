@@ -135,4 +135,17 @@ public interface EmarkingMessages extends Messages {
 	public String Wall();
 	public String Collaboration();
 	public String ShowColors();
+	public String SendSOS();
+	public String SendSOSTitle();
+	public String Send();
+	public String Priority();
+	public String Help();
+	public String AboutEmarking();
+	public String AboutEmarkingDetail();
+	public String Tutorials();
+	public String HowToWhatIsEMarking();
+	public String HowToPrintAnExam();	
+	public String HowToCreateRubric();
+	public String HowToAnonymousMarking();	
+	public String HowToMarkingReports();
 }

@@ -6,6 +6,7 @@ package cl.uai.client.chat.messages;
 import java.util.Date;
 
 import cl.uai.client.chat.User;
+import cl.uai.client.data.AjaxRequest;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -46,7 +47,7 @@ public class SosMessage extends ChatMessage {
 		
 		// draft id
 		Icon icon = new Icon(IconType.SIGNIN);
-		mainPanel.add(new HTML("<a href=\"#?id="+this.draftid+"\">"+icon.toString()+"</a>")); ;
+		mainPanel.add(new HTML("<a href=\"#\" onclick=\"window.open('"+AjaxRequest.getMoodleBaseUrl() + "mod/emarking/marking/index.php?id=" + this.draftid+"');\">"+icon.toString()+"</a>")); ;
 		// status
 		Icon iconStatus = statusIcons[this.status-1];
 		mainPanel.add(new HTML(iconStatus.toString()));

@@ -60,30 +60,8 @@ public class CriterionHeader extends EMarkingComposite {
 	private int commentPage = 0;
 	private int backGroundPercent = 0;
 	private int regradeid = 0;
-	public int getRegradeid() {
-		return regradeid;
-	}
-
-	public void setRegradeData(int regradeid, int regradeaccepted) {
-		this.regradeid = regradeid;
-		this.regradeaccepted = regradeaccepted;
-		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">";
-		if(this.regradeid > 0) {
-			if(this.regradeaccepted == 0)
-				html += "Por recorregir";
-			else
-				html += "Recorregida";
-		}
-		html += "</div>";
-		this.regradeHtml.setHTML(html);
-	}
-
-	public int getRegradeaccepted() {
-		return regradeaccepted;
-	}
-
 	private int regradeaccepted = 0;
-	
+
 	public CriterionHeader(int idx, int cid, String cdesc, float b, int regrid, int regraccepted) {
 		this.mainPanel = new VerticalPanel();
 		this.mainPanel.addStyleName(Resources.INSTANCE.css().criterionrow());
@@ -164,12 +142,45 @@ public class CriterionHeader extends EMarkingComposite {
 		initWidget(mainPanel);
 	}
 
+	public int getBackGroundPercent() {
+		return backGroundPercent;
+	}
+
+	public int getCommentId() {
+		return this.commentId;
+	}
+	
+	public int getCommentPage() {
+		return this.commentPage;
+	}
+
+	public String getCriterionDescription() {
+		return criterionDescription;
+	}
+
 	public int getCriterionId() {
 		return criterionId;
 	}
-
+	
 	public int getIndex() {
 		return index;
+	}
+
+	public int getRegradeaccepted() {
+		return regradeaccepted;
+	}
+
+	public int getRegradeid() {
+		return regradeid;
+	}
+
+	public void setBackGroundPercent(int backGroundPercent) {
+		this.backGroundPercent = backGroundPercent;
+		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker0());
+		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker25());
+		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker50());
+		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker75());
+		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker100());
 	}
 	
 	public void setBonus(float b) {
@@ -184,8 +195,16 @@ public class CriterionHeader extends EMarkingComposite {
 		this.bonusHtml.setHTML(html);
 	}
 
-	public String getCriterionDescription() {
-		return criterionDescription;
+	public void setCommentId(int commentid) {
+		this.commentId = commentid;
+	}
+	
+	public void setCommentPage(int commentpage) {
+		this.commentPage = commentpage;
+	}
+
+	public void setLoadingVisible(boolean visible) {
+		this.loadingIcon.setVisible(visible);
 	}
 
 	public void setMarkerVisible(boolean visible) {
@@ -196,36 +215,17 @@ public class CriterionHeader extends EMarkingComposite {
 			regradeHtml.setVisible(false);
 	}
 
-	public void setCommentId(int commentid) {
-		this.commentId = commentid;
-	}
-	
-	public int getCommentId() {
-		return this.commentId;
-	}
-
-	public void setCommentPage(int commentpage) {
-		this.commentPage = commentpage;
-	}
-	
-	public int getCommentPage() {
-		return this.commentPage;
-	}
-
-	public int getBackGroundPercent() {
-		return backGroundPercent;
-	}
-
-	public void setBackGroundPercent(int backGroundPercent) {
-		this.backGroundPercent = backGroundPercent;
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker0());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker25());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker50());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker75());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker100());
-	}
-
-	public void setLoadingVisible(boolean visible) {
-		this.loadingIcon.setVisible(visible);
+	public void setRegradeData(int regradeid, int regradeaccepted) {
+		this.regradeid = regradeid;
+		this.regradeaccepted = regradeaccepted;
+		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">";
+		if(this.regradeid > 0) {
+			if(this.regradeaccepted == 0)
+				html += "Por recorregir";
+			else
+				html += "Recorregida";
+		}
+		html += "</div>";
+		this.regradeHtml.setHTML(html);
 	}
 }

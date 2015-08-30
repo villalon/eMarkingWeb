@@ -51,6 +51,7 @@ public class Color {
 	 */
 	private static void setWidgetStyleHueColor(int sequence, Widget widget, String styleAttribute) {
 		String style = widget.getElement().getAttribute("style");
+		style = style.replaceAll("color:hsl\\(\\d+,\\d+%,\\d+%\\);", "");
 		widget.getElement().setAttribute("style", style += styleAttribute + ":" + getCSSHueColor(sequence) + ";");
 	}
 }

@@ -118,6 +118,7 @@ public class EMarkingWeb implements EntryPoint {
 		int draftId = 0;
 		int preferredWidth = 860;
 		boolean showRubric = true;
+		boolean showColors = false;
 
 		try {
 			// First, if there's a URL parameter, replace the value
@@ -152,7 +153,15 @@ public class EMarkingWeb implements EntryPoint {
 				showRubric = Integer.parseInt(cookie_showrubric) == 1;
 			}
 			
-			logger.fine("ShowRubric: " + showRubric + " Preferred width:" + preferredWidth);
+			String cookie_showcolors = Cookies.getCookie("emarking_showcolors");
+			
+			if(cookie_showcolors != null) {
+				showColors = Integer.parseInt(cookie_showcolors) == 1;
+			}
+			
+			logger.fine("ShowRubric: " + showRubric + 
+					" Show colors:" + showColors + 
+					" Preferred width:" + preferredWidth);
 		} catch (Exception e) {
 			logger.severe(e.getMessage());
 			errors.add("Error in HTML for eMarkingWeb can not initalize. Invalid submissionId value (must be integer).");
@@ -184,6 +193,7 @@ public class EMarkingWeb implements EntryPoint {
 			MarkingInterface.setDraftId(draftId);
 
 			EMarkingConfiguration.setShowRubricOnLoad(showRubric);
+			EMarkingConfiguration.setColoredRubric(showColors);
 
 			// Ajax URL in moodle
 			AjaxRequest.moodleUrl = moodleurl;

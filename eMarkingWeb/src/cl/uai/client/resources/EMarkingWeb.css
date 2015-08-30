@@ -230,7 +230,8 @@ to {
 }
 
 .leveldesc {
-    height: 100px;
+	min-height: 40px;
+    max-height: 100px;
     overflow-y: auto;
     min-width: 50px;
 }
@@ -265,6 +266,12 @@ to {
 .criterionlistbox {
 	max-width: 100%;
 	text-shadow: 1px 1px 2px #666;
+	margin-bottom: 0px;
+	margin-left: 5px;
+	height: 20px;
+    padding: 0px;
+    font-size: 10pt;
+    font-weight: bold;
 }
 
 .markrubricheader {
@@ -326,7 +333,7 @@ to {
     margin-right: 3px;
 }
 
-.activityname,.rubrictitle,.prevcommentstitle, .criterionlistbox {
+.activityname,.rubrictitle,.prevcommentstitle {
 	font-size: 12pt;
 	font-weight: bold;
 }

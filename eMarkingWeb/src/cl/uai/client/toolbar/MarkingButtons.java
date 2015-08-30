@@ -75,7 +75,7 @@ public class MarkingButtons extends EMarkingComposite {
 	
 	public void changeCriterionList(int index){
 		criterionList.setSelectedIndex(index);
-		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
+//		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
 	}
 
 	private EmarkingToolBarValueChangeHandler handler = new EmarkingToolBarValueChangeHandler();
@@ -190,8 +190,6 @@ public class MarkingButtons extends EMarkingComposite {
 		buttons.get(selectedIndex).setValue(true);
 
 		criterionList = new CriterionListBox();
-		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
-		
 		markingButtonsPanel.add(criterionList);
 		markingButtonsPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
 
@@ -302,7 +300,8 @@ public class MarkingButtons extends EMarkingComposite {
 		
 	}
 	
-	public void loadSubmissionData(){		
+	public void loadSubmissionData() {
+		
 		criterionList.loadSubmissionData();
 		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
 		
@@ -421,7 +420,6 @@ public class MarkingButtons extends EMarkingComposite {
 		for (int i = 0; i < criterionList.getItemCount(); i++) {
 			if(Integer.parseInt(criterionList.getValue(i)) == id){
 				criterionList.setSelectedIndex(i);
-				changeColorButtons();
 			}
 		}		
 	}

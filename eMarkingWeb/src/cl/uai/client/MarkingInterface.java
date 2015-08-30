@@ -532,9 +532,7 @@ public class MarkingInterface extends EMarkingComposite {
 							markingPagesInterface.addMarkWidget(mark, previd, page);
 							rubricInterface.getRubricPanel().addMarkToRubric(mark);
 							toolbar.getMarkingButtons().updateStats();
-							if(EMarkingConfiguration.isColoredRubric()) {
-								toolbar.getMarkingButtons().changeColor(criterion.getId());
-							}
+							toolbar.getMarkingButtons().changeColor(criterion.getId());
 
 							EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
 							getPreviousComments().addMarkAsCommentToInterface(mark);							
@@ -671,7 +669,7 @@ public class MarkingInterface extends EMarkingComposite {
 		Cookies.setCookie("emarking_showcolors", colored ? "1" : "0", oneyear);
 		EMarkingConfiguration.setColoredRubric(colored);
 		
-		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();
+		EMarkingWeb.markingInterface.loadInterface();
 	}
 
 	/**
@@ -680,7 +678,6 @@ public class MarkingInterface extends EMarkingComposite {
 	public void loadInterface() {
 
 		toolbar.loadSubmissionData();
-		toolbar.getMarkingButtons().loadSubmissionData();
 
 		dragController.unregisterDropControllers();
 		interfacePanel.clear();
@@ -1037,7 +1034,7 @@ public class MarkingInterface extends EMarkingComposite {
 	public void setFinalgrade(float newgrade, long timemodified) {
 		submissionData.setFinalgrade(newgrade);
 		this.setTimemodified(timemodified);
-		toolbar.loadSubmissionData();
+		toolbar.getGrade().loadSubmissionData();
 		focusPanel.getElement().focus();
 	}
 

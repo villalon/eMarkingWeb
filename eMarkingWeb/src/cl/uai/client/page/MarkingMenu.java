@@ -71,8 +71,15 @@ public class MarkingMenu extends PopupPanel {
 		}
 		
 		if(EMarkingConfiguration.isChatEnabled()) {
-			MenuItem item = menu.addItem("Ask for help", new AskForHelpCommand(null));
-			item.setTitle("Title");
+			AskForHelpCommand cmd = new AskForHelpCommand(null) {
+				@Override
+				public void execute() {
+					super.execute();
+					hide();
+				}
+			};
+			MenuItem item = menu.addItem(MarkingInterface.messages.SendSOS(), cmd);
+			item.setTitle(MarkingInterface.messages.SendSOSTitle());
 		}
 		
 		this.add(menu);

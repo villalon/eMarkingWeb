@@ -33,6 +33,7 @@ public class CriterionListBox extends ListBox {
 	@Override
 	public void setSelectedIndex(int index) {
 		super.setSelectedIndex(index);
+		changeColors();
 	}
 
 	public void loadSubmissionData() {
@@ -57,13 +58,20 @@ public class CriterionListBox extends ListBox {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				CriterionListBox cbox = (CriterionListBox) event.getSource();
-				Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
-				int color = crit == null ? 0 : crit.getId();
-				EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
-				Color.setWidgetFontHueColor(color, cbox);
+				changeColors();
 			}
-		});
+		});	
+	}
 	
+	private void changeColors() {
+		Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+		int color = crit == null ? 0 : crit.getId();
+		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeColorButtons();
+		Color.setWidgetFontHueColor(color, this);		
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
 	}
 }

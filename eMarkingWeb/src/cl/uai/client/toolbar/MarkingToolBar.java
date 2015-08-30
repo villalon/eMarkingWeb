@@ -54,6 +54,8 @@ public class MarkingToolBar extends EMarkingComposite {
 	
 	private ChatButtons chatButtons = null;
 	
+	private HelpButtons helpButtons = null;
+	
 	/** Tab panel with the set of buttons **/
 	private TabPanel tabButtonsPanel = null;
 	/**
@@ -83,6 +85,9 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		chatButtons = new ChatButtons();
 		chatButtons.setVisible(false);
+		
+		helpButtons = new HelpButtons();
+		helpButtons.setVisible(false);
 
 		tabButtonsPanel = new TabPanel();
 		tabButtonsPanel.addStyleName(Resources.INSTANCE.css().tabbuttons());
@@ -91,10 +96,12 @@ public class MarkingToolBar extends EMarkingComposite {
 		tabButtonsPanel.add(markingButtons, MarkingInterface.messages.Mark().toUpperCase());
 		tabButtonsPanel.add(viewButtons, MarkingInterface.messages.View().toUpperCase());
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
+		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
 		
 		tabButtonsPanel.selectTab(0);
 
 		buttonsPanel = new HorizontalPanel();
+		buttonsPanel.setVisible(false);
 		
 		buttonsPanel.addStyleName(Resources.INSTANCE.css().buttonspanel());		
 		buttonsPanel.add(tabButtonsPanel);
@@ -114,13 +121,14 @@ public class MarkingToolBar extends EMarkingComposite {
 	 */
 	public void loadSubmissionData() {
 		
-		markingButtons.setVisible(true);
-		examButtons.loadSubmissionData();
-		chatButtons.loadSubmissionData();
+		this.markingButtons.loadSubmissionData();
+		this.examButtons.loadSubmissionData();
+		this.chatButtons.loadSubmissionData();
+		this.viewButtons.loadSubmissionData();
+		this.helpButtons.loadSubmissionData();
+		this.grade.loadSubmissionData();
 		
 		buttonsPanel.setVisible(!EMarkingConfiguration.isReadonly());
-				
-		this.grade.loadSubmissionData();
 	}
 
 	public void setButtonPressed(int index) {
@@ -133,5 +141,9 @@ public class MarkingToolBar extends EMarkingComposite {
 
 	public ChatButtons getChatButtons() {
 		return this.chatButtons;
+	}
+
+	public DraftGrade getGrade() {
+		return this.grade;
 	}	
 }

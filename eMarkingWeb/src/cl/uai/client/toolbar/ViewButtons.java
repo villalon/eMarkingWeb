@@ -85,4 +85,9 @@ public class ViewButtons extends Composite {
 			showRubricButton.setTitle(MarkingInterface.messages.ShowRubric());
 		}
 	}
+
+	public void loadSubmissionData() {
+		// TODO Auto-generated method stub
+		
+	}
 }

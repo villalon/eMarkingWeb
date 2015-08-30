@@ -41,8 +41,8 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -72,7 +72,7 @@ public class ChatInterface extends DialogBox {
 	/** Scroll for the messages **/
 	private ScrollPanel scrollMessagesPanel;
 	/** Close button **/
-	private HTML closeButton;
+	private Button closeButton;
 	
 	/** Timer to update dates in the chat **/
 	private Timer timer = null;
@@ -147,7 +147,7 @@ public class ChatInterface extends DialogBox {
 		mainPanel.add(scrollMessagesPanel);
 		mainPanel.add(sendMessageTextArea);
 		
-		closeButton = new HTML(MarkingInterface.messages.Close());
+		closeButton = new Button(MarkingInterface.messages.Close());
 		closeButton.addClickHandler(new ClickHandler() {			
 			@Override
 			public void onClick(ClickEvent event) {
