@@ -35,10 +35,10 @@ public class ViewButtons extends Composite {
 	public ViewButtons() {
 		this.mainPanel = new HorizontalPanel();
 
-		Icon finishIcon = new Icon(IconType.EYE_OPEN);
+		Icon finishIcon = new Icon(IconType.TH);
 		showRubricButton = new PushButton();
 		showRubricButton.setHTML(finishIcon.toString());
-		showRubricButton.setTitle(MarkingInterface.messages.FinishMarking());
+		showRubricButton.setTitle(MarkingInterface.messages.ShowRubric());
 		showRubricButton.addStyleName(Resources.INSTANCE.css().finishmarkingbutton());
 		showRubricButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -73,21 +73,7 @@ public class ViewButtons extends Composite {
 		
 		this.mainPanel.setWidth("0px");
 	}
-	
-	public void setRubricVisibility(boolean visible) {
-		if(visible) {
-			Icon finishIcon = new Icon(IconType.EYE_CLOSE);
-			showRubricButton.setHTML(finishIcon.toString());
-			showRubricButton.setTitle(MarkingInterface.messages.HideRubric());
-		} else {
-			Icon finishIcon = new Icon(IconType.EYE_OPEN);
-			showRubricButton.setHTML(finishIcon.toString());
-			showRubricButton.setTitle(MarkingInterface.messages.ShowRubric());
-		}
-	}
 
 	public void loadSubmissionData() {
-		// TODO Auto-generated method stub
-		
 	}
 }
