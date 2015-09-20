@@ -1,47 +1,35 @@
 /**
  * 
  */
-package cl.uai.client.toolbar;
+package cl.uai.client.toolbar.buttons;
 
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
-import cl.uai.client.resources.Resources;
+import cl.uai.client.toolbar.TutorialDialogBox;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.PushButton;
 
 /**
  * @author Jorge Villalón
  *
  */
-public class HelpButtons extends Composite {
+public class HelpButtons extends Buttons {
 
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(HelpButtons.class.getName());
-	
-	private HorizontalPanel mainPanel = null;
 	
 	private PushButton aboutButton = null;
 	private PushButton tutorialsButton = null;
 
 	public HelpButtons() {
-		this.mainPanel = new HorizontalPanel();
-		this.mainPanel.addStyleName(Resources.INSTANCE.css().buttonshpanel());
 		
-		Icon infoIcon = new Icon(IconType.INFO);
-		aboutButton = new PushButton();
-		aboutButton.setHTML(infoIcon.toString());
-		aboutButton.setTitle(MarkingInterface.messages.ShowChat());
-		aboutButton.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		aboutButton = new PushButton(IconType.INFO, MarkingInterface.messages.AboutEmarking());
 		aboutButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -56,11 +44,7 @@ public class HelpButtons extends Composite {
 			}
 		});
 		
-		Icon tutorialsIcon = new Icon(IconType.BOOK);
-		tutorialsButton = new PushButton();
-		tutorialsButton.setHTML(tutorialsIcon.toString());
-		tutorialsButton.setTitle(MarkingInterface.messages.Tutorials());
-		tutorialsButton.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		tutorialsButton = new PushButton(IconType.BOOK, MarkingInterface.messages.Tutorials());
 		tutorialsButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -71,17 +55,9 @@ public class HelpButtons extends Composite {
 
 		this.mainPanel.add(aboutButton);
 		this.mainPanel.add(tutorialsButton);
-		
-		initWidget(this.mainPanel);
 	}
 	
 	@Override
-	protected void onLoad() {
-		super.onLoad();
-		
-		this.setWidth("0px");
-	}
-	
 	public void loadSubmissionData() {		
 	}
 }

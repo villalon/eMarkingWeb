@@ -1,45 +1,32 @@
 /**
  * 
  */
-package cl.uai.client.toolbar;
+package cl.uai.client.toolbar.buttons;
 
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
-import cl.uai.client.resources.Resources;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.PushButton;
 
 /**
  * @author Jorge Villalón
  *
  */
-public class ViewButtons extends Composite {
+public class ViewButtons extends Buttons {
 
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(ViewButtons.class.getName());
-
-	private HorizontalPanel mainPanel = null;
 
 	private PushButton showRubricButton = null;
 	private PushButton showColorsButton = null;
 
 	public ViewButtons() {
-		this.mainPanel = new HorizontalPanel();
-
-		Icon finishIcon = new Icon(IconType.TH);
-		showRubricButton = new PushButton();
-		showRubricButton.setHTML(finishIcon.toString());
-		showRubricButton.setTitle(MarkingInterface.messages.ShowRubric());
-		showRubricButton.addStyleName(Resources.INSTANCE.css().finishmarkingbutton());
+		showRubricButton = new PushButton(IconType.TH, MarkingInterface.messages.ShowRubric());
 		showRubricButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -48,32 +35,21 @@ public class ViewButtons extends Composite {
 			}
 		});
 
-		Icon showColorsIcon = new Icon(IconType.TINT);
-		showColorsButton = new PushButton();
-		showColorsButton.setHTML(showColorsIcon.toString());
-		showColorsButton.setTitle(MarkingInterface.messages.ShowColors());
-		showColorsButton.addStyleName(Resources.INSTANCE.css().finishmarkingbutton());
+		showColorsButton = new PushButton(IconType.TINT, MarkingInterface.messages.ShowColors());
 		showColorsButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				EMarkingWeb.markingInterface.setColoredRubric(
 						!EMarkingConfiguration.isColoredRubric());
+				EMarkingWeb.markingInterface.getToolbar().setSelectedTab(1);
 			}
 		});
 		
 		this.mainPanel.add(showRubricButton);
 		this.mainPanel.add(showColorsButton);
-
-		initWidget(this.mainPanel);
 	}
 
 	@Override
-	protected void onLoad() {
-		super.onLoad();
-		
-		this.mainPanel.setWidth("0px");
-	}
-
 	public void loadSubmissionData() {
 	}
 }

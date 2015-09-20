@@ -20,6 +20,9 @@ public class EMarkingConfiguration {
 	/** eMarking version according to Moodle for debugging information **/
 	private static int eMarkingVersion = 0;
 
+	/** For messages including the admin's email **/
+	private static String administratorEmail = null;
+	
 	/** Indicates if the marking interface will include student anonymous information **/
 	private static boolean studentAnonymous = true;
 
@@ -62,6 +65,9 @@ public class EMarkingConfiguration {
 
 	/** If the chat is enabled **/
 	private static boolean chatEnabled = false;
+
+	/** If the chat server raised an error **/
+	private static boolean chatServerError = false;
 
 	/**
 	 * @return the eMarkingVersion
@@ -171,6 +177,9 @@ public class EMarkingConfiguration {
 		// Assign Moodle session key
 		sessKey = value.get("sesskey");
 
+		// Assign Moodle session key
+		administratorEmail = value.get("adminemail");
+
 		// Assign if the student is anonymous
 		studentAnonymous = value.get("studentanonymous").equals("true");
 
@@ -226,5 +235,26 @@ public class EMarkingConfiguration {
 	 */
 	public static void setShowRubricOnLoad(boolean showRubricOnLoad) {
 		EMarkingConfiguration.showRubricOnLoad = showRubricOnLoad;
+	}
+
+	/**
+	 * @return the administratorEmail
+	 */
+	public static String getAdministratorEmail() {
+		return administratorEmail;
+	}
+
+	/**
+	 * @return the chatServerError
+	 */
+	public static boolean isChatServerError() {
+		return chatServerError;
+	}
+
+	/**
+	 * @param chatServerError the chatServerError to set
+	 */
+	public static void setChatServerError(boolean chatServerError) {
+		EMarkingConfiguration.chatServerError = chatServerError;
 	}
 }

@@ -27,6 +27,11 @@ import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.toolbar.buttons.ChatButtons;
+import cl.uai.client.toolbar.buttons.ExamButtons;
+import cl.uai.client.toolbar.buttons.HelpButtons;
+import cl.uai.client.toolbar.buttons.MarkingButtons;
+import cl.uai.client.toolbar.buttons.ViewButtons;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -98,7 +103,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
 		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
 		
-		tabButtonsPanel.selectTab(0);
+		tabButtonsPanel.selectTab(1);
 
 		buttonsPanel = new HorizontalPanel();
 		buttonsPanel.setVisible(false);
@@ -145,5 +150,9 @@ public class MarkingToolBar extends EMarkingComposite {
 
 	public DraftGrade getGrade() {
 		return this.grade;
-	}	
+	}
+	
+	public void setSelectedTab(int idx) {
+		this.tabButtonsPanel.selectTab(idx);
+	}
 }

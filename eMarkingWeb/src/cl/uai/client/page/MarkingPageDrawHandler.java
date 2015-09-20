@@ -7,8 +7,9 @@ import org.vaadin.gwtgraphics.client.shape.path.LineTo;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.PathMark;
-import cl.uai.client.toolbar.MarkingButtons;
+import cl.uai.client.toolbar.buttons.MarkingButtons;
 
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -64,9 +65,11 @@ public class MarkingPageDrawHandler implements DrawHandler {
 
 	@Override
 	public void drawEnd(MouseUpEvent event) {
+		
 		if(!isPenActive()){
 			return;
 		}
+		
 		drawingArea.remove(this.currentPath);
 		int pathX = this.currentPath.getX();
 		int pathY = this.currentPath.getY();
@@ -74,7 +77,15 @@ public class MarkingPageDrawHandler implements DrawHandler {
 		int left = 11000;
 		int right = -1;
 		int bottom = -1;
-		selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion().getId();
+		
+		selectedCriterion = 0;
+		
+		if(EMarkingConfiguration.isColoredRubric()) {
+			Criterion criterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+			if(criterion != null) {
+				selectedCriterion = criterion.getId();
+			}
+		}
 		
 		int x = this.currentPath.getX();
 		int y = this.currentPath.getY();

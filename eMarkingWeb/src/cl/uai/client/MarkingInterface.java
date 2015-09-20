@@ -66,6 +66,8 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
@@ -96,6 +98,9 @@ public class MarkingInterface extends EMarkingComposite {
 	/** For logging purposes */
 	private static Logger logger = Logger.getLogger(MarkingInterface.class.getName());
 
+	/** Event bus for e-marking **/
+	public static EventBus EVENT_BUS = GWT.create(SimpleEventBus.class);
+	
 	/** Static resource for i18n messages **/
 	public static EmarkingMessages messages = GWT.create(EmarkingMessages.class);
 
@@ -896,13 +901,8 @@ public class MarkingInterface extends EMarkingComposite {
 			@Override
 			public void onFailure(Exception reason) {
 				logger.severe("Could not find node server " + nodepath);
-
-				EMarkingConfiguration.setChatEnabled(false);
-				for(BubbleButton b : bubbleButtons) {
-					if(!(b instanceof ShowRubricButton)) {
-						b.setVisible(false);
-					}
-				}
+				EMarkingConfiguration.setChatServerError(true);
+				disableCollaboration();
 			}
 
 			@Override
@@ -923,12 +923,8 @@ public class MarkingInterface extends EMarkingComposite {
 				} catch (Exception e) {
 					e.printStackTrace();
 					logger.severe("Fatal error trying to load NodeJS. Disabling collaborative features.");
-					EMarkingConfiguration.setChatEnabled(false);
-					for(BubbleButton b : bubbleButtons) {
-						if(!(b instanceof ShowRubricButton)) {
-							b.setVisible(false);
-						}
-					}
+					EMarkingConfiguration.setChatServerError(true);
+					disableCollaboration();
 				}					
 			}
 		}).inject();
@@ -1069,5 +1065,14 @@ public class MarkingInterface extends EMarkingComposite {
 			}
 		}
 		getToolbar().getChatButtons().removeNotification(source);
+	}
+	
+	public void disableCollaboration() {
+		for(BubbleButton b : bubbleButtons) {
+			if(!(b instanceof ShowRubricButton)) {
+				b.setVisible(false);
+			}
+		}
+		this.toolbar.getChatButtons().loadSubmissionData();
 	}
 }

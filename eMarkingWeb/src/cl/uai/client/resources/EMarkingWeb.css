@@ -503,6 +503,7 @@ to {
 
 .tabbuttons .gwt-TabPanelBottom {
 	padding:0px;
+	max-height: 70px;
 }
 
 .tabbuttons .gwt-TabBarItem {
@@ -581,6 +582,19 @@ to {
 
 .rubricbuttoncustom {
 	font-size: 16pt;
+}
+
+.rubricbuttontext {
+	font-size: 8pt;
+	font-weight: normal;
+	white-space: nowrap;
+	margin-right: 30px;
+	text-align: left;
+}
+
+.rubricbutton i {
+	float: left;
+    margin-right: 10px;
 }
 
 .rubricbuttonjewel {

@@ -18,7 +18,7 @@
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-package cl.uai.client.toolbar;
+package cl.uai.client.toolbar.buttons;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +32,7 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.toolbar.CriterionListBox;
 import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
@@ -304,6 +305,7 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		criterionList.loadSubmissionData();
 		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
+		changeColorButtons();
 		
 		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
 	}
@@ -319,7 +321,7 @@ public class MarkingButtons extends EMarkingComposite {
 				buttons.get(i).getElement().removeAttribute("style");
 			}
 		}
-		EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
+		// EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
 	}
 
 	private void loadCustomMarksButtons(String customMarks) {

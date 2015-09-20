@@ -148,4 +148,5 @@ public interface EmarkingMessages extends Messages {
 	public String HowToCreateRubric();
 	public String HowToAnonymousMarking();	
 	public String HowToMarkingReports();
+	public String ChatServerError(String adminemail);
 }

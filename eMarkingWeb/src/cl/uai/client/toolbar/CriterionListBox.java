@@ -54,8 +54,7 @@ public class CriterionListBox extends ListBox {
 			 options.getItem(i).setAttribute("style", "color:" + Color.getCSSHueColor(cid));;
 		}
 		
-		this.addChangeHandler(new ChangeHandler() {
-			
+		this.addChangeHandler(new ChangeHandler() {			
 			@Override
 			public void onChange(ChangeEvent event) {
 				changeColors();

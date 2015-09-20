@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cl.uai.client.toolbar;
+package cl.uai.client.toolbar.buttons;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -14,9 +14,8 @@ import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.page.MarkingPage;
-import cl.uai.client.resources.Resources;
+import cl.uai.client.toolbar.FinishMarkingDialog;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,39 +24,25 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * @author Jorge Villalón
  *
  */
-public class ExamButtons extends Composite {
+public class ExamButtons extends Buttons {
 
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(ExamButtons.class.getName());
 	
-	private HorizontalPanel mainPanel = null;
-	
 	private PushButton finishMarkingButton = null;
-
 	private PushButton saveChangesButton = null;
-	
 	private PushButton saveAndJumpToNextButton = null;
 
 	
 	public ExamButtons() {
-		this.mainPanel = new HorizontalPanel();
-		this.mainPanel.addStyleName(Resources.INSTANCE.css().buttonshpanel());
-		
-		Icon finishIcon = new Icon(IconType.CHECK);
-		finishMarkingButton = new PushButton();
-		finishMarkingButton.setHTML(finishIcon.toString());
-		finishMarkingButton.setTitle(MarkingInterface.messages.FinishMarking());
-		finishMarkingButton.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		finishMarkingButton = new PushButton(IconType.CHECK, MarkingInterface.messages.FinishMarking());
 		finishMarkingButton.setVisible(false);
 		finishMarkingButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -131,11 +116,7 @@ public class ExamButtons extends Composite {
 			}
 		});
 		
-		Icon icon = new Icon(IconType.SAVE);
-		saveChangesButton = new PushButton();
-		saveChangesButton.setHTML(icon.toString());
-		saveChangesButton.setTitle(MarkingInterface.messages.SaveChangesClose());
-		saveChangesButton.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		saveChangesButton = new PushButton(IconType.SAVE, MarkingInterface.messages.SaveChangesClose());
 		saveChangesButton.setVisible(false);
 		saveChangesButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -145,11 +126,7 @@ public class ExamButtons extends Composite {
 			}
 		});
 		
-		Icon chkContinueIcon = new Icon(IconType.EXTERNAL_LINK);
-		saveAndJumpToNextButton = new PushButton();
-		saveAndJumpToNextButton.setHTML(chkContinueIcon.toString());
-		saveAndJumpToNextButton.setTitle(MarkingInterface.messages.JumpToNextStudent());
-		saveAndJumpToNextButton.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		saveAndJumpToNextButton = new PushButton(IconType.EXTERNAL_LINK, MarkingInterface.messages.JumpToNextStudent());
 		saveAndJumpToNextButton.setVisible(false);
 		saveAndJumpToNextButton.addClickHandler(new ClickHandler() {
 			
@@ -188,15 +165,6 @@ public class ExamButtons extends Composite {
 		this.mainPanel.add(saveAndJumpToNextButton);
 		this.mainPanel.add(saveChangesButton);
 		this.mainPanel.add(finishMarkingButton);
-
-		initWidget(this.mainPanel);
-	}
-	
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		
-		this.mainPanel.setWidth("0px");
 	}
 	
 	public void loadSubmissionData() {

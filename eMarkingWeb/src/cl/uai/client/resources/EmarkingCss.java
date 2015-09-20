@@ -170,4 +170,5 @@ public interface EmarkingCss extends CssResource {
 	String chatelapsedtime();
 	String tabbuttons();
 	String buttonshpanel();
+	String rubricbuttontext();
 }
