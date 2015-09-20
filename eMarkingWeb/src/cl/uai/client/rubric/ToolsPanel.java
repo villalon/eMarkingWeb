@@ -67,7 +67,9 @@ public class ToolsPanel extends Composite {
 		}
 
 		marksSummary = new MarksSummaryInterface();
-		toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
+		if(EMarkingConfiguration.getMarkingType() != 5) {
+			toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
+		}
 		
 		toolsPanel.selectTab(0);
 		

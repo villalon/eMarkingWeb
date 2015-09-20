@@ -138,18 +138,6 @@ public class MarkingButtons extends EMarkingComposite {
 	private Map<Integer, Label> buttonsStats;
 
 	/**
-	 * If the button is shown
-	 */
-	private static boolean[] buttonsShow = {
-		true,
-		true,
-		true,
-		true,
-		true,
-		true,
-	};
-
-	/**
 	 * Creates the rubric buttons interface
 	 */
 	public MarkingButtons() {
@@ -167,9 +155,6 @@ public class MarkingButtons extends EMarkingComposite {
 		// First creates all buttonstats as they have to be referenced by buttons
 		for(int i=0;i<iconTypes.length;i++) {
 
-			if(!buttonsShow[i])
-				continue;
-
 			Label lblstat = new Label();
 			lblstat.addStyleName(Resources.INSTANCE.css().rubricbuttonjewel());
 			buttonsStats.put(buttonFormats[i], lblstat);
@@ -178,9 +163,6 @@ public class MarkingButtons extends EMarkingComposite {
 		// Second we create all buttons and reference the to their stats
 		for(int i=0;i<iconTypes.length;i++) {
 
-			if(!buttonsShow[i])
-				continue;
-
 			addToggleButton(
 					getButtonHtml(Buttons.values()[i]), 
 					buttonsTitles[i], 
@@ -188,7 +170,12 @@ public class MarkingButtons extends EMarkingComposite {
 					buttonFormats[i]);
 		}
 
+		if(EMarkingConfiguration.getMarkingType() == 5) {
+			selectedIndex = 1;
+			buttons.get(0).setEnabled(false);
+		}
 		buttons.get(selectedIndex).setValue(true);
+		buttons.get(selectedIndex).setDown(true);
 
 		criterionList = new CriterionListBox();
 		markingButtonsPanel.add(criterionList);
@@ -235,7 +222,10 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		ToggleButton tbutton = buttons.get(index);
 
-		if(tbutton == null || (fromEvent && !tbutton.isDown())) {
+		if(tbutton == null) {
+			return;
+		}
+		if (fromEvent && !tbutton.isDown()) {
 			tbutton.setValue(true);
 			return;
 		}
@@ -308,6 +298,10 @@ public class MarkingButtons extends EMarkingComposite {
 		changeColorButtons();
 		
 		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
+		
+		if(EMarkingConfiguration.getMarkingType() == 5) {
+			buttons.get(0).setVisible(false);
+		}
 	}
 	
 	public void changeColorButtons() {
@@ -400,7 +394,7 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);
-		vpanel.add(lblstat, 23, 2);
+		vpanel.add(lblstat, 23, 0);
 		markingButtonsPanel.add(vpanel);	
 	}
 

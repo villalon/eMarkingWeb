@@ -172,7 +172,8 @@ public class ExamButtons extends Buttons {
 		finishMarkingButton.setVisible(false);
 		saveAndJumpToNextButton.setVisible(true);
 		
-		if(EMarkingConfiguration.isSupervisor() && !MarkingInterface.submissionData.isQualitycontrol()) {
+		if(EMarkingConfiguration.isSupervisor() && !MarkingInterface.submissionData.isQualitycontrol()
+				&& EMarkingConfiguration.getMarkingType() != 5) {
 			finishMarkingButton.setVisible(true);
 		}
 	}

@@ -238,6 +238,11 @@ public class RubricPanel extends EMarkingComposite {
 		
 		scrollPanel.setStyleName("rubricscroll");
 		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");
+		
+		if(EMarkingConfiguration.getMarkingType() == 5) {
+			scrollPanel.setVisible(false);
+			rubricFilter.setVisible(false);
+		}
 
 		rubricTable.clear();
 
@@ -362,7 +367,7 @@ public class RubricPanel extends EMarkingComposite {
 			String value = filter.getValue(filter.getSelectedIndex());
 			
 			// Hide rubric when hide is selected
-			scrollPanel.setVisible(!value.equals("hide"));
+			scrollPanel.setVisible(!value.equals("hide") && EMarkingConfiguration.getMarkingType() != 5);
 			
 			EMarkingWeb.markingInterface.getRubricInterface().resizeToolsPanel();
 			

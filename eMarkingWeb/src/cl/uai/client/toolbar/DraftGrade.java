@@ -22,6 +22,7 @@
 package cl.uai.client.toolbar;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.SubmissionGradeData;
 import cl.uai.client.marks.RubricMark;
@@ -60,10 +61,9 @@ public class DraftGrade extends EMarkingComposite {
 
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
 		
-		if(sdata == null)
+		if(sdata == null || EMarkingConfiguration.getMarkingType() == 5)
 			return;
-		
-		
+				
 		lblGrade = new Label(RubricMark.scoreFormat(sdata.getFinalgrade(), false)+"");
 		lblGrade.addStyleName(Resources.INSTANCE.css().grade());
 		
