@@ -413,6 +413,10 @@ public class MarkingButtons extends EMarkingComposite {
 	}
 
 	public void changeColor(int id) {
+		if(!EMarkingConfiguration.isColoredRubric()) {
+			return;
+		}
+		
 		for (int i = 0; i < criterionList.getItemCount(); i++) {
 			if(Integer.parseInt(criterionList.getValue(i)) == id){
 				criterionList.setSelectedIndex(i);

@@ -71,7 +71,9 @@ public class ToolsPanel extends Composite {
 			toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
 		}
 		
-		toolsPanel.selectTab(0);
+		if(toolsPanel.getWidgetCount() > 0) {
+			toolsPanel.selectTab(0);
+		}
 		
 		scroll = new ScrollPanel();
 		scroll.add(toolsPanel);

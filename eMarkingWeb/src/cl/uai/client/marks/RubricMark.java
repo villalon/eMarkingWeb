@@ -133,7 +133,7 @@ public class RubricMark extends Mark {
 			
 			
 			if(this.getRegradeid() > 0 && !headerOnly) {
-				html += "<div style=\"background-color:yellow\">"+ MarkingInterface.messages.Regrade()
+				html += "<div style=\"background-color:yellow; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
 						+ (((RubricMark)this).getRegradeaccepted() == 0 ? " " + MarkingInterface.messages.Requested() : " " + MarkingInterface.messages.Replied())
 						+"</div>";
 				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
@@ -144,7 +144,7 @@ public class RubricMark extends Mark {
 			}
 			
 			// If the mark has a color, we use the background to color it
-			if(this.criterionid > 0) {
+			if(this.criterionid > 0 && EMarkingConfiguration.isColoredRubric()) {
 				Color.setWidgetBackgroundHueColor(this.criterionid, this);
 			}
 			
