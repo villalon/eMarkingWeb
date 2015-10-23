@@ -101,10 +101,27 @@ public class Moodle {
 	private Hashtable<Integer, Course> courses = new Hashtable<Integer, Course>();
 	/** Enrolments data **/
 	private Hashtable<Integer, Course> usercourses = new Hashtable<Integer, Course>();
-
+	/** Percentage of the page that will be deleted for anonymity **/
 	private int anonymousPercentage = 10;
-	private int anonymousPercentageFirstPage = 10;
+	/** Percentage of the page that will be deleted for anonymity for a custom page **/
+	private int anonymousPercentageCustomPage = 10;
+	/** The custom page that will be made anonymous using the custom percentage **/
+	private int anonymousCustomPage = 1;
 	
+	/**
+	 * @return the anonymousCustomPage
+	 */
+	public int getAnonymousCustomPage() {
+		return anonymousCustomPage;
+	}
+
+	/**
+	 * @param anonymousCustomPage the anonymousCustomPage to set
+	 */
+	public void setAnonymousCustomPage(int anonymousCustomPage) {
+		this.anonymousCustomPage = anonymousCustomPage;
+	}
+
 	/**
 	 * @return the anonymousPercentage
 	 */
@@ -120,17 +137,17 @@ public class Moodle {
 	}
 
 	/**
-	 * @return the anonymousPercentageFirstPage
+	 * @return the anonymousPercentageCustomPage
 	 */
-	public int getAnonymousPercentageFirstPage() {
-		return anonymousPercentageFirstPage;
+	public int getAnonymousPercentageCustomPage() {
+		return anonymousPercentageCustomPage;
 	}
 
 	/**
-	 * @param anonymousPercentageFirstPage the anonymousPercentageFirstPage to set
+	 * @param anonymousPercentageCustomPage the anonymousPercentageCustomPage to set
 	 */
-	public void setAnonymousPercentageFirstPage(int anonymousPercentageFirstPage) {
-		this.anonymousPercentageFirstPage = anonymousPercentageFirstPage;
+	public void setAnonymousPercentageCustomPage(int anonymousPercentageCustomPage) {
+		this.anonymousPercentageCustomPage = anonymousPercentageCustomPage;
 	}
 
 	private boolean answerSheets = false;
@@ -383,8 +400,11 @@ public class Moodle {
 		if(p.containsKey("anonymouspercentage")) {
 			setAnonymousPercentage(Integer.parseInt(p.getProperty("anonymouspercentage")));
 		}
-		if(p.containsKey("anonymouspercentagefirstpage")) {
-			setAnonymousPercentageFirstPage(Integer.parseInt(p.getProperty("anonymouspercentagefirstpage")));
+		if(p.containsKey("anonymouspercentagecustompage")) {
+			setAnonymousPercentageCustomPage(Integer.parseInt(p.getProperty("anonymouspercentagecustompage")));
+		}
+		if(p.containsKey("anonymouscustompage")) {
+			setAnonymousCustomPage(Integer.parseInt(p.getProperty("anonymouscustompage")));
 		}
 	}
 
@@ -566,7 +586,8 @@ public class Moodle {
 		p.setProperty("density", Integer.toString(this.density));
 		p.setProperty("shapesize", Integer.toString(this.shapesize));
 		p.setProperty("anonymouspercentage", Integer.toString(this.anonymousPercentage));
-		p.setProperty("anonymouspercentagefirstpage", Integer.toString(this.anonymousPercentageFirstPage));
+		p.setProperty("anonymouspercentagecustompage", Integer.toString(this.anonymousPercentageCustomPage));
+		p.setProperty("anonymouscustompage", Integer.toString(this.anonymousCustomPage));
 		try {
 			p.store(new FileOutputStream(f), "eMarking for Moodle");
 		} catch (Exception e) {
