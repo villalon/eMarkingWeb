@@ -88,6 +88,8 @@ public class OptionsDialog extends JDialog {
 	private JSpinner spinnerOMRshapeSize;
 	private JSpinner spinnerOMRdensity;
 	private JSpinner spinnerOMRthreshold;
+	private JSpinner spinnerAnonymousPercentage;
+	private JSpinner spinnerAnonymousPercentageFirstPage;
 
 	/**
 	 * @return the cancelled
@@ -147,6 +149,8 @@ public class OptionsDialog extends JDialog {
 							moodle.setThreshold(Integer.parseInt(spinnerOMRthreshold.getValue().toString()));
 							moodle.setDensity(Integer.parseInt(spinnerOMRdensity.getValue().toString()));
 							moodle.setShapeSize(Integer.parseInt(spinnerOMRshapeSize.getValue().toString()));
+							moodle.setAnonymousPercentage(Integer.parseInt(spinnerAnonymousPercentage.getValue().toString()));
+							moodle.setAnonymousPercentageFirstPage(Integer.parseInt(spinnerAnonymousPercentageFirstPage.getValue().toString()));
 							moodle.saveProperties();
 							cancelled = false;
 							setVisible(false);
@@ -486,6 +490,26 @@ public class OptionsDialog extends JDialog {
 		spinnerOMRshapeSize.setBounds(150, 99, 169, 20);
 		panel_5.add(spinnerOMRshapeSize);
 		spinnerOMRshapeSize.setValue(this.moodle.getOMRshapeSize());
+		
+		JLabel lblAnonymousPercentage = new JLabel("<html>"+EmarkingDesktop.lang.getString("anonymouspercentage")+"</html>");
+		lblAnonymousPercentage.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblAnonymousPercentage.setBounds(329, 32, 130, 27);
+		panel_5.add(lblAnonymousPercentage);
+		
+		spinnerAnonymousPercentage = new JSpinner();
+		spinnerAnonymousPercentage.setBounds(469, 32, 169, 20);
+		panel_5.add(spinnerAnonymousPercentage);
+		spinnerAnonymousPercentage.setValue(this.moodle.getAnonymousPercentage());
+		
+		JLabel lblAnonymousPercentageFirstPage = new JLabel("<html>"+EmarkingDesktop.lang.getString("anonymouspercentagefirstpage")+"</html>");
+		lblAnonymousPercentageFirstPage.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblAnonymousPercentageFirstPage.setBounds(329, 70, 130, 27);
+		panel_5.add(lblAnonymousPercentageFirstPage);
+		
+		spinnerAnonymousPercentageFirstPage = new JSpinner();
+		spinnerAnonymousPercentageFirstPage.setBounds(469, 70, 169, 20);
+		panel_5.add(spinnerAnonymousPercentageFirstPage);
+		spinnerAnonymousPercentageFirstPage.setValue(this.moodle.getAnonymousPercentageFirstPage());
 	}
 
 	public boolean getDoubleSideSelected() {

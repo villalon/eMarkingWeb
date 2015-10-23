@@ -130,6 +130,8 @@ public class EmarkingDesktop {
 	private JTabbedPane tabbedPane;
 	private JScrollPane scrollPaneStudentsTable;
 	private StudentsTable studentsTable;
+	private JScrollPane scrollAnonymousPagesTable;
+	private AnonymousPagesTable anonymousPagesTable;
 
 	/**
 	 * Create the application.
@@ -207,6 +209,11 @@ public class EmarkingDesktop {
 						false);
 				if(pagesTable.getRowCount()==1)
 					pagesTable.selectAll();
+				anonymousPagesTable.getPagesTableModel().addRow((Object[][]) null);
+				anonymousPagesTable.updateData(
+						moodle.getPages().getRowData(p.getRow()),
+						p.getRow(),
+						false);
 				progress.getLblProgress().setText(lang.getString("processingpage") + " " + p.getRow());
 			}
 			@Override
@@ -394,6 +401,10 @@ public class EmarkingDesktop {
 		tabbedPane.addTab(lang.getString("pages"), null, scrollPanePagesTable, null);
 		scrollPanePagesTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
+		scrollAnonymousPagesTable = new JScrollPane();
+		tabbedPane.addTab(lang.getString("anonymouspages"), null, scrollAnonymousPagesTable, null);
+		scrollAnonymousPagesTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
 		scrollPaneStudentsTable = new JScrollPane();
 		scrollPaneStudentsTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		tabbedPane.addTab(lang.getString("students"), null, scrollPaneStudentsTable, null);
@@ -402,6 +413,9 @@ public class EmarkingDesktop {
 	
 		scrollPanePagesTable.add(pagesTable);
 		scrollPanePagesTable.setViewportView(pagesTable);
+
+		scrollPanePagesTable.add(anonymousPagesTable);
+		scrollPanePagesTable.setViewportView(anonymousPagesTable);
 
 		studentsTable = new StudentsTable(moodle);
 		scrollPaneStudentsTable.setViewportView(studentsTable);
@@ -624,10 +638,20 @@ public class EmarkingDesktop {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if(pagesTable.getSelectedRow() >= 0) {
-					loadSelectedRowPreview(pagesTable.getSelectedRow());
+					loadSelectedRowPreview(pagesTable.getSelectedRow(), false);
 					menuEdit.setEnabled(true);
 				} else {
 					menuEdit.setEnabled(false);					
+				}
+			}
+		});
+		anonymousPagesTable = new AnonymousPagesTable(moodle);
+		scrollAnonymousPagesTable.setViewportView(anonymousPagesTable);
+		anonymousPagesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if(anonymousPagesTable.getSelectedRow() >= 0) {
+					loadSelectedRowPreview(anonymousPagesTable.getSelectedRow(), true);
 				}
 			}
 		});
@@ -638,6 +662,7 @@ public class EmarkingDesktop {
 	public void updateTableData(int row) {
 		Object[] data = moodle.getPages().getRowData(row);
 		pagesTable.updateData(data, row, moodle.getQr().isDoubleside());
+		anonymousPagesTable.updateData(data, row, moodle.getQr().isDoubleside());
 		Page p = moodle.getPages().get(row);
 		if(p != null && p.getStudent() != null) {
 			studentsTable.updateData(p.getStudent());
@@ -657,7 +682,7 @@ public class EmarkingDesktop {
 				int rowNumber = Integer.parseInt(e.getOutput().toString());
 				scrollToRow(rowNumber);
 				updateTableData(rowNumber);
-				loadSelectedRowPreview(rowNumber);
+				loadSelectedRowPreview(rowNumber, false);
 			}
 			@Override
 			public void processFinished(MoodleWorkerEvent e) {
@@ -721,12 +746,14 @@ public class EmarkingDesktop {
 		return this.frame;
 	}
 
-	private void loadSelectedRowPreview(int row) {
+	private void loadSelectedRowPreview(int row, boolean anonymous) {
 		if(moodle.getPages().get(row) == null) {
 			logger.error("Invalid row for preview:" + row);
 		}
 		String pageFilename = moodle.getPages().get(row).getFilename();
-		String filename = moodle.getQr().getTempdirStringPath() + "/" + pageFilename + ".png";
+		String filename = anonymous ? 
+				moodle.getQr().getTempdirStringPath() + "/" + pageFilename + "_a.png" :
+				moodle.getQr().getTempdirStringPath() + "/" + pageFilename + ".png" ;
 		try {
 			File imagefile = new File(filename);
 			if(!imagefile.exists()) {

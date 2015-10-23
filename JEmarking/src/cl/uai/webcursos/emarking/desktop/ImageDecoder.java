@@ -94,7 +94,16 @@ public class ImageDecoder implements Runnable {
 	}
 
 	private BufferedImage createAnonymousVersion(BufferedImage image) {
-		int cropHeight = (int) Math.max(((float) image.getHeight() / 10.0f),130);
+		float anonymousPercentage = (float) this.moodle.getAnonymousPercentage();
+		float anonymousPercentageFirstPage = (float) this.moodle.getAnonymousPercentageFirstPage();
+		if(this.qrResult.isSuccess() && this.qrResult.getExampage() == 1) {
+			anonymousPercentage = anonymousPercentageFirstPage;
+		}
+		if(anonymousPercentage == 0) {
+			anonymousPercentage = 10f;
+		}
+		int cropHeight = (int) Math.max(((float) image.getHeight() * (anonymousPercentage / 100)),1);
+		logger.debug("Croping with height:" + cropHeight);
 		BufferedImage anonymousimage = new BufferedImage(
 				image.getWidth(), 
 				image.getHeight(), 

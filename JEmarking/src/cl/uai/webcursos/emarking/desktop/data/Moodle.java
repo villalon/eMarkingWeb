@@ -102,6 +102,37 @@ public class Moodle {
 	/** Enrolments data **/
 	private Hashtable<Integer, Course> usercourses = new Hashtable<Integer, Course>();
 
+	private int anonymousPercentage = 10;
+	private int anonymousPercentageFirstPage = 10;
+	
+	/**
+	 * @return the anonymousPercentage
+	 */
+	public int getAnonymousPercentage() {
+		return anonymousPercentage;
+	}
+
+	/**
+	 * @param anonymousPercentage the anonymousPercentage to set
+	 */
+	public void setAnonymousPercentage(int anonymousPercentage) {
+		this.anonymousPercentage = anonymousPercentage;
+	}
+
+	/**
+	 * @return the anonymousPercentageFirstPage
+	 */
+	public int getAnonymousPercentageFirstPage() {
+		return anonymousPercentageFirstPage;
+	}
+
+	/**
+	 * @param anonymousPercentageFirstPage the anonymousPercentageFirstPage to set
+	 */
+	public void setAnonymousPercentageFirstPage(int anonymousPercentageFirstPage) {
+		this.anonymousPercentageFirstPage = anonymousPercentageFirstPage;
+	}
+
 	private boolean answerSheets = false;
 	
 	public Moodle() {
@@ -310,6 +341,8 @@ public class Moodle {
 				e.printStackTrace();
 				return;
 			}
+		} else {
+			setMoodleAjaxUrl("mod/emarking/ajax/d.php");
 		}
 		if(p.containsKey("moodleurl")) {
 			setUrl(p.getProperty("moodleurl"));
@@ -346,6 +379,12 @@ public class Moodle {
 		}
 		if(p.containsKey("shapesize")) {
 			setShapeSize(Integer.parseInt(p.getProperty("shapesize")));
+		}
+		if(p.containsKey("anonymouspercentage")) {
+			setAnonymousPercentage(Integer.parseInt(p.getProperty("anonymouspercentage")));
+		}
+		if(p.containsKey("anonymouspercentagefirstpage")) {
+			setAnonymousPercentageFirstPage(Integer.parseInt(p.getProperty("anonymouspercentagefirstpage")));
 		}
 	}
 
@@ -526,6 +565,8 @@ public class Moodle {
 		p.setProperty("threshold", Integer.toString(this.threshold));
 		p.setProperty("density", Integer.toString(this.density));
 		p.setProperty("shapesize", Integer.toString(this.shapesize));
+		p.setProperty("anonymouspercentage", Integer.toString(this.anonymousPercentage));
+		p.setProperty("anonymouspercentagefirstpage", Integer.toString(this.anonymousPercentageFirstPage));
 		try {
 			p.store(new FileOutputStream(f), "eMarking for Moodle");
 		} catch (Exception e) {
