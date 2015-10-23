@@ -3,8 +3,15 @@
  */
 package cl.uai.client;
 
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
+
+import cl.uai.client.data.AjaxRequest;
+
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.json.client.JSONObject;
 
 /**
  * Class representing an EMarking interface configuration
@@ -69,6 +76,7 @@ public class EMarkingConfiguration {
 	/** If the chat server raised an error **/
 	private static boolean chatServerError = false;
 
+	private static Map<Integer, String> regradeMotives = null;
 	/**
 	 * @return the eMarkingVersion
 	 */
@@ -212,6 +220,19 @@ public class EMarkingConfiguration {
 
 		// Obtain the nodejs path from Moodle configuration
 		nodeJsPath = value.get("nodejspath");
+		
+		JSONObject obj = new JSONObject(JsonUtils.safeEval(value.get("motives")));
+		List<Map<String, String>> motives = AjaxRequest.getValuesFromResult(obj);
+		
+		regradeMotives = new TreeMap<Integer, String>();
+		
+		for(Map<String,String> motive : motives) {
+			int motiveid = Integer.parseInt(motive.get("id"));
+			String motiveName = motive.get("description");
+			logger.fine(motiveid + " " + motiveName);
+			regradeMotives.put(motiveid, motiveName);
+		}
+		
 
 		logger.fine("---------- E-Marking configuration -----------" +
 				"\nStudent anonymous:" + studentAnonymous + 
@@ -244,6 +265,14 @@ public class EMarkingConfiguration {
 		return administratorEmail;
 	}
 
+	/**
+	 * An array to show all regrade motives in e-marking
+	 * @return Map with motive ID and description
+	 */
+	public static Map<Integer, String> getRegradeMotives() {
+		return regradeMotives;
+	}
+	
 	/**
 	 * @return the chatServerError
 	 */

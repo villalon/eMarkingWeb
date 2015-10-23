@@ -22,6 +22,7 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
@@ -97,11 +98,12 @@ public class RequestRegradeDialog extends DialogBox {
 		
 		motive = new ListBox();
 		motive.setWidth("390px");
+		
 		motive.addItem(MarkingInterface.messages.Select(), "0");
-		motive.addItem(MarkingInterface.messages.MissassignedScore(), "1");
-		motive.addItem(MarkingInterface.messages.UnclearFeedback(), "2");
-		motive.addItem(MarkingInterface.messages.StatementProblem(), "3");
-		motive.addItem(MarkingInterface.messages.Other(), "10");
+		for(int motiveId : EMarkingConfiguration.getRegradeMotives().keySet()) {
+			String motiveName = EMarkingConfiguration.getRegradeMotives().get(motiveId);
+			motive.addItem(motiveName, Integer.toString(motiveId));
+		}
 		
 		HorizontalPanel hpanel = new HorizontalPanel();
 		hpanel.setWidth("100%");

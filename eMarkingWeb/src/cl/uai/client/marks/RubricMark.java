@@ -133,14 +133,21 @@ public class RubricMark extends Mark {
 			
 			
 			if(this.getRegradeid() > 0 && !headerOnly) {
-				html += "<div style=\"background-color:yellow; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
-						+ (((RubricMark)this).getRegradeaccepted() == 0 ? " " + MarkingInterface.messages.Requested() : " " + MarkingInterface.messages.Replied())
+				html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
+						+ " " + MarkingInterface.messages.Requested()
 						+"</div>";
 				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
 						+ MarkingInterface.messages.Motive() + ": " + this.getRegradeMotiveText() + "<hr>" 
 						+ MarkingInterface.messages.Comment() + ": " + this.getRegradecomment()
-						+ (this.getRegradeaccepted() == 0 ? "" : "<hr>"+MarkingInterface.messages.RegradeReply()+": " + this.getRegrademarkercomment())
 						+ "</div>";
+				if(this.getRegradeaccepted() > 0) {
+				html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
+						+ " " +  MarkingInterface.messages.Replied()
+						+"</div>";
+				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">"
+						+ "<hr>"+MarkingInterface.messages.RegradeReply()+": " + this.getRegrademarkercomment()
+						+ "</div>";
+				}
 			}
 			
 			// If the mark has a color, we use the background to color it

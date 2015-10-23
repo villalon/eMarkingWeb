@@ -27,6 +27,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 
@@ -42,22 +43,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 public class SubmissionGradeData {
+	
+	private static Logger logger = Logger.getLogger(SubmissionGradeData.class.getName());
 
 	public static String getRegradeMotiveText(int motiveid) {
-		switch(motiveid) {
-		case 1:
-			return MarkingInterface.messages.MissassignedScore();
-		case 2:
-			return MarkingInterface.messages.UnclearFeedback();
-		case 3:
-			return MarkingInterface.messages.StatementProblem();
-		case 10:
-		default:
-			return MarkingInterface.messages.Other();
+		if(EMarkingConfiguration.getRegradeMotives().get(motiveid) == null) {
+			logger.fine("Empty " + motiveid);
 		}
+		return EMarkingConfiguration.getRegradeMotives().get(motiveid);
 	}
-	
-	Logger logger = Logger.getLogger(SubmissionGradeData.class.getName());
 	private int id;
 	private float finalgrade;
 	private float grademin;
@@ -260,6 +254,7 @@ public class SubmissionGradeData {
 						rubricname = criterion.get("rubricname").toString();
 						int regradeid = Integer.parseInt(criterion.get("regradeid"));
 						int regradeaccepted = Integer.parseInt(criterion.get("regradeaccepted"));
+						int regrademotive = Integer.parseInt(criterion.get("motive"));
 						boolean markerIsAssigned = Integer.parseInt(criterion.get("markerassigned")) == 1;
 						String regradecomment = criterion.get("regradecomment").toString();
 						String regrademarkercomment = criterion.get("regrademarkercomment").toString();
@@ -279,6 +274,7 @@ public class SubmissionGradeData {
 						criteriondata.setMarkerIsAssigned(markerIsAssigned);
 						criteriondata.setRegradeComment(regradecomment);
 						criteriondata.setRegradeMarkerComment(regrademarkercomment);
+						criteriondata.setRegrademotive(regrademotive);
 						for(Map<String,String> level : levels) {
 							Level levelData = new Level(
 									criteriondata,

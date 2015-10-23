@@ -211,7 +211,6 @@ public class RubricPanel extends EMarkingComposite {
 					cheader.setRegradeData(mark.getRegradeid(), mark.getRegradeaccepted());
 				}
 				cheader.setMarkerVisible(!popupInterface);
-				cheader.setRegradeData(mark.getRegradeid(), mark.getRegradeaccepted());
 			}
 		}
 		
@@ -284,6 +283,7 @@ public class RubricPanel extends EMarkingComposite {
 					
 					if(criterion.getRegradeid() > 0) {
 						levelLabel.setRegradeRequested(true);
+						levelLabel.setRegradeMotive(criterion.getRegrademotive());
 						levelLabel.setRegradeComment(criterion.getRegradeComment());
 						levelLabel.updateHtml();
 					}
@@ -420,6 +420,10 @@ public class RubricPanel extends EMarkingComposite {
 			if(lblLabel.getLevelId() == mark.getLevelId()) {
 				found = lblLabel;
 			}
+			lblLabel.setRegradeRequested(false);
+			lblLabel.setRegradeComment(null);
+			lblLabel.setRegradeMotive(0);
+			lblLabel.updateHtml();
 		}
 
 		return found;
@@ -551,9 +555,7 @@ public class RubricPanel extends EMarkingComposite {
 
 			// If the level id changed remove the mark and then add it when updated
 			if(oldLevelId != newLevel.getId()) {
-
 				this.deleteMarkFromRubric(rmark);
-
 				this.addMarkToRubric(rmark);
 			} else {
 				// If not update the bonus

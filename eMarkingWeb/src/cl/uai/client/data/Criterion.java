@@ -73,6 +73,7 @@ public class Criterion {
 	}
 
 	private int regradeaccepted = 0;
+	private int regrademotive = 0;
 	private int sortorder;
 	
 	/**
@@ -212,5 +213,19 @@ public class Criterion {
 	 */
 	public void setHueColor(int hueColor) {
 		this.hueColor = hueColor;
+	}
+
+	/**
+	 * @return the regrademotive
+	 */
+	public int getRegrademotive() {
+		return regrademotive;
+	}
+
+	/**
+	 * @param regrademotive the regrademotive to set
+	 */
+	public void setRegrademotive(int regrademotive) {
+		this.regrademotive = regrademotive;
 	}
 }
