@@ -161,6 +161,18 @@ public class EmarkingDesktop {
 				logger.debug("IDENTIFIED - Student:" + qrResult.getUserid() + " Course:"+
 						qrResult.getCourseid()+" Page:" + qrResult.getExampage());
 
+				// If we'll use fake students we retrieve fake data
+				if(moodle.isFakeStudents()
+						&& (moodle.getCourses().size() == 0
+						|| moodle.getStudents().size() == 0)) {
+					try {
+						moodle.retrieveCourseFromId(0);
+						moodle.retrieveStudents(qrResult.getCourseid());
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				
 				// Validate data				
 				if(!moodle.getCourses().containsKey(qrResult.getCourseid()) 
 						&& qrResult.getCourseid() > 0) {

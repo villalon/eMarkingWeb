@@ -107,6 +107,8 @@ public class Moodle {
 	private int anonymousPercentageCustomPage = 10;
 	/** The custom page that will be made anonymous using the custom percentage **/
 	private int anonymousCustomPage = 1;
+	/** If students should just be fake as they will be ignored **/
+	private boolean fakeStudents = false;
 	
 	/**
 	 * @return the anonymousCustomPage
@@ -166,7 +168,7 @@ public class Moodle {
 
 	public boolean connect() {
 		try {
-			retrieveCourses();
+			retrieveUserCourses();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -453,6 +455,11 @@ public class Moodle {
 
 	public void retrieveCourseFromId(int courseid) throws Exception {
 
+		if(fakeStudents) {
+			retrieveUserCourses();
+			return;
+		}
+		
 		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courseinfo&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
@@ -470,8 +477,32 @@ public class Moodle {
 		courses.put(id, st);
 	}
 
-	private void retrieveCourses() throws Exception {
+	private void retrieveUserCourses() throws Exception {
 
+		usercourses = new Hashtable<Integer, Course>();
+
+		if(fakeStudents) {
+			courses = new Hashtable<Integer, Course>();
+			for(int i=0;i<6;i++) {
+				
+				int id = i;
+				String shortname = "course-" + i;
+				String fullname = "Fake course " + i;
+				
+				Course course = new Course();
+				course.setId(i);
+				course.setShortname(shortname);
+				course.setFullname(fullname);
+
+				usercourses.put(id, course);
+				courses.put(id, course);
+
+				logger.debug("id:" + id + " shortname:" + shortname + " fullname:" + fullname);				
+			}
+			
+			return;
+		}
+		
 		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courses&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
@@ -539,12 +570,38 @@ public class Moodle {
 
 	public void retrieveStudents(int courseId) throws Exception {
 
+		if(students == null)
+			students = new Hashtable<Integer, Student>();
+
+		if(this.fakeStudents) {
+			for(int i=0;i<100;i++) {
+				try {
+					int id = i+1;			
+					String idnumber = id+"";			
+					String studentname = id + ", " + EmarkingDesktop.lang.getString("student");
+
+					Student st = new Student();
+					st.setId(id);
+					st.setIdnumber(idnumber);
+					st.setFullname(studentname);
+
+					if(!students.containsKey(id)) {
+						st.setRownumber(students.keySet().size());
+						students.put(id, st);
+					}
+
+					logger.debug("id:" + id + " student:" + studentname + " idnumber:" + idnumber);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+				}
+			}
+			
+			return;
+		}
+		
 		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+courseId+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
-
-		if(students == null)
-			students = new Hashtable<Integer, Student>();
 
 		for(int i=0;i<jarr.size();i++) {
 			try {
@@ -832,5 +889,19 @@ public class Moodle {
 	 */
 	public void setAnswerSheets(boolean answerSheets) {
 		this.answerSheets = answerSheets;
+	}
+
+	/**
+	 * @return the fakeStudents
+	 */
+	public boolean isFakeStudents() {
+		return fakeStudents;
+	}
+
+	/**
+	 * @param fakeStudents the fakeStudents to set
+	 */
+	public void setFakeStudents(boolean fakeStudents) {
+		this.fakeStudents = fakeStudents;
 	}
 }

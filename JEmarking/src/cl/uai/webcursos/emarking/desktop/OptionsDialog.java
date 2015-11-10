@@ -91,6 +91,8 @@ public class OptionsDialog extends JDialog {
 	private JSpinner spinnerAnonymousPercentage;
 	private JSpinner spinnerAnonymousPercentageCustomPage;
 	private JSpinner spinnerCustomPage;
+	private JLabel lblMarkersTraining;
+	private JCheckBox chckbxMarkersTraining;
 
 	/**
 	 * @return the cancelled
@@ -113,7 +115,7 @@ public class OptionsDialog extends JDialog {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(OptionsDialog.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_439_wrench.png")));
 		setTitle(EmarkingDesktop.lang.getString("emarkingoptions"));
 		setModal(true);
-		setBounds(100, 100, 707, 400);
+		setBounds(100, 100, 707, 444);
 		this.moodle = _moodle;
 		this.moodle.loadProperties();
 		getContentPane().setLayout(new BorderLayout());
@@ -152,6 +154,7 @@ public class OptionsDialog extends JDialog {
 							moodle.setShapeSize(Integer.parseInt(spinnerOMRshapeSize.getValue().toString()));
 							moodle.setAnonymousPercentage(Integer.parseInt(spinnerAnonymousPercentage.getValue().toString()));
 							moodle.setAnonymousPercentageCustomPage(Integer.parseInt(spinnerAnonymousPercentageCustomPage.getValue().toString()));
+							moodle.setFakeStudents(chckbxMarkersTraining.isSelected());
 							moodle.saveProperties();
 							cancelled = false;
 							setVisible(false);
@@ -274,7 +277,7 @@ public class OptionsDialog extends JDialog {
 
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_3.setBounds(10, 159, 666, 131);
+		panel_3.setBounds(10, 159, 666, 174);
 		panel.add(panel_3);
 		panel_3.setLayout(null);
 
@@ -290,7 +293,7 @@ public class OptionsDialog extends JDialog {
 
 		chckbxDoubleSide = new JCheckBox(EmarkingDesktop.lang.getString("doubleside"));
 		chckbxDoubleSide.setEnabled(false);
-		chckbxDoubleSide.setBounds(125, 60, 117, 23);
+		chckbxDoubleSide.setBounds(125, 60, 333, 23);
 		panel_3.add(chckbxDoubleSide);
 		chckbxDoubleSide.setToolTipText(EmarkingDesktop.lang.getString("doublesidetooltip"));
 		this.chckbxDoubleSide.setSelected(this.moodle.isDoubleside());
@@ -334,14 +337,14 @@ public class OptionsDialog extends JDialog {
 
 		JLabel lblOMRtemplate = new JLabel(EmarkingDesktop.lang.getString("omrfile"));
 		lblOMRtemplate.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblOMRtemplate.setBounds(0, 95, 119, 14);
+		lblOMRtemplate.setBounds(0, 142, 119, 14);
 		panel_3.add(lblOMRtemplate);
 
 		omrtemplate = new JTextField();
 		omrtemplate.setEnabled(false);
 		omrtemplate.setText((String) null);
 		omrtemplate.setColumns(10);
-		omrtemplate.setBounds(129, 92, 329, 20);
+		omrtemplate.setBounds(129, 139, 329, 20);
 		panel_3.add(omrtemplate);
 		omrtemplate.setText(this.moodle.getOMRTemplate());
 
@@ -372,8 +375,17 @@ public class OptionsDialog extends JDialog {
 				}
 			}
 		});
-		btnOpenOMRTemplate.setBounds(468, 89, 172, 27);
+		btnOpenOMRTemplate.setBounds(468, 136, 172, 27);
 		panel_3.add(btnOpenOMRTemplate);
+		
+		lblMarkersTraining = new JLabel((String) EmarkingDesktop.lang.getString("markerstraining"));
+		lblMarkersTraining.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblMarkersTraining.setBounds(0, 89, 119, 14);
+		panel_3.add(lblMarkersTraining);
+		
+		chckbxMarkersTraining = new JCheckBox(EmarkingDesktop.lang.getString("markerstrainingfakestudents"));
+		chckbxMarkersTraining.setBounds(125, 87, 333, 23);
+		panel_3.add(chckbxMarkersTraining);
 		btnOpenPdfFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				okButton.setEnabled(false);

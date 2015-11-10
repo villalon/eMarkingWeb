@@ -37,9 +37,11 @@ import javax.imageio.ImageIO;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ghost4j.Ghostscript;
 import org.ghost4j.GhostscriptException;
+import org.ghost4j.GhostscriptLoggerOutputStream;
 import org.ghost4j.document.DocumentException;
 
 import cl.uai.webcursos.emarking.desktop.data.Moodle;
@@ -434,8 +436,11 @@ public class QRextractor implements Runnable {
 				throw new Exception("Impossible to copy file");
 			}
 
+			GhostscriptLoggerOutputStream gsloggerOutStream = new GhostscriptLoggerOutputStream(Level.OFF);
 			Ghostscript gs = Ghostscript.getInstance();
-
+			gs.setStdOut(gsloggerOutStream);
+			gs.setStdOut(gsloggerOutStream);
+			
 			//prepare Ghostscript interpreter parameters
 			//refer to Ghostscript documentation for parameter usage
 			String[] gsArgs = new String[9];
@@ -447,7 +452,7 @@ public class QRextractor implements Runnable {
 			gsArgs[5] = "-dFirstPage=" + first;
 			gsArgs[6] = "-dLastPage=" + last;
 			gsArgs[7] = "-sOutputFile=tmpfigure%d.png";
-			gsArgs[8] = pdffile;
+			gsArgs[8] = "input.pdf";
 
 			//execute and exit interpreter
 			try {
