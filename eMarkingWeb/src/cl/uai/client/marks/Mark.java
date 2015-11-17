@@ -248,6 +248,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		if(this.iconType != null) {
 			Icon icon = new Icon(this.iconType);
 			iconhtml = icon.toString();
+		} else if(this.iconOnly && this instanceof CustomMark) {
+			CustomMark cmark = (CustomMark) this;
+			iconhtml = cmark.getTitle();
 		}
 
 		String markername = EMarkingConfiguration.isMarkerAnonymous() ? MarkingInterface.messages.MarkerDetails(MarkingInterface.messages.Anonymous())

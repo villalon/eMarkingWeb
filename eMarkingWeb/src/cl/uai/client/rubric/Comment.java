@@ -1,6 +1,8 @@
 package cl.uai.client.rubric;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 public class Comment {
@@ -10,7 +12,57 @@ public class Comment {
 	private int format;
 	private long lastUsed;
 	private int timesUsed;
-	private int markerId;
+	private List<Integer> markerIds;
+	private int markid;
+	private boolean ownComment;
+	/**
+	 * @return the ownComment
+	 */
+	public boolean isOwnComment() {
+		return ownComment;
+	}
+
+	/**
+	 * @param ownComment the ownComment to set
+	 */
+	public void setOwnComment(boolean ownComment) {
+		this.ownComment = ownComment;
+	}
+
+	/**
+	 * @return the pages
+	 */
+	public List<Integer> getPages() {
+		return pages;
+	}
+
+	/**
+	 * @param pages the pages to set
+	 */
+	public void setPages(int pages) {
+		if(!this.pages.contains(pages)) {
+			this.pages.add(pages);
+		}
+	}
+
+	private List<Integer> pages;
+	private List<Integer> criteriaIds;
+
+	/**
+	 * @return the criteriaIds
+	 */
+	public List<Integer> getCriteriaIds() {
+		return criteriaIds;
+	}
+
+	/**
+	 * @param criteriaIds the criteriaIds to set
+	 */
+	public void setCriteriaIds(int criteriaIds) {
+		if(!this.criteriaIds.contains(criteriaIds)) {
+			this.criteriaIds.add(criteriaIds);
+		}
+	}
 
 	/**
 	 * @return the id
@@ -85,24 +137,29 @@ public class Comment {
 	/**
 	 * @return the markerId
 	 */
-	public int getMarkerId() {
-		return markerId;
+	public List<Integer> getMarkerId() {
+		return markerIds;
 	}
 
 	/**
 	 * @param markerId the markerId to set
 	 */
 	public void setMarkerId(int markerId) {
-		this.markerId = markerId;
+		if(!this.markerIds.contains(markerId)) {
+			this.markerIds.add(markerId);
+		}
 	}
 
-	public Comment(int id, String text, int format, int markerid, int used, long lastused){
+	public Comment(int id, String text, int format, List<Integer> markerid, int used, long lastused, List<Integer> pages, boolean ownComment, List<Integer> criteriaIds) {
 		this.id = id;
 		this.text = text;
 		this.format = format;
-		this.markerId = markerid;
+		this.markerIds = markerid;
 		this.timesUsed = used;
 		this.lastUsed = lastused;
+		this.pages = pages;
+		this.ownComment = ownComment;
+		this.criteriaIds = criteriaIds;
 	}
 
 	public static Comment createFromMap(Map<String, String> values) {
@@ -112,16 +169,55 @@ public class Comment {
 			int id = Integer.parseInt(values.get("id"));
 			String text = values.get("text").trim();
 			int format = Integer.parseInt(values.get("format"));
-			int markerId = Integer.parseInt(values.get("markerid"));
 			int timesUsed = Integer.parseInt(values.get("used"));
 			long lastUsed = Long.parseLong(values.get("lastused"));
+			int owncomment = Integer.parseInt(values.get("owncomment"));
+			boolean isown = owncomment > 0;
 
-			comment = new Comment(id, text, format, markerId, timesUsed, lastUsed);
+			String markersids = values.get("markerids");
+			String[] mids = markersids.split("-");
+			List<Integer> markerId = new ArrayList<Integer>();
+			for(int i=0; i<mids.length; i++) {
+				markerId.add(Integer.parseInt(mids[i]));				
+			}
+
+			String pages = values.get("pages");
+			String[] pids = pages.split("-");
+			List<Integer> pagesIds = new ArrayList<Integer>();
+			for(int i=0; i<pids.length; i++) {
+				pagesIds.add(Integer.parseInt(pids[i]));				
+			}
+
+			String criteria = values.get("criteria");
+			String[] cids = criteria.split("-");
+			List<Integer> criteriaIds = new ArrayList<Integer>();
+			for(int i=0; i<cids.length; i++) {
+				int cid = Integer.parseInt(cids[i]);
+				if(cid > 0) {
+					criteriaIds.add(cid);
+				}
+			}
+
+			comment = new Comment(id, text, format, markerId, timesUsed, lastUsed, pagesIds, isown, criteriaIds);
 		} catch (Exception e) {
 			return null;
 		}
 
 		return comment;
+	}
+
+	/**
+	 * @return the markid
+	 */
+	public int getMarkid() {
+		return markid;
+	}
+
+	/**
+	 * @param markid the markid to set
+	 */
+	public void setMarkid(int markid) {
+		this.markid = markid;
 	}
 
 	public static Comparator<Comment> CommentTextComparator  = new Comparator<Comment>() {

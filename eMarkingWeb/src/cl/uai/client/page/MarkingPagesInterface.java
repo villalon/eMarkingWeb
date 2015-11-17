@@ -125,6 +125,31 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	}
 	
 	/**
+	 * Minimizes all rubric marks in the interface 
+	 */
+	public void minimizeAllRubricMarks() {
+		// Loop through pages
+		for(int i=0;i<pagesPanel.getWidgetCount();i++) {
+			// Get widget
+			Widget selectedWidget = pagesPanel.getWidget(i);
+
+			// If it's a label then ignore it
+			if(!(selectedWidget instanceof MarkingPage))
+				continue;
+
+			// If it's a page, remove the mark
+			MarkingPage currentPage = (MarkingPage) selectedWidget;
+			for(Mark m : currentPage.getMarkWidgets().values()) {
+				if(m instanceof RubricMark) {
+					RubricMark rmark = (RubricMark) m;
+					rmark.setHeaderOnly(true);
+					m.setMarkHTML();
+				}
+			}
+		}				
+	}
+	
+	/**
 	 * Highlights a mark in the corresponding page. For the moment
 	 * highlighting is to scroll to its position
 	 * 

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.marks.Mark;
 
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,6 +25,7 @@ public class ViewButtons extends Buttons {
 
 	private PushButton showRubricButton = null;
 	private PushButton showColorsButton = null;
+	private PushButton minimizeAllRubricMarks = null;
 
 	public ViewButtons() {
 		showRubricButton = new PushButton(IconType.TH, MarkingInterface.messages.ShowRubric());
@@ -45,8 +47,18 @@ public class ViewButtons extends Buttons {
 			}
 		});
 		
+		minimizeAllRubricMarks = new PushButton(IconType.MINUS, MarkingInterface.messages.MinimizeAllRubricMarks());
+		minimizeAllRubricMarks.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				EMarkingWeb.markingInterface.getMarkingPagesInterface().minimizeAllRubricMarks();
+				Mark.hideIcons();
+			}
+		});
+		
 		this.mainPanel.add(showRubricButton);
 		this.mainPanel.add(showColorsButton);
+		this.mainPanel.add(minimizeAllRubricMarks);
 	}
 
 	@Override

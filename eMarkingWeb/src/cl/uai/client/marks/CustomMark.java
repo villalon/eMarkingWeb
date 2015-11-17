@@ -54,7 +54,8 @@ public class CustomMark extends Mark {
 		
 		this.format = 1000;
 		this.title = title;
-
+		this.iconOnly = true;
+		
 		this.addStyleName(Resources.INSTANCE.css().checkmark());
 	}
 	

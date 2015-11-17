@@ -90,74 +90,76 @@ public class RubricMark extends Mark {
 			String markername,
 			String rawtext) {
 		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
-		
+
 		// Rubric marks have format 2
 		this.format = 2;
 		this.iconType = IconType.TH;
 
 		this.addStyleName(Resources.INSTANCE.css().markpopup());
-		
+
 		this.setLevelId(lvlid);
 	}
 
 	@Override
 	public void setMarkHTML() {
+
+		// Starts with an empty HTML
+		String html = "";
+		boolean headerOnly = false;
+
+		RubricMark rmark = (RubricMark) this;
+		headerOnly = rmark.isHeaderOnly();
+
+		String criterionindex = "" + EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().getCriterionIndex(rmark.getCriterionId());
+		String leveldesc = headerOnly ? criterionindex : " " + rmark.getLevel().getCriterion().getDescription();
 		
-			// Starts with an empty HTML
-			String html = "";
-			boolean headerOnly = false;
-			
-				RubricMark rmark = (RubricMark) this;
-				headerOnly = rmark.isHeaderOnly();
-				
-				Icon icon = new Icon(this.iconType);
-				
-				html += "<table class=\"markrubricheader\" style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
-						+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markicon()+"\">" 
-						+ icon.toString() + "</div></td><td><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" + rmark.getLevel().getCriterion().getDescription() + "</div></td>";
-				html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
-						+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
-						+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
-						+"</div></td></tr></table>";
-				if(!headerOnly)
-				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
-						+ "</div>";
-			
-			if(!headerOnly) {
-				html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
-				// Show the marker's name if the marking process is not anonymous
-				if(!EMarkingConfiguration.isMarkerAnonymous()) {
-					html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
-				}
+		Icon icon = new Icon(this.iconType);
+
+		html += "<table class=\"markrubricheader\" style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
+				+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markicon()+"\">" 
+				+ icon.toString() + "</div></td><td><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" + leveldesc + "</div></td>";
+		html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
+				+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
+				+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
+				+"</div></td></tr></table>";
+		if(!headerOnly) {
+			// Show the level description
+			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
+					+ "</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+			// Show the marker's name if the marking process is not anonymous
+			if(!EMarkingConfiguration.isMarkerAnonymous()) {
+				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
 			}
-			
-			
-			if(this.getRegradeid() > 0 && !headerOnly) {
-				html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
-						+ " " + MarkingInterface.messages.Requested()
-						+"</div>";
-				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
-						+ MarkingInterface.messages.Motive() + ": " + this.getRegradeMotiveText() + "<hr>" 
-						+ MarkingInterface.messages.Comment() + ": " + this.getRegradecomment()
-						+ "</div>";
-				if(this.getRegradeaccepted() > 0) {
+		}
+
+
+		if(this.getRegradeid() > 0 && !headerOnly) {
+			html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
+					+ " " + MarkingInterface.messages.Requested()
+					+"</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
+					+ MarkingInterface.messages.Motive() + ": " + this.getRegradeMotiveText() + "<hr>" 
+					+ MarkingInterface.messages.Comment() + ": " + this.getRegradecomment()
+					+ "</div>";
+			if(this.getRegradeaccepted() > 0) {
 				html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
 						+ " " +  MarkingInterface.messages.Replied()
 						+"</div>";
 				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">"
 						+ "<hr>"+MarkingInterface.messages.RegradeReply()+": " + this.getRegrademarkercomment()
 						+ "</div>";
-				}
 			}
-			
-			// If the mark has a color, we use the background to color it
-			if(this.criterionid > 0 && EMarkingConfiguration.isColoredRubric()) {
-				Color.setWidgetBackgroundHueColor(this.criterionid, this);
-			}
-			
-			this.setHTML(html);		
 		}
-	
+
+		// If the mark has a color, we use the background to color it
+		if(this.criterionid > 0 && EMarkingConfiguration.isColoredRubric()) {
+			Color.setWidgetBackgroundHueColor(this.criterionid, this);
+		}
+
+		this.setHTML(html);		
+	}
+
 	/**
 	 * Gets the rubric level of the RubricMark
 	 * @return a rubric level
@@ -177,7 +179,7 @@ public class RubricMark extends Mark {
 	public static String scoreFormat(double score, boolean sign) {
 		return getNumberFormat(sign).format(score);
 	}
-	
+
 	/**
 	 * Parses a formatted float value
 	 * 
@@ -188,7 +190,7 @@ public class RubricMark extends Mark {
 		String format = sign ? "+#.##;-#" : "#.##";
 		return NumberFormat.getFormat(format);
 	}
-			
+
 	/**
 	 * Creates a RubricMark from a Hash with Strings as key value pairs,
 	 * parsing the values in the map and casting them to the proper
@@ -210,16 +212,16 @@ public class RubricMark extends Mark {
 				mark.get("markername"),
 				mark.get("rawtext")
 				);
-		
+
 		markobj.setRegradeid(Integer.parseInt(mark.get("regradeid")));
 		markobj.setRegradecomment(mark.get("regradecomment"));
 		markobj.setRegrademotive(Integer.parseInt(mark.get("motive")));
 		markobj.setRegradeaccepted(Integer.parseInt(mark.get("regradeaccepted")));
 		markobj.setRegrademarkercomment(mark.get("regrademarkercomment"));
-				
+
 		return markobj;
 	}
-	
+
 	public int getRegradeid() {
 		return regradeid;
 	}
@@ -239,17 +241,17 @@ public class RubricMark extends Mark {
 	@Override
 	public void setLoading() {
 		super.setLoading();
-		
+
 		EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().loadingRubricCriterion(levelid);
 	}
-	
+
 	/**
 	 * Updates the mark's basic data: comment and position 
 	 */
 	@Override
 	public void update(String newcomment, int newposx, int newposy,
 			int levelid, float bonus, String regradecomment, int regradeaccepted, int widthPage, int heightPage) {
-		
+
 		super.update(newcomment, newposx, newposy, levelid, bonus, regradecomment, regradeaccepted, widthPage, heightPage);
 		Criterion criterion = MarkingInterface.submissionData.getLevelById(levelid).getCriterion();
 		EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().updateRubricCriterion(
@@ -264,7 +266,7 @@ public class RubricMark extends Mark {
 	public Level getLevel() {
 		return MarkingInterface.submissionData.getLevelById(levelid);
 	}
-	
+
 	public int getCriterionId() {
 		if(getLevel() != null) {
 			return getLevel().getCriterion().getId();
@@ -283,11 +285,11 @@ public class RubricMark extends Mark {
 		this.bonus = newbonus;
 		this.getLevel().setBonus(this.bonus);
 	}
-	
+
 	public int getRegrademotive() {
 		return regrademotive;
 	}
-	
+
 	public String getRegradeMotiveText() {
 		return SubmissionGradeData.getRegradeMotiveText(regrademotive);
 	}

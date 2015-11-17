@@ -20,7 +20,9 @@
  */
 package cl.uai.client.rubric;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +34,14 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
+import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -59,8 +62,9 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 	private FlowPanel previousCommentsMine = null;
 	private FlowPanel previousCommentsRecent = null;
 	private FlowPanel previousCommentsMostUsed = null;
+	private Map<Integer, FlowPanel> previousCommentsCriteria = null;
 	
-	private TabPanel commentsTabs = null;
+	private StackPanel commentsTabs = null;
 	
 	/*
 	 * Comment lists
@@ -80,20 +84,27 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().previouscomments());
 		
-		commentsTabs = new TabPanel();
+		commentsTabs = new StackPanel();
+		commentsTabs.addStyleName(Resources.INSTANCE.css().previouscomments());
 		
 		// Add comments table
 		previousCommentsAll = new FlowPanel();
 		previousCommentsMine = new FlowPanel();
 		previousCommentsRecent = new FlowPanel();
 		previousCommentsMostUsed = new FlowPanel();
+		previousCommentsCriteria = new HashMap<Integer, FlowPanel>();
 
-		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
 		commentsTabs.add(previousCommentsMine, MarkingInterface.messages.MyComments());
+		
+		for(Criterion criterion : MarkingInterface.submissionData.getRubricfillings().values()) {
+			FlowPanel criterionPanel = new FlowPanel();
+			previousCommentsCriteria.put(criterion.getId(), criterionPanel);
+			commentsTabs.add(criterionPanel, criterion.getDescription());
+		}
+		
 		commentsTabs.add(previousCommentsRecent, MarkingInterface.messages.Recent());
 		commentsTabs.add(previousCommentsMostUsed, MarkingInterface.messages.MostUsed());
-		
-		commentsTabs.selectTab(0);
+		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
 		
 		mainPanel.add(commentsTabs);
 		
@@ -139,13 +150,22 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		previousCommentsMine.clear();
 		previousCommentsRecent.clear();
 		previousCommentsMostUsed.clear();
+		for(FlowPanel f : previousCommentsCriteria.values()) {
+			f.clear();
+		}
 
 		Collections.sort(previousComments, Comment.CommentTextComparator);
 		for(Comment c : previousComments) {
-			if(c.getMarkerId() == EMarkingConfiguration.getMarkerId()) {
+			if(c.isOwnComment()) {
 				addCommentLabelToInterface(c, previousCommentsMine);
 			}
 			addCommentLabelToInterface(c, previousCommentsAll);
+			for(int cid : c.getCriteriaIds()) {
+				if(previousCommentsCriteria.get(cid) != null) {
+					FlowPanel f = previousCommentsCriteria.get(cid);
+					addCommentLabelToInterface(c, f);
+				}
+			}
 		}
 		Collections.sort(previousComments, Comment.CommentTimesUsedComparator);
 		for(Comment c : previousComments) {
@@ -197,14 +217,25 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 				prevComment.setLastUsed(unixTime);
 				prevComment.setTimesUsed(prevComment.getTimesUsed()+1);
 				prevComment.setMarkerId(EMarkingConfiguration.getMarkerId());
-		} else {		
+				prevComment.setPages(mark.getPageno());
+				prevComment.setOwnComment(true);
+		} else {
+			List<Integer> markers = new ArrayList<Integer>();
+			markers.add(mark.getMarkerId());
+			List<Integer> pages = new ArrayList<Integer>();
+			pages.add(mark.getPageno());
+			List<Integer> criteria = new ArrayList<Integer>();
+			criteria.add(mark.getCriterionid());
 			Comment newComment = new Comment(
 					mark.getId(), 
 					mark.getRawtext(), 
 					mark.getFormat(), 
-					mark.getMarkerId(), 
+					markers, 
 					1, 
-					mark.getTimeCreated());
+					mark.getTimeCreated(),
+					pages,
+					true,
+					criteria);
 			
 			previousComments.add(newComment);
 			
