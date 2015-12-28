@@ -32,6 +32,9 @@ public class EMarkingConfiguration {
 	
 	/** Indicates if the marking interface will include student anonymous information **/
 	private static boolean studentAnonymous = true;
+	
+	/** Indicates if the user can manage delphi process **/
+	private static boolean manageDelphi = false;
 
 	/** Indicates if the marking interface will include marker anonymous information **/
 	private static boolean markerAnonymous = true;
@@ -43,7 +46,7 @@ public class EMarkingConfiguration {
 	private static boolean supervisor = false;
 
 	/** The id of the marker.**/
-	private static int markerId=0;
+	private static int markerId = 0;
 
 	/** Indicates if the user owns the draft **/
 	private static boolean ownDraft = false;
@@ -174,6 +177,13 @@ public class EMarkingConfiguration {
 	public static boolean isSupervisor() {
 		return supervisor;
 	}
+	
+	/**
+	 * @return the manageDelphi
+	 */
+	public static boolean getUserCanManageDelphi() {
+		return manageDelphi;
+	}
 
 	/**
 	 * Reads the configuration from a JSON obtained map
@@ -185,6 +195,9 @@ public class EMarkingConfiguration {
 		// Assign Moodle session key
 		sessKey = value.get("sesskey");
 
+		// Assign if the user can manage delphi process
+		manageDelphi = value.get("managedelphi").equals("true");
+		
 		// Assign Moodle session key
 		administratorEmail = value.get("adminemail");
 
@@ -196,7 +209,7 @@ public class EMarkingConfiguration {
 
 		// Assign if the assignment is anonymous
 		readonly = (value.get("hascapability") != null && value.get("hascapability").equals("false"));
-
+		
 		// Assign if the user is supervisor
 		supervisor = (value.get("supervisor") != null && value.get("supervisor").equals("true"));
 

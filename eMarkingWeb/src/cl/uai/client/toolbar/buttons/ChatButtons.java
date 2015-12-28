@@ -27,6 +27,8 @@ public class ChatButtons extends Buttons {
 	private PushButton showChatButton = null;
 	private PushButton showWallButton = null;
 	private PushButton showHelpButton = null;
+	
+	private HTML lblNoChatAvailable = null;
 
 	public ChatButtons() {
 		
@@ -110,7 +112,11 @@ public class ChatButtons extends Buttons {
 	public void setChatDisabled() {
 		String moodleUrl = AjaxRequest.moodleUrl.replaceAll("mod/emarking/ajax/a.php", "");
 		moodleUrl += "course/modedit.php?update=" + MarkingInterface.submissionData.getCoursemoduleid() + "&return=1";
-		HTML lblNoChatAvailable = new HTML(MarkingInterface.messages.NoChatAvailable(moodleUrl));
+		if(EMarkingConfiguration.getUserCanManageDelphi()){
+			lblNoChatAvailable = new HTML(MarkingInterface.messages.NoChatAvailable(moodleUrl));
+		}else{
+			lblNoChatAvailable = new HTML(MarkingInterface.messages.NoChatAvailableForMarker());
+		}
 		lblNoChatAvailable.setHeight("27px");
 		this.mainPanel.clear();
 		this.mainPanel.add(lblNoChatAvailable);		

@@ -131,6 +131,7 @@ public interface EmarkingMessages extends Messages {
 	public String ShowHelp();
 	public String Chat();
 	public String NoChatAvailable(String url);
+	public String NoChatAvailableForMarker();
 	public String SOS();
 	public String Wall();
 	public String Collaboration();
