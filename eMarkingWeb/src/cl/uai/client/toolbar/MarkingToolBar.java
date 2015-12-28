@@ -102,8 +102,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		tabButtonsPanel.add(viewButtons, MarkingInterface.messages.View().toUpperCase());
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
 		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
-		
-		//tabButtonsPanel.selectTab(1);
 
 		buttonsPanel = new HorizontalPanel();
 		buttonsPanel.setVisible(false);
