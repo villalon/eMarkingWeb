@@ -63,6 +63,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 	private FlowPanel previousCommentsRecent = null;
 	private FlowPanel previousCommentsMostUsed = null;
 	private Map<Integer, FlowPanel> previousCommentsCriteria = null;
+	private Map<Integer, FlowPanel> previousCommentsDrafts = null;
 	
 	private StackPanel commentsTabs = null;
 	
@@ -101,7 +102,13 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 			previousCommentsCriteria.put(criterion.getId(), criterionPanel);
 			commentsTabs.add(criterionPanel, criterion.getDescription());
 		}
-		
+
+		for(Criterion criterion : MarkingInterface.submissionData.getRubricfillings().values()) {
+			FlowPanel criterionPanel = new FlowPanel();
+			previousCommentsCriteria.put(criterion.getId(), criterionPanel);
+			commentsTabs.add(criterionPanel, criterion.getDescription());
+		}
+
 		commentsTabs.add(previousCommentsRecent, MarkingInterface.messages.Recent());
 		commentsTabs.add(previousCommentsMostUsed, MarkingInterface.messages.MostUsed());
 		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
@@ -226,6 +233,8 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 			pages.add(mark.getPageno());
 			List<Integer> criteria = new ArrayList<Integer>();
 			criteria.add(mark.getCriterionid());
+			List<Integer> drafts = new ArrayList<Integer>();
+			drafts.add(MarkingInterface.getDraftId());
 			Comment newComment = new Comment(
 					mark.getId(), 
 					mark.getRawtext(), 
@@ -235,7 +244,8 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 					mark.getTimeCreated(),
 					pages,
 					true,
-					criteria);
+					criteria,
+					drafts);
 			
 			previousComments.add(newComment);
 			

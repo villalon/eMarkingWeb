@@ -84,6 +84,9 @@ public class SubmissionGradeData {
 	private Date regradeopendate;
 	private Date regradeclosedate;
 
+	/** A list of drafts related to the one being marked, usually parallels within a markers training **/
+	private List<Integer> drafts = null;
+
 	/** Rubric definition **/
 	private SortedMap<Integer, Criterion> rubricdefinition = null;
 	public String getActivityname() {
@@ -421,5 +424,19 @@ public class SubmissionGradeData {
 
 	public void setStudentid(int studentid) {
 		this.studentid = studentid;
+	}
+
+	/**
+	 * @return the drafts
+	 */
+	public List<Integer> getDrafts() {
+		return drafts;
+	}
+
+	/**
+	 * @param drafts the drafts to set
+	 */
+	public void setDrafts(List<Integer> drafts) {
+		this.drafts = drafts;
 	}
 }
