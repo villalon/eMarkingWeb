@@ -105,7 +105,7 @@ public class MarkingButtons extends EMarkingComposite {
 		IconType.OK,
 		IconType.REMOVE,
 		IconType.PENCIL,
-		IconType.QUESTION,
+		IconType.QUESTION_SIGN,
 	};
 	
 	/**

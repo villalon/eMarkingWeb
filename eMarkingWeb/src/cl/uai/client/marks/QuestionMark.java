@@ -53,7 +53,7 @@ public class QuestionMark extends Mark {
 		
 		this.format = 6;
 		this.iconOnly = true;
-		this.iconType = IconType.QUESTION;
+		this.iconType = IconType.QUESTION_SIGN;
 		
 		this.addStyleName(Resources.INSTANCE.css().checkmark());
 	}
