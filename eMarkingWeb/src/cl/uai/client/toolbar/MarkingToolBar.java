@@ -141,7 +141,6 @@ public class MarkingToolBar extends EMarkingComposite {
 			tabButtonsPanel.remove(markingButtons);
 			tabButtonsPanel.remove(examButtons);
 			tabButtonsPanel.remove(chatButtons);
-			tabButtonsPanel.remove(helpButtons);
 			tabButtonsPanel.selectTab(0);
 		}
 
