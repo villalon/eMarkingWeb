@@ -7,161 +7,37 @@ import java.util.Map;
 
 public class Comment {
 
-	private int id;
-	private String text;
-	private int format;
-	private long lastUsed;
-	private int timesUsed;
-	private List<Integer> markerIds;
-	private int markid;
-	private boolean ownComment;
-	/**
-	 * @return the ownComment
-	 */
-	public boolean isOwnComment() {
-		return ownComment;
-	}
+	public static Comparator<Comment> CommentTextComparator  = new Comparator<Comment>() {
 
-	/**
-	 * @param ownComment the ownComment to set
-	 */
-	public void setOwnComment(boolean ownComment) {
-		this.ownComment = ownComment;
-	}
+		public int compare(Comment comment1, Comment comment2) {
 
-	/**
-	 * @return the pages
-	 */
-	public List<Integer> getPages() {
-		return pages;
-	}
+			String text1 = comment1.getText().toUpperCase();
+			String text2 = comment2.getText().toUpperCase();
 
-	/**
-	 * @param pages the pages to set
-	 */
-	public void setPages(int pages) {
-		if(!this.pages.contains(pages)) {
-			this.pages.add(pages);
+			return text1.compareTo(text2);
+
 		}
-	}
+	};
+	public static Comparator<Comment> CommentLastUsedComparator  = new Comparator<Comment>() {
 
-	private List<Integer> pages;
-	private List<Integer> criteriaIds;
-
-	/**
-	 * @return the criteriaIds
-	 */
-	public List<Integer> getCriteriaIds() {
-		return criteriaIds;
-	}
-
-	/**
-	 * @param criteriaIds the criteriaIds to set
-	 */
-	public void setCriteriaIds(int criteriaIds) {
-		if(!this.criteriaIds.contains(criteriaIds)) {
-			this.criteriaIds.add(criteriaIds);
+		public int compare(Comment comment1, Comment comment2) {
+			Long lastused1 = comment1.getLastUsed();
+			Long lastused2 = comment2.getLastUsed();
+			//Inverted compare to make latest appear first
+			return lastused2.compareTo(lastused1);
 		}
-	}
 
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
+	};
+	public static Comparator<Comment> CommentTimesUsedComparator  = new Comparator<Comment>() {
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
+		public int compare(Comment comment1, Comment comment2) {
 
-	/**
-	 * @return the text
-	 */
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * @param text the text to set
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	/**
-	 * @return the format
-	 */
-	public int getFormat() {
-		return format;
-	}
-
-	/**
-	 * @param format the format to set
-	 */
-	public void setFormat(int format) {
-		this.format = format;
-	}
-
-	/**
-	 * @return the lastUsed
-	 */
-	public long getLastUsed() {
-		return lastUsed;
-	}
-
-	/**
-	 * @param lastUsed the lastUsed to set
-	 */
-	public void setLastUsed(long lastUsed) {
-		this.lastUsed = lastUsed;
-	}
-
-	/**
-	 * @return the timesUsed
-	 */
-	public int getTimesUsed() {
-		return timesUsed;
-	}
-
-	/**
-	 * @param timesUsed the timesUsed to set
-	 */
-	public void setTimesUsed(int timesUsed) {
-		this.timesUsed = timesUsed;
-	}
-
-	/**
-	 * @return the markerId
-	 */
-	public List<Integer> getMarkerId() {
-		return markerIds;
-	}
-
-	/**
-	 * @param markerId the markerId to set
-	 */
-	public void setMarkerId(int markerId) {
-		if(!this.markerIds.contains(markerId)) {
-			this.markerIds.add(markerId);
+			Integer timesused1 = comment1.getTimesUsed();
+			Integer timesused2 = comment2.getTimesUsed();
+			//Inverted compare to make most used appear first
+			return timesused2.compareTo(timesused1);
 		}
-	}
-
-	public Comment(int id, String text, int format, List<Integer> markerid, int used, long lastused, List<Integer> pages, boolean ownComment, List<Integer> criteriaIds) {
-		this.id = id;
-		this.text = text;
-		this.format = format;
-		this.markerIds = markerid;
-		this.timesUsed = used;
-		this.lastUsed = lastused;
-		this.pages = pages;
-		this.ownComment = ownComment;
-		this.criteriaIds = criteriaIds;
-	}
-
+	};
 	public static Comment createFromMap(Map<String, String> values) {
 
 		Comment comment = null;
@@ -188,6 +64,13 @@ public class Comment {
 				pagesIds.add(Integer.parseInt(pids[i]));				
 			}
 
+			String drafts = values.get("drafts");
+			String[] dids = drafts.split("-");
+			List<Integer> draftIds = new ArrayList<Integer>();
+			for(int i=0; i<dids.length; i++) {
+				draftIds.add(Integer.parseInt(dids[i]));				
+			}
+
 			String criteria = values.get("criteria");
 			String[] cids = criteria.split("-");
 			List<Integer> criteriaIds = new ArrayList<Integer>();
@@ -198,12 +81,75 @@ public class Comment {
 				}
 			}
 
-			comment = new Comment(id, text, format, markerId, timesUsed, lastUsed, pagesIds, isown, criteriaIds);
+			comment = new Comment(id, text, format, markerId, timesUsed, lastUsed, pagesIds, isown, criteriaIds, draftIds);
 		} catch (Exception e) {
 			return null;
 		}
 
 		return comment;
+	}
+	
+	private int id;
+	private String text;
+	private int format;
+	private long lastUsed;
+	private int timesUsed;
+	private int markid;
+	private boolean ownComment;
+
+	private List<Integer> markerIds;
+	private List<Integer> pages;
+	private List<Integer> criteria;
+	private List<Integer> drafts;
+
+	public Comment(int id, String text, int format, List<Integer> markerid, 
+			int used, long lastused, List<Integer> pages, boolean ownComment, 
+			List<Integer> criteriaIds, List<Integer> draftsIds) {
+		this.id = id;
+		this.text = text;
+		this.format = format;
+		this.markerIds = markerid;
+		this.timesUsed = used;
+		this.lastUsed = lastused;
+		this.pages = pages;
+		this.ownComment = ownComment;
+		this.criteria = criteriaIds;
+		this.drafts = draftsIds;
+	}
+
+	/**
+	 * @return the criteriaIds
+	 */
+	public List<Integer> getCriteriaIds() {
+		return criteria;
+	}
+
+	/**
+	 * @return the format
+	 */
+	public int getFormat() {
+		return format;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @return the lastUsed
+	 */
+	public long getLastUsed() {
+		return lastUsed;
+	}
+
+	/**
+	 * @return the markerId
+	 */
+	public List<Integer> getMarkerId() {
+		return markerIds;
 	}
 
 	/**
@@ -214,43 +160,122 @@ public class Comment {
 	}
 
 	/**
+	 * @return the pages
+	 */
+	public List<Integer> getPages() {
+		return pages;
+	}
+
+	/**
+	 * @return the text
+	 */
+	public String getText() {
+		return text;
+	}
+
+	/**
+	 * @return the timesUsed
+	 */
+	public int getTimesUsed() {
+		return timesUsed;
+	}
+
+	/**
+	 * @return the ownComment
+	 */
+	public boolean isOwnComment() {
+		return ownComment;
+	}
+
+	/**
+	 * @param criteriaIds the criteriaIds to set
+	 */
+	public void setCriteriaIds(int criteriaIds) {
+		if(!this.criteria.contains(criteriaIds)) {
+			this.criteria.add(criteriaIds);
+		}
+	}
+
+	/**
+	 * @param format the format to set
+	 */
+	public void setFormat(int format) {
+		this.format = format;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @param lastUsed the lastUsed to set
+	 */
+	public void setLastUsed(long lastUsed) {
+		this.lastUsed = lastUsed;
+	}
+
+	/**
+	 * @param markerId the markerId to set
+	 */
+	public void setMarkerId(int markerId) {
+		if(!this.markerIds.contains(markerId)) {
+			this.markerIds.add(markerId);
+		}
+	}
+
+	/**
 	 * @param markid the markid to set
 	 */
 	public void setMarkid(int markid) {
 		this.markid = markid;
 	}
 
-	public static Comparator<Comment> CommentTextComparator  = new Comparator<Comment>() {
+	/**
+	 * @param ownComment the ownComment to set
+	 */
+	public void setOwnComment(boolean ownComment) {
+		this.ownComment = ownComment;
+	}
 
-		public int compare(Comment comment1, Comment comment2) {
-
-			String text1 = comment1.getText().toUpperCase();
-			String text2 = comment2.getText().toUpperCase();
-
-			return text1.compareTo(text2);
-
+	/**
+	 * @param pages the pages to set
+	 */
+	public void setPages(int pages) {
+		if(!this.pages.contains(pages)) {
+			this.pages.add(pages);
 		}
-	};
+	}
 
-	public static Comparator<Comment> CommentLastUsedComparator  = new Comparator<Comment>() {
+	/**
+	 * @param text the text to set
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
 
-		public int compare(Comment comment1, Comment comment2) {
-			Long lastused1 = comment1.getLastUsed();
-			Long lastused2 = comment2.getLastUsed();
-			//Inverted compare to make latest appear first
-			return lastused2.compareTo(lastused1);
+	/**
+	 * @param timesUsed the timesUsed to set
+	 */
+	public void setTimesUsed(int timesUsed) {
+		this.timesUsed = timesUsed;
+	}
+
+	/**
+	 * @return the drafts
+	 */
+	public List<Integer> getDrafts() {
+		return drafts;
+	}
+
+	/**
+	 * @param drafts the drafts to set
+	 */
+	public void setDrafts(int draftId) {
+		if(!this.drafts.contains(draftId)) {
+			this.drafts.add(draftId);
 		}
-
-	};
-
-	public static Comparator<Comment> CommentTimesUsedComparator  = new Comparator<Comment>() {
-
-		public int compare(Comment comment1, Comment comment2) {
-
-			Integer timesused1 = comment1.getTimesUsed();
-			Integer timesused2 = comment2.getTimesUsed();
-			//Inverted compare to make most used appear first
-			return timesused2.compareTo(timesused1);
-		}
-	};	
+	}	
 }

@@ -106,7 +106,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 	/** Id of the draft to visualize **/
 	private static int draftId = -1;
-
+	
 	/** Wait dialog to make sure some things occur linearly **/
 	private static DialogBox waitDialog = null;
 
@@ -809,6 +809,22 @@ public class MarkingInterface extends EMarkingComposite {
 					submissionData.setIsgraded(true);
 				} catch(Exception e) {
 					logger.severe("Exception parsing submission finalgrade and timemodified data.");
+					logger.severe(e.getMessage());
+				}
+
+				// Final grade and update time could be null
+				try {
+					String drafts = values.get("drafts");
+					if(drafts != null) {
+						List<Integer> draftIds = new ArrayList<Integer>();
+						for(String did : drafts.split("-")) {
+							int id = Integer.parseInt(did);
+							draftIds.add(id);
+						}
+						submissionData.setDrafts(draftIds);
+					}
+				} catch(Exception e) {
+					logger.severe("Exception parsing drafts information.");
 					logger.severe(e.getMessage());
 				}
 
