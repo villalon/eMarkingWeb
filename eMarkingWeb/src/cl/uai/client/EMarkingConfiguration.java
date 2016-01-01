@@ -21,6 +21,14 @@ import com.google.gwt.json.client.JSONObject;
  */
 public class EMarkingConfiguration {
 	
+	/** Constants for emarking types. It must fit values un /mod/emarking/lib.php **/
+	public static final int EMARKING_TYPE_PRINT_ONLY = 0;
+	public static final int EMARKING_TYPE_NORMAL = 1;
+	public static final int EMARKING_TYPE_MARKER_TRAINING = 2;
+	public static final int EMARKING_TYPE_STUDENT_TRAINING = 3;
+	public static final int EMARKING_TYPE_PEER_REVIEW = 4;
+	public static final int EMARKING_TYPE_PRINT_SCAN = 5;
+
 	/** For logging purposes **/
 	private static Logger logger = Logger.getLogger(EMarkingConfiguration.class.getName());
 	
@@ -68,7 +76,7 @@ public class EMarkingConfiguration {
 	}
 
 	/** The marking type (normal, markers training, etc) **/
-	private static int markingType = 0;
+	private static int markingType = EMARKING_TYPE_PRINT_ONLY;
 
 	/** If the chat is enabled **/
 	private static boolean chatEnabled = false;
@@ -183,44 +191,58 @@ public class EMarkingConfiguration {
 	public static void readConfiguration(Map<String, String> value) throws Exception {
 
 		// Assign Moodle session key
+		logger.fine(value.get("sesskey"));
 		sessKey = value.get("sesskey");
 
 		// Assign Moodle session key
+		logger.fine(value.get("adminemail"));
 		administratorEmail = value.get("adminemail");
 
 		// Assign if the student is anonymous
+		logger.fine(value.get("studentanonymous"));
 		studentAnonymous = value.get("studentanonymous").equals("true");
 
 		// Assign if the marker is anonymous
+		logger.fine(value.get("markeranonymous"));
 		markerAnonymous =  value.get("markeranonymous").equals("true");
 
-		// Assign if the assignment is anonymous
-		readonly = (value.get("hascapability") != null && value.get("hascapability").equals("false"));
+		// Assign if the marking is readonly
+		logger.fine(value.get("readonly"));
+		readonly = (value.get("readonly") != null && value.get("readonly").equals("true"));
 
 		// Assign if the user is supervisor
+		logger.fine(value.get("supervisor"));
 		supervisor = (value.get("supervisor") != null && value.get("supervisor").equals("true"));
 
 		// Gets the user id of the person in front of the interface
+		logger.fine(value.get("user"));
 		markerId = Integer.parseInt(value.get("user"));
 
 		// Gets the version of the Moodle module
+		logger.fine(value.get("version"));
 		eMarkingVersion = Integer.parseInt(value.get("version"));
 
 		// Indicates if the user owns the current submission
+		logger.fine(value.get("student"));
 		ownDraft = markerId == Integer.parseInt(value.get("student"));
 
 		// Read the marking type
+		logger.fine(value.get("markingtype"));
 		markingType = Integer.parseInt(value.get("markingtype"));
 
 		// Link rubric colors if configured as
+		logger.fine(value.get("linkrubric"));
 		coloredRubric = value.get("linkrubric").equals("1");
 
 		// Collaborative features (chat, wall) if configured as
+		logger.fine(value.get("collaborativefeatures"));
 		chatEnabled = value.get("collaborativefeatures").equals("1");
 
 		// Obtain the nodejs path from Moodle configuration
+		logger.fine(value.get("nodejspath"));
 		nodeJsPath = value.get("nodejspath");
 		
+		logger.fine(value.get("motives"));
 		JSONObject obj = new JSONObject(JsonUtils.safeEval(value.get("motives")));
 		List<Map<String, String>> motives = AjaxRequest.getValuesFromResult(obj);
 		

@@ -20,6 +20,7 @@
  */
 package cl.uai.client.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,22 +29,18 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingConfiguration;
-import cl.uai.client.EMarkingWeb;
-import cl.uai.client.MarkingInterface;
 
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * This clas contains all data pertaining to a submission, including its grade, student and marker
+ * This class contains all data pertaining to a draft, including its grade and marker
  * 
  * @author Jorge Villalón
  *
  */
 public class SubmissionGradeData {
-	
+
 	private static Logger logger = Logger.getLogger(SubmissionGradeData.class.getName());
 
 	public static String getRegradeMotiveText(int motiveid) {
@@ -52,18 +49,14 @@ public class SubmissionGradeData {
 		}
 		return EMarkingConfiguration.getRegradeMotives().get(motiveid);
 	}
+	
 	private int id;
 	private float finalgrade;
 	private float grademin;
 	private float grademax;
-	private String firstname;
-	private String lastname;
-	private int studentid;
-	private String email;
 	private String coursename;
 	private String courseshort;
 	private int courseid;
-	private boolean isgraded;
 	private int markerid;
 	private String markerfirstname;
 	private String markerlastname;
@@ -92,37 +85,34 @@ public class SubmissionGradeData {
 	public String getActivityname() {
 		return activityname;
 	}
-	
+
 	public int getCourseid() {
 		return courseid;
 	}
-	
+
 	public int getCoursemoduleid() {
 		return coursemoduleid;
 	}
-	
+
 	public String getCoursename() {
 		return coursename;
 	}
-	
+
 	public String getCourseshort() {
 		return courseshort;
 	}
-	
+
 	public String getCustommarks() {
 		return custommarks;
 	}
-	
+
 	public Date getDatecreated() {
 		return datecreated;
 	}
-	
+
 	public Date getDatemodified() {
 		return datemodified;
 	}
-	public String getEmail() {
-		return email;
-	}	
 
 	/**
 	 * @return the feedback
@@ -134,9 +124,6 @@ public class SubmissionGradeData {
 	public float getFinalgrade() {
 		return finalgrade;
 	}
-	public String getFirstname() {
-		return firstname;
-	}
 	public float getGrademax() {
 		return grademax;
 	}
@@ -145,9 +132,6 @@ public class SubmissionGradeData {
 	}
 	public int getId() {
 		return id;
-	}
-	public String getLastname() {
-		return lastname;
 	}
 	public Level getLevelById(int lvlid) {
 		for(Criterion criterion : rubricdefinition.values()) {
@@ -199,12 +183,7 @@ public class SubmissionGradeData {
 		}
 		return map;
 	}
-	public int getStudentid() {
-		return studentid;
-	}
-	public boolean isIsgraded() {
-		return isgraded;
-	}
+
 	/**
 	 * @return the qualitycontrol
 	 */
@@ -220,110 +199,173 @@ public class SubmissionGradeData {
 	public boolean isRegradingAllowed() {
 		if(!regraderestrictdates)
 			return true;
-		
+
 		Date now = new Date();
 		if(regradeopendate.before(now) && regradeclosedate.after(now))
 			return true;
-		
+
 		return false;
 	}
-	
-	public void loadRubricFromMap() {
 
-		EMarkingWeb.markingInterface.addLoading(false);
+	/**
+	 * Loads the configuration for a submission 
+	 * @param values
+	 * @throws Exception
+	 */
+	public static SubmissionGradeData createFromConfiguration(Map<String, String> values) {
+
+		SubmissionGradeData submissionData = new SubmissionGradeData();
 		
-		AjaxRequest.ajaxRequest("action=getrubric", new AsyncCallback<AjaxData>() {			
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.severe("Error getting rubric from Moodle!");
-				logger.severe(caught.getMessage());
-				Window.alert(caught.getMessage());				
-				EMarkingWeb.markingInterface.finishLoading();
+		try {
+
+		logger.fine("id");
+		submissionData.setId(Integer.parseInt(values.get("id")));
+		logger.fine("grademin");
+		submissionData.setGrademin(Float.parseFloat(values.get("grademin")));
+		logger.fine("grademax");
+		submissionData.setGrademax(Float.parseFloat(values.get("grademax")));
+		logger.fine("courseid");
+		submissionData.setCourseid(Integer.parseInt(values.get("courseid")));
+		logger.fine("coursename");
+		submissionData.setCoursename(values.get("coursename"));
+		logger.fine("courseshort");
+		submissionData.setCourseshort(values.get("courseshort"));
+		logger.fine("markeremail");
+		submissionData.setMarkeremail(values.get("markeremail"));
+		logger.fine("markerfirstname");
+		submissionData.setMarkerfirstname(values.get("markerfirstname"));
+		logger.fine("markerlastname");
+		submissionData.setMarkerlastname(values.get("markerlastname"));
+		logger.fine("markerid");
+		submissionData.setMarkerid(Integer.parseInt(values.get("markerid")));
+		logger.fine("activityname");
+		submissionData.setActivityname(values.get("activityname"));
+		logger.fine("feedback");
+		submissionData.setFeedback(values.get("feedback"));
+		logger.fine("custommarks");
+		submissionData.setCustommarks(values.get("custommarks"));
+		logger.fine("qualitycontrol");
+		submissionData.setQualitycontrol(values.get("qualitycontrol").equals("1"));
+		logger.fine("coursemodule");
+		submissionData.setCoursemoduleid(Integer.parseInt(values.get("coursemodule")));
+		logger.fine("timecreated");
+		submissionData.setDatecreated(Long.parseLong(values.get("timecreated")));					
+		logger.fine("regraderestrictdates");
+		submissionData.setRegraderestrictdates(values.get("regraderestrictdates").equals("1"));
+		logger.fine("regradesopendate");
+		submissionData.setRegradeopendate(new Date(Long.parseLong(values.get("regradesopendate")) * 1000));					
+		logger.fine("regradesclosedate");
+		submissionData.setRegradeclosedate(new Date(Long.parseLong(values.get("regradesclosedate")) * 1000));					
+		logger.fine("finalgrade");
+		submissionData.setFinalgrade(Float.parseFloat(values.get("finalgrade")));
+		logger.fine("timemodified");
+		submissionData.setDatemodified(Long.parseLong(values.get("timemodified")));
+		
+		logger.fine("drafts");
+		String drafts = values.get("drafts");
+		if(drafts != null) {
+			List<Integer> draftIds = new ArrayList<Integer>();
+			for(String did : drafts.split(",")) {
+				int id = Integer.parseInt(did);
+				draftIds.add(id);
 			}
+			submissionData.setDrafts(draftIds);
+		}
 
-			@Override
-			public void onSuccess(AjaxData result) {
+		logger.fine("rubric");
+		JSONObject rubricobj = new JSONObject(JsonUtils.safeEval(values.get("rubric")));
+		List<Map<String, String>> rubric = AjaxRequest.getValuesFromResult(rubricobj);
 
-				List<Map<String, String>> rubric = AjaxRequest.getValuesFromResult(result);
+		SortedMap<Integer, Criterion> definition = new TreeMap<Integer, Criterion>();
 
-				SortedMap<Integer, Criterion> definition = new TreeMap<Integer, Criterion>();
+		logger.fine("Rubric parsed");
+		
+		for(Map<String, String> criterion : rubric) {
+			logger.fine("id");
+			int criterionId = Integer.parseInt(criterion.get("id"));
+			logger.fine("sortorder");
+			int criterionSortOrder = Integer.parseInt(criterion.get("sortorder"));
+			logger.fine("maxscore");
+			float maxscore = Float.parseFloat(criterion.get("maxscore"));
+			logger.fine("description");
+			String criterionDescription = criterion.get("description").toString();
+			logger.fine("rubricname");
+			submissionData.setRubricname(criterion.get("rubricname").toString());
+			logger.fine("regradeid");
+			int regradeid = Integer.parseInt(criterion.get("regradeid"));
+			logger.fine("regradeaccepted");
+			int regradeaccepted = Integer.parseInt(criterion.get("regradeaccepted"));
+			logger.fine("motive");
+			int regrademotive = Integer.parseInt(criterion.get("motive"));
+			logger.fine("markerassigned");
+			boolean markerIsAssigned = Integer.parseInt(criterion.get("markerassigned")) == 1;
+			logger.fine("regradecomment");
+			String regradecomment = criterion.get("regradecomment").toString();
+			logger.fine("regrademarkercomment");
+			String regrademarkercomment = criterion.get("regrademarkercomment").toString();
 
-				try {
-					for(Map<String, String> criterion : rubric) {
-						int criterionId = Integer.parseInt(criterion.get("id"));
-						int criterionSortOrder = Integer.parseInt(criterion.get("sortorder"));
-						float maxscore = Float.parseFloat(criterion.get("maxscore"));
-						String criterionDescription = criterion.get("description").toString();
-						rubricname = criterion.get("rubricname").toString();
-						int regradeid = Integer.parseInt(criterion.get("regradeid"));
-						int regradeaccepted = Integer.parseInt(criterion.get("regradeaccepted"));
-						int regrademotive = Integer.parseInt(criterion.get("motive"));
-						boolean markerIsAssigned = Integer.parseInt(criterion.get("markerassigned")) == 1;
-						String regradecomment = criterion.get("regradecomment").toString();
-						String regrademarkercomment = criterion.get("regrademarkercomment").toString();
+			logger.fine("levels");
+			JSONObject obj = new JSONObject(JsonUtils.safeEval(criterion.get("levels")));
+			List<Map<String, String>> levels = AjaxRequest.getValuesFromResult(obj);
 
-						JSONObject obj = new JSONObject(JsonUtils.safeEval(criterion.get("levels")));
-						List<Map<String, String>> levels = AjaxRequest.getValuesFromResult(obj);
+			SortedMap<Integer, Level> levelsdata = new TreeMap<Integer, Level>();
+			Criterion criteriondata = new Criterion(
+					criterionId, 
+					criterionDescription, 
+					maxscore, 
+					regradeid, 
+					regradeaccepted, 
+					levelsdata,
+					criterionSortOrder);
+			criteriondata.setMarkerIsAssigned(markerIsAssigned);
+			criteriondata.setRegradeComment(regradecomment);
+			criteriondata.setRegradeMarkerComment(regrademarkercomment);
+			criteriondata.setRegrademotive(regrademotive);
+			for(Map<String,String> level : levels) {
+				Level levelData = new Level(
+						criteriondata,
+						Integer.parseInt(level.get("id").toString()), 
+						level.get("description").toString(),
+						Float.parseFloat(level.get("score").toString()));
+				float bonus=Float.parseFloat(criterion.get("bonus").toString());
+				int commentpage = Integer.parseInt(level.get("commentpage").toString());
+				int markid = Integer.parseInt(level.get("commentid").toString());
+				levelData.setBonus(bonus);
+				levelData.setPage(commentpage);
+				levelData.setMarkId(markid);
+				levelsdata.put(levelData.getId(), levelData);
 
-						SortedMap<Integer, Level> levelsdata = new TreeMap<Integer, Level>();
-						Criterion criteriondata = new Criterion(
-								criterionId, 
-								criterionDescription, 
-								maxscore, 
-								regradeid, 
-								regradeaccepted, 
-								levelsdata,
-								criterionSortOrder);
-						criteriondata.setMarkerIsAssigned(markerIsAssigned);
-						criteriondata.setRegradeComment(regradecomment);
-						criteriondata.setRegradeMarkerComment(regrademarkercomment);
-						criteriondata.setRegrademotive(regrademotive);
-						for(Map<String,String> level : levels) {
-							Level levelData = new Level(
-									criteriondata,
-									Integer.parseInt(level.get("id").toString()), 
-									level.get("description").toString(),
-									Float.parseFloat(level.get("score").toString()));
-							float bonus=Float.parseFloat(criterion.get("bonus").toString());
-							int commentpage = Integer.parseInt(level.get("commentpage").toString());
-							int markid = Integer.parseInt(level.get("commentid").toString());
-							levelData.setBonus(bonus);
-							levelData.setPage(commentpage);
-							levelData.setMarkId(markid);
-							levelsdata.put(levelData.getId(), levelData);
-							
-							if(markid > 0) {
-								criteriondata.setSelectedLevel(levelData.getId());
-							}
-						}
-
-						criteriondata.setHueColor(definition.size());
-						definition.put(criteriondata.getId(), criteriondata);
-					}
-
-					rubricdefinition = definition;
-				} catch(Exception e) {
-					logger.severe("Error parsing json data trying to create rubric definition and fillings");
-					logger.severe(e.getMessage());
-					e.printStackTrace();
-					Window.alert(e.getMessage());
-					rubricdefinition = null;
-				} finally {
-					if(rubricdefinition != null)
-						EMarkingWeb.markingInterface.loadInterface();
-					else
-						Window.alert(MarkingInterface.messages.InvalidSubmissionData());
-					EMarkingWeb.markingInterface.finishLoading();
+				if(markid > 0) {
+					criteriondata.setSelectedLevel(levelData.getId());
 				}
 			}
-		});
+
+			criteriondata.setHueColor(definition.size());
+			definition.put(criteriondata.getId(), criteriondata);
+		}
+
+		submissionData.setRubricDefinition(definition);
+		
+		} catch (Exception e) {
+			logger.severe(e.getLocalizedMessage());
+			return null;
+		}
+		
+		return submissionData;
 	}
+
+	private void setRubricDefinition(SortedMap<Integer, Criterion> definition) {
+		this.rubricdefinition = definition;
+	}
+
 	public void setActivityname(String activityname) {
 		this.activityname = activityname;
 	}
+
 	public void setCourseid(int courseid) {
 		this.courseid = courseid;
 	}
+
 	public void setCoursemoduleid(int coursemoduleid) {
 		this.coursemoduleid = coursemoduleid;
 	}
@@ -342,9 +384,6 @@ public class SubmissionGradeData {
 	public void setDatemodified(long datemodified) {
 		this.datemodified = new Date(datemodified * 1000);
 	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	/**
 	 * @param feedback the feedback to set
 	 */
@@ -353,9 +392,6 @@ public class SubmissionGradeData {
 	}
 	public void setFinalgrade(float finalgrade) {
 		this.finalgrade = finalgrade;
-	}
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
 	}
 	public void setGrademax(float grademax) {
 		this.grademax = grademax;
@@ -366,13 +402,6 @@ public class SubmissionGradeData {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public void setIsgraded(boolean isgraded) {
-		this.isgraded = isgraded;
-	}
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
 	}
 
 	public void setMarkeremail(String markeremail) {
@@ -400,30 +429,26 @@ public class SubmissionGradeData {
 	public void setRegradeclosedate(Date regradeclosedate) {
 		this.regradeclosedate = regradeclosedate;
 	}
-	
+
 	/**
 	 * @param regradeopendate the regradeopendate to set
 	 */
 	public void setRegradeopendate(Date regradeopendate) {
 		this.regradeopendate = regradeopendate;
 	}
-	
+
 	/**
 	 * @param regraderestrictdates the regraderestrictdates to set
 	 */
 	public void setRegraderestrictdates(boolean regraderestrictdates) {
 		this.regraderestrictdates = regraderestrictdates;
 	}
-	
+
 	/**
 	 * @param rubricname the rubricname to set
 	 */
 	public void setRubricname(String rubricname) {
 		this.rubricname = rubricname;
-	}
-
-	public void setStudentid(int studentid) {
-		this.studentid = studentid;
 	}
 
 	/**

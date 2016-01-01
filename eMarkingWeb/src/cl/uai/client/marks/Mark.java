@@ -381,6 +381,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 					rmark.setBonus(newbonus);
 					rmark.setRegradeaccepted(newregradeaccepted);
 					rmark.setRegrademarkercomment(newregrademarkercomment);
+					rmark.setMarkername(MarkingInterface.submissionData.getMarkerfirstname() + " " + MarkingInterface.submissionData.getMarkerlastname());
+					rmark.setMarkerid(MarkingInterface.submissionData.getMarkerid());
 					EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(rmark);
 					EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().finishloadingRubricCriterion(newlevel);
 				}

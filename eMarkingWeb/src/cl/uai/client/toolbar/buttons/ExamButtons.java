@@ -173,7 +173,7 @@ public class ExamButtons extends Buttons {
 		saveAndJumpToNextButton.setVisible(true);
 		
 		if(EMarkingConfiguration.isSupervisor() && !MarkingInterface.submissionData.isQualitycontrol()
-				&& EMarkingConfiguration.getMarkingType() != 5) {
+				&& EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			finishMarkingButton.setVisible(true);
 		}
 	}

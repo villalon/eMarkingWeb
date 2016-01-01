@@ -63,7 +63,7 @@ public class ViewButtons extends Buttons {
 
 	@Override
 	public void loadSubmissionData() {
-		if(EMarkingConfiguration.getMarkingType() == 5) {
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			showColorsButton.setVisible(false);
 		}
 	}

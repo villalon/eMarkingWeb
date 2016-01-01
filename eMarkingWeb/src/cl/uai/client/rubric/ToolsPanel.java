@@ -57,6 +57,14 @@ public class ToolsPanel extends Composite {
 
 		if(!EMarkingConfiguration.isReadonly()) {
 			toolsPanel.add(previousComments, MarkingInterface.messages.PreviousComments());
+		}
+
+		marksSummary = new MarksSummaryInterface();
+		if(EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
+			toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
+		}
+		
+		if(!EMarkingConfiguration.isReadonly()) {
 			toolsPanel.add(generalFeedback, MarkingInterface.messages.GeneralFeedback());
 		}
 
@@ -66,11 +74,6 @@ public class ToolsPanel extends Composite {
 			toolsPanel.add(sortPages, MarkingInterface.messages.SortPages());
 		}
 
-		marksSummary = new MarksSummaryInterface();
-		if(EMarkingConfiguration.getMarkingType() != 5) {
-			toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
-		}
-		
 		if(toolsPanel.getWidgetCount() > 0) {
 			toolsPanel.selectTab(0);
 		}

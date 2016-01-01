@@ -53,7 +53,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class PreviousCommentsInterface extends EMarkingComposite {
 
 	Logger logger = Logger.getLogger(PreviousCommentsInterface.class.getName());
-	
+
 	/** Main panel for previous comments **/
 	private VerticalPanel mainPanel = new VerticalPanel();
 
@@ -64,30 +64,30 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 	private FlowPanel previousCommentsMostUsed = null;
 	private Map<Integer, FlowPanel> previousCommentsCriteria = null;
 	private Map<Integer, FlowPanel> previousCommentsDrafts = null;
-	
+
 	private StackPanel commentsTabs = null;
-	
+
 	/*
 	 * Comment lists
 	 */
 	private List<Comment> previousComments;
 
-	
-	
+
+
 	/**
 	 * Creates the interface
 	 */
 	public PreviousCommentsInterface() {
-		
+
 		previousComments = new LinkedList<Comment>();
-		
+
 		// Initialize interface and add CSS style
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().previouscomments());
-		
+
 		commentsTabs = new StackPanel();
 		commentsTabs.addStyleName(Resources.INSTANCE.css().previouscomments());
-		
+
 		// Add comments table
 		previousCommentsAll = new FlowPanel();
 		previousCommentsMine = new FlowPanel();
@@ -96,25 +96,28 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		previousCommentsCriteria = new HashMap<Integer, FlowPanel>();
 
 		commentsTabs.add(previousCommentsMine, MarkingInterface.messages.MyComments());
-		
+
 		for(Criterion criterion : MarkingInterface.submissionData.getRubricfillings().values()) {
 			FlowPanel criterionPanel = new FlowPanel();
 			previousCommentsCriteria.put(criterion.getId(), criterionPanel);
 			commentsTabs.add(criterionPanel, criterion.getDescription());
 		}
 
-		for(Criterion criterion : MarkingInterface.submissionData.getRubricfillings().values()) {
-			FlowPanel criterionPanel = new FlowPanel();
-			previousCommentsCriteria.put(criterion.getId(), criterionPanel);
-			commentsTabs.add(criterionPanel, criterion.getDescription());
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING) {
+			previousCommentsDrafts = new HashMap<Integer, FlowPanel>();
+			for(int draftid : MarkingInterface.submissionData.getDrafts()) {
+				FlowPanel draftPanel = new FlowPanel();
+				previousCommentsDrafts.put(draftid, draftPanel);
+				commentsTabs.add(draftPanel, MarkingInterface.messages.Exam() + " " + draftid);
+			}
 		}
 
 		commentsTabs.add(previousCommentsRecent, MarkingInterface.messages.Recent());
 		commentsTabs.add(previousCommentsMostUsed, MarkingInterface.messages.MostUsed());
 		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
-		
+
 		mainPanel.add(commentsTabs);
-		
+
 		this.initWidget(mainPanel);
 	}
 
@@ -125,11 +128,11 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		Widget parent = this.getParent().getParent().getParent();
 		int height = parent.getOffsetHeight() - 8;
 		this.setHeight(height+"px");
-		
+
 		AjaxRequest.ajaxRequest("action=prevcomments", new AsyncCallback<AjaxData>() {			
 			@Override
 			public void onSuccess(AjaxData result) {
-				
+
 				previousComments.clear();
 				List<Map<String, String>> comments = AjaxRequest.getValuesFromResult(result);
 				for(Map<String, String> comment : comments) {
@@ -137,7 +140,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 					previousComments.add(newcomment);
 					EMarkingWeb.markingInterface.previousCommentsOracle.add(newcomment.getText());
 				}
-				
+
 				updateAllCommentsInInterfaces();
 			}
 
@@ -152,7 +155,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 
 	private void updateAllCommentsInInterfaces() {
 		removeAllCommentsFromInterfaces();
-		
+
 		previousCommentsAll.clear();
 		previousCommentsMine.clear();
 		previousCommentsRecent.clear();
@@ -173,6 +176,14 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 					addCommentLabelToInterface(c, f);
 				}
 			}
+			if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING) {
+				for(int did : c.getDrafts()) {
+					FlowPanel f = previousCommentsDrafts.get(did);
+					if(f != null) {
+						addCommentLabelToInterface(c, f);					
+					}
+				}
+			}
 		}
 		Collections.sort(previousComments, Comment.CommentTimesUsedComparator);
 		for(Comment c : previousComments) {
@@ -191,7 +202,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		EMarkingWeb.markingInterface.dragController.makeDraggable(commentLabel);
 		commentInterface.add(commentLabel);			
 	}
-	
+
 	private void removeAllCommentsFromInterfaces() {
 		for(int i=0; i<previousCommentsAll.getWidgetCount(); i++) {
 			PreviousCommentLabel lbl = (PreviousCommentLabel) previousCommentsAll.getWidget(i);
@@ -206,7 +217,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 			EMarkingWeb.markingInterface.dragController.makeNotDraggable(lbl);
 		}
 	}
-	
+
 	/**
 	 * Adds a string comment
 	 * @param comment
@@ -215,17 +226,17 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		if(mark.getRawtext().trim().length() == 0) {
 			return;
 		}
-		
+
 		Comment prevComment = findPreviousComment(mark.getRawtext());
-		
+
 		// First check if the comment hasn't been added before
 		if(prevComment != null) {
-				long unixTime = System.currentTimeMillis() / 1000L;
-				prevComment.setLastUsed(unixTime);
-				prevComment.setTimesUsed(prevComment.getTimesUsed()+1);
-				prevComment.setMarkerId(EMarkingConfiguration.getMarkerId());
-				prevComment.setPages(mark.getPageno());
-				prevComment.setOwnComment(true);
+			long unixTime = System.currentTimeMillis() / 1000L;
+			prevComment.setLastUsed(unixTime);
+			prevComment.setTimesUsed(prevComment.getTimesUsed()+1);
+			prevComment.setMarkerId(EMarkingConfiguration.getMarkerId());
+			prevComment.setPages(mark.getPageno());
+			prevComment.setOwnComment(true);
 		} else {
 			List<Integer> markers = new ArrayList<Integer>();
 			markers.add(mark.getMarkerId());
@@ -246,18 +257,18 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 					true,
 					criteria,
 					drafts);
-			
+
 			previousComments.add(newComment);
-			
+
 			EMarkingWeb.markingInterface.previousCommentsOracle.add(newComment.getText());
 		}
-		
+
 		updateAllCommentsInInterfaces();
 	}
 
 	private Comment findPreviousComment(String text) {
 		Comment previousComment = null;
-		
+
 		// First check if the comment hasn't been added before
 		for(Comment prevComment : previousComments) {
 			if(prevComment.getText().trim().equals(text)) {
@@ -265,7 +276,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 				break;
 			}
 		}
-		
+
 		return previousComment;
 	}
 	/**
@@ -277,7 +288,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 			return;
 
 		Comment previousComment = findPreviousComment(comment);
-		
+
 		if(previousComment != null) {
 			if(previousComment.getTimesUsed() == 1) {
 				previousComments.remove(previousComment);
@@ -287,7 +298,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 				previousComment.setLastUsed(unixtime);
 			}
 		}
-		
+
 		updateAllCommentsInInterfaces();
 	}	
 }

@@ -238,7 +238,7 @@ public class RubricPanel extends EMarkingComposite {
 		scrollPanel.setStyleName("rubricscroll");
 		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");
 		
-		if(EMarkingConfiguration.getMarkingType() == 5) {
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			scrollPanel.setVisible(false);
 			rubricFilter.setVisible(false);
 		}

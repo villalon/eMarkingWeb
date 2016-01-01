@@ -170,7 +170,7 @@ public class MarkingButtons extends EMarkingComposite {
 					buttonFormats[i]);
 		}
 
-		if(EMarkingConfiguration.getMarkingType() == 5) {
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			selectedIndex = 1;
 			buttons.get(0).setEnabled(false);
 		}
@@ -299,7 +299,7 @@ public class MarkingButtons extends EMarkingComposite {
 		
 		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
 		
-		if(EMarkingConfiguration.getMarkingType() == 5) {
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			buttons.get(0).setVisible(false);
 		}
 	}

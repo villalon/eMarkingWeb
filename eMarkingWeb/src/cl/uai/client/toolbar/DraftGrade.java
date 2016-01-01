@@ -61,7 +61,7 @@ public class DraftGrade extends EMarkingComposite {
 
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
 		
-		if(sdata == null || EMarkingConfiguration.getMarkingType() == 5)
+		if(sdata == null || EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN)
 			return;
 				
 		lblGrade = new Label(RubricMark.scoreFormat(sdata.getFinalgrade(), false)+"");

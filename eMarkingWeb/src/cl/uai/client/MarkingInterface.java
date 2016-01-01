@@ -269,7 +269,7 @@ public class MarkingInterface extends EMarkingComposite {
 			public void run() {
 				String extradata = "";
 				if(submissionData != null)
-					extradata = "&marker=" + submissionData.getMarkerid() + "&student=" + submissionData.getStudentid();
+					extradata = "&marker=" + submissionData.getMarkerid() + "&draft=" + submissionData.getId();
 				final String requestUrl = extradata;
 				AjaxRequest.ajaxRequest("action=heartbeat" + extradata, new AsyncCallback<AjaxData>() {
 					@Override
@@ -753,87 +753,12 @@ public class MarkingInterface extends EMarkingComposite {
 				Map<String, String> values = AjaxRequest.getValueFromResult(result);
 
 				// Reset submission data
-				submissionData = new SubmissionGradeData();
-				submissionData.setIsgraded(false);
-
-				// Loads basic data that shouldn't be null and validate types by parsing
-				try {
-					submissionData.setId(Integer.parseInt(values.get("id")));
-					submissionData.setGrademin(Float.parseFloat(values.get("grademin")));
-					submissionData.setGrademax(Float.parseFloat(values.get("grademax")));
-					submissionData.setCourseid(Integer.parseInt(values.get("courseid")));
-					submissionData.setCoursename(values.get("coursename"));
-					submissionData.setCourseshort(values.get("courseshort"));
-					submissionData.setEmail(values.get("email"));
-					submissionData.setFirstname(values.get("firstname"));
-					submissionData.setLastname(values.get("lastname"));
-					submissionData.setStudentid(Integer.parseInt(values.get("studentid")));
-					submissionData.setMarkeremail(values.get("markeremail"));
-					submissionData.setMarkerfirstname(values.get("markerfirstname"));
-					submissionData.setMarkerlastname(values.get("markerlastname"));
-					submissionData.setMarkerid(Integer.parseInt(values.get("markerid")));
-					submissionData.setActivityname(values.get("activityname"));
-					submissionData.setFeedback(values.get("feedback"));
-					submissionData.setCustommarks(values.get("custommarks"));
-					submissionData.setQualitycontrol(values.get("qualitycontrol").equals("1"));
-					submissionData.setCoursemoduleid(Integer.parseInt(values.get("coursemodule")));
-				} catch(Exception e) {
-					// If something goes wrong, data is invalid and we can't work with it
-					logger.severe("Exception parsing submission data.");
-					logger.severe(e.getMessage());
-					submissionData = null;
-				}
-
-				// For a non marked submission datecreated could be null
-				try {
-					submissionData.setDatecreated(Long.parseLong(values.get("timecreated")));					
-				} catch(Exception e) {
-					logger.severe("Exception parsing submission timecreated data."+values.get("timecreated"));
-					logger.severe(e.getMessage());
-				}
-
-				// Regrade restrictions dates and info
-				try {
-					submissionData.setRegraderestrictdates(values.get("regraderestrictdates").equals("1"));
-					submissionData.setRegradeopendate(new Date(Long.parseLong(values.get("regradesopendate")) * 1000));					
-					submissionData.setRegradeclosedate(new Date(Long.parseLong(values.get("regradesclosedate")) * 1000));					
-				} catch(Exception e) {
-					logger.severe("Exception parsing submission regrade restriction data.");
-					logger.severe(e.getMessage());
-				}
-
-				// Final grade and update time could be null
-				try {
-					submissionData.setFinalgrade(Float.parseFloat(values.get("finalgrade")));
-					submissionData.setDatemodified(Long.parseLong(values.get("timemodified")));
-					submissionData.setIsgraded(true);
-				} catch(Exception e) {
-					logger.severe("Exception parsing submission finalgrade and timemodified data.");
-					logger.severe(e.getMessage());
-				}
-
-				// Final grade and update time could be null
-				try {
-					String drafts = values.get("drafts");
-					if(drafts != null) {
-						List<Integer> draftIds = new ArrayList<Integer>();
-						for(String did : drafts.split("-")) {
-							int id = Integer.parseInt(did);
-							draftIds.add(id);
-						}
-						submissionData.setDrafts(draftIds);
-					}
-				} catch(Exception e) {
-					logger.severe("Exception parsing drafts information.");
-					logger.severe(e.getMessage());
-				}
-
-				// Load interfaces if everything is all right
+				submissionData = SubmissionGradeData.createFromConfiguration(values);
+				
 				if(submissionData != null) {
-					submissionData.loadRubricFromMap();
+					EMarkingWeb.markingInterface.loadInterface();
 				} else {
-					logger.severe("Error parsing submission data!");
-					Window.alert(messages.InvalidSubmissionData());
+					Window.alert(MarkingInterface.messages.InvalidSubmissionData());
 				}
 
 				Window.setTitle("e-marking " + submissionData.getCoursename() + " " + submissionData.getActivityname());
@@ -843,6 +768,7 @@ public class MarkingInterface extends EMarkingComposite {
 				}
 
 				finishLoading();
+				
 				Window.addResizeHandler(new ResizeHandler() {			
 					@Override
 					public void onResize(ResizeEvent event) {
