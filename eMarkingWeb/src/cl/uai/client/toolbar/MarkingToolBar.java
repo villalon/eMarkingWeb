@@ -102,8 +102,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		tabButtonsPanel.add(viewButtons, MarkingInterface.messages.View().toUpperCase());
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
 		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
-		
-		tabButtonsPanel.selectTab(1);
 
 		buttonsPanel = new HorizontalPanel();
 		buttonsPanel.setVisible(false);
@@ -133,7 +131,17 @@ public class MarkingToolBar extends EMarkingComposite {
 		this.helpButtons.loadSubmissionData();
 		this.grade.loadSubmissionData();
 		
-		buttonsPanel.setVisible(!EMarkingConfiguration.isReadonly());
+		buttonsPanel.setVisible(true);
+		
+		if(!EMarkingConfiguration.isReadonly()){
+			tabButtonsPanel.selectTab(1);
+		}else{
+			tabButtonsPanel.remove(markingButtons);
+			tabButtonsPanel.remove(examButtons);
+			tabButtonsPanel.remove(chatButtons);
+			tabButtonsPanel.selectTab(0);
+		}
+
 	}
 
 	public void setButtonPressed(int index) {

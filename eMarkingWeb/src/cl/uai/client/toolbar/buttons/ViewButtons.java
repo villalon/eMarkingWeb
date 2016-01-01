@@ -59,6 +59,7 @@ public class ViewButtons extends Buttons {
 		this.mainPanel.add(showRubricButton);
 		this.mainPanel.add(showColorsButton);
 		this.mainPanel.add(minimizeAllRubricMarks);
+		
 	}
 
 	@Override
@@ -66,5 +67,10 @@ public class ViewButtons extends Buttons {
 		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			showColorsButton.setVisible(false);
 		}
+		if(EMarkingConfiguration.isReadonly()){
+			mainPanel.remove(showColorsButton);
+			mainPanel.remove(minimizeAllRubricMarks);
+		}
+		
 	}
 }

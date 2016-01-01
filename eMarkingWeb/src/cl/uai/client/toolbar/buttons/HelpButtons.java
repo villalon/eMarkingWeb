@@ -29,7 +29,7 @@ public class HelpButtons extends Buttons {
 
 	public HelpButtons() {
 		
-		aboutButton = new PushButton(IconType.INFO, MarkingInterface.messages.AboutEmarking());
+		aboutButton = new PushButton(IconType.INFO_SIGN, MarkingInterface.messages.AboutEmarking());
 		aboutButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
