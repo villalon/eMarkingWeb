@@ -803,7 +803,7 @@ public class MarkingInterface extends EMarkingComposite {
 					Map<String, String> value = AjaxRequest.getValueFromResult(result);
 
 					try {
-						EMarkingConfiguration.readConfiguration(value);
+						EMarkingConfiguration.loadConfiguration(value);
 					} catch (Exception e) {
 						e.printStackTrace();
 						Window.alert(MarkingInterface.messages.ErrorLoadingSubmission());

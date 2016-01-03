@@ -198,7 +198,7 @@ public class EMarkingConfiguration {
 	 * @param value
 	 * @throws Exception
 	 */
-	public static void readConfiguration(Map<String, String> value) throws Exception {
+	public static void loadConfiguration(Map<String, String> value) throws Exception {
 
 		// Assign Moodle session key
 		logger.fine(value.get("sesskey"));
