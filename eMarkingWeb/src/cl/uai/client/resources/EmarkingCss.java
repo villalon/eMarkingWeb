@@ -171,4 +171,14 @@ public interface EmarkingCss extends CssResource {
 	String tabbuttons();
 	String buttonshpanel();
 	String rubricbuttontext();
+	
+	String likeIcon();
+	String likeIconclicked();
+	String mycolloborativeicon();
+	String tablecollaborativebuttons();
+	String waitajax();
+	String discussionmessage();
+	String discussiondialog();
+	String tablediscussionmessages();
+	String mediscussionmessage();
 }

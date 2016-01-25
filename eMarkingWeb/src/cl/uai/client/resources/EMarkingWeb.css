@@ -256,7 +256,6 @@ to {
 .mark {
 	z-index: 100;
 	font-size: 2vw;
-	text-shadow: 1px 1px 2px #666;
 }
 
 .mark i {
@@ -265,7 +264,6 @@ to {
 
 .criterionlistbox {
 	max-width: 100%;
-	text-shadow: 1px 1px 2px #666;
 	margin-bottom: 0px;
 	margin-left: 5px;
 	height: 20px;
@@ -444,7 +442,6 @@ to {
 .bubblenotification {
 	color:red;
 	font-size: 12pt;
-	   text-shadow: 1px 1px 2px #666;
 }
 
 .markmarkername, .markrawtext {
@@ -576,7 +573,6 @@ to {
 	text-align: center;
 	min-width: 21px;
 	font-weight: bolder;
-	text-shadow: 1px 1px 2px #666;
 	margin-left: 5px;
 }
 
@@ -616,8 +612,8 @@ to {
 	min-width: 12px;
 	padding: 0;
 	text-align: center;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, .4);
 	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, .4);
 }
 
 .generalfeedbacktxt {
@@ -628,7 +624,6 @@ to {
 .logo {
 	color: rgb(0, 0, 0);
 	font-size: 18pt;
-	text-shadow: 2px 1px #999;
 	font-weight: bold;
 	margin-left: 5px;
 	margin-bottom: 6px;
@@ -816,7 +811,6 @@ to {
 	border-radius: 50%;
 	line-height: 30px;
 	box-shadow: 1px 1px 5px #888888;
-	text-shadow: rgba(255, 255, 255, .5) 0 1px 0;
 }
 
 .chatuserssmall {
@@ -846,6 +840,7 @@ background-color: #c0c0c0;
 
 .chatscrollmessages {
 	max-height: 300px;
+	max-width: 500px;
 }
 
 .chatauthor {
@@ -866,7 +861,6 @@ background-color: #c0c0c0;
     margin: 2px 2px 3px 2px;
     border-radius: 2px;
     color: #373e4d;
-    text-shadow: rgba(255, 255, 255, .5) 0 1px 0;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -975,4 +969,59 @@ background-color: #c0c0c0;
 .chatelapsedtime {
 	font-size:7pt;
 	width:100%;
+}
+
+.likeIcon{
+	font-size:1.2em;
+	z-index: 300;
+}
+.likeIcon:hover{
+	cursor: pointer;
+}
+
+.likeIconclicked{
+	font-size:1.2em;
+	z-index: 300;
+	color: #0080FF;
+}
+.likeIconclicked:hover{
+	cursor: pointer;
+}
+
+.mycolloborativeicon{
+	font-size:1.2em;
+	z-index: 300;
+}
+.tablecollaborativebuttons{
+	 z-index: 300;
+	 border-spacing: 8px 0px;
+	 border-collapse: separate;
+}
+.waitajax{
+	z-index: 100;
+}
+
+.discussionmessage{
+	background-color: #CBCBCB;
+	border-radius: 6px 6px 6px 6px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	max-width: 474px;
+}
+
+.discussiondialog{
+	width: 500px;
+}
+
+.tablediscussionmessages{
+	max-width: 480px;
+	width: 480px;
+}
+
+.mediscussionmessage{
+	background-color: #D0FFD0;
+	border-radius: 6px 6px 6px 6px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	max-width: 474px;
 }

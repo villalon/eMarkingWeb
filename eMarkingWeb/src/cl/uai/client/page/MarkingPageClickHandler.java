@@ -56,7 +56,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 	
 	@Override
 	public void onClick(ClickEvent event) {
-
+		
 		// If interface is in readonly mode no popups should be allowed.
 		if(EMarkingConfiguration.isReadonly()) {
 			return;

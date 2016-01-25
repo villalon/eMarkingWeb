@@ -311,8 +311,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		if(!(mark instanceof PathMark)) {
 			dragController.makeDraggable(mark);
 		}
-		
 		absolutePanel.add(mark, mark.getPosx(), mark.getPosy());
+		if(mark instanceof RubricMark && EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING){
+			((RubricMark)mark).addCollaborativesButtons();
+		}
 
 		return mark;
 	}
@@ -327,9 +329,13 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 
 		// If exists remove from panel and from hashmap
 		if(mark != null) {
+			if(mark instanceof RubricMark && EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING){
+				((RubricMark) mark).removeCollaborativeButtons();
+			}
 			absolutePanel.remove(mark);
 			marks.remove(id);
 		}
+
 	}
 
 	/**

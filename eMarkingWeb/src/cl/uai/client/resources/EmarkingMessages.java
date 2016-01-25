@@ -56,6 +56,7 @@ public interface EmarkingMessages extends Messages {
 	public String LastSaved(String when);
 	public String Level();
 	public String Loading();
+	public String Marker();
 	public String MarkerDetails(String name);
 	public String MarksSummary();
 	public String MissassignedScore();

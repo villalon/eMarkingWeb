@@ -350,11 +350,13 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				"&regradeid=" + regradeid +
 				"&regradeaccepted=" + newregradeaccepted +
 				"&regrademarkercomment=" + newregrademarkercomment +
+				"&markerid=" + EMarkingConfiguration.getMarkerId() +
 				"&width=" + this.width +
 				"&height=" + this.height +
 				"&comment=" + URL.encode(newcomment) +
 				"&windowswidth=" + widthPage +
-				"&windowsheight=" + heightPage, new AsyncCallback<AjaxData>() {
+				"&windowsheight=" + heightPage, 
+				new AsyncCallback<AjaxData>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
