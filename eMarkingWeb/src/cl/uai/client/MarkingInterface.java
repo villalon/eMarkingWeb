@@ -620,6 +620,9 @@ public class MarkingInterface extends EMarkingComposite {
 					// Then add resulting mark it to the rubric interface
 					rubricMark.getLevel().getCriterion().setSelectedLevel(0);
 					rubricInterface.getRubricPanel().deleteMarkFromRubric(rubricMark);
+					if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING){
+						rubricMark.removeCollaborativeButtons();
+					}
 					rubricInterface.getToolsPanel().getPreviousComments().deletePreviousComment(rubricMark.getRawtext());
 					setFinalgrade(newgrade, timemodified);
 				} else {

@@ -83,6 +83,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 				Mark.minimizeIcon.setVisible(true);
 				Mark.minimizeIcon.setMark(mark);
 				left -= 15;
+				
 			}
 			
 			// Edit icon is only for comments and rubrics
@@ -115,5 +116,6 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 			int criterionid = ((RubricMark) mark).getCriterionId();
 			EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().highlightRubricCriterion(criterionid);
 		}
+						
 	}
 }

@@ -28,6 +28,13 @@ public class EMarkingConfiguration {
 	public static final int EMARKING_TYPE_STUDENT_TRAINING = 3;
 	public static final int EMARKING_TYPE_PEER_REVIEW = 4;
 	public static final int EMARKING_TYPE_PRINT_SCAN = 5;
+	
+	/** Constants for collaboratives buttons types **/
+	public static final int EMARKING_COLLABORATIVE_BUTTON_LIKE = 1;
+	public static final int EMARKING_COLLABORATIVE_BUTTON_DISLIKE = 2;
+	public static final int EMARKING_COLLABORATIVE_BUTTON_QUOTE = 3;
+	public static final int EMARKING_COLLABORATIVE_BUTTON_DISCUSSION = 4;
+	public static final int EMARKING_COLLABORATIVE_BUTTON_CLICKED = 1 ;
 
 	/** For logging purposes **/
 	private static Logger logger = Logger.getLogger(EMarkingConfiguration.class.getName());

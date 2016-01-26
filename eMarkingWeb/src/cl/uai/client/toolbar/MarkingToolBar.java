@@ -33,6 +33,7 @@ import cl.uai.client.toolbar.buttons.HelpButtons;
 import cl.uai.client.toolbar.buttons.MarkingButtons;
 import cl.uai.client.toolbar.buttons.ViewButtons;
 
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -109,12 +110,15 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.addStyleName(Resources.INSTANCE.css().buttonspanel());		
 		buttonsPanel.add(tabButtonsPanel);
 		buttonsPanel.setCellHorizontalAlignment(markingButtons, HasHorizontalAlignment.ALIGN_LEFT);
-		buttonsPanel.setCellWidth(markingButtons, "80%");
+		buttonsPanel.setCellWidth(markingButtons, "50%");
+		
+		buttonsPanel.add(new HTML("Hola, acá habran estadisticas de corrección"));
+		buttonsPanel.setCellWidth(markingButtons, "30%");
 		
 		buttonsPanel.add(grade);
 		buttonsPanel.setCellVerticalAlignment(grade, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(grade, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(grade, "20%");
+		buttonsPanel.setCellWidth(grade, "10%");
 		
 		this.initWidget(buttonsPanel);
 	}

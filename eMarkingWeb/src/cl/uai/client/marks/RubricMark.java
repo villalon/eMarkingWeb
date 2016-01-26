@@ -20,20 +20,29 @@
  */
 package cl.uai.client.marks;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.AjaxData;
+import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.data.Level;
 import cl.uai.client.data.SubmissionGradeData;
+import cl.uai.client.marks.collaborative.*;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 /**
  * A RubricMark represents a mark on a student page which contains
@@ -53,6 +62,13 @@ public class RubricMark extends Mark {
 	private int regradeaccepted = 0;
 	private String regrademarkercomment = null;
 	private boolean headerOnly = false;
+	
+	/** Collaboratives icons **/
+	private LikeMark like = null;
+	private DisLikeMark dislike = null;
+	private QuoteMark quote = null;
+	private DiscussionMark discussion = null;
+	private HorizontalPanel collaborativeMarks = null;
 
 	public boolean isHeaderOnly() {
 		return headerOnly;
@@ -94,10 +110,123 @@ public class RubricMark extends Mark {
 		// Rubric marks have format 2
 		this.format = 2;
 		this.iconType = IconType.TH;
-
+		
 		this.addStyleName(Resources.INSTANCE.css().markpopup());
 
 		this.setLevelId(lvlid);
+		
+		// Collaborative buttons
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING){
+			collaborativeMarks = new HorizontalPanel();
+			
+			like = new LikeMark();
+			like.setMark(this);
+			like.setValue(0);
+			collaborativeMarks.add(like);
+			
+			dislike = new DisLikeMark();
+			dislike.setMark(this);
+			dislike.setValue(0);
+			collaborativeMarks.add(dislike);
+			
+			quote = new QuoteMark();
+			quote.setMark(this);
+			quote.setValue(0);
+			collaborativeMarks.add(quote);
+			
+			discussion = new DiscussionMark();
+			discussion.setMark(this);
+			discussion.setValue(0);
+			collaborativeMarks.add(discussion);
+			//TODO
+			Date time = new Date (timecreated*1000L);	
+			discussion.addMessage(time.toString(), markername, rawtext,markerid);
+			
+			collaborativeMarks.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			collaborativeMarks.addStyleName(Resources.INSTANCE.css().tablecollaborativebuttons());
+			
+			// The mark dont belongs me
+			if(markerid != EMarkingConfiguration.getMarkerId()){
+				like.setCanClick(true);				
+				dislike.setCanClick(true);				
+				quote.setCanClick(true);
+				//discussion.setCanClick(true);
+			}else{
+				like.removeStyleName(Resources.INSTANCE.css().likeIcon());
+				like.addStyleName(Resources.INSTANCE.css().mycolloborativeicon());
+				
+				dislike.removeStyleName(Resources.INSTANCE.css().likeIcon());
+				dislike.addStyleName(Resources.INSTANCE.css().mycolloborativeicon());
+				
+				quote.removeStyleName(Resources.INSTANCE.css().likeIcon());
+				quote.addStyleName(Resources.INSTANCE.css().mycolloborativeicon());
+			}
+			
+			// get counter for collaborative buttons
+			String url = "ids="+MarkingInterface.getDraftId()+"&commentid="+this.getId();
+			AjaxRequest.ajaxRequest("action=getvaluescollaborativebuttons&"+url, new AsyncCallback<AjaxData>() {
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					logger.warning("Error values collaboratives buttons");
+					hideCollaborativeButtons();
+				}
+				
+				@Override
+				public void onSuccess(AjaxData result) {
+					List<Map<String, String>> valuesCollaborativesButtons = AjaxRequest.getValuesFromResult(result);
+
+					for(Map<String, String> value : valuesCollaborativesButtons) {
+						
+						int markerid = Integer.parseInt(value.get("markerid"));
+						int type = Integer.parseInt(value.get("type"));
+						String markername = value.get("markername");
+						String date = value.get("date");
+						String text = value.get("text");
+						
+						switch (type){
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_LIKE:
+								like.addValue(1);
+								like.setFormat(markerid,markername);
+								like.setMarkHTML();
+								break;
+								
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_DISLIKE:
+								dislike.addValue(1);
+								dislike.setFormat(markerid,markername);
+								dislike.setMarkHTML();
+								break;
+								
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_QUOTE:
+								quote.addValue(1);
+								quote.setMarkHTML();
+								quote.setFormat(markerid,markername);
+								quote.setMarkHTML();
+								break;
+								
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_DISCUSSION:
+								discussion.addValue(1);
+								discussion.setMarkHTML();
+								discussion.setFormat(markerid,markername);
+								discussion.setMarkHTML();
+								String[] parts = date.split(" ");
+								String[] hourMinute = parts[1].split(":");
+								String realDate = hourMinute[0]+":"+hourMinute[1]+" &nbsp &nbsp"+parts[0];
+								discussion.addMessage(realDate, markername, text, markerid);
+								break;
+						}				
+					}
+				}
+			});
+			like.setMarkHTML();
+			dislike.setMarkHTML();
+			quote.setMarkHTML();
+			if(getMarkername() != null){
+				discussion.instanceDialog();
+			}
+			discussion.setMarkHTML();
+		}
+
 	}
 
 	@Override
@@ -132,7 +261,6 @@ public class RubricMark extends Mark {
 				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
 			}
 		}
-
 
 		if(this.getRegradeid() > 0 && !headerOnly) {
 			html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
@@ -251,7 +379,7 @@ public class RubricMark extends Mark {
 	@Override
 	public void update(String newcomment, int newposx, int newposy,
 			int levelid, float bonus, String regradecomment, int regradeaccepted, int widthPage, int heightPage) {
-
+		
 		super.update(newcomment, newposx, newposy, levelid, bonus, regradecomment, regradeaccepted, widthPage, heightPage);
 		Criterion criterion = MarkingInterface.submissionData.getLevelById(levelid).getCriterion();
 		EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().updateRubricCriterion(
@@ -261,6 +389,7 @@ public class RubricMark extends Mark {
 				levelid, 
 				regradeaccepted, 
 				regradeaccepted);
+
 	}
 
 	public Level getLevel() {
@@ -305,4 +434,37 @@ public class RubricMark extends Mark {
 	public void setRegradeaccepted(int regradeaccepted) {
 		this.regradeaccepted = regradeaccepted;
 	}
+	
+	public void addCollaborativesButtons(){
+		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();
+		int top = this.getAbsoluteTop();
+		int left = this.getAbsoluteLeft();
+
+		abspanel.add(collaborativeMarks,top,left);
+		
+		updatePositionCollaborativeButtons();
+	}
+	
+	public void removeCollaborativeButtons(){
+		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();
+		abspanel.remove(collaborativeMarks);
+	}
+	
+	public void hideCollaborativeButtons(){
+		collaborativeMarks.setVisible(false);
+	}
+	
+	public void showCollaborativeButtons(){
+		collaborativeMarks.setVisible(true);
+	}
+	
+	public void updatePositionCollaborativeButtons(){
+		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();		
+		abspanel.setWidgetPosition(collaborativeMarks,abspanel.getWidgetLeft(this),abspanel.getWidgetTop(this)+ this.height-10);
+	}
+	
+	public void updateValueCollaborativeButtons(){
+		
+	}
+	
 }

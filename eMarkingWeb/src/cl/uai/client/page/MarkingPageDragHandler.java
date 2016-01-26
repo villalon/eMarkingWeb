@@ -70,6 +70,13 @@ public class MarkingPageDragHandler implements DragHandler {
 	@Override
 	public void onDragStart(DragStartEvent event) {
 		Mark.hideIcons();
+		// Update position
+		Mark mark = (Mark) event.getSource();
+		if(mark instanceof RubricMark && 
+				EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING) {
+			((RubricMark) mark).hideCollaborativeButtons();
+		}
+		
 	}
 
 	/**
@@ -77,13 +84,20 @@ public class MarkingPageDragHandler implements DragHandler {
 	 */
 	@Override
 	public void onDragEnd(DragEndEvent event) {
+
+		// Update position
+		Mark mark = (Mark) event.getSource();
+		if(mark instanceof RubricMark && 
+				EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING) {
+			((RubricMark) mark).updatePositionCollaborativeButtons();
+			((RubricMark) mark).showCollaborativeButtons();
+		}
 		
 		// If we are in readonly mode we don't update the data but let the mark move for usability
-		if(EMarkingConfiguration.isReadonly())
+		if(EMarkingConfiguration.isReadonly())	
 			return;
 
 		// Read the data from the interface to update the mark
-		Mark mark = (Mark) event.getSource();
 		int level = 0;
 		float bonus = 0;
 		String regradecomment = "";
@@ -108,6 +122,7 @@ public class MarkingPageDragHandler implements DragHandler {
 				regradecomment, 
 				motive,
 				widthPage,
-				heightPage);				
+				heightPage);
+		
 	}
 }
