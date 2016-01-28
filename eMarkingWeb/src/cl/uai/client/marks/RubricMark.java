@@ -116,7 +116,8 @@ public class RubricMark extends Mark {
 		this.setLevelId(lvlid);
 		
 		// Collaborative buttons
-		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING){
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING
+				&& EMarkingConfiguration.isChatEnabled()){
 			collaborativeMarks = new HorizontalPanel();
 			
 			like = new LikeMark();
@@ -435,7 +436,11 @@ public class RubricMark extends Mark {
 		this.regradeaccepted = regradeaccepted;
 	}
 	
-	public void addCollaborativesButtons(){
+	public void addCollaborativesButtons() {
+		
+		if(collaborativeMarks == null)
+			return;
+		
 		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();
 		int top = this.getAbsoluteTop();
 		int left = this.getAbsoluteLeft();
@@ -446,19 +451,31 @@ public class RubricMark extends Mark {
 	}
 	
 	public void removeCollaborativeButtons(){
+		if(collaborativeMarks == null)
+			return;
+		
 		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();
 		abspanel.remove(collaborativeMarks);
 	}
 	
 	public void hideCollaborativeButtons(){
+		if(collaborativeMarks == null)
+			return;
+		
 		collaborativeMarks.setVisible(false);
 	}
 	
 	public void showCollaborativeButtons(){
+		if(collaborativeMarks == null)
+			return;
+		
 		collaborativeMarks.setVisible(true);
 	}
 	
 	public void updatePositionCollaborativeButtons(){
+		if(collaborativeMarks == null)
+			return;
+		
 		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();		
 		abspanel.setWidgetPosition(collaborativeMarks,abspanel.getWidgetLeft(this),abspanel.getWidgetTop(this)+ this.height-10);
 	}

@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.SubmissionGradeData;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.toolbar.buttons.ChatButtons;
 import cl.uai.client.toolbar.buttons.ExamButtons;
@@ -112,8 +113,14 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellHorizontalAlignment(markingButtons, HasHorizontalAlignment.ALIGN_LEFT);
 		buttonsPanel.setCellWidth(markingButtons, "50%");
 		
-		buttonsPanel.add(new HTML("Hola, acá habran estadisticas de corrección"));
-		buttonsPanel.setCellWidth(markingButtons, "30%");
+		SubmissionGradeData sdata = MarkingInterface.submissionData;
+		
+		if(sdata != null 
+				&& EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING
+				&& EMarkingConfiguration.isChatEnabled()) {
+			buttonsPanel.add(new HTML("Hola, acá habran estadisticas de corrección"));
+			buttonsPanel.setCellWidth(markingButtons, "30%");
+		}
 		
 		buttonsPanel.add(grade);
 		buttonsPanel.setCellVerticalAlignment(grade, HasVerticalAlignment.ALIGN_MIDDLE);

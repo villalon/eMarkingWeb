@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 public class QuoteMark extends CollaborativeMark{
@@ -20,6 +21,7 @@ public class QuoteMark extends CollaborativeMark{
 		super();
 		icon = new Icon(IconType.SHARE_SIGN);
 		popupMarkers = new MyPopup();
+		markers = new HTML();
 
 		onClick = new ClickHandler() {			
 			@Override
