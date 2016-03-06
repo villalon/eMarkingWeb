@@ -652,38 +652,6 @@ public class Moodle {
 		}
 	}
 
-	public Course[] searchCourses(String q) throws Exception {
-
-		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=coursesearch&username="+moodleUsername+"&password="+moodlePassword+"&q="+q);
-
-		JsonArray jarr = parseMoodleResponse(response);
-
-		Course[] courses = new Course[jarr.size()];
-
-		for(int i=0;i<jarr.size();i++) {
-			try {
-				JsonObject job = jarr.getJsonObject(i);
-				int id = Integer.parseInt(job.getString("id"));			
-				String shortname = job.getString("shortname");			
-				String fullname = job.getString("fullname");
-
-				Course st = new Course();
-				st.setId(id);
-				st.setShortname(shortname);
-				st.setFullname(fullname);
-
-				courses[i] = st;
-
-				logger.debug("id:" + id + " shortname:" + shortname + " fullname:" + fullname);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				return null;
-			}
-		}
-
-		return courses;
-	}
-
 	public void setDensity(int density) {
 		this.density = density;
 	}

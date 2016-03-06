@@ -115,6 +115,7 @@ public class ImageDecoder implements Runnable {
 				image.getWidth(), image.getHeight(), null);
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, anonymousimage.getWidth(), cropHeight);
+		g.fillRect(0, anonymousimage.getHeight() - cropHeight, cropHeight, anonymousimage.getHeight());
 		g.dispose();
 
 		return anonymousimage;
