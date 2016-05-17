@@ -14,8 +14,10 @@ import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.page.MarkingPage;
+import cl.uai.client.resources.Resources;
 import cl.uai.client.toolbar.FinishMarkingDialog;
 
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,6 +27,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -39,6 +42,7 @@ public class ExamButtons extends Buttons {
 	private PushButton finishMarkingButton = null;
 	private PushButton saveChangesButton = null;
 	private PushButton saveAndJumpToNextButton = null;
+	private ToggleButton selectAsAnswerKey = null;
 
 	
 	public ExamButtons() {
@@ -126,6 +130,41 @@ public class ExamButtons extends Buttons {
 			}
 		});
 		
+		selectAsAnswerKey = new ToggleButton();
+		selectAsAnswerKey.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		Icon i = new Icon(IconType.SEARCH);
+		selectAsAnswerKey.setHTML(i.toString() + "<div class=\""+Resources.INSTANCE.css().rubricbuttontext()+"\">" +
+				MarkingInterface.messages.AnswerKey() + "</div>");
+		selectAsAnswerKey.setVisible(true);
+		selectAsAnswerKey.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				EMarkingWeb.markingInterface.addLoading(true);
+				
+				AjaxRequest.ajaxRequest("action=setanswerkey&status=1", new AsyncCallback<AjaxData>() {					
+					@Override
+					public void onSuccess(AjaxData result) {
+						EMarkingWeb.markingInterface.finishLoading();
+						if(!result.getError().equals("")) {
+							Window.alert("Error on ajax request for setting as answwer key");
+							return;
+						}
+						Map<String, String> values = AjaxRequest.getValueFromResult(result);
+						String newvalue = values.get("newvalue");
+						if(newvalue != null && newvalue.equals("1")) {
+							selectAsAnswerKey.setDown(true);
+						} else {
+							selectAsAnswerKey.setDown(false);
+						}
+					}					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error trying to select as answer key");
+					}
+				});
+			}
+		});
+		
 		saveAndJumpToNextButton = new PushButton(IconType.EXTERNAL_LINK, MarkingInterface.messages.JumpToNextStudent());
 		saveAndJumpToNextButton.setVisible(false);
 		saveAndJumpToNextButton.addClickHandler(new ClickHandler() {
@@ -165,6 +204,7 @@ public class ExamButtons extends Buttons {
 		this.mainPanel.add(saveAndJumpToNextButton);
 		this.mainPanel.add(saveChangesButton);
 		this.mainPanel.add(finishMarkingButton);
+		this.mainPanel.add(selectAsAnswerKey);
 	}
 	
 	public void loadSubmissionData() {
@@ -176,5 +216,8 @@ public class ExamButtons extends Buttons {
 				&& EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			finishMarkingButton.setVisible(true);
 		}
+		
+		boolean isAnswerKey = MarkingInterface.submissionData.isAnswerkey();
+		selectAsAnswerKey.setDown(isAnswerKey);
 	}
 }

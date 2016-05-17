@@ -76,6 +76,8 @@ public class SubmissionGradeData {
 	private boolean regraderestrictdates;
 	private Date regradeopendate;
 	private Date regradeclosedate;
+	private boolean answerkey;
+	private SortedMap<Integer, Submission> answerKeys;
 
 	/** A list of drafts related to the one being marked, usually parallels within a markers training **/
 	private List<Integer> drafts = null;
@@ -217,7 +219,6 @@ public class SubmissionGradeData {
 		SubmissionGradeData submissionData = new SubmissionGradeData();
 		
 		try {
-
 		logger.fine("id");
 		submissionData.setId(Integer.parseInt(values.get("id")));
 		logger.fine("grademin");
@@ -346,6 +347,26 @@ public class SubmissionGradeData {
 
 		submissionData.setRubricDefinition(definition);
 		
+		logger.fine("answerkeys");
+		JSONObject answerkeysjson = new JSONObject(JsonUtils.safeEval(values.get("answerkeys")));
+		List<Map<String, String>> answerkeyslist = AjaxRequest.getValuesFromResult(answerkeysjson);
+
+		SortedMap<Integer, Submission> answerkeys = new TreeMap<Integer, Submission>();
+
+		logger.fine("Answer keys parsed");
+		
+		boolean thisIsAnswerKey = false;
+		for(Map<String, String> answerkey : answerkeyslist) {
+			Submission sub = new Submission(answerkey);
+			answerkeys.put(sub.getId(), sub);
+			if(sub.getId() == submissionData.getId()) {
+				thisIsAnswerKey = true;
+			}
+		}
+		
+		submissionData.answerKeys = answerkeys;
+		submissionData.answerkey = thisIsAnswerKey;
+		
 		} catch (Exception e) {
 			logger.severe(e.getLocalizedMessage());
 			return null;
@@ -463,5 +484,21 @@ public class SubmissionGradeData {
 	 */
 	public void setDrafts(List<Integer> drafts) {
 		this.drafts = drafts;
+	}
+
+	/**
+	 * Returns the list of submissions that are marked as answer keys
+	 * @return
+	 */
+	public SortedMap<Integer, Submission> getAnswerKeys() {
+		return this.answerKeys;
+	}
+	
+	public boolean isAnswerkey() {
+		return answerkey;
+	}
+
+	public void setAnswerkey(boolean answerkey) {
+		this.answerkey = answerkey;
 	}
 }

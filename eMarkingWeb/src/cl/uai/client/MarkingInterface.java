@@ -225,7 +225,7 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel = new HorizontalPanel();
 		interfacePanel.addStyleName(Resources.INSTANCE.css().interfacepanel());
 
-		loadingMessage = new HTML(messages.Loading() + " " + AjaxRequest.moodleUrl);
+		loadingMessage = new HTML(messages.Loading() + " " + EMarkingConfiguration.getMoodleUrl());
 
 		bubbleButtons = new ArrayList<BubbleButton>();
 
@@ -258,7 +258,7 @@ public class MarkingInterface extends EMarkingComposite {
 					// Updating next trial for one more second and trying onLoad again
 					timerWaitingTurns++;
 					ticksUntilTrying = Math.min(timerWaitingTurns, 60);
-					loadingMessage.setHTML(messages.Loading() + " " + AjaxRequest.moodleUrl);					
+					loadingMessage.setHTML(messages.Loading() + " " + EMarkingConfiguration.getMoodleUrl());					
 					onLoad();
 				}
 			}

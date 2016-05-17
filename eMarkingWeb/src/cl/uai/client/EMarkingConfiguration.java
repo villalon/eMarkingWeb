@@ -78,6 +78,9 @@ public class EMarkingConfiguration {
 	/** If is enabled linkrubric (Marcelo's thesis) **/
 	private static boolean coloredRubric = false;
 
+	/** The URL of the moodle installation with which EMarking is linked **/
+	private static String moodleUrl = null;
+	
 	/**
 	 * @param coloredRubric the coloredRubric to set
 	 */
@@ -327,5 +330,19 @@ public class EMarkingConfiguration {
 	 */
 	public static void setChatServerError(boolean chatServerError) {
 		EMarkingConfiguration.chatServerError = chatServerError;
+	}
+
+	/**
+	 * @return the moodleUrl
+	 */
+	public static String getMoodleUrl() {
+		return moodleUrl;
+	}
+
+	/**
+	 * @param moodleUrl the moodleUrl to set
+	 */
+	public static void setMoodleUrl(String _moodleUrl) {
+		moodleUrl = _moodleUrl;
 	}
 }

@@ -30,6 +30,7 @@ public interface EmarkingMessages extends Messages {
 	public String All();
 	public String Anonymous();
 	public String AnonymousCourse();
+	public String AnswerKey();
 	public String Cancel();
 	public String CantReachServerRetrying(int seconds);
 	public String CheckTitle();

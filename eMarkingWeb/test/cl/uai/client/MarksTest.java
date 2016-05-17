@@ -51,7 +51,7 @@ public class MarksTest extends GWTTestCase {
 		delayTestFinish(500);
 		
 		MarkingInterface.setDraftId(1);
-		AjaxRequest.moodleUrl = "http://localhost/wc/mod/emarking/ajax.php";
+		EMarkingConfiguration.setMoodleUrl("http://localhost/wc/mod/emarking/ajax.php");
 	}
 	
 	public MarksTest() {

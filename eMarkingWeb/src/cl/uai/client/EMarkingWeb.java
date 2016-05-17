@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import cl.uai.client.chat.NodeChat;
-import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -196,7 +195,7 @@ public class EMarkingWeb implements EntryPoint {
 			EMarkingConfiguration.setColoredRubric(showColors);
 
 			// Ajax URL in moodle
-			AjaxRequest.moodleUrl = moodleurl;
+			EMarkingConfiguration.setMoodleUrl(moodleurl);
 
 			// Automagically resize popup to use most of the window
 			int width = screenWidth();

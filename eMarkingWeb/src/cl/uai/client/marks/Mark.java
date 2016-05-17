@@ -370,6 +370,14 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			public void onSuccess(AjaxData result) {
 				Map<String, String> value = AjaxRequest.getValueFromResult(result);
 
+				if(!result.getError().equals("")) {
+					Window.alert(result.getError());
+					setMarkHTML();
+					removeStyleName(Resources.INSTANCE.css().updating());
+					EMarkingWeb.markingInterface.finishLoading();
+					return;
+				}
+				
 				// Parse json values from Moodle
 				long timemodified = Long.parseLong(value.get("timemodified"));
 				float newgrade = Float.parseFloat(value.get("newgrade"));

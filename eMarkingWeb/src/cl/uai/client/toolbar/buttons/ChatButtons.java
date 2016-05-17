@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
-import cl.uai.client.data.AjaxRequest;
 
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,7 +33,7 @@ public class ChatButtons extends Buttons {
 		
 		String notification = "!";
 
-		showChatButton = new PushButton(IconType.COMMENT_ALT, MarkingInterface.messages.ShowChat(), notification);
+		showChatButton = new PushButton(IconType.COMMENT_ALT, null, MarkingInterface.messages.ShowChat(), notification);
 		showChatButton.setVisible(false);
 		showChatButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -43,7 +42,7 @@ public class ChatButtons extends Buttons {
 			}
 		});
 		
-		showWallButton = new PushButton(IconType.BULLHORN, MarkingInterface.messages.ShowWall(), notification);
+		showWallButton = new PushButton(IconType.BULLHORN, null, MarkingInterface.messages.ShowWall(), notification);
 		showWallButton.setVisible(false);
 		showWallButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -52,7 +51,7 @@ public class ChatButtons extends Buttons {
 			}
 		});
 		
-		showHelpButton = new PushButton(IconType.AMBULANCE, MarkingInterface.messages.ShowHelp(), notification);
+		showHelpButton = new PushButton(IconType.AMBULANCE, null, MarkingInterface.messages.ShowHelp(), notification);
 		showHelpButton.setVisible(false);
 		showHelpButton.addClickHandler(new ClickHandler() {			
 			@Override
@@ -110,7 +109,7 @@ public class ChatButtons extends Buttons {
 	}
 	
 	public void setChatDisabled() {
-		String moodleUrl = AjaxRequest.moodleUrl.replaceAll("mod/emarking/ajax/a.php", "");
+		String moodleUrl = EMarkingConfiguration.getMoodleUrl().replaceAll("mod/emarking/ajax/a.php", "");
 		moodleUrl += "course/modedit.php?update=" + MarkingInterface.submissionData.getCoursemoduleid() + "&return=1";
 		if(EMarkingConfiguration.getUserCanManageDelphi()){
 			lblNoChatAvailable = new HTML(MarkingInterface.messages.NoChatAvailable(moodleUrl));

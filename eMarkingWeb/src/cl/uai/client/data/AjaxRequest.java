@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 
 import com.google.gwt.json.client.JSONArray;
@@ -47,11 +48,8 @@ public class AjaxRequest {
 	
 	private static Logger logger = Logger.getLogger(AjaxRequest.class.getName());
 	
-	/** Moodle base ajax url **/
-	public static String moodleUrl = null;
-
 	public static String getMoodleBaseUrl() {
-		return moodleUrl.replaceAll("mod/emarking/ajax/a.php", "");
+		return EMarkingConfiguration.getMoodleUrl().replaceAll("mod/emarking/ajax/a.php", "");
 	}
 	
 	/**
@@ -62,7 +60,7 @@ public class AjaxRequest {
 	 */
 	public static void ajaxRequest(String params, AsyncCallback<AjaxData> callback) {
 		
-		final String url = moodleUrl + "?ids=" + MarkingInterface.getDraftId() + "&" + params;
+		final String url = EMarkingConfiguration.getMoodleUrl() + "?ids=" + MarkingInterface.getDraftId() + "&" + params;
 		
 		logger.fine(url);
 
