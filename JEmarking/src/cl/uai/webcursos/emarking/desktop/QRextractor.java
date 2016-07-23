@@ -91,7 +91,7 @@ public class QRextractor implements Runnable {
 	}
 
 	private boolean doubleside = false;
-	
+
 	private String pdffile = null;
 
 	private TreeMap<Integer, Map<Integer, String>> decodedpages = null;
@@ -99,7 +99,7 @@ public class QRextractor implements Runnable {
 	private TreeMap<Integer, String> errorpages = null;
 
 	private EventListenerList listenerList = null;
-	
+
 	private Moodle moodle;
 
 	public QRextractor(Moodle _moodle) {
@@ -233,6 +233,18 @@ public class QRextractor implements Runnable {
 
 		long time = System.currentTimeMillis();
 		int currentpage = 0;
+
+		try {
+			File f = new File(this.pdffile);
+
+			if(!f.exists()) {
+				throw new Exception("Invalid PDF file for processing. It does not exist.");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			logger.error(e.getLocalizedMessage());
+			return;
+		}
 
 		// Checking if number of pages is even for double sided scanning jobs
 		if(doubleside && step % 2 != 0)
@@ -409,6 +421,18 @@ public class QRextractor implements Runnable {
 		}
 	}
 
+	/**
+	 * @param tempdir the tempdir to set
+	 */
+	public void setTempdir(String tmpdir) {	
+		try {
+			this.tempdir = new File(tmpdir);
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
 	public String getTempdirStringPath() {
 		return this.tempdir.getAbsolutePath();
 	}
@@ -424,6 +448,7 @@ public class QRextractor implements Runnable {
 
 		// If we are processing a PDF file we use ghostscript to read it
 		if(this.fileType == FileType.PDF) {
+			logger.debug("PDF file being processed " + pdffile);
 			File inputfile = new File(pdffile);
 			File tmpfile = new File("input.pdf");
 			if(tmpfile.exists())
@@ -440,7 +465,7 @@ public class QRextractor implements Runnable {
 			Ghostscript gs = Ghostscript.getInstance();
 			gs.setStdOut(gsloggerOutStream);
 			gs.setStdOut(gsloggerOutStream);
-			
+
 			//prepare Ghostscript interpreter parameters
 			//refer to Ghostscript documentation for parameter usage
 			String[] gsArgs = new String[9];
