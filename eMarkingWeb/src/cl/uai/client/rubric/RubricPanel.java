@@ -229,14 +229,14 @@ public class RubricPanel extends EMarkingComposite {
 		// If we are in the popup interface we hide the close button
 		closeButton.setVisible(!popupInterface);
 
-		int height = (Window.getClientHeight() * 35) / 100;
-		scrollPanel.setHeight(height+"px");
-		
-		int width = this.getOffsetWidth();
-		scrollPanel.setWidth(width+"px");
-		
 		scrollPanel.setStyleName("rubricscroll");
+		
+		float height = Window.getClientHeight()
+				- EMarkingWeb.markingInterface.getToolbar().getOffsetHeight()
+				- 40;
+		height = height / 2;
 		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");
+		scrollPanel.setHeight(height + "px");
 		
 		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			scrollPanel.setVisible(false);
@@ -368,8 +368,6 @@ public class RubricPanel extends EMarkingComposite {
 			
 			// Hide rubric when hide is selected
 			scrollPanel.setVisible(!value.equals("hide") && EMarkingConfiguration.getMarkingType() != 5);
-			
-			EMarkingWeb.markingInterface.getRubricInterface().resizeToolsPanel();
 			
 			// We have to update visibility
 			for(int criterionId : rubricRows.keySet()) {

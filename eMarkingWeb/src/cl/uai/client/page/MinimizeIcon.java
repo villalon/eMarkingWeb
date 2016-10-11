@@ -47,6 +47,7 @@ public class MinimizeIcon extends TrashIcon {
 			rmark.setHeaderOnly(!rmark.isHeaderOnly());
 			mark.setMarkHTML();
 			Mark.hideIcons();
+			Mark.markPopup.setVisible(false);
 		}
 	}
 

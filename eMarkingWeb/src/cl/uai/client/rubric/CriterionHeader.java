@@ -51,7 +51,6 @@ public class CriterionHeader extends EMarkingComposite {
 	private int criterionId;
 	private int index;
 	private String criterionDescription;
-	private HTML criterionMarker = null;
 	private HTML bonusHtml = null;
 	private HTML regradeHtml = null;
 	private HTML loadingIcon = null;
@@ -71,10 +70,17 @@ public class CriterionHeader extends EMarkingComposite {
 		
 		Label lbl = new Label(cdesc);
 		lbl.addStyleName(Resources.INSTANCE.css().criterionheader());
-		
+		lbl.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				if(commentId > 0 && commentPage > 0)
+					EMarkingWeb.markingInterface.getMarkingPagesInterface().highlightRubricMark(commentId, commentPage);
+			}
+		});
 		mainPanel.add(lbl);
 		
 		HorizontalPanel horizontal = new HorizontalPanel();
+		horizontal.addStyleName(Resources.INSTANCE.css().colorsquaretable());
 		
 		//the square with the color
 		if(EMarkingConfiguration.isColoredRubric()){
@@ -101,19 +107,6 @@ public class CriterionHeader extends EMarkingComposite {
 		HTML separation = new HTML();
 		separation.setHTML("<div style='width:20px;height:20px;'></div>");
 		horizontal.add(separation);
-		
-		criterionMarker = new HTML();
-		criterionMarker.addStyleName(Resources.INSTANCE.css().rubricmark());
-		criterionMarker.setVisible(false);
-		criterionMarker.setHTML("<div class=\""+Resources.INSTANCE.css().innercomment()+"\">"+index+"</div>");
-		criterionMarker.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(commentId > 0 && commentPage > 0)
-					EMarkingWeb.markingInterface.getMarkingPagesInterface().highlightRubricMark(commentId, commentPage);
-			}
-		});
-		horizontal.add(criterionMarker);
 		
 		mainPanel.add(horizontal);
 		
@@ -176,11 +169,6 @@ public class CriterionHeader extends EMarkingComposite {
 
 	public void setBackGroundPercent(int backGroundPercent) {
 		this.backGroundPercent = backGroundPercent;
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker0());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker25());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker50());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker75());
-		this.criterionMarker.removeStyleName(Resources.INSTANCE.css().marker100());
 	}
 	
 	public void setBonus(float b) {
@@ -208,7 +196,6 @@ public class CriterionHeader extends EMarkingComposite {
 	}
 
 	public void setMarkerVisible(boolean visible) {
-		criterionMarker.setVisible(visible);
 		bonusHtml.setVisible(visible);
 		regradeHtml.setVisible(visible);
 		if(this.regradeid == 0)

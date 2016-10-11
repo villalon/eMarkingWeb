@@ -22,13 +22,10 @@ package cl.uai.client.marks;
 
 import java.util.logging.Logger;
 
-import cl.uai.client.EMarkingConfiguration;
-import cl.uai.client.EMarkingWeb;
-import cl.uai.client.MarkingInterface;
-
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
+
+import cl.uai.client.EMarkingWeb;
 
 /**
  * Handler for moving the mouse over a mark. Implements showing
@@ -44,78 +41,15 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 
 	@Override
 	public void onMouseOver(MouseOverEvent event) {
-		// Gets the absolute panel which contains the mark to calculate its coordinates
 		Mark mark = (Mark) event.getSource();
-		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
-
-		int topdiff = - 20;
-		int widthdiff = - 12;
 		
-		if(mark instanceof RubricMark) {
-			topdiff = - 20;
-			widthdiff = - 20;
-		}
-		// Calculates basic left, top position for icons
-		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() + (topdiff);
-		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
-
-		// Check if icons and popup are already added in the panel, if not adds them
-		if(abspanel.getWidgetIndex(Mark.editIcon) < 0)
-			abspanel.add(Mark.editIcon, left, top);
-
-		if(abspanel.getWidgetIndex(Mark.deleteIcon) < 0)
-			abspanel.add(Mark.deleteIcon, left, top);
-
-		if(abspanel.getWidgetIndex(Mark.regradeIcon) < 0)
-			abspanel.add(Mark.regradeIcon, left, top);
-
-		if(abspanel.getWidgetIndex(Mark.minimizeIcon) < 0)
-			abspanel.add(Mark.minimizeIcon, left, top);
-
-		// Make sure no other icons are left
-		Mark.hideIcons();
-
-		// If we are in grading mode, show delete and edit icons
-		if(!EMarkingConfiguration.isReadonly()) {
-			
-			if(mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.minimizeIcon, left, top);
-				Mark.minimizeIcon.setVisible(true);
-				Mark.minimizeIcon.setMark(mark);
-				left -= 15;
-				
-			}
-			
-			// Edit icon is only for comments and rubrics
-			if(mark instanceof CommentMark || mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.editIcon, left, top);
-				Mark.editIcon.setVisible(true);
-				Mark.editIcon.setMark(mark);
-				left -= 15;
-				top -= 1;
-			}
-
-			// Delete icon
-			abspanel.setWidgetPosition(Mark.deleteIcon, left, top);
-			Mark.deleteIcon.setVisible(true);
-			Mark.deleteIcon.setMark(mark);
-		}
+		Mark.showIcons(mark);
 		
-		// If the user owns the submission and the dates are ok we show the regrade icon
-		if(EMarkingConfiguration.isOwnDraft() && MarkingInterface.submissionData.isRegradingAllowed()) {
-			// Edit icon is only for comments and rubrics
-			if(mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.regradeIcon, left, top);
-				Mark.regradeIcon.setVisible(true);
-				Mark.regradeIcon.setMark(mark);
-			}			
-		}
-
 		// Highlight the rubric interface if the mark is a RubricMark
 		if(mark instanceof RubricMark) {
 			int criterionid = ((RubricMark) mark).getCriterionId();
 			EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().highlightRubricCriterion(criterionid);
 		}
-						
+		
 	}
 }

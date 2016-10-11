@@ -159,6 +159,8 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	public void highlightRubricMark(int markId, int markPage) {
 		// Select the page and load if necessary
 		scrollToPage(markPage - 1);
+		RubricMark mark = (RubricMark) getPageByIndex(markPage-1).getMarkWidgets().get(markId);
+		Mark.showIcons(mark);
 	}
 
 	public void scrollToPage(int page) {

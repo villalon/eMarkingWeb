@@ -30,7 +30,6 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -74,14 +73,8 @@ public class RubricInterface extends EMarkingComposite {
 
 	@Override
 	protected void onLoad() {
-		super.onLoad();
-		toolsPanel.setWidth("100%");
-		resizeToolsPanel();
-	}
-	
-	public void resizeToolsPanel() {
-		int height = Window.getClientHeight() - toolsPanel.getAbsoluteTop();
-		toolsPanel.setHeight(height+"px");
+		mainPanel.setHeight(getParent().getOffsetHeight() + "px");
+		super.onLoad();		
 	}
 	
 	@Override
@@ -105,11 +98,6 @@ public class RubricInterface extends EMarkingComposite {
 		return rubricPanel;
 	}
 
-	public void restoreRubricPanel() {
-		mainPanel.remove(rubricPanel);
-		mainPanel.insert(rubricPanel, 0);
-	}
-	
 	public ToolsPanel getToolsPanel() {
 		return this.toolsPanel;
 	}

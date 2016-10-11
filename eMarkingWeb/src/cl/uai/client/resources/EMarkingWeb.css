@@ -24,16 +24,18 @@
     .gwt-TabBarRest-wrapper, .gwt-TabBarItem-wrapper, .gwt-TabBar, .gwt-TabBarItem-selected,
     .gwt-TabBarItem-wrapper-selected, .gwt-ToggleButton, .gwt-PushButton, .gwt-TabPanelBottom,
     .gwt-ToggleButton-down, .gwt-ToggleButton-up, .gwt-PushButton-up, .gwt-PushButton-down,
-    .gwt-ToggleButton-down-hovering, .gwt-ToggleButton-up-hovering, .gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering;
+    .gwt-ToggleButton-down-hovering, .gwt-ToggleButton-up-hovering, .gwt-PushButton-up-hovering,
+    .gwt-PushButton-down-hovering;
 
 /** Main interfaces **/
-.interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable, .rubricpanel, .rubricinterface
+.interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable,
+.rubricpanel, .rubricinterface, .colorsquaretable
 	{
 	width: 100%;
 }
 
 .rubricrow {
-	border-bottom: 1px solid #ccc;
+	background-color: #eee;
 }
 
 .markbuttons {
@@ -42,12 +44,11 @@
 
 .rubricinterface {
 	background-color: #fff;
-	border-radius: 5px;
-	border: solid 1px #2d5873;
 }
 
 .rubricinterface,.rubricinterface td {
-	font-size: 8pt;
+	font-size: 12px;
+	line-height: 15px;
 }
 
 .interfacepanel,.buttonspanel {
@@ -73,11 +74,12 @@
 
 /** Toolbar parts **/
 .studentSelector select,.rubricfilterselect {
-	font-size: x-small;
+	font-size: 12px;
 	height: 1.6em;
 	line-height: 1.6em;
 	padding: 0px;
 	width: 300px;
+	margin-top: 10px;
 }
 
 .rubricfilterselect {
@@ -102,6 +104,14 @@
 	background-color: #fff;
 }
 
+.previouscomments .gwt-TabBar {
+	margin-top:10px;
+}
+
+.previouscomments .gwt-TabBarItem-selected {
+	background-color: #2d5873;
+	color: #fff;
+}
 .buttonspanel{
 	margin-left: 0px;
 	border-bottom: 1px solid #ccc;	
@@ -194,8 +204,17 @@ to {
 
 .previousComment {
 	float: left;
-	background-color: #61B7CF;
+	background-color: #2d5873;
+	color: #fff;
+	font-weight: bold;
 }
+
+.previouscomments .gwt-TabPanelBottom {
+	border-collapse: collapse;
+    border-style: none;
+    border-width: 0px;
+}
+
 
 .iconupdating,.iconloading,.rubricmark {
 	margin: 2px;
@@ -211,11 +230,12 @@ to {
 	font-size: 3em;
 }
 
-.criterionDescription,.previousComment {
-	margin: 2px;
+.criterionDescription,.previousComment, .criterionrow {
+	margin: 3px;
 	padding: 2px;
 }
 .criterionDescription {
+	background-color: #ffffff;
 }colorrionheader,.criterionheaderregrade,.criterionheaderregradeaccepted
 	{
 	font-weight: bold;
@@ -234,18 +254,20 @@ to {
     max-height: 100px;
     overflow-y: auto;
     min-width: 50px;
+    height: 100px;
 }
 
 .regradecomment {
 	background-color: #E8FFE8;
 }
 
-.criterionDescription,.previousComment,.sortpagesdraghandle {
+.sortpagesdraghandle {
 	border-radius: 3px;
 	border: solid 1px;
 }
 
 .rubricLevelSelected {
+	font-weight: bolder;
 	background-color: #D0FFD0;
 }
 
@@ -290,9 +312,10 @@ to {
 	height: 34px;
 }
 
-.checkmark,.crossmark {
-	color: #ff0000;
+.checkmark,.crossmark, .rubricmark {
+	color: #fa3c45;
 	font-weight: 100;
+	text-shadow: 1px 1px #999;
 }
 
 .commentmark {
@@ -318,7 +341,7 @@ to {
 }
 
 .scale,.criterionheaderbonus {
-	font-size: x-small;
+	font-size: 12px;
 }
 
 .criterionheaderbonus {
@@ -338,7 +361,7 @@ to {
 
 .rubrictitle,.prevcommentstitle {
 	height: 26px;
-	margin-top: 6px;
+	margin-top: 10px;
 }
 
 .rubrictitle,.prevcommentstitle,.rubrictitlepanel {
@@ -418,8 +441,16 @@ to {
 	white-space: nowrap;
 }
 
-.markcrit,.marklvl,.criterionrow {
+.markcrit,.marklvl {
 	margin-left: 2px;
+}
+
+.criterionrow {
+	background-color: #2d5873;
+/*	background-color: #067906; */
+	color: #fff;
+    height: 120px;
+    margin-left: 0px;
 }
 
 .btnsave,.btncancel {
@@ -461,7 +492,7 @@ to {
 }
 
 .oddrow {
-	background-color: #eee;
+	background-color: #fff;
 }
 
 .pagecanvas {
@@ -477,7 +508,9 @@ to {
 	background-color: #fff;
 	border-radius: 3px;
 	z-index: 100;
-	box-shadow: 1px 1px 2px #666;
+	box-shadow: 2px 3px 5px -3px black;
+	font-size: 12px;
+	line-height: 15px;
 }
 
 .markpopuppanel {
@@ -486,11 +519,20 @@ to {
 	border-color: #FFF;
 }
 
+@keyframes highlight {
+	from {background-color: #ff8000;}
+	to {background-color: #ffcc66;}
+}
 .rubricmarkhover {
+	background-color: #ffcc66;
+	animation-name:highlight;
+	animation-duration: 1s;
+	font-weight: bold;
 }
 
 .criterionheader {
 	width: 100px;
+	margin: 5px;
 }
 
 .toolbarbuttons {
@@ -559,7 +601,7 @@ to {
 	border: 0px;
 }
 
-.criterionrow .rubricmark {
+.criterionrow .rubricmark, .criterionheader {
 	cursor: pointer;
 }
 
@@ -754,9 +796,10 @@ to {
 	gwt-image: "othermarker100";
 }
 .colorsquare{
-	width:20px;
-	height:20px;
-	border:1px solid #000;
+	width:30px;
+	height:30px;
+	border-radius:50%;
+	float: right;
 }
 
 .miniscale{

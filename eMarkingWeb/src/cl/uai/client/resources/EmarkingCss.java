@@ -181,4 +181,5 @@ public interface EmarkingCss extends CssResource {
 	String discussiondialog();
 	String tablediscussionmessages();
 	String mediscussionmessage();
+	String colorsquaretable();
 }

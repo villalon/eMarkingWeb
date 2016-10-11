@@ -32,6 +32,7 @@ import cl.uai.client.page.EditIcon;
 import cl.uai.client.page.EditMarkDialog;
 import cl.uai.client.page.EditMarkMenu;
 import cl.uai.client.page.LoadingIcon;
+import cl.uai.client.page.MarkPopup;
 import cl.uai.client.page.MarkingPage;
 import cl.uai.client.page.MinimizeIcon;
 import cl.uai.client.page.RegradeIcon;
@@ -50,6 +51,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 
@@ -109,6 +111,10 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		loadingIcon = new LoadingIcon();
 	}
 
+	public static MarkPopup markPopup = null;
+	static {
+		markPopup = new MarkPopup();
+	}
 	/**
 	 * Hides all icons
 	 */
@@ -117,6 +123,86 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		editIcon.setVisible(false);
 		regradeIcon.setVisible(false);
 		minimizeIcon.setVisible(false);
+	}
+	
+	public static void showIcons(Mark mark) {
+		// Gets the absolute panel which contains the mark to calculate its coordinates
+		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
+
+		int topdiff = - 20;
+		int widthdiff = - 12;
+		
+		if(mark instanceof RubricMark) {
+			topdiff = - 20;
+			widthdiff = - 0;
+		}
+		// Calculates basic left, top position for icons
+		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() + (topdiff);
+		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
+
+		// Check if icons and popup are already added in the panel, if not adds them
+		if(abspanel.getWidgetIndex(Mark.editIcon) < 0)
+			abspanel.add(Mark.editIcon, left, top);
+
+		if(abspanel.getWidgetIndex(Mark.deleteIcon) < 0)
+			abspanel.add(Mark.deleteIcon, left, top);
+
+		if(abspanel.getWidgetIndex(Mark.regradeIcon) < 0)
+			abspanel.add(Mark.regradeIcon, left, top);
+
+		if(abspanel.getWidgetIndex(Mark.minimizeIcon) < 0)
+			abspanel.add(Mark.minimizeIcon, left, top);
+
+		if(abspanel.getWidgetIndex(Mark.markPopup) < 0)
+			abspanel.add(Mark.markPopup, left, top);
+
+		// Make sure no other icons are left
+		Mark.hideIcons();
+
+		// If we are in grading mode, show delete and edit icons
+		if(!EMarkingConfiguration.isReadonly()) {
+			
+			if(mark instanceof RubricMark) {
+				abspanel.setWidgetPosition(Mark.minimizeIcon, left, top);
+				Mark.minimizeIcon.setVisible(true);
+				Mark.minimizeIcon.setMark(mark);
+				left -= 15;
+				
+			}
+			
+			// Edit icon is only for comments and rubrics
+			if(mark instanceof CommentMark || mark instanceof RubricMark) {
+				abspanel.setWidgetPosition(Mark.editIcon, left, top);
+				Mark.editIcon.setVisible(true);
+				Mark.editIcon.setMark(mark);
+				left -= 15;
+				top -= 1;
+			}
+
+			// Delete icon
+			abspanel.setWidgetPosition(Mark.deleteIcon, left, top);
+			Mark.deleteIcon.setVisible(true);
+			Mark.deleteIcon.setMark(mark);
+		}
+		
+		// If the user owns the submission and the dates are ok we show the regrade icon
+		if(EMarkingConfiguration.isOwnDraft() && MarkingInterface.submissionData.isRegradingAllowed()) {
+			// Edit icon is only for comments and rubrics
+			if(mark instanceof RubricMark) {
+				abspanel.setWidgetPosition(Mark.regradeIcon, left, top);
+				Mark.regradeIcon.setVisible(true);
+				Mark.regradeIcon.setMark(mark);
+			}			
+		}
+
+		// Highlight the rubric interface if the mark is a RubricMark
+		if(mark instanceof RubricMark) {
+			Mark.markPopup.setHTML(((RubricMark) mark).getMarkPopupHTML());
+			Mark.markPopup.setVisible(true);
+			top += 50;
+			abspanel.setWidgetPosition(Mark.markPopup, left, top);
+		}
+			
 	}
 	
 	protected static EditMarkMenu editMenu = null;
@@ -387,13 +473,17 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				if(mark instanceof RubricMark) {
 					RubricMark rmark = (RubricMark)mark;
 					// Update submission data
+					int previousLevelid = rmark.getLevelId();
+					float previousBonus = rmark.getBonus();
 					rmark.setLevelId(newlevel);
 					rmark.setBonus(newbonus);
 					rmark.setRegradeaccepted(newregradeaccepted);
 					rmark.setRegrademarkercomment(newregrademarkercomment);
-					if(rmark.getLevelId() != newlevel) {
+					if(rmark.getLevelId() != previousLevelid
+							|| rmark.getBonus() != previousBonus) {
 						rmark.setMarkername(MarkingInterface.submissionData.getMarkerfirstname() + " " + MarkingInterface.submissionData.getMarkerlastname());
 						rmark.setMarkerid(MarkingInterface.submissionData.getMarkerid());
+						Mark.showIcons(rmark);
 					}
 					EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(rmark);
 					EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().finishloadingRubricCriterion(newlevel);
@@ -441,7 +531,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				public void onClose(CloseEvent<PopupPanel> event) {
 					EditMarkDialog dialog = (EditMarkDialog) event.getSource();
 					
-					MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().getPageByIndex(pageno-1);
+					MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().
+							getPageByIndex(pageno-1);
 					int widthPage = page.getWidth();
 					int heightPage = page.getHeight();
 					// If the dialog was not cancelled update the mark with the dialog values

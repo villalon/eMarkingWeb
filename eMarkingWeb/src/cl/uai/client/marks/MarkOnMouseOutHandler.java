@@ -23,6 +23,8 @@ package cl.uai.client.marks;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 
+import cl.uai.client.EMarkingWeb;
+
 /**
  * Manages when the mouse goes out from a Mark
  * 
@@ -32,6 +34,13 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 public class MarkOnMouseOutHandler implements MouseOutHandler {
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
+		// Gets the absolute panel which contains the mark to calculate its coordinates
+		Mark mark = (Mark) event.getSource();
+		if(mark instanceof RubricMark) {
+			RubricMark rmark = (RubricMark) mark;
+			EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().
+				dehighlightRubricCriterion(rmark.getCriterionId());
+		}
 	}
 }
 

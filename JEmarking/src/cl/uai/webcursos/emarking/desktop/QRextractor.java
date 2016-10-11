@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -448,9 +449,10 @@ public class QRextractor implements Runnable {
 
 		// If we are processing a PDF file we use ghostscript to read it
 		if(this.fileType == FileType.PDF) {
-			logger.debug("PDF file being processed " + pdffile);
+			Path dir = Files.createTempDirectory("emarking");
 			File inputfile = new File(pdffile);
-			File tmpfile = new File("input.pdf");
+			File tmpfile = new File(dir.toAbsolutePath() + "input.pdf");
+			logger.debug("PDF file being processed " + pdffile + " copying to " + tmpfile.getAbsolutePath());
 			if(tmpfile.exists())
 				tmpfile.delete();
 
@@ -476,8 +478,8 @@ public class QRextractor implements Runnable {
 			gsArgs[4] = "-r" + resolution;
 			gsArgs[5] = "-dFirstPage=" + first;
 			gsArgs[6] = "-dLastPage=" + last;
-			gsArgs[7] = "-sOutputFile=tmpfigure%d.png";
-			gsArgs[8] = "input.pdf";
+			gsArgs[7] = "-sOutputFile=" + dir.toAbsolutePath() + "tmpfigure%d.png";
+			gsArgs[8] = dir.toAbsolutePath() + "input.pdf";
 
 			//execute and exit interpreter
 			try {
@@ -492,7 +494,7 @@ public class QRextractor implements Runnable {
 
 			for(int i=1;i<=last-first+1;i++) {
 				try {
-					File f = new File("tmpfigure"+ i +".png");
+					File f = new File(dir.toAbsolutePath() + "tmpfigure"+ i +".png");
 					images.add(ImageIO.read(f));
 					f.delete();
 				} catch (IOException e) {

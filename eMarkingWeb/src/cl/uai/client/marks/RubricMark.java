@@ -111,7 +111,7 @@ public class RubricMark extends Mark {
 		this.format = 2;
 		this.iconType = IconType.TH;
 		
-		this.addStyleName(Resources.INSTANCE.css().markpopup());
+		this.addStyleName(Resources.INSTANCE.css().rubricmark());
 
 		this.setLevelId(lvlid);
 		
@@ -232,7 +232,15 @@ public class RubricMark extends Mark {
 
 	@Override
 	public void setMarkHTML() {
+		// If the mark has a color, we use the background to color it
+		if(this.criterionid > 0 && EMarkingConfiguration.isColoredRubric()) {
+			Color.setWidgetFontHueColor(this.criterionid, this);
+		}
 
+		this.setHTML((new Icon(IconType.MAP_MARKER)).toString());		
+	}
+	
+	public String getMarkPopupHTML() {
 		// Starts with an empty HTML
 		String html = "";
 		boolean headerOnly = false;
@@ -280,13 +288,8 @@ public class RubricMark extends Mark {
 						+ "</div>";
 			}
 		}
-
-		// If the mark has a color, we use the background to color it
-		if(this.criterionid > 0 && EMarkingConfiguration.isColoredRubric()) {
-			Color.setWidgetBackgroundHueColor(this.criterionid, this);
-		}
-
-		this.setHTML(html);		
+		
+		return html;
 	}
 
 	/**
@@ -397,6 +400,9 @@ public class RubricMark extends Mark {
 		return MarkingInterface.submissionData.getLevelById(levelid);
 	}
 
+	public float getBonus() {
+		return this.bonus;
+	}
 	public int getCriterionId() {
 		if(getLevel() != null) {
 			return getLevel().getCriterion().getId();

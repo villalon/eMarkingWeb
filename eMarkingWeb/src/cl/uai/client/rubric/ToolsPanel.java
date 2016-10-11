@@ -4,9 +4,11 @@
 package cl.uai.client.rubric;
 
 import cl.uai.client.EMarkingConfiguration;
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -92,12 +94,15 @@ public class ToolsPanel extends Composite {
 	protected void onLoad() {
 		super.onLoad();
 		
+		scroll.setStyleName("rubricscroll");
+		
+		float height = Window.getClientHeight()
+				- EMarkingWeb.markingInterface.getToolbar().getOffsetHeight()
+				- 40;
+		height = height / 2;
+		scroll.getElement().getStyle().setProperty("MaxHeight", height+"px");
+		scroll.setHeight(height + "px");
+
 		marksSummary.loadSubmissionData();
-	}
-	
-	@Override
-	public void setHeight(String height) {
-		super.setHeight(height);
-		 scroll.setHeight(height);
 	}
 }

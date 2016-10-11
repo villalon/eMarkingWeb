@@ -219,47 +219,26 @@ public class SubmissionGradeData {
 		SubmissionGradeData submissionData = new SubmissionGradeData();
 		
 		try {
-		logger.fine("id");
 		submissionData.setId(Integer.parseInt(values.get("id")));
-		logger.fine("grademin");
 		submissionData.setGrademin(Float.parseFloat(values.get("grademin")));
-		logger.fine("grademax");
 		submissionData.setGrademax(Float.parseFloat(values.get("grademax")));
-		logger.fine("courseid");
 		submissionData.setCourseid(Integer.parseInt(values.get("courseid")));
-		logger.fine("coursename");
 		submissionData.setCoursename(values.get("coursename"));
-		logger.fine("courseshort");
 		submissionData.setCourseshort(values.get("courseshort"));
-		logger.fine("markeremail");
 		submissionData.setMarkeremail(values.get("markeremail"));
-		logger.fine("markerfirstname");
 		submissionData.setMarkerfirstname(values.get("markerfirstname"));
-		logger.fine("markerlastname");
 		submissionData.setMarkerlastname(values.get("markerlastname"));
-		logger.fine("markerid");
 		submissionData.setMarkerid(Integer.parseInt(values.get("markerid")));
-		logger.fine("activityname");
 		submissionData.setActivityname(values.get("activityname"));
-		logger.fine("feedback");
 		submissionData.setFeedback(values.get("feedback"));
-		logger.fine("custommarks");
 		submissionData.setCustommarks(values.get("custommarks"));
-		logger.fine("qualitycontrol");
 		submissionData.setQualitycontrol(values.get("qualitycontrol").equals("1"));
-		logger.fine("coursemodule");
 		submissionData.setCoursemoduleid(Integer.parseInt(values.get("coursemodule")));
-		logger.fine("timecreated");
 		submissionData.setDatecreated(Long.parseLong(values.get("timecreated")));					
-		logger.fine("regraderestrictdates");
 		submissionData.setRegraderestrictdates(values.get("regraderestrictdates").equals("1"));
-		logger.fine("regradesopendate");
 		submissionData.setRegradeopendate(new Date(Long.parseLong(values.get("regradesopendate")) * 1000));					
-		logger.fine("regradesclosedate");
 		submissionData.setRegradeclosedate(new Date(Long.parseLong(values.get("regradesclosedate")) * 1000));					
-		logger.fine("finalgrade");
 		submissionData.setFinalgrade(Float.parseFloat(values.get("finalgrade")));
-		logger.fine("timemodified");
 		submissionData.setDatemodified(Long.parseLong(values.get("timemodified")));
 		
 		logger.fine("drafts");
@@ -282,27 +261,16 @@ public class SubmissionGradeData {
 		logger.fine("Rubric parsed");
 		
 		for(Map<String, String> criterion : rubric) {
-			logger.fine("id");
 			int criterionId = Integer.parseInt(criterion.get("id"));
-			logger.fine("sortorder");
 			int criterionSortOrder = Integer.parseInt(criterion.get("sortorder"));
-			logger.fine("maxscore");
 			float maxscore = Float.parseFloat(criterion.get("maxscore"));
-			logger.fine("description");
 			String criterionDescription = criterion.get("description").toString();
-			logger.fine("rubricname");
 			submissionData.setRubricname(criterion.get("rubricname").toString());
-			logger.fine("regradeid");
 			int regradeid = Integer.parseInt(criterion.get("regradeid"));
-			logger.fine("regradeaccepted");
 			int regradeaccepted = Integer.parseInt(criterion.get("regradeaccepted"));
-			logger.fine("motive");
 			int regrademotive = Integer.parseInt(criterion.get("motive"));
-			logger.fine("markerassigned");
 			boolean markerIsAssigned = Integer.parseInt(criterion.get("markerassigned")) == 1;
-			logger.fine("regradecomment");
 			String regradecomment = criterion.get("regradecomment").toString();
-			logger.fine("regrademarkercomment");
 			String regrademarkercomment = criterion.get("regrademarkercomment").toString();
 
 			logger.fine("levels");

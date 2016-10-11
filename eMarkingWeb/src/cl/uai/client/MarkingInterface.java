@@ -77,7 +77,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -235,7 +234,7 @@ public class MarkingInterface extends EMarkingComposite {
 		bubbleButtons.add(new ShowHelpButton(Window.getClientWidth()-40, 135, NodeChat.SOURCE_SOS));
 
 		interfacePanel.add(loadingMessage);
-		interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
+		// interfacePanel.setCellHorizontalAlignment(loadingMessage, HasAlignment.ALIGN_CENTER);		
 
 		markingPanel = new AbsolutePanel();
 		markingPanel.add(interfacePanel);
@@ -625,6 +624,7 @@ public class MarkingInterface extends EMarkingComposite {
 					}
 					rubricInterface.getToolsPanel().getPreviousComments().deletePreviousComment(rubricMark.getRawtext());
 					setFinalgrade(newgrade, timemodified);
+					Mark.markPopup.setVisible(false);
 				} else {
 					markingPagesInterface.deleteMarkWidget(mark.getId());
 					setTimemodified(timemodified);
@@ -693,9 +693,6 @@ public class MarkingInterface extends EMarkingComposite {
 		markingPagesInterface = new MarkingPagesInterface();
 		rubricInterface = new RubricInterface();
 
-		interfacePanel.add(markingPagesInterface);
-		interfacePanel.setCellWidth(markingPagesInterface, "60%");
-
 		for(BubbleButton b : bubbleButtons) {
 			b.setLeft(Window.getClientWidth()-40);
 			b.updatePosition(markingPanel);
@@ -708,8 +705,9 @@ public class MarkingInterface extends EMarkingComposite {
 			b.setVisible(false);
 		}		
 
+		interfacePanel.add(markingPagesInterface);
 		interfacePanel.add(rubricInterface);
-		interfacePanel.setCellWidth(rubricInterface, "40%");
+		interfacePanel.setHeight((Window.getClientHeight() - toolbar.getOffsetHeight()) + "px");
 
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
 		rubricInterface.setVisible(EMarkingConfiguration.isShowRubricOnLoad());

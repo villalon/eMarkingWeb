@@ -95,12 +95,14 @@ public class EMarkingWeb implements EntryPoint {
 		// Pointer to CSS manager. It has to go first!
 		GWT.<Resources>create(Resources.class).css().ensureInjected();
 		// Log messages
-		logger.fine("Loading eMarkingWeb interface");
-		logger.fine(Navigator.getPlatform());
-		logger.fine(Navigator.getUserAgent());
-		logger.fine(Navigator.getAppName());
-		logger.fine(Navigator.getAppCodeName());
-		logger.fine(Navigator.getAppVersion());
+		String msg = "Loading EMarkingWeb interface \n" +
+		"Platform: " + Navigator.getPlatform() + "\n" +
+		"User agent: " + Navigator.getUserAgent() + "\n" +
+		"App name: " + Navigator.getAppName() + "\n" +
+		"App code name: " + Navigator.getAppCodeName() + "\n" +
+		"App version: " + Navigator.getAppVersion();
+		
+		logger.fine(msg);
 
 		// List of errors after trying to initialize
 		ArrayList<String> errors = new ArrayList<String>();
