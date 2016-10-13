@@ -438,6 +438,7 @@ public class MarkingInterface extends EMarkingComposite {
 					final String comment = dialog.getTxtComment(); // Comment from dialog
 					final float bonus = dialog.getBonus();
 					final int levelid = dialog.getLevelId();
+					final String feedbacktext = dialog.getFeedback();
 
 					// Ajax URL for adding mark
 					String url = "action=addmark"+
@@ -449,7 +450,8 @@ public class MarkingInterface extends EMarkingComposite {
 							"&bonus="+bonus+
 							"&comment="+URL.encode(comment) +
 							"&windowswidth=" + page.getWidth() +
-							"&windowsheight=" + page.getHeight();
+							"&windowsheight=" + page.getHeight() +
+							"&feedback=" + URL.encode(feedbacktext);
 
 					// Add loading icon
 					Mark.loadingIcon.removeFromParent();
