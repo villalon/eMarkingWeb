@@ -182,4 +182,19 @@ public interface EmarkingCss extends CssResource {
 	String tablediscussionmessages();
 	String mediscussionmessage();
 	String colorsquaretable();
+	
+	String feedbackdialog();
+	String feedbackpanel();
+	String resorucespanel();
+	String keywordspanel();
+	String btnkeyword();
+	String scrollresources();
+	String panelscrollresources();
+	String resourcetitle();
+	String resourcelink();
+	String hrsize();
+	String plusicon();
+	String feedbacktext();
+	String feedbacksummary();
+	String feedbackforstudent();
 }
