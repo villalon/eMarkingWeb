@@ -1072,3 +1072,74 @@ background-color: #c0c0c0;
 	margin-top: 5px;
 	max-width: 474px;
 }
+
+.feedbackdialog{
+	width: 900px;
+}
+
+.feedbackpanel{
+	width: 600px;
+}
+
+.resorucespanel{
+ 	width: 600px;
+}
+
+.keywordspanel{
+	border-spacing: 5px;
+    border-collapse: separate;
+	max-width: 600px;
+	font-size: 2em;
+}
+ 
+.btnkeyword{
+	font-size: 1em;
+	padding: 2px 5px 2px 5px;
+	border-radius: 4px;
+}
+
+.scrollresources {
+	max-height: 300px;
+	max-width: 600px;
+	overflow-x:hidden;
+}
+ 
+.panelscrollresources{
+	width: 580px;
+	overflow-x:hidden;
+}
+
+.resourcetitle{
+	width: 330px;
+	overflow-x:hidden;
+}
+
+ .resourcelink{
+ 	width: 215px;
+	overflow-x:hidden;
+}
+
+.hrsize{
+	height: 1px;
+}
+
+.plusicon{
+	width: 25px;
+}
+ 
+.feedbacktext{
+	width: 290px;
+	word-wrap: break-word;
+	overflow-x:hidden;
+}
+
+.feedbacksummary{
+	width: 300px;
+	max-height: 150px;
+ 	word-wrap: break-word;
+}
+
+.feedbackforstudent{
+	width: 290px;
+  	word-wrap: break-word;
+ }

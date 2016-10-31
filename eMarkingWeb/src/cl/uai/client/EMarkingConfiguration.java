@@ -74,6 +74,9 @@ public class EMarkingConfiguration {
 
 	/** Path for NodeJs server which implements the chat interface **/
 	private static String nodeJsPath;
+	
+	/** String contains the keywords separated by comma **/
+	private static String keywords;
 
 	/** If is enabled linkrubric (Marcelo's thesis) **/
 	private static boolean coloredRubric = false;
@@ -131,6 +134,13 @@ public class EMarkingConfiguration {
 	 */
 	public static String getNodejspath() {
 		return nodeJsPath;
+	}
+	
+	/**
+	 * @return the keywords
+	 */
+	public static String getKeywords() {
+		return keywords;
 	}
 
 	/**
@@ -251,6 +261,9 @@ public class EMarkingConfiguration {
 
 		// Obtain the nodejs path from Moodle configuration
 		nodeJsPath = value.get("nodejspath");
+		
+		// Obtain the keyword for the feedback
+		keywords = value.get("keywords");
 		
 		JSONObject obj = new JSONObject(JsonUtils.safeEval(value.get("motives")));
 		List<Map<String, String>> motives = AjaxRequest.getValuesFromResult(obj);

@@ -22,9 +22,11 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Level;
+import cl.uai.client.feedback.FeedbackInterface;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
@@ -44,6 +46,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -85,6 +88,12 @@ public class EditMarkDialog extends DialogBox {
 
 	/** Dialog's main panel **/
 	private VerticalPanel mainPanel;
+	
+	/** Super panel main + feedback**/
+	private HorizontalPanel superPanel;
+	
+	/** Feedback panel**/
+	private FeedbackInterface feedbackPanel;
 
 	/** The text box for the comment **/
 	private SuggestBox txtComment;
@@ -116,6 +125,12 @@ public class EditMarkDialog extends DialogBox {
 
 	/** Indicates if the dialog was cancelled **/
 	private boolean cancelled = false;
+	
+	private String keyWords = null;
+	private boolean simplePanel = false;
+	private ScrollPanel feedbackSummary;
+	private VerticalPanel feedbackForStudent;
+	private int count = 1;
 
 	
 	/**
@@ -133,6 +148,25 @@ public class EditMarkDialog extends DialogBox {
 		this.levelId = level;
 		Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
 
+		if(!EMarkingConfiguration.getKeywords().equals("null")){
+			keyWords = EMarkingConfiguration.getKeywords();
+		}else{
+			simplePanel = true;
+		}
+		
+		superPanel = new HorizontalPanel();
+		superPanel.addStyleName(Resources.INSTANCE.css().feedbackdialog());
+
+		feedbackPanel = new FeedbackInterface(keyWords);
+		feedbackPanel.setParent(this);
+		feedbackPanel.addStyleName(Resources.INSTANCE.css().feedbackpanel());
+		
+		feedbackForStudent = new VerticalPanel();
+		feedbackForStudent.addStyleName(Resources.INSTANCE.css().feedbackforstudent());
+		
+		feedbackSummary = new ScrollPanel(feedbackForStudent);
+		feedbackSummary.addStyleName(Resources.INSTANCE.css().feedbacksummary());
+		
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().editmarkdialog());
 
@@ -271,7 +305,19 @@ public class EditMarkDialog extends DialogBox {
 		mainPanel.add(hpanel);
 		mainPanel.setCellHorizontalAlignment(hpanel, HasHorizontalAlignment.ALIGN_RIGHT);
 
-		this.setWidget(mainPanel);
+		if(simplePanel){
+			// No feedback
+			this.setWidget(mainPanel);
+		}else{
+			// add feedback panel
+			mainPanel.add(new HTML("<h4>Feedback</h4>"));
+			mainPanel.add(feedbackSummary);
+		
+			superPanel.add(mainPanel);
+			superPanel.add(feedbackPanel);
+		
+			this.setWidget(superPanel);
+		}
 	}
 
 	@Override
@@ -398,5 +444,28 @@ public class EditMarkDialog extends DialogBox {
 			return false;
 		}		
 		return true;
+	}
+	
+	public void addFeedback(HTML name, HTML auxLink, String source) {
+		 HTML feedback = new HTML();
+		 if(source == "ocwmit"){
+			 source = "OCW MIT";
+		 }else if(source == "merlot"){
+			 source = "Merlot";
+		 }
+		 String html = "<p><b>" + count +". " + source + "</b> "+name.toString() + "</p><p><b>Link:<b> " + auxLink.toString() + "</p><hr>" ;
+		 feedback.setHTML(html);
+		 feedbackForStudent.add(feedback);	
+		 count = count + 1;
+	}
+	
+	public String getFeedback(){
+		String outputFeedback = "";
+		feedbackForStudent.iterator();
+		for(int i = 0; i < feedbackForStudent.getWidgetCount(); i++){
+			outputFeedback = outputFeedback + feedbackForStudent.getWidget(i).toString().replaceAll("\\<.*?>","");
+			outputFeedback = outputFeedback +"__separador__";
+		}
+		return outputFeedback;		
 	}
 }

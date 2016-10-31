@@ -19,7 +19,7 @@ public class QuoteMark extends CollaborativeMark{
 	
 	public QuoteMark(){
 		super();
-		icon = new Icon(IconType.SHARE_SIGN);
+		icon = new Icon(IconType.SHARE);
 		popupMarkers = new MyPopup();
 		markers = new HTML();
 
