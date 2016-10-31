@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.http.client.URL;
+
 public class Comment {
 
 	public static Comparator<Comment> CommentTextComparator  = new Comparator<Comment>() {
@@ -43,7 +45,7 @@ public class Comment {
 		Comment comment = null;
 		try {
 			int id = Integer.parseInt(values.get("id"));
-			String text = values.get("text").trim();
+			String text = URL.decode(values.get("text").trim());
 			int format = Integer.parseInt(values.get("format"));
 			int timesUsed = Integer.parseInt(values.get("used"));
 			long lastUsed = Long.parseLong(values.get("lastused"));

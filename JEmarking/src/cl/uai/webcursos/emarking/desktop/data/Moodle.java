@@ -35,7 +35,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -455,7 +457,7 @@ public class Moodle {
 
 	public void retrieveCourseFromId(int courseid) throws Exception {
 
-		if(fakeStudents) {
+		if(fakeStudents || courseid < 0) {
 			retrieveUserCourses();
 			return;
 		}
@@ -598,8 +600,17 @@ public class Moodle {
 			
 			return;
 		}
+		List<Integer> coursesToRetrieve = new ArrayList<Integer>();
+		if(courseId < 0) {
+			for(Integer cid : usercourses.keySet()) {
+				coursesToRetrieve.add(cid);
+			}			
+		} else {
+			coursesToRetrieve.add(courseId);
+		}
 		
-		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+courseId+"&username="+moodleUsername+"&password="+moodlePassword);
+		for(int course : coursesToRetrieve) {
+		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+course+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
 
@@ -624,6 +635,7 @@ public class Moodle {
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
+		}
 		}
 	}
 
@@ -871,5 +883,9 @@ public class Moodle {
 	 */
 	public void setFakeStudents(boolean fakeStudents) {
 		this.fakeStudents = fakeStudents;
+	}
+
+	public void copyCoursesFromUser() {
+		courses = usercourses;
 	}
 }

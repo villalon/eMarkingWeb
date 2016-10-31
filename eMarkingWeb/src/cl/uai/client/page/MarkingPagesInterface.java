@@ -238,7 +238,8 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					int newwidth = (int) screenWidth;
 					double ratio = (double) width / (double) height;
 					int newheight = (int) (screenWidth / ratio);
-					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), newwidth, newheight, allcomments);
+					MarkingPage page = new MarkingPage(tabnum, tabinfo.get("url"), newwidth, 
+							newheight, allcomments);
 					if(!showmarker) {
 						page.setVisible(false);
 					}

@@ -85,8 +85,6 @@ public class RegradeIcon extends HTML {
 
 		final RequestRegradeDialog dialog = new RequestRegradeDialog();
 		
-		logger.fine("Regrade id: " + rmark.getRegradeid() + " motive: " + rmark.getRegrademotive() + " comment: " + rmark.getRegradecomment());
-		
 		dialog.getComment().setText(rmark.getRegradecomment());
 		dialog.getMotive().setSelectedIndex(getMotiveIndex(rmark.getRegrademotive()));
 		

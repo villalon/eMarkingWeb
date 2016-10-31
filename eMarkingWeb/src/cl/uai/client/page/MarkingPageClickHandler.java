@@ -36,6 +36,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 
@@ -106,7 +107,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 							unixtime,
 							selectedCriterion,
 							"Not set",
-							dialog.getTxtComment()
+							URL.encode(dialog.getTxtComment())
 							);
 					EMarkingWeb.markingInterface.addMark(mark, parentPage);
 				}

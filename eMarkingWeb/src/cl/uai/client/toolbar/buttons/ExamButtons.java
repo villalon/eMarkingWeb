@@ -132,7 +132,7 @@ public class ExamButtons extends Buttons {
 		
 		selectAsAnswerKey = new ToggleButton();
 		selectAsAnswerKey.addStyleName(Resources.INSTANCE.css().rubricbutton());
-		Icon i = new Icon(IconType.SEARCH);
+		Icon i = new Icon(IconType.TROPHY);
 		selectAsAnswerKey.setHTML(i.toString() + "<div class=\""+Resources.INSTANCE.css().rubricbuttontext()+"\">" +
 				MarkingInterface.messages.AnswerKey() + "</div>");
 		selectAsAnswerKey.setVisible(true);

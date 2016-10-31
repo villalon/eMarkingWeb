@@ -241,6 +241,15 @@ public class EmarkingDesktop {
 					menuSave.setEnabled(true);
 					lblStatusBar.setText(moodle.getPages().getSummary());
 				}
+				try {
+					if(moodle.getCourses().size()==0)
+						moodle.retrieveCourseFromId(-1);
+					if(moodle.getStudents().size()==0)
+						moodle.retrieveStudents(-1);
+					moodle.copyCoursesFromUser();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
 				logger.debug("QR extraction finished!");
 			}
 			@Override

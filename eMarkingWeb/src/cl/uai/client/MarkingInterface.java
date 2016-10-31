@@ -173,8 +173,6 @@ public class MarkingInterface extends EMarkingComposite {
 	 */
 	public MarkingInterface() {
 
-		logger.fine("Initializing eMarking");
-
 		// The timer will check if no other resize events have been called in the last 200 ms
 		resizeTimer = new Timer() {			
 			@Override
@@ -396,7 +394,7 @@ public class MarkingInterface extends EMarkingComposite {
 
 				if(!(mark instanceof CustomMark) && mark.getFormat() != 5) {
 					EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
-					getPreviousComments().addMarkAsCommentToInterface(mark);
+					getPreviousComments().addMarkAsCommentToInterface(mark, true);
 				}
 
 				// Updates toolbar
@@ -539,7 +537,7 @@ public class MarkingInterface extends EMarkingComposite {
 							toolbar.getMarkingButtons().changeColor(criterion.getId());
 
 							EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
-							getPreviousComments().addMarkAsCommentToInterface(mark);							
+							getPreviousComments().addMarkAsCommentToInterface(mark, true);							
 
 							setFinalgrade(newgrade, timemodified);
 						}
@@ -876,8 +874,11 @@ public class MarkingInterface extends EMarkingComposite {
 	public void regradeMark(final RubricMark mark, final String comment, final int motive) {
 
 		RootPanel.get().getElement().getStyle().setCursor(Cursor.WAIT);
-
-		final MarkingPage page = markingPagesInterface.getPageByIndex(mark.getPageno());
+		final MarkingPage page = markingPagesInterface.getPageByIndex(mark.getPageno()-1);
+		if(page == null) {
+			logger.severe("Page is null for page index " + mark.getPageno());
+			return;
+		}
 		Mark.loadingIcon.removeFromParent();
 		page.getAbsolutePanel().add(Mark.loadingIcon, mark.getPosx(), mark.getPosy());
 		Mark.loadingIcon.setVisible(true);

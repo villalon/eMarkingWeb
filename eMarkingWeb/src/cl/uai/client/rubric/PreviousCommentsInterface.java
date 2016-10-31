@@ -32,12 +32,15 @@ import cl.uai.client.EMarkingComposite;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.chat.NodeChat;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
+import cl.uai.client.data.SubmissionGradeData;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -95,6 +98,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		previousCommentsMostUsed = new FlowPanel();
 		previousCommentsCriteria = new HashMap<Integer, FlowPanel>();
 
+		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
 		commentsTabs.add(previousCommentsMine, MarkingInterface.messages.MyComments());
 
 		for(Criterion criterion : MarkingInterface.submissionData.getRubricfillings().values()) {
@@ -114,7 +118,6 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 
 		commentsTabs.add(previousCommentsRecent, MarkingInterface.messages.Recent());
 		commentsTabs.add(previousCommentsMostUsed, MarkingInterface.messages.MostUsed());
-		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
 
 		mainPanel.add(commentsTabs);
 
@@ -222,7 +225,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 	 * Adds a string comment
 	 * @param comment
 	 */
-	public void addMarkAsCommentToInterface(Mark mark) {
+	public void addMarkAsCommentToInterface(Mark mark, boolean broadcast) {
 		if(mark.getRawtext().trim().length() == 0) {
 			return;
 		}
@@ -260,7 +263,21 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 
 			previousComments.add(newComment);
 
-			EMarkingWeb.markingInterface.previousCommentsOracle.add(newComment.getText());
+			if(broadcast && EMarkingWeb.chatServer != null) {
+				SubmissionGradeData sdata = MarkingInterface.submissionData;
+				String json = "{ " + 
+						"\"id\":" + mark.getId() + "," +
+						"\"text\": \"" + URL.encode(mark.getRawtext()) + "\"," +
+						"\"criterionid\":" + mark.getCriterionid() + "," +
+						"\"pageno\":" + mark.getPageno() + "," +
+						"\"markerid\":" + mark.getMarkerId() + "," +
+						"\"format\":" + mark.getFormat() + "," +
+						"\"timecreated\":" + mark.getTimeCreated() +
+						"}";
+				EMarkingWeb.chatServer.sendMessage(sdata.getMarkerid(), json, NodeChat.SOURCE_BUS, MarkingInterface.getDraftId(), 0, 0);
+			}
+			
+			EMarkingWeb.markingInterface.previousCommentsOracle.add(URL.decode(newComment.getText()));
 		}
 
 		updateAllCommentsInInterfaces();

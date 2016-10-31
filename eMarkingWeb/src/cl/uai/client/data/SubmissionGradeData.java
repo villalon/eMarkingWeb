@@ -32,6 +32,7 @@ import cl.uai.client.EMarkingConfiguration;
 
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * This class contains all data pertaining to a draft, including its grade and marker
@@ -241,7 +242,6 @@ public class SubmissionGradeData {
 		submissionData.setFinalgrade(Float.parseFloat(values.get("finalgrade")));
 		submissionData.setDatemodified(Long.parseLong(values.get("timemodified")));
 		
-		logger.fine("drafts");
 		String drafts = values.get("drafts");
 		if(drafts != null) {
 			List<Integer> draftIds = new ArrayList<Integer>();
@@ -252,14 +252,11 @@ public class SubmissionGradeData {
 			submissionData.setDrafts(draftIds);
 		}
 
-		logger.fine("rubric");
 		JSONObject rubricobj = new JSONObject(JsonUtils.safeEval(values.get("rubric")));
 		List<Map<String, String>> rubric = AjaxRequest.getValuesFromResult(rubricobj);
 
 		SortedMap<Integer, Criterion> definition = new TreeMap<Integer, Criterion>();
 
-		logger.fine("Rubric parsed");
-		
 		for(Map<String, String> criterion : rubric) {
 			int criterionId = Integer.parseInt(criterion.get("id"));
 			int criterionSortOrder = Integer.parseInt(criterion.get("sortorder"));
@@ -273,7 +270,6 @@ public class SubmissionGradeData {
 			String regradecomment = criterion.get("regradecomment").toString();
 			String regrademarkercomment = criterion.get("regrademarkercomment").toString();
 
-			logger.fine("levels");
 			JSONObject obj = new JSONObject(JsonUtils.safeEval(criterion.get("levels")));
 			List<Map<String, String>> levels = AjaxRequest.getValuesFromResult(obj);
 
@@ -294,7 +290,7 @@ public class SubmissionGradeData {
 				Level levelData = new Level(
 						criteriondata,
 						Integer.parseInt(level.get("id").toString()), 
-						level.get("description").toString(),
+						SafeHtmlUtils.htmlEscape(level.get("description").toString()),
 						Float.parseFloat(level.get("score").toString()));
 				float bonus=Float.parseFloat(criterion.get("bonus").toString());
 				int commentpage = Integer.parseInt(level.get("commentpage").toString());
@@ -315,14 +311,11 @@ public class SubmissionGradeData {
 
 		submissionData.setRubricDefinition(definition);
 		
-		logger.fine("answerkeys");
 		JSONObject answerkeysjson = new JSONObject(JsonUtils.safeEval(values.get("answerkeys")));
 		List<Map<String, String>> answerkeyslist = AjaxRequest.getValuesFromResult(answerkeysjson);
 
 		SortedMap<Integer, Submission> answerkeys = new TreeMap<Integer, Submission>();
 
-		logger.fine("Answer keys parsed");
-		
 		boolean thisIsAnswerKey = false;
 		for(Map<String, String> answerkey : answerkeyslist) {
 			Submission sub = new Submission(answerkey);

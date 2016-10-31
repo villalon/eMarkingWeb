@@ -95,7 +95,7 @@ public class EMarkingWeb implements EntryPoint {
 		// Pointer to CSS manager. It has to go first!
 		GWT.<Resources>create(Resources.class).css().ensureInjected();
 		// Log messages
-		String msg = "Loading EMarkingWeb interface \n" +
+		String msg = "\nInitializing EMarking\n" +
 		"Platform: " + Navigator.getPlatform() + "\n" +
 		"User agent: " + Navigator.getUserAgent() + "\n" +
 		"App name: " + Navigator.getAppName() + "\n" +
@@ -110,7 +110,7 @@ public class EMarkingWeb implements EntryPoint {
 		// Get id for eMarkingWeb's DIV tag
 		final String eMarkingDivId = "emarking";
 		if(RootPanel.get(eMarkingDivId)==null) {
-			errors.add("Can not initalize. eMarkingWeb requires an existing DIV tag with id: emarking.");
+			errors.add("Can not initalize. EMarking requires an existing DIV tag with id: emarking.");
 			return;
 		}
 		
@@ -160,9 +160,6 @@ public class EMarkingWeb implements EntryPoint {
 				showColors = Integer.parseInt(cookie_showcolors) == 1;
 			}
 			
-			logger.fine("ShowRubric: " + showRubric + 
-					" Show colors:" + showColors + 
-					" Preferred width:" + preferredWidth);
 		} catch (Exception e) {
 			logger.severe(e.getMessage());
 			errors.add("Error in HTML for eMarkingWeb can not initalize. Invalid submissionId value (must be integer).");
@@ -172,7 +169,12 @@ public class EMarkingWeb implements EntryPoint {
 		String moodleurl = null;
 		if(RootPanel.get(eMarkingDivId).getElement().getAttribute("moodleurl") != null)
 			moodleurl = RootPanel.get(eMarkingDivId).getElement().getAttribute("moodleurl");
-		logger.fine("Moodle ajax url: " + moodleurl);
+		
+		logger.fine(
+				"\nShowRubric: " + showRubric + 
+				"\nShow colors:" + showColors + 
+				"\nPreferred width:" + preferredWidth +
+				"\nMoodle ajax url: " + moodleurl);
 
 		if(moodleurl == null)
 			errors.add("Invalid Moodle ajax url");

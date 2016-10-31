@@ -28,6 +28,7 @@ import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HTML;
 
 /**
@@ -85,7 +86,7 @@ public class MarkPopup extends HTML {
 		
 		// If the inner comment contains something
 		if(this.mark.getRawtext().trim().length() > 0) {
-			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.mark.getRawtext() + "</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.mark.getRawtext()) + "</div>";
 		}
 		
 		// Show the marker's name if the marking process is not anonymous
@@ -94,13 +95,13 @@ public class MarkPopup extends HTML {
 		}
 		
 		if(mark instanceof RubricMark && ((RubricMark)mark).getRegradeid() > 0) {
-			html += "<div style=\"background-color:yellow\">"+"Recorrección"
-					+ (((RubricMark)mark).getRegradeaccepted() == 0 ? " solicitada" : " lista")
+			html += "<div style=\"background-color:yellow\">"+MarkingInterface.messages.Regrade()
+					+ " " + (((RubricMark)mark).getRegradeaccepted() == 0 ? MarkingInterface.messages.Requested() : MarkingInterface.messages.Replied())
 					+"</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
-					+ "Motivo: " + ((RubricMark)mark).getRegradeMotiveText() + "<hr>" 
-					+ "Comentario: " + ((RubricMark)mark).getRegradecomment()
-					+ (((RubricMark)mark).getRegradeaccepted() == 0 ? "" : "<hr>Respuesta: " + (((RubricMark)mark).getRegrademarkercomment()))
+					+ MarkingInterface.messages.Motive() + ": " + ((RubricMark)mark).getRegradeMotiveText() + "<hr>" 
+					+ MarkingInterface.messages.Comment() + ": " + SafeHtmlUtils.htmlEscape(((RubricMark)mark).getRegradecomment())
+					+ (((RubricMark)mark).getRegradeaccepted() == 0 ? "" : "<hr>"+MarkingInterface.messages.RegradeReply()+": " + SafeHtmlUtils.htmlEscape((((RubricMark)mark).getRegrademarkercomment())))
 					+ "</div>";
 		}
 

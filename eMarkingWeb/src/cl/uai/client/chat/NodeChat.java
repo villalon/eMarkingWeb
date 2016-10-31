@@ -29,7 +29,9 @@ import java.util.logging.Logger;
 import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
+import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.SubmissionGradeData;
+import cl.uai.client.marks.CommentMark;
 
 import com.google.gwt.core.client.JsArray;
 
@@ -45,6 +47,7 @@ public class NodeChat {
 	public static int SOURCE_CHAT = 1;
 	public static int SOURCE_WALL = 2;
 	public static int SOURCE_SOS = 3;
+	public static int SOURCE_BUS = 4;
 	
 	/** To store the date of the last messages as they arrive **/
 	public static Map<Integer, Date> lastMessages = new HashMap<Integer, Date>();
@@ -163,6 +166,20 @@ public class NodeChat {
 			}
 			lastMessages.put(NodeChat.SOURCE_SOS, today);
 			EMarkingWeb.markingInterface.help.addMessage(today, userid, message.getMessage(), message.getDraftId(), message.getStatus(), message.getUrgency());
+		}  else if(message.getSource() == NodeChat.SOURCE_BUS) {
+			Map<String, String> result = AjaxRequest.getValueFromResultString(message.getMessage());
+			CommentMark mark = new CommentMark(
+					Integer.parseInt(result.get("id")), 
+					0, 
+					0, 
+					Integer.parseInt(result.get("pageno")), 
+					Integer.parseInt(result.get("markerid")), 
+					Integer.parseInt(result.get("timecreated")), 
+							Integer.parseInt(result.get("criterionid")), 
+					"anonymous", 
+					result.get("text")); 
+				EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel()
+				.getPreviousComments().addMarkAsCommentToInterface(mark, false);
 		} else {
 			logger.severe("Something is very wrong");
 		}

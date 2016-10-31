@@ -241,6 +241,10 @@ to {
 	font-weight: bold;
 }
 
+.previouscomments .criterionheader {
+	width: auto;
+}
+
 .criterionheaderregrade {
 	color: #ff0000;
 }

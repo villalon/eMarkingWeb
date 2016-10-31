@@ -23,6 +23,7 @@ package cl.uai.client.marks;
 import java.util.Map;
 
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.http.client.URL;
 
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
@@ -77,7 +78,7 @@ public class CommentMark extends Mark {
 				Long.parseLong(markMap.get("timecreated")),
 				Integer.parseInt(markMap.get("criterionid")),
 				markMap.get("markername"),
-				markMap.get("rawtext")
+				URL.decode(markMap.get("rawtext"))
 				);
 
 		return commentobj;

@@ -38,7 +38,9 @@ import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -264,7 +266,7 @@ public class RubricMark extends Mark {
 			// Show the level description
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
 					+ "</div>";
-			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
 			// Show the marker's name if the marking process is not anonymous
 			if(!EMarkingConfiguration.isMarkerAnonymous()) {
 				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
@@ -277,7 +279,7 @@ public class RubricMark extends Mark {
 					+"</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
 					+ MarkingInterface.messages.Motive() + ": " + this.getRegradeMotiveText() + "<hr>" 
-					+ MarkingInterface.messages.Comment() + ": " + this.getRegradecomment()
+					+ MarkingInterface.messages.Comment() + ": " + SafeHtmlUtils.htmlEscape(this.getRegradecomment())
 					+ "</div>";
 			if(this.getRegradeaccepted() > 0) {
 				html += "<div style=\"background-color:#FFFF99; width:99%; font-size: 10pt;\" class=\""+Resources.INSTANCE.css().markcrit()+"\">"+ MarkingInterface.messages.Regrade()
@@ -342,7 +344,7 @@ public class RubricMark extends Mark {
 				Long.parseLong(mark.get("timecreated")),
 				Integer.parseInt(mark.get("criterionid")),
 				mark.get("markername"),
-				mark.get("rawtext")
+				URL.decode(mark.get("rawtext"))
 				);
 
 		markobj.setRegradeid(Integer.parseInt(mark.get("regradeid")));

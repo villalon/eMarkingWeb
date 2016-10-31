@@ -191,7 +191,6 @@ public class RubricPanel extends EMarkingComposite {
 			logger.severe(MarkingInterface.messages.ErrorInvalidLevelId());
 		} else {
 			if(mark.getRegradeid() > 0) {
-				lblLabel.setRegradeMotive(mark.getRegrademotive());
 				lblLabel.setRegradeComment(mark.getRegradecomment());
 				lblLabel.setRegradeRequested(true);
 			}
@@ -283,7 +282,6 @@ public class RubricPanel extends EMarkingComposite {
 					
 					if(criterion.getRegradeid() > 0) {
 						levelLabel.setRegradeRequested(true);
-						levelLabel.setRegradeMotive(criterion.getRegrademotive());
 						levelLabel.setRegradeComment(criterion.getRegradeComment());
 						levelLabel.updateHtml();
 					}
@@ -420,7 +418,6 @@ public class RubricPanel extends EMarkingComposite {
 			}
 			lblLabel.setRegradeRequested(false);
 			lblLabel.setRegradeComment(null);
-			lblLabel.setRegradeMotive(0);
 			lblLabel.updateHtml();
 		}
 

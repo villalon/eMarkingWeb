@@ -49,6 +49,7 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -351,7 +352,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" title=\""+ markername +"\" " + styleColor + ">" + iconhtml + "</div>";
 		// If the mark is an icon
 		if(!this.iconOnly && this.getRawtext().trim().length() > 0) {
-			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ this.getRawtext() + "</div>";
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
 			// Show the marker's name if the marking process is not anonymous
 			if(!EMarkingConfiguration.isMarkerAnonymous()) {
 				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ markername + "</div>";
@@ -493,9 +494,12 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				EMarkingWeb.markingInterface.setFinalgrade(newgrade, timemodified);
 				setMarkHTML();
 				
-				EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().getPreviousComments().addMarkAsCommentToInterface(mark);
+				EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().
+					getPreviousComments().addMarkAsCommentToInterface(mark, true);
 
 				removeStyleName(Resources.INSTANCE.css().updating());
+				
+				Mark.markPopup.setMark(mark);
 				
 				EMarkingWeb.markingInterface.finishLoading();
 			}
@@ -537,7 +541,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 					int heightPage = page.getHeight();
 					// If the dialog was not cancelled update the mark with the dialog values
 					if(!dialog.isCancelled()) {
-							mark.update(dialog.getTxtComment(),
+							mark.update(
+								dialog.getTxtComment(),
 								mark.getPosx(),
 								mark.getPosy(),
 								dialog.getLevelId(),
