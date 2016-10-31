@@ -91,6 +91,7 @@ public class MarkingPageDragHandler implements DragHandler {
 				EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING) {
 			((RubricMark) mark).updatePositionCollaborativeButtons();
 			((RubricMark) mark).showCollaborativeButtons();
+			Mark.hideIcons();
 		}
 		
 		// If we are in readonly mode we don't update the data but let the mark move for usability

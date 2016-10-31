@@ -124,6 +124,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		editIcon.setVisible(false);
 		regradeIcon.setVisible(false);
 		minimizeIcon.setVisible(false);
+		markPopup.setVisible(false);
 	}
 	
 	public static void showIcons(Mark mark) {
@@ -498,8 +499,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 					getPreviousComments().addMarkAsCommentToInterface(mark, true);
 
 				removeStyleName(Resources.INSTANCE.css().updating());
-				
-				Mark.markPopup.setMark(mark);
 				
 				EMarkingWeb.markingInterface.finishLoading();
 			}

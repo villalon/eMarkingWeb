@@ -22,13 +22,8 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
-import cl.uai.client.EMarkingConfiguration;
-import cl.uai.client.MarkingInterface;
-import cl.uai.client.marks.Mark;
-import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HTML;
 
 /**
@@ -41,10 +36,8 @@ import com.google.gwt.user.client.ui.HTML;
  */
 public class MarkPopup extends HTML {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(MarkPopup.class.getName());
-	
-	/** The mark related to the popup **/
-	private Mark mark;
 	
 	/**
 	 * Constructor setting css style and empty HTML
@@ -54,60 +47,7 @@ public class MarkPopup extends HTML {
 		this.addStyleName(Resources.INSTANCE.css().markpopup());
 	}
 
-	/**
-	 * Sets the mark to be shown
-	 * 
-	 * @param mark current mark
-	 */
-	public void setMark(Mark mark) {
-		if(mark == null) {
-			logger.warning("Invalid null mark passed to setMark");
-			return;
-		}
-		
-		this.mark = mark;
 
-		// Starts with an empty HTML
-		String html = "";
-		
-		// If it's a RubricMark add score header and both rubric and criterion descriptions
-		if(mark instanceof RubricMark) {
-			RubricMark rmark = (RubricMark) mark;
-			html += "<table style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
-					+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" 
-					+ rmark.getLevel().getCriterion().getDescription() + "</div></td>";
-			html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
-					+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
-					+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
-					+"</div></td></tr></table>";
-			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
-					+ "</div>";
-		}
-		
-		// If the inner comment contains something
-		if(this.mark.getRawtext().trim().length() > 0) {
-			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.mark.getRawtext()) + "</div>";
-		}
-		
-		// Show the marker's name if the marking process is not anonymous
-		if(!EMarkingConfiguration.isMarkerAnonymous()) {
-			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.mark.getMarkername()) + "</div>";
-		}
-		
-		if(mark instanceof RubricMark && ((RubricMark)mark).getRegradeid() > 0) {
-			html += "<div style=\"background-color:yellow\">"+MarkingInterface.messages.Regrade()
-					+ " " + (((RubricMark)mark).getRegradeaccepted() == 0 ? MarkingInterface.messages.Requested() : MarkingInterface.messages.Replied())
-					+"</div>";
-			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" 
-					+ MarkingInterface.messages.Motive() + ": " + ((RubricMark)mark).getRegradeMotiveText() + "<hr>" 
-					+ MarkingInterface.messages.Comment() + ": " + SafeHtmlUtils.htmlEscape(((RubricMark)mark).getRegradecomment())
-					+ (((RubricMark)mark).getRegradeaccepted() == 0 ? "" : "<hr>"+MarkingInterface.messages.RegradeReply()+": " + SafeHtmlUtils.htmlEscape((((RubricMark)mark).getRegrademarkercomment())))
-					+ "</div>";
-		}
-
-		this.setHTML(html);
-	}
-	
 	@Override
 	protected void onLoad() {
 		super.onLoad();

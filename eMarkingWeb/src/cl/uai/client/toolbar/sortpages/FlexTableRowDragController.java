@@ -56,7 +56,6 @@ public final class FlexTableRowDragController extends PickupDragController {
   @Override
   public void setBehaviorDragProxy(boolean dragProxyEnabled) {
     if (!dragProxyEnabled) {
-      // TODO implement drag proxy behavior
       throw new IllegalArgumentException();
     }
     super.setBehaviorDragProxy(dragProxyEnabled);

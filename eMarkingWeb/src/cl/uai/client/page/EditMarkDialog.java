@@ -22,11 +22,9 @@ package cl.uai.client.page;
 
 import java.util.logging.Logger;
 
-import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Level;
-import cl.uai.client.feedback.FeedbackInterface;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
@@ -92,9 +90,6 @@ public class EditMarkDialog extends DialogBox {
 	/** Super panel main + feedback**/
 	private HorizontalPanel superPanel;
 	
-	/** Feedback panel**/
-	private FeedbackInterface feedbackPanel;
-
 	/** The text box for the comment **/
 	private SuggestBox txtComment;
 
@@ -126,7 +121,6 @@ public class EditMarkDialog extends DialogBox {
 	/** Indicates if the dialog was cancelled **/
 	private boolean cancelled = false;
 	
-	private String keyWords = null;
 	private boolean simplePanel = false;
 	private ScrollPanel feedbackSummary;
 	private VerticalPanel feedbackForStudent;
@@ -148,19 +142,11 @@ public class EditMarkDialog extends DialogBox {
 		this.levelId = level;
 		Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
 
-		if(!EMarkingConfiguration.getKeywords().equals("null")){
-			keyWords = EMarkingConfiguration.getKeywords();
-		}else{
-			simplePanel = true;
-		}
+		simplePanel = true;
 		
 		superPanel = new HorizontalPanel();
 		superPanel.addStyleName(Resources.INSTANCE.css().feedbackdialog());
 
-		feedbackPanel = new FeedbackInterface(keyWords);
-		feedbackPanel.setParent(this);
-		feedbackPanel.addStyleName(Resources.INSTANCE.css().feedbackpanel());
-		
 		feedbackForStudent = new VerticalPanel();
 		feedbackForStudent.addStyleName(Resources.INSTANCE.css().feedbackforstudent());
 		
@@ -314,7 +300,6 @@ public class EditMarkDialog extends DialogBox {
 			mainPanel.add(feedbackSummary);
 		
 			superPanel.add(mainPanel);
-			superPanel.add(feedbackPanel);
 		
 			this.setWidget(superPanel);
 		}

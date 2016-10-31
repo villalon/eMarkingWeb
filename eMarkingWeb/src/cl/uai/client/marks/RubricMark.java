@@ -251,7 +251,7 @@ public class RubricMark extends Mark {
 		headerOnly = rmark.isHeaderOnly();
 
 		String criterionindex = "" + EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().getCriterionIndex(rmark.getCriterionId());
-		String leveldesc = headerOnly ? criterionindex : " " + rmark.getLevel().getCriterion().getDescription();
+		String leveldesc = headerOnly ? criterionindex : " " + SafeHtmlUtils.htmlEscape(rmark.getLevel().getCriterion().getDescription());
 		
 		Icon icon = new Icon(this.iconType);
 
@@ -264,7 +264,7 @@ public class RubricMark extends Mark {
 				+"</div></td></tr></table>";
 		if(!headerOnly) {
 			// Show the level description
-			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
+			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + SafeHtmlUtils.htmlEscape(rmark.getLevel().getDescription()) 
 					+ "</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
 			// Show the marker's name if the marking process is not anonymous
@@ -286,7 +286,7 @@ public class RubricMark extends Mark {
 						+ " " +  MarkingInterface.messages.Replied()
 						+"</div>";
 				html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">"
-						+ "<hr>"+MarkingInterface.messages.RegradeReply()+": " + this.getRegrademarkercomment()
+						+ "<hr>"+MarkingInterface.messages.RegradeReply()+": " + SafeHtmlUtils.htmlEscape(this.getRegrademarkercomment())
 						+ "</div>";
 			}
 		}

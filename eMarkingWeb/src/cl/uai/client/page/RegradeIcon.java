@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  */
 public class RegradeIcon extends HTML {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(RegradeIcon.class.getName());
 	/**The mark related to the icon **/
 	protected Mark mark = null;
