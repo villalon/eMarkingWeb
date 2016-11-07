@@ -132,10 +132,17 @@ public class EMarkingWeb implements EntryPoint {
 				errors.add("Submission id must be a non negative integer.");
 			}
 			
+			// Reading the image width
+			float imagewidth = 0;
+			if(RootPanel.get(eMarkingDivId).getElement().getAttribute("imagewidth") != null)
+				imagewidth = Float.parseFloat(RootPanel.get(eMarkingDivId).getElement().getAttribute("imagewidth"));
+
 			String cookie_width = Cookies.getCookie("emarking_width");
 			
 			if(cookie_width != null) {
 				preferredWidth = Integer.parseInt(cookie_width); 				
+			} else if(imagewidth > 0) {
+				preferredWidth = (int) (imagewidth / 0.6f);
 			}
 			
 			// Validate that the preferredWidth is a positive integer greater than 10

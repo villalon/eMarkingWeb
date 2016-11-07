@@ -44,6 +44,8 @@ public class ImageDecoder implements Runnable {
 
 	private File tempdir;
 
+	private boolean debugcorners = false;
+
 	private boolean doubleside = false;
 
 	private QrDecodingResult qrResult;
@@ -77,7 +79,7 @@ public class ImageDecoder implements Runnable {
 	private boolean success = false;
 
 	private BufferedImage qr;
-	
+
 	private Moodle moodle;
 
 	public ImageDecoder(BufferedImage _img, BufferedImage _back, int _filenumber, File _tmpdir, Moodle _moodle) {
@@ -156,7 +158,16 @@ public class ImageDecoder implements Runnable {
 	private BufferedImage extractTopRightCornerForQR(BufferedImage image) {
 		BufferedImage subimage = image.getSubimage(
 				image.getWidth() - image.getWidth() / 4, 0,
-				image.getWidth() / 4, image.getHeight() / 4);
+				image.getWidth() / 4, image.getHeight() / 8);
+
+		if(this.debugcorners) {
+			try {
+				ImageIO.write((RenderedImage) subimage, "png", 
+						new File(tempdir.getAbsolutePath() + "/corner" + filenumber + ".png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		return subimage;
 	}
@@ -202,7 +213,7 @@ public class ImageDecoder implements Runnable {
 
 		this.success = qrResult.isSuccess();
 		this.rotated = qrResult.isRotated();
-		
+
 		if(this.success && qrResult.isAnswersheet() && this.moodle.getOMRTemplate() != null) {
 			TreeMap<String, String> answers = new TreeMap<String, String>();
 			FormTemplate formTemplate = null;
@@ -217,14 +228,14 @@ public class ImageDecoder implements Runnable {
 					FormField ff = filledForm.getField(key);
 					answers.put(key, ff.getValues());
 				}
-				
+
 				qrResult.setAnswers(answers);
 			} catch (Exception e) {
 				logger.error("Problem with the OMR template");
 				e.printStackTrace();
 			}
 		}
-		
+
 		// Now write images as files
 		try {
 			ImageIO.write((RenderedImage) image, "png", 
@@ -249,7 +260,7 @@ public class ImageDecoder implements Runnable {
 				source));
 		return bitmap;
 	}
-	
+
 	private QrDecodingResult decodeQR(BufferedImage image, int filenumber) {
 		// Create qr image from original for decoding
 
@@ -258,7 +269,7 @@ public class ImageDecoder implements Runnable {
 		QrDecodingResult decodingresult = new QrDecodingResult();
 
 		try {
-			
+
 			// Decode QR
 			Result result = null;
 			Exception decodeException = null;
@@ -282,7 +293,7 @@ public class ImageDecoder implements Runnable {
 				filter.filter(qrcorner, newqrcorner);
 				qrcorner = newqrcorner;
 			}
-			
+
 			if(decodeException != null)
 				throw decodeException;
 
@@ -303,12 +314,12 @@ public class ImageDecoder implements Runnable {
 					decodingresult.setAttemptId(Integer.parseInt(parts[3]));
 					decodingresult.setAnswersheet(true);
 				}
-				
+
 				// Now check if the QR string has a fourth component (image is rotated)
 				if(parts.length == 4 && parts[3].trim().contains("R")) {
 					decodingresult.setRotated(true);					
 				}
-				
+
 				// If everything looks well, parse the numbers from the decoded QR info
 				if(parts.length >= 3) {
 
@@ -316,10 +327,10 @@ public class ImageDecoder implements Runnable {
 					decodingresult.setUserid(Integer.parseInt(parts[0]));
 					decodingresult.setCourseid(Integer.parseInt(parts[1]));
 					decodingresult.setExampage(Integer.parseInt(parts[2]));
-					
+
 					// Set filename with the corresponding IDs
 					decodingresult.setFilename(decodingresult.getUserid() + "-" + decodingresult.getCourseid() + "-" + decodingresult.getExampage());
-					
+
 					// Processing was a success
 					decodingresult.setSuccess(true);
 				} else {
@@ -341,5 +352,13 @@ public class ImageDecoder implements Runnable {
 		decodingresult.setBackfilename(decodingresult.getFilename() + "b");
 
 		return decodingresult;
+	}
+
+	public boolean isDebugcorners() {
+		return debugcorners;
+	}
+
+	public void setDebugcorners(boolean debugcorners) {
+		this.debugcorners = debugcorners;
 	}
 }
