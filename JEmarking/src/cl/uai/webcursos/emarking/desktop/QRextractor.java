@@ -76,13 +76,15 @@ public class QRextractor implements Runnable {
 
 
 	private static Logger logger = Logger.getLogger(QRextractor.class);
+	
+	private static String imageExtension = ".jpg";
 
 	private File tempdir = null;
 	private int totalpages = 0;
 	private int maxpages = Integer.MAX_VALUE;
 	private int threads = 4;
 	private int step = 32;
-	private int resolution = 100;
+	private int resolution = 300;
 	public int getResolution() {
 		return resolution;
 	}
@@ -470,16 +472,17 @@ public class QRextractor implements Runnable {
 
 			//prepare Ghostscript interpreter parameters
 			//refer to Ghostscript documentation for parameter usage
-			String[] gsArgs = new String[9];
+			String[] gsArgs = new String[10];
 			gsArgs[0] = "-dSAFER";
 			gsArgs[1] = "-dBATCH";
 			gsArgs[2] = "-dNOPAUSE";
-			gsArgs[3] = "-sDEVICE=pnggray";
-			gsArgs[4] = "-r" + resolution;
-			gsArgs[5] = "-dFirstPage=" + first;
-			gsArgs[6] = "-dLastPage=" + last;
-			gsArgs[7] = "-sOutputFile=" + dir.toAbsolutePath() + "tmpfigure%d.png";
-			gsArgs[8] = dir.toAbsolutePath() + "input.pdf";
+			gsArgs[3] = "-sDEVICE=jpeggray";
+			gsArgs[4] = "-dJPEGQ=100";
+			gsArgs[5] = "-r" + resolution;
+			gsArgs[6] = "-dFirstPage=" + first;
+			gsArgs[7] = "-dLastPage=" + last;
+			gsArgs[8] = "-sOutputFile=" + dir.toAbsolutePath() + "tmpfigure%d." + imageExtension;
+			gsArgs[9] = dir.toAbsolutePath() + "input.pdf";
 
 			//execute and exit interpreter
 			try {
@@ -494,7 +497,7 @@ public class QRextractor implements Runnable {
 
 			for(int i=1;i<=last-first+1;i++) {
 				try {
-					File f = new File(dir.toAbsolutePath() + "tmpfigure"+ i +".png");
+					File f = new File(dir.toAbsolutePath() + "tmpfigure"+ i +"." + imageExtension);
 					images.add(ImageIO.read(f));
 					f.delete();
 				} catch (IOException e) {
@@ -508,7 +511,7 @@ public class QRextractor implements Runnable {
 			List<BufferedImage> images = new ArrayList<BufferedImage>();
 
 			for(int i=first;i<=last;i++) {
-				String filename = this.tempdir.getAbsolutePath() + "/Prueba_"+ i +".png";
+				String filename = this.tempdir.getAbsolutePath() + "/Prueba_"+ i +"." + imageExtension;
 				try {
 					File f = new File(filename);
 					images.add(ImageIO.read(f));

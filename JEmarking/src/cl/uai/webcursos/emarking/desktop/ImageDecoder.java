@@ -5,6 +5,7 @@ package cl.uai.webcursos.emarking.desktop;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -39,12 +40,12 @@ import com.jhlabs.image.MedianFilter;
 public class ImageDecoder implements Runnable {
 
 	private static Logger logger = Logger.getLogger(ImageDecoder.class);
-
+	private static String imageExtension = "jpg";
 	private int filenumber = 0;
 
 	private File tempdir;
 
-	private boolean debugcorners = false;
+	private boolean debugcorners = true;
 
 	private boolean doubleside = false;
 
@@ -108,7 +109,7 @@ public class ImageDecoder implements Runnable {
 		BufferedImage anonymousimage = new BufferedImage(
 				image.getWidth(), 
 				image.getHeight(), 
-				BufferedImage.TYPE_INT_ARGB_PRE);
+				BufferedImage.TYPE_BYTE_GRAY);
 		Graphics g = anonymousimage.getGraphics();
 		g.drawImage(image, 
 				0, cropHeight, 
@@ -162,8 +163,8 @@ public class ImageDecoder implements Runnable {
 
 		if(this.debugcorners) {
 			try {
-				ImageIO.write((RenderedImage) subimage, "png", 
-						new File(tempdir.getAbsolutePath() + "/corner" + filenumber + ".png"));
+				ImageIO.write((RenderedImage) subimage, imageExtension, 
+						new File(tempdir.getAbsolutePath() + "/corner" + filenumber + "." + imageExtension));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -197,6 +198,12 @@ public class ImageDecoder implements Runnable {
 			}
 		}
 
+		float factor = 1200f / this.image.getWidth();
+		this.image = resizeImage(this.image, factor);
+		if(this.backimage != null) {
+			this.image = resizeImage(this.image, factor);
+		}
+		
 		// If images were rotated, both are rotated
 		if(qrResult.isSuccess() && qrResult.isRotated()) {
 			this.image = rotateImage180(this.image);
@@ -238,19 +245,28 @@ public class ImageDecoder implements Runnable {
 
 		// Now write images as files
 		try {
-			ImageIO.write((RenderedImage) image, "png", 
-					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + ".png"));
-			ImageIO.write((RenderedImage) anonymous, "png",			
-					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "_a.png"));
+			ImageIO.write((RenderedImage) image, imageExtension, 
+					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "." + imageExtension));
+			ImageIO.write((RenderedImage) anonymous, imageExtension,			
+					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "_a." + imageExtension));
 			if(doubleside) {
-				ImageIO.write((RenderedImage) backimage, "png", 
-						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + ".png"));
-				ImageIO.write((RenderedImage) backanonymous, "png", 
-						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "_a.png"));
+				ImageIO.write((RenderedImage) backimage, imageExtension, 
+						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "." + imageExtension));
+				ImageIO.write((RenderedImage) backanonymous, imageExtension, 
+						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "_a." + imageExtension));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private BufferedImage resizeImage(BufferedImage image, float factor) {
+		BufferedImage blackWhite = new BufferedImage((int) ((float) image.getWidth() * factor), (int) ((float) image.getHeight() * factor), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = blackWhite.createGraphics();
+        g2d.drawImage(image, 0, 0, (int) ((float) image.getWidth() * factor), (int) ((float) image.getHeight() * factor), null);
+        g2d.dispose();
+
+		return blackWhite;
 	}
 
 	private BinaryBitmap getBitmapFromBufferedImage(BufferedImage qrcorner) {
@@ -265,7 +281,12 @@ public class ImageDecoder implements Runnable {
 		// Create qr image from original for decoding
 
 		BufferedImage qrcorner = extractTopRightCornerForQR(image);
-
+		BufferedImage blackWhite = new BufferedImage(qrcorner.getWidth() / 2, qrcorner.getHeight() / 2, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = blackWhite.createGraphics();
+        g2d.drawImage(qrcorner, 0, 0, qrcorner.getWidth() / 2, qrcorner.getHeight() / 2, null);
+        g2d.dispose();
+        qrcorner = blackWhite;
+        
 		QrDecodingResult decodingresult = new QrDecodingResult();
 
 		try {
@@ -278,18 +299,27 @@ public class ImageDecoder implements Runnable {
 			int maxattempts = 3;
 			int attempt = 1;
 			while(attempt <= maxattempts) {
+				logger.debug("Attempt " + attempt);
 				try {
 					BinaryBitmap bitmap = getBitmapFromBufferedImage(qrcorner);
 					result = reader.decode(bitmap);
 					decodeException = null;
+					logger.debug("Success!");
 					break;
 				}  catch(Exception e) {
 					decodeException = e;
+					if(debugcorners) {
+						try {
+							ImageIO.write((RenderedImage) qrcorner, "jpg", 
+									new File(tempdir.getAbsolutePath() + "/corner" + filenumber + "_" + attempt + ".jpg"));
+						} catch (IOException ex) {
+							ex.printStackTrace();
+						}
+					}
 				}
-				logger.debug("Attempt " + attempt);
 				attempt++;
 				com.jhlabs.image.MedianFilter filter = new MedianFilter();
-				BufferedImage newqrcorner = new BufferedImage(qrcorner.getWidth(), qrcorner.getHeight(), BufferedImage.TYPE_INT_RGB);
+				BufferedImage newqrcorner = new BufferedImage(qrcorner.getWidth(), qrcorner.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
 				filter.filter(qrcorner, newqrcorner);
 				qrcorner = newqrcorner;
 			}
