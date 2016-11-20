@@ -163,7 +163,7 @@ public class eMarkingCli {
 		moodle.setPassword(line.getOptionValue("pwd"));
 
 		moodle.setDebugCorners(line.hasOption("debug"));		
-		moodle.setDoubleside(line.hasOption("doubleside"));
+		moodle.getQrExtractor().setDoubleside(line.hasOption("doubleside"));
 
 		if (!moodle.connect()) {
 			throw new Exception("Invalid parameters. Could not login to Moodle.");

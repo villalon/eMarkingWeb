@@ -330,7 +330,7 @@ public class EmarkingDesktop {
 				actionSwap();
 			}
 		});
-		if(moodle.isDoubleside()) {
+		if(moodle.getQrExtractor().isDoubleside()) {
 			contextMenu.add(popupMenuItem5);
 		}
 		JMenuItem popupMenuItem6 = new JMenuItem(lang.getString("rotateandfixfromprevious"));

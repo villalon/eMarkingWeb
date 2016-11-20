@@ -111,11 +111,11 @@ public class Pages extends Hashtable<Integer, Page> {
 	}
 
 	public void fixFromPrevious(int row) throws Exception {
-		if(this.moodle.isDoubleside() && row % 2 != 0) {
+		if(this.moodle.getQrExtractor().isDoubleside() && row % 2 != 0) {
 			throw new Exception("Invalid row number for fixing row in doubleside");
 		}
 
-		int minimum = this.moodle.isDoubleside() ? 2 : 1;
+		int minimum = this.moodle.getQrExtractor().isDoubleside() ? 2 : 1;
 
 		if(row < minimum) {
 			throw new Exception("There is no previous row to copy from");
@@ -136,7 +136,7 @@ public class Pages extends Hashtable<Integer, Page> {
 	}
 
 	public void fixFromFollowing(int row) throws Exception {
-		if(this.moodle.isDoubleside() && row % 2 != 0) {
+		if(this.moodle.getQrExtractor().isDoubleside() && row % 2 != 0) {
 			throw new Exception("Invalid row number for fixing row in doubleside");
 		}
 
@@ -144,7 +144,7 @@ public class Pages extends Hashtable<Integer, Page> {
 			throw new Exception("There is no following row to copy from");
 		}
 
-		int gap = this.moodle.isDoubleside() ? 2 : 1;
+		int gap = this.moodle.getQrExtractor().isDoubleside() ? 2 : 1;
 
 		Page following = this.get(row + gap);
 		Page current = this.get(row);

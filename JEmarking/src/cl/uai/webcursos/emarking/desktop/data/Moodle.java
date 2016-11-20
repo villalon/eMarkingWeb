@@ -78,8 +78,6 @@ public class Moodle {
 	private String moodleUsername;
 	/** Moodle password **/
 	private String moodlePassword;
-	/** Scanning was made for both sides of pages **/
-	private boolean doubleSide;
 	/** Max zip size before generating multiple zips **/
 	private String maxzipsize = "64Mb";
 	public static String imageType = "jpg";
@@ -347,13 +345,6 @@ public class Moodle {
 		return moodleUsername;
 	}
 
-	/**
-	 * @return the doubleside
-	 */
-	public boolean isDoubleside() {
-		return doubleSide;
-	}
-
 	public void loadProperties() {
 		Properties p = new Properties();
 		File f = new File("moodle.properties");
@@ -377,7 +368,7 @@ public class Moodle {
 			setLastfile(p.getProperty("filename"));
 		}
 		if(p.containsKey("doubleside")) {
-			setDoubleside(p.getProperty("doubleside").equals("true"));
+			qrExtractor.setDoubleside(p.getProperty("doubleside").equals("true"));
 		}
 		if(p.containsKey("maxthreads")) {
 			setMaxthreads(Integer.parseInt(p.getProperty("maxthreads")));
@@ -647,7 +638,7 @@ public class Moodle {
 		p.setProperty("moodleurl", this.moodleUrl);
 		p.setProperty("username", this.moodleUsername);
 		p.setProperty("filename", this.lastfile);
-		p.setProperty("doubleside", this.doubleSide ? "true" : "false");
+		p.setProperty("doubleside", this.qrExtractor.isDoubleside() ? "true" : "false");
 		p.setProperty("maxthreads", Integer.toString(this.qrExtractor.getMaxThreads()));
 		p.setProperty("resolution", Integer.toString(this.qrExtractor.getResolution()));
 		p.setProperty("maxzipsize", this.maxzipsize);
@@ -668,13 +659,6 @@ public class Moodle {
 
 	public void setDensity(int density) {
 		this.density = density;
-	}
-
-	/**
-	 * @param doubleside the doubleside to set
-	 */
-	public void setDoubleside(boolean doubleside) {
-		this.doubleSide = doubleside;
 	}
 
 	/**

@@ -144,7 +144,7 @@ public class OptionsDialog extends JDialog {
 								}
 							}
 							moodle.setLastfile(filename.getText());
-							moodle.setDoubleside(chckbxDoubleSide.isSelected());
+							moodle.getQrExtractor().setDoubleside(chckbxDoubleSide.isSelected());
 							moodle.setMaxthreads(Integer.parseInt(getMaxThreads().getSelectedItem().toString())); 
 							moodle.setResolution(Integer.parseInt(getResolution().getSelectedItem().toString())); 
 							moodle.setMaxzipsize(getMaxZipSize().getSelectedItem().toString());
@@ -296,7 +296,7 @@ public class OptionsDialog extends JDialog {
 		chckbxDoubleSide.setBounds(125, 60, 333, 23);
 		panel_3.add(chckbxDoubleSide);
 		chckbxDoubleSide.setToolTipText(EmarkingDesktop.lang.getString("doublesidetooltip"));
-		this.chckbxDoubleSide.setSelected(this.moodle.isDoubleside());
+		this.chckbxDoubleSide.setSelected(this.moodle.getQrExtractor().isDoubleside());
 
 		filename = new JTextField();
 		filename.setEnabled(false);

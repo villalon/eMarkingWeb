@@ -128,7 +128,7 @@ public class MoodleWorker implements Runnable {
 				try {
 					rotatePageAndSave(row);
 					rowsprocessed.put(row, true);
-					if(moodle.isDoubleside() && row % 2 == 0) {
+					if(moodle.getQrExtractor().isDoubleside() && row % 2 == 0) {
 						rotatePageAndSave(row+1);
 						rowsprocessed.put(row+1, true);
 					}
@@ -143,7 +143,7 @@ public class MoodleWorker implements Runnable {
 				try {
 					rotatePageAndSave(row);
 					rowsprocessed.put(row, true);
-					if(moodle.isDoubleside() && row % 2 == 0) {
+					if(moodle.getQrExtractor().isDoubleside() && row % 2 == 0) {
 						rotatePageAndSave(row+1);
 						rowsprocessed.put(row+1, true);
 					}
@@ -173,7 +173,7 @@ public class MoodleWorker implements Runnable {
 				try {
 					rotatePageAndSave(row);
 					rowsprocessed.put(row, true);
-					if(moodle.isDoubleside() && row % 2 == 0) {
+					if(moodle.getQrExtractor().isDoubleside() && row % 2 == 0) {
 						rotatePageAndSave(row+1);
 						rowsprocessed.put(row+1, true);
 					}
