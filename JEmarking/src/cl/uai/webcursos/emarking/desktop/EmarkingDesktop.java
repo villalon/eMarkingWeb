@@ -145,9 +145,15 @@ public class EmarkingDesktop {
 	 */
 	private void initialize() {
 
-		moodle = new Moodle();
+		try {
+			moodle = new Moodle();
+		} catch (IOException e3) {
+			logger.error("Impossible to create Moodle configuration");
+			e3.printStackTrace();
+			System.exit(e3.hashCode());
+		}
 
-		moodle.getQr().addPageProcessedListener(new PageProcessedListener() {			
+		moodle.getQrExtractor().addPageProcessedListener(new PageProcessedListener() {			
 			@Override
 			public void processed(QRExtractorEvent e) {
 
@@ -242,11 +248,13 @@ public class EmarkingDesktop {
 					lblStatusBar.setText(moodle.getPages().getSummary());
 				}
 				try {
-					if(moodle.getCourses().size()==0)
+					if(moodle.getCourses().size()==0) {
 						moodle.retrieveCourseFromId(-1);
-					if(moodle.getStudents().size()==0)
+						moodle.copyCoursesFromUser();
+					}
+					if(moodle.getStudents().size()==0) {
 						moodle.retrieveStudents(-1);
-					moodle.copyCoursesFromUser();
+					}
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -355,7 +363,12 @@ public class EmarkingDesktop {
 		btnLoadPdf.setToolTipText(lang.getString("loadpdf"));
 		btnLoadPdf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				actionLoadPdf();
+				try {
+					actionLoadPdf();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Fatal error:\n" + e1.getMessage());
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnLoadPdf.setIcon(new ImageIcon(EmarkingDesktop.class.getResource("/cl/uai/webcursos/emarking/desktop/resources/glyphicons_036_file.png")));
@@ -450,7 +463,12 @@ public class EmarkingDesktop {
 		menuFileOpen = new JMenuItem(lang.getString("loadpdf"));
 		menuFileOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				actionLoadPdf();
+				try {
+					actionLoadPdf();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Fatal error:\n" + e1.getMessage());
+					e1.printStackTrace();
+				}
 			}
 		});
 		menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
@@ -632,7 +650,7 @@ public class EmarkingDesktop {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-				if(moodle.getQr().isDoubleside() && pagesTable.getSelectedRow() % 2 != 0) {
+				if(moodle.getQrExtractor().isDoubleside() && pagesTable.getSelectedRow() % 2 != 0) {
 					JOptionPane.showMessageDialog(frame, lang.getString("onlyevenrowsdoubleside"));
 					return;
 				}
@@ -682,8 +700,8 @@ public class EmarkingDesktop {
 
 	public void updateTableData(int row) {
 		Object[] data = moodle.getPages().getRowData(row);
-		pagesTable.updateData(data, row, moodle.getQr().isDoubleside());
-		anonymousPagesTable.updateData(data, row, moodle.getQr().isDoubleside());
+		pagesTable.updateData(data, row, moodle.getQrExtractor().isDoubleside());
+		anonymousPagesTable.updateData(data, row, moodle.getQrExtractor().isDoubleside());
 		Page p = moodle.getPages().get(row);
 		if(p != null && p.getStudent() != null) {
 			studentsTable.updateData(p.getStudent());
@@ -773,8 +791,8 @@ public class EmarkingDesktop {
 		}
 		String pageFilename = moodle.getPages().get(row).getFilename();
 		String filename = anonymous ? 
-				moodle.getQr().getTempdirStringPath() + "/" + pageFilename + "_a.png" :
-				moodle.getQr().getTempdirStringPath() + "/" + pageFilename + ".png" ;
+				moodle.getQrExtractor().getTempdirStringPath() + "/" + pageFilename + "_a" + Moodle.imageExtension :
+				moodle.getQrExtractor().getTempdirStringPath() + "/" + pageFilename + Moodle.imageExtension ;
 		try {
 			File imagefile = new File(filename);
 			if(!imagefile.exists()) {
@@ -792,17 +810,17 @@ public class EmarkingDesktop {
 		}		
 	}
 
-	private void actionLoadPdf() {
+	private void actionLoadPdf() throws IOException {
 		OptionsDialog dialog = new OptionsDialog(moodle);
 		dialog.setModal(true);
 		dialog.setLocationRelativeTo(frame);
 		dialog.setVisible(true);
 		if(dialog.isCancelled())
 			return;
-		moodle.getQr().setDoubleside(dialog.getDoubleSideSelected());
+		moodle.getQrExtractor().setDoubleside(dialog.getDoubleSideSelected());
 		moodle.setOMRTemplate(dialog.getOMRTemplate());
 		moodle.clearPages();
-		lblStatusBarRight.setText(moodle.getQr().getTempdirStringPath());
+		lblStatusBarRight.setText(moodle.getQrExtractor().getTempdirStringPath());
 		File pdfFile = new File(dialog.getFilename().getText());
 		int pages = 0;
 
@@ -811,7 +829,7 @@ public class EmarkingDesktop {
 			try {
 				pdfdoc.load(pdfFile);
 				pages = pdfdoc.getPageCount();
-				moodle.getQr().setFileType(FileType.PDF);
+				moodle.getQrExtractor().setFileType(FileType.PDF);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
 				ex.printStackTrace();
@@ -820,7 +838,7 @@ public class EmarkingDesktop {
 		} else if(pdfFile.getPath().endsWith(".zip")) {
 			ZipFile zpf = new ZipFile(moodle);
 			pages = zpf.unZipIt(pdfFile.getAbsolutePath());
-			moodle.getQr().setFileType(FileType.ZIP);
+			moodle.getQrExtractor().setFileType(FileType.ZIP);
 			if(pages == 0) {
 				JOptionPane.showMessageDialog(frame, lang.getString("unabletoopenfile") + " " + pdfFile.getName());
 				return;			
@@ -832,10 +850,10 @@ public class EmarkingDesktop {
 		progress.getProgressBar().setMaximum(pages);
 		progress.getProgressBar().setMinimum(0);
 		progress.getProgressBar().setValue(0);
-		moodle.getQr().setPdffile(dialog.getFilename().getText());
-		moodle.getQr().setTotalpages(pages);
+		moodle.getQrExtractor().setPdffile(dialog.getFilename().getText());
+		moodle.getQrExtractor().setTotalpages(pages);
 		progress.setLocationRelativeTo(frame);
-		progress.setWorker(moodle.getQr());
+		progress.setWorker(moodle.getQrExtractor());
 		initializeTable();
 		progress.startProcessing();		
 	}

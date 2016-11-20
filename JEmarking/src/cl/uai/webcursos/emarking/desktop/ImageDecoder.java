@@ -40,12 +40,9 @@ import com.jhlabs.image.MedianFilter;
 public class ImageDecoder implements Runnable {
 
 	private static Logger logger = Logger.getLogger(ImageDecoder.class);
-	private static String imageExtension = "jpg";
 	private int filenumber = 0;
 
 	private File tempdir;
-
-	private boolean debugcorners = true;
 
 	private boolean doubleside = false;
 
@@ -161,10 +158,10 @@ public class ImageDecoder implements Runnable {
 				image.getWidth() - image.getWidth() / 4, 0,
 				image.getWidth() / 4, image.getHeight() / 8);
 
-		if(this.debugcorners) {
+		if(this.moodle.isDebugCorners()) {
 			try {
-				ImageIO.write((RenderedImage) subimage, imageExtension, 
-						new File(tempdir.getAbsolutePath() + "/corner" + filenumber + "." + imageExtension));
+				ImageIO.write((RenderedImage) subimage, Moodle.imageExtension, 
+						new File(tempdir.getAbsolutePath() + "/corner" + filenumber + "." + Moodle.imageExtension));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -245,17 +242,24 @@ public class ImageDecoder implements Runnable {
 
 		// Now write images as files
 		try {
-			ImageIO.write((RenderedImage) image, imageExtension, 
-					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "." + imageExtension));
-			ImageIO.write((RenderedImage) anonymous, imageExtension,			
-					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "_a." + imageExtension));
+			boolean result = ImageIO.write((RenderedImage) image, Moodle.imageType, 
+					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + Moodle.imageExtension));
+			result = result && ImageIO.write((RenderedImage) anonymous, Moodle.imageType,			
+					new File(tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + "_a" + Moodle.imageExtension));
 			if(doubleside) {
-				ImageIO.write((RenderedImage) backimage, imageExtension, 
-						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "." + imageExtension));
-				ImageIO.write((RenderedImage) backanonymous, imageExtension, 
-						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "_a." + imageExtension));
+				result = result && ImageIO.write((RenderedImage) backimage, Moodle.imageType, 
+						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + Moodle.imageExtension));
+				result = result && ImageIO.write((RenderedImage) backanonymous, Moodle.imageType, 
+						new File(tempdir.getAbsolutePath() + "/" + qrResult.getBackfilename() + "_a" + Moodle.imageExtension));
+			}
+			if(result) {
+				logger.debug("Images saved to " + tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + Moodle.imageExtension);
+			} else {
+				logger.error("Error saving images to " + tempdir.getAbsolutePath() + "/" + qrResult.getFilename() + Moodle.imageExtension);
+				logger.error("ImageIO.write returned a false");
 			}
 		} catch (IOException e) {
+			logger.error("Error saving images");
 			e.printStackTrace();
 		}
 	}
@@ -308,10 +312,10 @@ public class ImageDecoder implements Runnable {
 					break;
 				}  catch(Exception e) {
 					decodeException = e;
-					if(debugcorners) {
+					if(this.moodle.isDebugCorners()) {
 						try {
-							ImageIO.write((RenderedImage) qrcorner, "jpg", 
-									new File(tempdir.getAbsolutePath() + "/corner" + filenumber + "_" + attempt + ".jpg"));
+							ImageIO.write((RenderedImage) qrcorner, Moodle.imageType, 
+									new File(tempdir.getAbsolutePath() + "/corner" + filenumber + "_" + attempt + Moodle.imageExtension));
 						} catch (IOException ex) {
 							ex.printStackTrace();
 						}
@@ -382,13 +386,5 @@ public class ImageDecoder implements Runnable {
 		decodingresult.setBackfilename(decodingresult.getFilename() + "b");
 
 		return decodingresult;
-	}
-
-	public boolean isDebugcorners() {
-		return debugcorners;
-	}
-
-	public void setDebugcorners(boolean debugcorners) {
-		this.debugcorners = debugcorners;
 	}
 }

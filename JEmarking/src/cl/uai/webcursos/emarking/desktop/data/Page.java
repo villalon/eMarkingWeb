@@ -31,7 +31,7 @@ public class Page {
 	private int pagenumber = -1;
 	private Moodle moodle = null;
 	private boolean rotated = false;
-	
+
 	public boolean isRotated() {
 		return rotated;
 	}
@@ -124,7 +124,7 @@ public class Page {
 	 * @return
 	 */
 	public File getFile() {
-		File file = new File(moodle.getQr().getTempdirStringPath() + "/" + this.filename + ".png");
+		File file = new File(moodle.getQrExtractor().getTempdirStringPath() + "/" + this.filename + Moodle.imageExtension);
 		return file;
 	}
 	

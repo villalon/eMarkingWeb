@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -81,6 +82,8 @@ public class Moodle {
 	private boolean doubleSide;
 	/** Max zip size before generating multiple zips **/
 	private String maxzipsize = "64Mb";
+	public static String imageType = "jpg";
+	public static String imageExtension = "." + imageType;
 
 	/** The scanned and processed pages **/
 	private Pages studentPages;
@@ -111,7 +114,13 @@ public class Moodle {
 	private int anonymousCustomPage = 1;
 	/** If students should just be fake as they will be ignored **/
 	private boolean fakeStudents = false;
-	
+	/** Save extracted corners for identifying QR images for debugging purposes **/
+	private boolean debugCorners = false;
+
+	public void setDebugCorners(boolean debugCorners) {
+		this.debugCorners = debugCorners;
+	}
+
 	/**
 	 * @return the anonymousCustomPage
 	 */
@@ -155,14 +164,14 @@ public class Moodle {
 	}
 
 	private boolean answerSheets = false;
-	
-	public Moodle() {
+
+	public Moodle() throws IOException {
 		this.qrExtractor = new QRextractor(this);
 		this.clearPages();
 	}
 
-	public void clearPages() {
-		this.qrExtractor.setTempdir();
+	public void clearPages() throws IOException {
+		this.qrExtractor.setTempdir(null);
 		this.studentPages = new Pages(this);
 		this.students = new Hashtable<Integer, Student>();
 		this.courses = new Hashtable<Integer, Course>();
@@ -254,13 +263,6 @@ public class Moodle {
 		return moodlePassword;
 	}
 
-	/**
-	 * @return the QR extractor
-	 */
-	public QRextractor getQr() {
-		return qrExtractor;
-	}
-
 	public QRextractor getQrExtractor() {
 		return this.qrExtractor;
 	}
@@ -321,7 +323,7 @@ public class Moodle {
 					if(i==0) {
 						string.append(questionEntry.getKey() + ",");
 					}
-						studentsstring.append(questionEntry.getValue() + ",");
+					studentsstring.append(questionEntry.getValue() + ",");
 				}
 			}
 			studentsstring.append("\n");
@@ -461,7 +463,7 @@ public class Moodle {
 			retrieveUserCourses();
 			return;
 		}
-		
+
 		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courseinfo&course="+courseid+"&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
@@ -486,11 +488,11 @@ public class Moodle {
 		if(fakeStudents) {
 			courses = new Hashtable<Integer, Course>();
 			for(int i=0;i<6;i++) {
-				
+
 				int id = i;
 				String shortname = "course-" + i;
 				String fullname = "Fake course " + i;
-				
+
 				Course course = new Course();
 				course.setId(i);
 				course.setShortname(shortname);
@@ -501,10 +503,10 @@ public class Moodle {
 
 				logger.debug("id:" + id + " shortname:" + shortname + " fullname:" + fullname);				
 			}
-			
+
 			return;
 		}
-		
+
 		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=courses&username="+moodleUsername+"&password="+moodlePassword);
 
 		JsonArray jarr = parseMoodleResponse(response);
@@ -597,7 +599,7 @@ public class Moodle {
 					logger.error(e.getMessage());
 				}
 			}
-			
+
 			return;
 		}
 		List<Integer> coursesToRetrieve = new ArrayList<Integer>();
@@ -608,34 +610,34 @@ public class Moodle {
 		} else {
 			coursesToRetrieve.add(courseId);
 		}
-		
+
 		for(int course : coursesToRetrieve) {
-		String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+course+"&username="+moodleUsername+"&password="+moodlePassword);
+			String response = makeMoodleRequest(getMoodleAjaxUrl() + "?action=students&course="+course+"&username="+moodleUsername+"&password="+moodlePassword);
 
-		JsonArray jarr = parseMoodleResponse(response);
+			JsonArray jarr = parseMoodleResponse(response);
 
-		for(int i=0;i<jarr.size();i++) {
-			try {
-				JsonObject job = jarr.getJsonObject(i);
-				int id = Integer.parseInt(job.getString("id"));			
-				String idnumber = job.getString("idnumber");			
-				String studentname = job.getString("lastname") + ", " + job.getString("firstname");
+			for(int i=0;i<jarr.size();i++) {
+				try {
+					JsonObject job = jarr.getJsonObject(i);
+					int id = Integer.parseInt(job.getString("id"));			
+					String idnumber = job.getString("idnumber");			
+					String studentname = job.getString("lastname") + ", " + job.getString("firstname");
 
-				Student st = new Student();
-				st.setId(id);
-				st.setIdnumber(idnumber);
-				st.setFullname(studentname);
+					Student st = new Student();
+					st.setId(id);
+					st.setIdnumber(idnumber);
+					st.setFullname(studentname);
 
-				if(!students.containsKey(id)) {
-					st.setRownumber(students.keySet().size());
-					students.put(id, st);
+					if(!students.containsKey(id)) {
+						st.setRownumber(students.keySet().size());
+						students.put(id, st);
+					}
+
+					logger.debug("id:" + id + " student:" + studentname + " idnumber:" + idnumber);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
 				}
-
-				logger.debug("id:" + id + " student:" + studentname + " idnumber:" + idnumber);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
 			}
-		}
 		}
 	}
 
@@ -887,5 +889,9 @@ public class Moodle {
 
 	public void copyCoursesFromUser() {
 		courses = usercourses;
+	}
+
+	public boolean isDebugCorners() {
+		return debugCorners;
 	}
 }

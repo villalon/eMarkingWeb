@@ -7,6 +7,13 @@ import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -30,36 +37,91 @@ public class eMarkingCli {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) {
+		// Obtain properties for log4j
+		PropertyConfigurator.configure("log4j.properties");
+		// Logging the start
+		logger.info("Starting EMarking CLI");
 
+		Option help = new Option( "help", "print this message" );
+		Option debug = new Option( "debug", "saves QR extracted images for debugging" );
+		Option doubleside = new Option( "doubleside", "PDF contains pages with both sides digitized" );
+		Option pdf = Option
+				.builder()
+				.argName("file")
+				.longOpt("pdf")
+                .hasArg()
+                .desc("digitized answers PDF file")
+                .build();
+		Option url = Option
+				.builder()
+				.argName("moodle url")
+				.longOpt("url")
+                .hasArg()
+                .desc("full moodle url, e.g http://www.moodle.com/")
+                .build();
+		Option username = Option
+				.builder()
+				.argName("username")
+				.longOpt("user")
+                .hasArg()
+                .desc("moodle user for reading enrollment information")
+                .build();
+		Option password = Option
+				.builder()
+				.argName("password")
+				.longOpt("pwd")
+                .hasArg()
+                .desc("moodle user password")
+                .build();
+		Option tmpdir = Option
+				.builder()
+				.argName("path")
+				.longOpt("tmp")
+                .hasArg()
+                .desc("directory for temporary files")
+                .build();
+		
+		Options options = new Options();
+		options.addOption(pdf);
+		options.addOption(url);
+		options.addOption(username);
+		options.addOption(password);
+		options.addOption(tmpdir);
+		options.addOption(debug);
+		options.addOption(doubleside);
+		options.addOption(help);
+		
+        CommandLine line = null;
+	    // create the parser
+	    CommandLineParser parser = new DefaultParser();
+	    try {
+	        // parse the command line arguments
+	        line = parser.parse( options, args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	        System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+	        System.exit(1);
+	    }
+	    if(line.hasOption("help")) {
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp("java -jar emarking.jar", options);
+	    	System.exit(0);
+	    }
 		// Obtain current locale for language settings
 		Locale locale = Locale.getDefault();
 		// Set language settings
 		EmarkingDesktop.lang = ResourceBundle.getBundle("cl.uai.webcursos.emarking.desktop.lang", locale);
 
-		if (args.length < 6) {
-			System.err.println(
-					"Invalid arguments. Usage: java -jar emarking.jar http://moodle_url/ username password pdffile tempdir log4j.properties");
+		if (!line.hasOption("pdf") || !line.hasOption("url") || !line.hasOption("user") || !line.hasOption("pwd")) {
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp("java -jar emarking.jar", options);			
 			System.exit(1);
 		}
 
-		try {
-			File log4jfile = new File(args[5]);
-
-			if (!log4jfile.exists()) {
-				throw new Exception("Log4j file does not exist.");
-			}
-		} catch (Exception e) {
-			System.err.println("Invalid parameters. Log 4j file does not exist:" + args[5]);
-			System.exit(2);
-		}
-		// Obtain properties for log4j
-		PropertyConfigurator.configure(args[5]);
-		// Logging the start
-		logger.info("Starting EMarking CLI");
-
 		eMarkingCli cli = null;
 		try {
-			cli = new eMarkingCli(args);
+			cli = new eMarkingCli(line);
 			cli.run();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -74,52 +136,53 @@ public class eMarkingCli {
 	 * @param args
 	 * @throws Exception
 	 */
-	public eMarkingCli(String[] args) throws Exception {
+	public eMarkingCli(CommandLine line) throws Exception {
 
 		UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
-		if (!validator.isValid(args[0])) {
-			throw new Exception("Invalid Moodle URL " + args[0]);
+		if (!validator.isValid(line.getOptionValue("url")) && !line.getOptionValue("url").contains(".online")) {
+			throw new Exception("Invalid Moodle URL " + line.getOptionValue("url"));
 		}
 
-		if (args[1].length() < 3 || args[2].length() < 3) {
-			throw new Exception("Invalid username and/or password ");
-		}
-
-		File pdffile = new File(args[3]);
+		File pdffile = new File(line.getOptionValue("pdf"));
 
 		if (!pdffile.exists()) {
-			throw new Exception("Invalid parameters. File does not exist:" + args[3]);
+			throw new Exception("Invalid parameters. File does not exist:" + line.getOptionValue("pdf"));
 		}
 
-		File tmpdir = new File(args[4]);
+		File tmpdir = new File(line.getOptionValue("tmp"));
 
 		if (!tmpdir.exists() || !tmpdir.isDirectory()) {
-			throw new Exception("Invalid parameters. Temp dir does not exist:" + args[4]);
+			throw new Exception("Invalid parameters. Temp dir does not exist:" + line.getOptionValue("tmp"));
 		}
 
 		moodle = new Moodle();
 		moodle.loadProperties();
 
-		moodle.setUrl(args[0]);
-		moodle.setUsername(args[1]);
-		moodle.setPassword(args[2]);
+		moodle.setUrl(line.getOptionValue("url"));
+		moodle.setUsername(line.getOptionValue("user"));
+		moodle.setPassword(line.getOptionValue("pwd"));
+
+		moodle.setDebugCorners(line.hasOption("debug"));		
+		moodle.setDoubleside(line.hasOption("doubleside"));
 
 		if (!moodle.connect()) {
 			throw new Exception("Invalid parameters. Could not login to Moodle.");
 		}
 
 		PDFDocument document = new PDFDocument();
-		document.load(new File(args[3]));
+		document.load(new File(line.getOptionValue("pdf")));
 		int totalpages = document.getPageCount();
 
 		if (totalpages == 0) {
 			throw new Exception("PDF contains no pages.");
 		}
 
-		qr = new QRextractor(moodle);
-		qr.setPdffile(args[3]);
+		File tempdir = new File(line.getOptionValue("tmp"));
+		
+		qr = moodle.getQrExtractor();
+		qr.setPdffile(line.getOptionValue("pdf"));
 		qr.setFileType(FileType.PDF);
-		qr.setTempdir(args[4]);
+		qr.setTempdir(tempdir);
 		qr.setTotalpages(totalpages);
 	}
 

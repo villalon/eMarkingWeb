@@ -12,6 +12,8 @@ import com.albertoborsetta.formscanner.api.FormField;
 import com.albertoborsetta.formscanner.api.FormPoint;
 import com.albertoborsetta.formscanner.api.FormTemplate;
 
+import cl.uai.webcursos.emarking.desktop.data.Moodle;
+
 /**
  * @author Jorge
  *
@@ -35,7 +37,7 @@ public class FormScannerTest {
 
 		File dir = new File("omr");
 		for(File imageFile : dir.listFiles()) {
-			if(!imageFile.getAbsolutePath().endsWith("_a.png"))
+			if(!imageFile.getAbsolutePath().endsWith("_a" + Moodle.imageExtension))
 				continue;
 			System.out.println(imageFile.getPath());
 			// Analyze image for search correct answers using the formTemplate

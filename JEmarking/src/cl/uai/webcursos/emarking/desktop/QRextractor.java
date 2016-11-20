@@ -26,7 +26,6 @@ package cl.uai.webcursos.emarking.desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -77,8 +76,6 @@ public class QRextractor implements Runnable {
 
 	private static Logger logger = Logger.getLogger(QRextractor.class);
 	
-	private static String imageExtension = ".jpg";
-
 	private File tempdir = null;
 	private int totalpages = 0;
 	private int maxpages = Integer.MAX_VALUE;
@@ -276,7 +273,7 @@ public class QRextractor implements Runnable {
 			List<BufferedImage> images = null;
 			// Images are exracted using the SimpleRenderer from Ghost4j
 			try {
-				images = getImages(currentpage+1, lastpage+1, pdffile);
+				images = getImages(currentpage+1, lastpage+1, pdffile, this.tempdir);
 				long timeperstepextract = System.currentTimeMillis() - timeperstep;
 				logger.debug("Extraction of " + images.size() + " pages finished in " + (timeperstepextract / 1000) + " seconds");
 			} catch (Exception e3) {
@@ -414,26 +411,33 @@ public class QRextractor implements Runnable {
 
 	/**
 	 * @param tempdir the tempdir to set
+	 * @throws IOException 
 	 */
-	public void setTempdir() {	
-		try {
-			this.tempdir = Files.createTempDirectory("emarking").toFile();
-		} catch(IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+	public void setTempdir(File tmpdir) throws IOException {
+		if(tmpdir == null) {
+			File tempdir = File.createTempFile("emarking", Long.toString(System.nanoTime()));
+			if(!tempdir.delete()) {
+				logger.error("Could not delete temp dir");
+				System.exit(1);
+			}
+			if(!tempdir.mkdir()) {
+				logger.error("Could not create temp dir");
+				System.exit(1);
+			}
+			tmpdir = tempdir;
 		}
-	}
-
-	/**
-	 * @param tempdir the tempdir to set
-	 */
-	public void setTempdir(String tmpdir) {	
-		try {
-			this.tempdir = new File(tmpdir);
-		} catch(Exception e) {
-			e.printStackTrace();
-			System.exit(1);
+		if(!tmpdir.exists() || !tmpdir.isDirectory()) {
+			logger.error("Invalid temp dirextory " + tmpdir.getAbsolutePath());
+			System.exit(1);			
 		}
+		if(tmpdir.listFiles().length != 0) {
+			logger.debug("Temp folder is not empty, cleaning.");
+			FileUtils.cleanDirectory(tmpdir);
+		}
+		if(this.tempdir != null) {
+			this.tempdir.delete();
+		}
+		this.tempdir = tmpdir;
 	}
 
 	public String getTempdirStringPath() {
@@ -447,22 +451,28 @@ public class QRextractor implements Runnable {
 		this.totalpages = totalpages;
 	}
 
-	private List<BufferedImage> getImages(int first, int last, String pdffile) throws Exception {
+	private List<BufferedImage> getImages(int first, int last, String pdffile, File tempdir) throws Exception {
 
 		// If we are processing a PDF file we use ghostscript to read it
 		if(this.fileType == FileType.PDF) {
-			Path dir = Files.createTempDirectory("emarking");
+			Path dir = tempdir.toPath();
 			File inputfile = new File(pdffile);
-			File tmpfile = new File(dir.toAbsolutePath() + "input.pdf");
-			logger.debug("PDF file being processed " + pdffile + " copying to " + tmpfile.getAbsolutePath());
-			if(tmpfile.exists())
-				tmpfile.delete();
+			File tmpfile = new File(dir.toAbsolutePath() + "/input.pdf");
+			
+			logger.debug("PDF file to process: " + pdffile + " Temp file: " + tmpfile.getAbsolutePath());
+			
+			if(!tmpfile.exists() || tmpfile.getTotalSpace() == 0 || tmpfile.getTotalSpace() != inputfile.getTotalSpace()) {
+				
+				if(tmpfile.exists())
+					tmpfile.delete();
 
-			try {
-				FileUtils.copyFile(inputfile, tmpfile);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				throw new Exception("Impossible to copy file");
+				try {
+					logger.debug("PDF copied to temp");
+					FileUtils.copyFile(inputfile, tmpfile);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					throw new Exception("Impossible to copy file");
+				}
 			}
 
 			GhostscriptLoggerOutputStream gsloggerOutStream = new GhostscriptLoggerOutputStream(Level.OFF);
@@ -481,8 +491,8 @@ public class QRextractor implements Runnable {
 			gsArgs[5] = "-r" + resolution;
 			gsArgs[6] = "-dFirstPage=" + first;
 			gsArgs[7] = "-dLastPage=" + last;
-			gsArgs[8] = "-sOutputFile=" + dir.toAbsolutePath() + "tmpfigure%d." + imageExtension;
-			gsArgs[9] = dir.toAbsolutePath() + "input.pdf";
+			gsArgs[8] = "-sOutputFile=" + dir.toAbsolutePath() + "/tmpfigure%d" + Moodle.imageExtension;
+			gsArgs[9] = dir.toAbsolutePath() + "/input.pdf";
 
 			//execute and exit interpreter
 			try {
@@ -497,7 +507,7 @@ public class QRextractor implements Runnable {
 
 			for(int i=1;i<=last-first+1;i++) {
 				try {
-					File f = new File(dir.toAbsolutePath() + "tmpfigure"+ i +"." + imageExtension);
+					File f = new File(dir.toAbsolutePath() + "/tmpfigure"+ i + Moodle.imageExtension);
 					images.add(ImageIO.read(f));
 					f.delete();
 				} catch (IOException e) {
@@ -511,7 +521,7 @@ public class QRextractor implements Runnable {
 			List<BufferedImage> images = new ArrayList<BufferedImage>();
 
 			for(int i=first;i<=last;i++) {
-				String filename = this.tempdir.getAbsolutePath() + "/Prueba_"+ i +"." + imageExtension;
+				String filename = this.tempdir.getAbsolutePath() + "/Prueba_"+ i + Moodle.imageExtension;
 				try {
 					File f = new File(filename);
 					images.add(ImageIO.read(f));

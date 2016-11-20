@@ -448,7 +448,7 @@ public class OptionsDialog extends JDialog {
 		panel_4.add(resolution);
 		resolution.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {75, 100, 150, 300, 400, 500, 600}));
 		resolution.setSelectedIndex(2);
-		this.resolution.setSelectedItem(this.moodle.getQr().getResolution());		
+		this.resolution.setSelectedItem(this.moodle.getQrExtractor().getResolution());		
 
 		maxZipSize = new JComboBox<String>();
 		maxZipSize.setBounds(150, 67, 169, 27);
@@ -462,7 +462,7 @@ public class OptionsDialog extends JDialog {
 		panel_4.add(maxThreads);
 		maxThreads.setModel(new DefaultComboBoxModel<Integer>(new Integer[] {2, 4, 8, 16}));
 		maxThreads.setSelectedIndex(1);
-		this.maxThreads.setSelectedItem(this.moodle.getQr().getMaxThreads());
+		this.maxThreads.setSelectedItem(this.moodle.getQrExtractor().getMaxThreads());
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setLayout(null);

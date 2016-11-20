@@ -200,10 +200,10 @@ public class MoodleWorker implements Runnable {
 	 * @throws Exception
 	 */
 	private void swapFrontBackPages(int row) throws Exception {
-		if(!moodle.getQr().isDoubleside())
+		if(!moodle.getQrExtractor().isDoubleside())
 			throw new Exception("This can not be done in single side scanning");
 
-		if(moodle.getQr().isDoubleside() && row % 2 != 0)
+		if(moodle.getQrExtractor().isDoubleside() && row % 2 != 0)
 			throw new Exception(EmarkingDesktop.lang.getString("onlyevenrowsdoubleside"));
 
 		Page current = moodle.getPages().get(row);
@@ -212,13 +212,13 @@ public class MoodleWorker implements Runnable {
 		if(current == null || next == null)
 			throw new Exception("Invalid pages in swap operation");
 
-		File currentFile = new File(moodle.getQr().getTempdirStringPath() + "/" + current.getFilename() + ".png");
-		File nextFile = new File(moodle.getQr().getTempdirStringPath() + "/" + next.getFilename() + ".png");
-		File tempFile = File.createTempFile("emarking", ".png");
+		File currentFile = new File(moodle.getQrExtractor().getTempdirStringPath() + "/" + current.getFilename() + Moodle.imageExtension);
+		File nextFile = new File(moodle.getQrExtractor().getTempdirStringPath() + "/" + next.getFilename() + Moodle.imageExtension);
+		File tempFile = File.createTempFile("emarking", Moodle.imageExtension);
 
-		File currentFileAnonymous = new File(moodle.getQr().getTempdirStringPath() + "/" + current.getFilename() + "_a.png");
-		File nextFileAnonymous = new File(moodle.getQr().getTempdirStringPath() + "/" + next.getFilename() + "_a.png");
-		File tempFileAnonymous = File.createTempFile("emarking_a", ".png");
+		File currentFileAnonymous = new File(moodle.getQrExtractor().getTempdirStringPath() + "/" + current.getFilename() + "_a" + Moodle.imageExtension);
+		File nextFileAnonymous = new File(moodle.getQrExtractor().getTempdirStringPath() + "/" + next.getFilename() + "_a" + Moodle.imageExtension);
+		File tempFileAnonymous = File.createTempFile("emarking_a", Moodle.imageExtension);
 
 		if(!currentFile.exists() || !nextFile.exists() || !currentFile.exists() || !nextFile.exists())
 			throw new Exception("Invalid files for swap operation");
@@ -257,12 +257,12 @@ public class MoodleWorker implements Runnable {
 		image = rotateImage180static(image);
 
 		// Save the file
-		ImageIO.write(image, "png", file);
+		ImageIO.write(image, Moodle.imageType, file);
 
 		// Produce a new anonymous version
-		File fileAnonymous = new File(moodle.getQr().getTempdirStringPath() + "/" + p.getFilename() + "_a.png");
+		File fileAnonymous = new File(moodle.getQrExtractor().getTempdirStringPath() + "/" + p.getFilename() + "_a" + Moodle.imageExtension);
 		BufferedImage anonymousImage = createAnonymousVersionStatic(image);
-		ImageIO.write(anonymousImage, "png", fileAnonymous);
+		ImageIO.write(anonymousImage, Moodle.imageType, fileAnonymous);
 	}
 
 	private BufferedImage rotateImage180static(BufferedImage image) {

@@ -172,17 +172,17 @@ public class Pages extends Hashtable<Integer, Page> {
 		}
 
 		String oldfilename = current.getFilename();
-		File oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + ".png");
+		File oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + Moodle.imageExtension);
 		String newfilename = copyfrom.getStudent().getId() + "-" + copyfrom.getCourse().getId() + "-" + newpagenumber;
-		File newfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + ".png");
+		File newfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + Moodle.imageExtension);
 		if(newfile.exists()) {
 			throw new Exception("Invalid fix, page already exists!");
 		}
 		oldfile.renameTo(newfile);
 
 		// Change the anonymous version too
-		oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + "_a.png");
-		oldfile.renameTo(new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + "_a.png"));
+		oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + "_a" + Moodle.imageExtension);
+		oldfile.renameTo(new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + "_a" + Moodle.imageExtension));
 
 		if(current.getStudent() != null) {
 			current.getStudent().removePage(current);
@@ -202,17 +202,17 @@ public class Pages extends Hashtable<Integer, Page> {
 			Page next = this.get(row+1);
 
 			oldfilename = next.getFilename();
-			oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + ".png");
+			oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + Moodle.imageExtension);
 			newfilename += "b";
-			newfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + ".png");
+			newfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + Moodle.imageExtension);
 			if(newfile.exists()) {
 				throw new Exception("Invalid fix, page already exists!");
 			}
 			oldfile.renameTo(newfile);
 
 			// Change the anonymous version too
-			oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + "_a.png");
-			oldfile.renameTo(new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + "_a.png"));
+			oldfile = new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + oldfilename + "_a" + Moodle.imageExtension);
+			oldfile.renameTo(new File(this.moodle.getQrExtractor().getTempdirStringPath() + "/" + newfilename + "_a" + Moodle.imageExtension));
 
 			if(next.getStudent() != null) {
 				next.getStudent().removePage(next);

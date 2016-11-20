@@ -63,7 +63,7 @@ public class ZipFile implements Runnable  {
 	{
 		this.moodle = moodle;
 		fileList = new ArrayList<String>();
-		SOURCE_FOLDER = this.moodle.getQr().getTempdirStringPath();
+		SOURCE_FOLDER = this.moodle.getQrExtractor().getTempdirStringPath();
 		this.listenerList = new EventListenerList();
 		this.zipfiles = new ArrayList<File>();
 		this.setDatalimit(moodle.getMaxZipSize());
@@ -117,13 +117,14 @@ public class ZipFile implements Runnable  {
 			int studentdatasize = 0;
 			int accumulateddata = 0;
 			int currentimage = 0;
-			for(String file : this.fileList){
+			for(String file : this.fileList) {
 				String zipfilename = zipFile + currentfile + ".zip";
 				currentimage++;
 				if(!file.equals("answers.txt")) {
 					String[] parts = file.split("-");
 					if(parts.length != 3) {
-						logger.error("Invalid file in directory " + file);
+						logger.error("Invalid file in directory, ignored " + file);
+						continue;
 					}
 					if(!laststudent.equals(parts[0])) {
 						laststudent = parts[0];
@@ -210,7 +211,7 @@ public class ZipFile implements Runnable  {
 	public void run() {
 
 		if(moodle.isAnswerSheets()) {
-			Path path = Paths.get(moodle.getQr().getTempdirStringPath() + "/answers.txt");
+			Path path = Paths.get(moodle.getQrExtractor().getTempdirStringPath() + "/answers.txt");
 			logger.info("Saving answers in json format to " + path.toString());
 			try {
 				Files.write(path, moodle.getStudentOMRAnswers().getBytes());
@@ -218,7 +219,7 @@ public class ZipFile implements Runnable  {
 				logger.error("Error writing answers in json");
 				e1.printStackTrace();
 			}
-			path = Paths.get(moodle.getQr().getTempdirStringPath() + "/answers.csv");
+			path = Paths.get(moodle.getQrExtractor().getTempdirStringPath() + "/answers.csv");
 			logger.info("Saving answers in CSV format to " + path.toString());
 			try {
 				Files.write(path, moodle.getStudentOMRAnswersCSV().getBytes());
@@ -228,7 +229,7 @@ public class ZipFile implements Runnable  {
 			}
 		}
 
-		this.generateFileList(new File(moodle.getQr().getTempdirStringPath()));
+		this.generateFileList(new File(moodle.getQrExtractor().getTempdirStringPath()));
 		logger.debug("Files to include in zip:" + this.fileList.size());
 
 		MoodleWorkerEvent e = new MoodleWorkerEvent(this, 0, this.fileList.size(), "");
@@ -260,7 +261,7 @@ public class ZipFile implements Runnable  {
 		try{
 
 			//create output directory if not exists
-			File folder = moodle.getQr().getTempdir();
+			File folder = moodle.getQrExtractor().getTempdir();
 			if(!folder.exists()){
 				folder.mkdir();
 			}
@@ -274,7 +275,7 @@ public class ZipFile implements Runnable  {
 			while(ze!=null){
 
 				String fileName = ze.getName();
-				File newFile = new File(moodle.getQr().getTempdir() + File.separator + fileName);
+				File newFile = new File(moodle.getQrExtractor().getTempdir() + File.separator + fileName);
 
 				//create all non exists folders
 				//else you will hit FileNotFoundException for compressed folder

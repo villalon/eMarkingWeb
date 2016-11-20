@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import cl.uai.webcursos.emarking.desktop.data.Moodle;
+
 /**
  * @author Jorge
  *
@@ -33,7 +35,7 @@ public class eMarkingTechnologySamples {
 		File samplesdir = new File("samples");
 		
 		for(File f : samplesdir.listFiles()) {
-			if(f.isDirectory() || !f.getAbsolutePath().endsWith(".png"))
+			if(f.isDirectory() || !f.getAbsolutePath().endsWith(Moodle.imageExtension))
 				continue;
 			
 			logger.info(f.getAbsolutePath());
