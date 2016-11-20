@@ -37,11 +37,6 @@ public class eMarkingCli {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) {
-		// Obtain properties for log4j
-		PropertyConfigurator.configure("log4j.properties");
-		// Logging the start
-		logger.info("Starting EMarking CLI");
-
 		Option help = new Option( "help", "print this message" );
 		Option debug = new Option( "debug", "saves QR extracted images for debugging" );
 		Option doubleside = new Option( "doubleside", "PDF contains pages with both sides digitized" );
@@ -80,13 +75,21 @@ public class eMarkingCli {
                 .hasArg()
                 .desc("directory for temporary files")
                 .build();
-		
+		Option log4j = Option
+				.builder()
+				.argName("path")
+				.longOpt("log4j")
+                .hasArg()
+                .desc("log4j properties file")
+                .build();
+				
 		Options options = new Options();
 		options.addOption(pdf);
 		options.addOption(url);
 		options.addOption(username);
 		options.addOption(password);
 		options.addOption(tmpdir);
+		options.addOption(log4j);
 		options.addOption(debug);
 		options.addOption(doubleside);
 		options.addOption(help);
@@ -113,11 +116,21 @@ public class eMarkingCli {
 		// Set language settings
 		EmarkingDesktop.lang = ResourceBundle.getBundle("cl.uai.webcursos.emarking.desktop.lang", locale);
 
-		if (!line.hasOption("pdf") || !line.hasOption("url") || !line.hasOption("user") || !line.hasOption("pwd")) {
+		if (!line.hasOption("pdf") || !line.hasOption("url") || !line.hasOption("user") || !line.hasOption("pwd") || !line.hasOption("log4j")) {
 	    	HelpFormatter formatter = new HelpFormatter();
 	    	formatter.printHelp("java -jar emarking.jar", options);			
 			System.exit(1);
 		}
+		
+		File log4jproperties = new File(line.getOptionValue("log4j"));
+		if(!log4jproperties.exists()) {
+			System.err.println("Fatal error, could not load log4j properties");
+		}
+		
+		// Obtain properties for log4j
+		PropertyConfigurator.configure(log4jproperties.getAbsolutePath());
+		// Logging the start
+		logger.info("Starting EMarking CLI");
 
 		eMarkingCli cli = null;
 		try {
