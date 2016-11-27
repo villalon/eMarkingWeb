@@ -55,9 +55,9 @@ public class CommentMark extends Mark {
 		
 		this.format = 1;
 		this.iconType = IconType.COMMENT;
+		this.iconOnly = true;
 
 		this.addStyleName(Resources.INSTANCE.css().commentmark());
-		this.addStyleName(Resources.INSTANCE.css().markpopup());
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class CommentMark extends Mark {
 		super.setMarkHTML();
 		
 		if(this.criterionid > 0) {
-			Color.setWidgetBackgroundHueColor(this.criterionid, this);
+			Color.setWidgetFontHueColor(this.criterionid, this);
 		}
 	}
 }

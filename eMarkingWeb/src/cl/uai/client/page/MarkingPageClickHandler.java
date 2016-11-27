@@ -36,7 +36,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 
@@ -107,7 +106,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 							unixtime,
 							selectedCriterion,
 							"Not set",
-							URL.encode(dialog.getTxtComment())
+							dialog.getTxtComment()
 							);
 					EMarkingWeb.markingInterface.addMark(mark, parentPage);
 				}
@@ -116,17 +115,34 @@ public class MarkingPageClickHandler implements ClickHandler {
 			break;
 			// A cross
 		case BUTTON_CROSS:
-			CrossMark crmark = new CrossMark(
-					0,
+			final EditMarkDialog dialogcross = new EditMarkDialog(
 					newposx, 
-					newposy, 
-					pageno,
-					EMarkingConfiguration.getMarkerId(), 
-					unixtime,
-					selectedCriterion,
-					MarkingInterface.submissionData.getMarkerfirstname(),
-					"");
-			EMarkingWeb.markingInterface.addMark(crmark, parentPage);
+					dialogposy,
+					0, // No level id for a text comment
+					0); // No regradeid either
+			
+			dialogcross.addCloseHandler(new CloseHandler<PopupPanel>() {				
+				@Override
+				public void onClose(CloseEvent<PopupPanel> event) {
+					if(dialogcross.isCancelled()) {
+						EMarkingWeb.markingInterface.getElement().focus();
+						return;
+					}
+
+					CrossMark crmark = new CrossMark(
+							0,
+							newposx, 
+							newposy, 
+							pageno,
+							EMarkingConfiguration.getMarkerId(), 
+							unixtime,
+							selectedCriterion,
+							MarkingInterface.submissionData.getMarkerfirstname(),
+							dialogcross.getTxtComment());
+					EMarkingWeb.markingInterface.addMark(crmark, parentPage);
+				}
+			});
+			dialogcross.show();			
 			break;
 			// A pen
 		case BUTTON_PEN:
@@ -140,51 +156,102 @@ public class MarkingPageClickHandler implements ClickHandler {
 			break;
 			// A check mark
 		case BUTTON_TICK:
-			CheckMark cmark = new CheckMark(
-					0,
+			final EditMarkDialog dialogtick = new EditMarkDialog(
 					newposx, 
-					newposy, 
-					pageno,
-					EMarkingConfiguration.getMarkerId(),
-					unixtime,
-					selectedCriterion,
-					MarkingInterface.submissionData.getMarkerfirstname(),
-					"");
-			EMarkingWeb.markingInterface.addMark(cmark, parentPage);
+					dialogposy,
+					0, // No level id for a text comment
+					0); // No regradeid either
+			
+			dialogtick.addCloseHandler(new CloseHandler<PopupPanel>() {				
+				@Override
+				public void onClose(CloseEvent<PopupPanel> event) {
+					if(dialogtick.isCancelled()) {
+						EMarkingWeb.markingInterface.getElement().focus();
+						return;
+					}
+
+					CheckMark cmark = new CheckMark(
+							0,
+							newposx, 
+							newposy, 
+							pageno,
+							EMarkingConfiguration.getMarkerId(),
+							unixtime,
+							selectedCriterion,
+							MarkingInterface.submissionData.getMarkerfirstname(),
+							dialogtick.getTxtComment());
+					EMarkingWeb.markingInterface.addMark(cmark, parentPage);
+				}
+			});
+			dialogtick.show();			
 			break;
 			// A check mark
 		case BUTTON_QUESTION:
-			QuestionMark qmark = new QuestionMark(
-					0,
+			final EditMarkDialog dialogquestion = new EditMarkDialog(
 					newposx, 
-					newposy, 
-					pageno,
-					EMarkingConfiguration.getMarkerId(),
-					unixtime,
-					selectedCriterion,
-					MarkingInterface.submissionData.getMarkerfirstname(),
-					"");
-			EMarkingWeb.markingInterface.addMark(qmark, parentPage);
+					dialogposy,
+					0, // No level id for a text comment
+					0); // No regradeid either
+			
+			dialogquestion.addCloseHandler(new CloseHandler<PopupPanel>() {				
+				@Override
+				public void onClose(CloseEvent<PopupPanel> event) {
+					if(dialogquestion.isCancelled()) {
+						EMarkingWeb.markingInterface.getElement().focus();
+						return;
+					}
+
+					QuestionMark qmark = new QuestionMark(
+							0,
+							newposx, 
+							newposy, 
+							pageno,
+							EMarkingConfiguration.getMarkerId(),
+							unixtime,
+							selectedCriterion,
+							MarkingInterface.submissionData.getMarkerfirstname(),
+							dialogquestion.getTxtComment());
+					EMarkingWeb.markingInterface.addMark(qmark, parentPage);
+				}
+			});
+			dialogquestion.show();			
 			break;
 		case BUTTON_CUSTOM:
-			CustomMark custommark = new CustomMark(
-					0,
-					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
-					.getSelectedButtonLabel(),
+			final EditMarkDialog dialogcustom = new EditMarkDialog(
 					newposx, 
-					newposy, 
-					pageno,
-					EMarkingConfiguration.getMarkerId(),
-					unixtime,
-					selectedCriterion,
-					MarkingInterface.submissionData.getMarkerfirstname(),
-					"");
-			custommark.setRawtext(
-					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
-						.getSelectedButtonLabel() + ": "
-						+ EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
-						.getSelectedButtonTitle());
-			EMarkingWeb.markingInterface.addMark(custommark, parentPage);
+					dialogposy,
+					0, // No level id for a text comment
+					0); // No regradeid either
+			
+			dialogcustom.addCloseHandler(new CloseHandler<PopupPanel>() {				
+				@Override
+				public void onClose(CloseEvent<PopupPanel> event) {
+					if(dialogcustom.isCancelled()) {
+						EMarkingWeb.markingInterface.getElement().focus();
+						return;
+					}
+
+					CustomMark custommark = new CustomMark(
+							0,
+							EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
+							.getSelectedButtonLabel(),
+							newposx, 
+							newposy, 
+							pageno,
+							EMarkingConfiguration.getMarkerId(),
+							unixtime,
+							selectedCriterion,
+							MarkingInterface.submissionData.getMarkerfirstname(),
+							"");
+					custommark.setRawtext(
+							EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
+								.getSelectedButtonLabel() + ": "
+								+ EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
+								.getSelectedButtonTitle() + "\n" + dialogcustom.getTxtComment());
+					EMarkingWeb.markingInterface.addMark(custommark, parentPage);
+				}
+			});
+			dialogcustom.show();			
 			break;
 		default:
 		}

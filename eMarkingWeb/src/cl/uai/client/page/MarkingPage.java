@@ -256,7 +256,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			Criterion selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 			if(selectedCriterion  == null){
 				newvalue++;
-			} else if(mark.getCriterionid() == selectedCriterion.getId()){
+			} else if(mark.getCriterionId() == selectedCriterion.getId()){
 				newvalue++;
 			}
 			stats.put(format, newvalue);

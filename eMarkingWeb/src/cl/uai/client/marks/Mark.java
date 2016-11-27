@@ -34,7 +34,6 @@ import cl.uai.client.page.EditMarkMenu;
 import cl.uai.client.page.LoadingIcon;
 import cl.uai.client.page.MarkPopup;
 import cl.uai.client.page.MarkingPage;
-import cl.uai.client.page.MinimizeIcon;
 import cl.uai.client.page.RegradeIcon;
 import cl.uai.client.page.TrashIcon;
 import cl.uai.client.resources.Resources;
@@ -78,7 +77,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		deleteIcon = new TrashIcon();
 	}
 
-	public int getCriterionid() {
+	public int getCriterionId() {
 		return criterionid;
 	}
 
@@ -100,13 +99,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		editIcon = new EditIcon();
 	}
 	
-	/** The minimize icon **/
-	protected static MinimizeIcon minimizeIcon = null;
-
-	static {
-		minimizeIcon = new MinimizeIcon();
-	}
-	
 	public static LoadingIcon loadingIcon = null;
 	static {
 		loadingIcon = new LoadingIcon();
@@ -123,7 +115,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		deleteIcon.setVisible(false);
 		editIcon.setVisible(false);
 		regradeIcon.setVisible(false);
-		minimizeIcon.setVisible(false);
 		markPopup.setVisible(false);
 	}
 	
@@ -152,9 +143,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		if(abspanel.getWidgetIndex(Mark.regradeIcon) < 0)
 			abspanel.add(Mark.regradeIcon, left, top);
 
-		if(abspanel.getWidgetIndex(Mark.minimizeIcon) < 0)
-			abspanel.add(Mark.minimizeIcon, left, top);
-
 		if(abspanel.getWidgetIndex(Mark.markPopup) < 0)
 			abspanel.add(Mark.markPopup, left, top);
 
@@ -163,14 +151,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 
 		// If we are in grading mode, show delete and edit icons
 		if(!EMarkingConfiguration.isReadonly()) {
-			
-			if(mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.minimizeIcon, left, top);
-				Mark.minimizeIcon.setVisible(true);
-				Mark.minimizeIcon.setMark(mark);
-				left -= 15;
-				
-			}
 			
 			// Edit icon is only for comments and rubrics
 			if(mark instanceof CommentMark || mark instanceof RubricMark) {
@@ -198,15 +178,25 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		}
 
 		// Highlight the rubric interface if the mark is a RubricMark
-		if(mark instanceof RubricMark) {
-			Mark.markPopup.setHTML(((RubricMark) mark).getMarkPopupHTML());
+			Mark.markPopup.setHTML(mark.getMarkPopupHTML());
 			Mark.markPopup.setVisible(true);
 			top += 50;
 			abspanel.setWidgetPosition(Mark.markPopup, left, top);
-		}
 			
 	}
 	
+	protected String getMarkPopupHTML() {
+		String html = "";
+		if(this.getRawtext() != null && this.getRawtext().length() > 0) {
+			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
+		}
+		// Show the marker's name if the marking process is not anonymous
+		if(!EMarkingConfiguration.isMarkerAnonymous()) {
+			html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ markername + "</div>";
+		}
+		return html;
+	}
+
 	protected static EditMarkMenu editMenu = null;
 
 	/** A mark id, corresponding to emarking_comment table in Moodle **/
@@ -350,7 +340,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			styleColor = "style=\"color:" + Color.getCSSHueColor(criterionid) + "\"";
 		}
 		
-		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" title=\""+ markername +"\" " + styleColor + ">" + iconhtml + "</div>";
+		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" " + styleColor + ">" + iconhtml + "</div>";
 		// If the mark is an icon
 		if(!this.iconOnly && this.getRawtext().trim().length() > 0) {
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";

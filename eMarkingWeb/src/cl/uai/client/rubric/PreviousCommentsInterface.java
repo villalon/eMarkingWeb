@@ -246,7 +246,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 			List<Integer> pages = new ArrayList<Integer>();
 			pages.add(mark.getPageno());
 			List<Integer> criteria = new ArrayList<Integer>();
-			criteria.add(mark.getCriterionid());
+			criteria.add(mark.getCriterionId());
 			List<Integer> drafts = new ArrayList<Integer>();
 			drafts.add(MarkingInterface.getDraftId());
 			Comment newComment = new Comment(
@@ -268,7 +268,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 				String json = "{ " + 
 						"\"id\":" + mark.getId() + "," +
 						"\"text\": \"" + URL.encode(mark.getRawtext()) + "\"," +
-						"\"criterionid\":" + mark.getCriterionid() + "," +
+						"\"criterionid\":" + mark.getCriterionId() + "," +
 						"\"pageno\":" + mark.getPageno() + "," +
 						"\"markerid\":" + mark.getMarkerId() + "," +
 						"\"format\":" + mark.getFormat() + "," +

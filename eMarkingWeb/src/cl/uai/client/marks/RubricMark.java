@@ -242,7 +242,8 @@ public class RubricMark extends Mark {
 		this.setHTML((new Icon(IconType.MAP_MARKER)).toString());		
 	}
 	
-	public String getMarkPopupHTML() {
+	@Override
+	protected String getMarkPopupHTML() {
 		// Starts with an empty HTML
 		String html = "";
 		boolean headerOnly = false;
@@ -404,12 +405,6 @@ public class RubricMark extends Mark {
 
 	public float getBonus() {
 		return this.bonus;
-	}
-	public int getCriterionId() {
-		if(getLevel() != null) {
-			return getLevel().getCriterion().getId();
-		}
-		return 0;
 	}
 	/**
 	 * Changes the rubric level for this rubric

@@ -341,7 +341,7 @@ public class MarkingInterface extends EMarkingComposite {
 				"&format=" + mark.getFormat() +
 				"&pageno=" + mark.getPageno() +
 				"&criterionid="+cid + 
-				"&colour="+mark.getCriterionid() +
+				"&colour="+mark.getCriterionId() +
 				"&windowswidth=" + page.getWidth() +
 				"&windowsheight=" + page.getHeight()
 				, new AsyncCallback<AjaxData>() {

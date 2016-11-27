@@ -316,14 +316,10 @@ to {
 	height: 34px;
 }
 
-.checkmark,.crossmark, .rubricmark {
+.checkmark,.crossmark, .rubricmark, .commentmark {
 	color: #fa3c45;
 	font-weight: 100;
 	text-shadow: 1px 1px #999;
-}
-
-.commentmark {
-	color: #0000ff;
 }
 
 .othermark {
@@ -804,6 +800,7 @@ to {
 	height:30px;
 	border-radius:50%;
 	float: right;
+	cursor: pointer;
 }
 
 .miniscale{

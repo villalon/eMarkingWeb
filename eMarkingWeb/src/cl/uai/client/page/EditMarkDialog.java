@@ -304,14 +304,13 @@ public class EditMarkDialog extends DialogBox {
 			this.setWidget(superPanel);
 		}
 	}
-
+	
 	@Override
 	public void show() {
 		super.show();
-
-		this.txtComment.getValueBox().setFocus(true);
+		logger.fine("Shown!");
 	}
-	
+
 	/**
 	 * Sets the text in the text box
 	 * @param txt
@@ -395,13 +394,6 @@ public class EditMarkDialog extends DialogBox {
 		this.bonusTxt.setText(RubricMark.getNumberFormat(true).format(bonus));
 	}
 
-	@Override
-	public void center() {
-		super.center();
-
-		this.txtComment.setFocus(true);
-	}
-	
 	@Override
 	public boolean onKeyDownPreview(char key, int modifiers) {
 		switch (key) {

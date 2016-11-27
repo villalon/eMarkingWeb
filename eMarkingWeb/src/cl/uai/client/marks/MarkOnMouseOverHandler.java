@@ -46,10 +46,10 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 		Mark.showIcons(mark);
 		
 		// Highlight the rubric interface if the mark is a RubricMark
-		if(mark instanceof RubricMark) {
-			int criterionid = ((RubricMark) mark).getCriterionId();
-			EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().highlightRubricCriterion(criterionid);
-		}
+			int criterionid = mark.getCriterionId();
+			if(criterionid > 0) {
+				EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().highlightRubricCriterion(criterionid);
+			}
 		
 	}
 }
