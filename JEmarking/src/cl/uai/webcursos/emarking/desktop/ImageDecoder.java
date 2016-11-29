@@ -195,12 +195,6 @@ public class ImageDecoder implements Runnable {
 			}
 		}
 
-		float factor = 1200f / this.image.getWidth();
-		this.image = resizeImage(this.image, factor);
-		if(this.backimage != null) {
-			this.image = resizeImage(this.image, factor);
-		}
-		
 		// If images were rotated, both are rotated
 		if(qrResult.isSuccess() && qrResult.isRotated()) {
 			this.image = rotateImage180(this.image);
@@ -262,15 +256,6 @@ public class ImageDecoder implements Runnable {
 			logger.error("Error saving images");
 			e.printStackTrace();
 		}
-	}
-
-	private BufferedImage resizeImage(BufferedImage image, float factor) {
-		BufferedImage blackWhite = new BufferedImage((int) ((float) image.getWidth() * factor), (int) ((float) image.getHeight() * factor), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = blackWhite.createGraphics();
-        g2d.drawImage(image, 0, 0, (int) ((float) image.getWidth() * factor), (int) ((float) image.getHeight() * factor), null);
-        g2d.dispose();
-
-		return blackWhite;
 	}
 
 	private BinaryBitmap getBitmapFromBufferedImage(BufferedImage qrcorner) {

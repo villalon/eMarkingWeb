@@ -26,7 +26,6 @@ package cl.uai.webcursos.emarking.desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -37,14 +36,11 @@ import javax.imageio.ImageIO;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.ghost4j.Ghostscript;
-import org.ghost4j.GhostscriptException;
-import org.ghost4j.GhostscriptLoggerOutputStream;
 import org.ghost4j.document.DocumentException;
 
 import cl.uai.webcursos.emarking.desktop.data.Moodle;
+import cl.uai.webcursos.emarking.desktop.utils.GhostscriptExtract;
 
 /**
  * @author Jorge Villalón
@@ -455,61 +451,16 @@ public class QRextractor implements Runnable {
 
 		// If we are processing a PDF file we use ghostscript to read it
 		if(this.fileType == FileType.PDF) {
-			Path dir = tempdir.toPath();
-			File inputfile = new File(pdffile);
-			File tmpfile = new File(dir.toAbsolutePath() + "/input.pdf");
-			
-			logger.debug("PDF file to process: " + pdffile + " Temp file: " + tmpfile.getAbsolutePath());
-			
-			if(!tmpfile.exists() || tmpfile.getTotalSpace() == 0 || tmpfile.getTotalSpace() != inputfile.getTotalSpace()) {
-				
-				if(tmpfile.exists())
-					tmpfile.delete();
 
-				try {
-					logger.debug("PDF copied to temp");
-					FileUtils.copyFile(inputfile, tmpfile);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					throw new Exception("Impossible to copy file");
-				}
-			}
-
-			GhostscriptLoggerOutputStream gsloggerOutStream = new GhostscriptLoggerOutputStream(Level.OFF);
-			Ghostscript gs = Ghostscript.getInstance();
-			gs.setStdOut(gsloggerOutStream);
-			gs.setStdOut(gsloggerOutStream);
-
-			//prepare Ghostscript interpreter parameters
-			//refer to Ghostscript documentation for parameter usage
-			String[] gsArgs = new String[10];
-			gsArgs[0] = "-dSAFER";
-			gsArgs[1] = "-dBATCH";
-			gsArgs[2] = "-dNOPAUSE";
-			gsArgs[3] = "-sDEVICE=jpeggray";
-			gsArgs[4] = "-dJPEGQ=100";
-			gsArgs[5] = "-r" + resolution;
-			gsArgs[6] = "-dFirstPage=" + first;
-			gsArgs[7] = "-dLastPage=" + last;
-			gsArgs[8] = "-sOutputFile=" + dir.toAbsolutePath() + "/tmpfigure%d" + Moodle.imageExtension;
-			gsArgs[9] = dir.toAbsolutePath() + "/input.pdf";
-
-			//execute and exit interpreter
-			try {
-				gs.initialize(gsArgs);
-				gs.exit();
-			} catch (GhostscriptException e) {
-				logger.error("ERROR: " + e.getMessage());
-				throw new Exception("Impossible to extract images");
-			}
+			GhostscriptExtract.extractImagesFromPDF(first, last, this.resolution, tempdir, pdffile);
 
 			List<BufferedImage> images = new ArrayList<BufferedImage>();
 
 			for(int i=1;i<=last-first+1;i++) {
 				try {
-					File f = new File(dir.toAbsolutePath() + "/tmpfigure"+ i + Moodle.imageExtension);
+					File f = new File(tempdir.getAbsolutePath() + "/tmpfigure"+ i + Moodle.imageExtension);
 					images.add(ImageIO.read(f));
-					f.delete();
+					// f.delete();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
