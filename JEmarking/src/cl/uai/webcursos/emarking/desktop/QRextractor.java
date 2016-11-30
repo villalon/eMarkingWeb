@@ -460,7 +460,7 @@ public class QRextractor implements Runnable {
 				try {
 					File f = new File(tempdir.getAbsolutePath() + "/tmpfigure"+ i + Moodle.imageExtension);
 					images.add(ImageIO.read(f));
-					// f.delete();
+					f.delete();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
