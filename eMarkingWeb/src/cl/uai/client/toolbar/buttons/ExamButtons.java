@@ -72,7 +72,7 @@ public class ExamButtons extends Buttons {
 				if(MarkingInterface.submissionData != null && MarkingInterface.submissionData.getId() > 0) {
 					
 					FinishMarkingDialog finishDialog = new FinishMarkingDialog();
-					finishDialog.setGeneralFeedback(EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().getGeneralFeedback().getFeedbackText());
+					finishDialog.setGeneralFeedback(EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().getGeneralFeedbackInterface().getFeedbackText());
 					
 					finishDialog.addCloseHandler(new CloseHandler<PopupPanel>() {						
 						@Override

@@ -61,6 +61,10 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
  */
 public class RubricPanel extends EMarkingComposite {
 
+	public GeneralFeedbackInterface getGeneralFeedbackInterface() {
+		return generalFeedbackInterface;
+	}
+
 	Logger logger = Logger.getLogger(RubricPanel.class.getName());
 
 	/** Contains the rubric table **/
@@ -80,6 +84,8 @@ public class RubricPanel extends EMarkingComposite {
 	
 	/** Scroll panel for rubric table **/
 	private ScrollPanel scrollPanel = null;
+	
+	private GeneralFeedbackInterface generalFeedbackInterface = null;
 
 	/** If the rubric must include headers for each criterion **/
 	private boolean popupInterface = false;
@@ -168,12 +174,15 @@ public class RubricPanel extends EMarkingComposite {
 		hpanelTitle.setCellVerticalAlignment(closeButton, HasVerticalAlignment.ALIGN_MIDDLE);
 		mainPanel.add(hpanelTitle);
 
+		generalFeedbackInterface = new GeneralFeedbackInterface();
+
 		// Adds the scroll panel containing the rubric table
 		scrollPanel = new ScrollPanel();
 		rubricTable = new VerticalPanel();
 		rubricTable.addStyleName(Resources.INSTANCE.css().rubrictable());
 		scrollPanel.add(rubricTable);
 		mainPanel.add(scrollPanel);
+		
 
 		initWidget(mainPanel);
 	}
@@ -327,6 +336,7 @@ public class RubricPanel extends EMarkingComposite {
 			rubricTable.add(rowPanel);
 		}
 
+		rubricTable.add(generalFeedbackInterface);
 	}
 
 	private String getCriterionVisibilityCss(Criterion criterion) {

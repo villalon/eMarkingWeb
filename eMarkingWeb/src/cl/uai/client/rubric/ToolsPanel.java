@@ -23,8 +23,6 @@ public class ToolsPanel extends Composite {
 	private TabPanel toolsPanel = null;
 	/** Previous comments interface **/
 	private PreviousCommentsInterface previousComments = null;
-	/** General feedback **/
-	private GeneralFeedbackInterface generalFeedback = null;
 	/** Sorting pages interfaces **/
 	private SortPagesInterface sortPages = null;
 	
@@ -32,13 +30,6 @@ public class ToolsPanel extends Composite {
 	
 	/** Scroll panel for managing a large number of comments **/
 	private ScrollPanel scroll;
-
-	/**
-	 * @return the generalFeedback
-	 */
-	public GeneralFeedbackInterface getGeneralFeedback() {
-		return generalFeedback;
-	}
 
 	/**
 	 * @return the previousComments
@@ -51,9 +42,6 @@ public class ToolsPanel extends Composite {
 		toolsPanel = new TabPanel();
 		toolsPanel.addStyleName(Resources.INSTANCE.css().previouscomments());
 		
-		// Marking tools
-		generalFeedback = new GeneralFeedbackInterface();
-
 		previousComments = new PreviousCommentsInterface();
 		previousComments.setVisible(!EMarkingConfiguration.isReadonly());
 
@@ -66,10 +54,6 @@ public class ToolsPanel extends Composite {
 			toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
 		}
 		
-		if(!EMarkingConfiguration.isReadonly()) {
-			toolsPanel.add(generalFeedback, MarkingInterface.messages.GeneralFeedback());
-		}
-
 		// Sorting pages
 		if(EMarkingConfiguration.isSupervisor()) {
 			sortPages = new SortPagesInterface();
