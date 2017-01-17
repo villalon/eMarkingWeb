@@ -84,7 +84,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		markingButtons = new MarkingButtons();
 		markingButtons.setVisible(false);
 
-		examButtons = new ExamButtons();
+		examButtons = new ExamButtons(true);
 		examButtons.setVisible(false);
 		
 		viewButtons = new ViewButtons();
@@ -126,6 +126,15 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellVerticalAlignment(grade, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(grade, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(grade, "10%");
+		
+		ExamButtons extraButtons = new ExamButtons(false);
+		extraButtons.getFinishMarkingButton().setVisible(true);
+		extraButtons.getSaveAndJumpToNextButton().setVisible(true);
+		extraButtons.getSaveChangesButton().setVisible(true);
+		buttonsPanel.add(extraButtons);
+		buttonsPanel.setCellVerticalAlignment(extraButtons, HasVerticalAlignment.ALIGN_MIDDLE);
+		buttonsPanel.setCellHorizontalAlignment(extraButtons, HasHorizontalAlignment.ALIGN_RIGHT);
+		buttonsPanel.setCellWidth(extraButtons, "40%");
 		
 		this.initWidget(buttonsPanel);
 	}

@@ -79,7 +79,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 		final int selectedCriterion = criterion == null ? 0 : criterion.getId();
 
 		// Switches over the selected button in the rubric interface, to know what mark to add
-		switch(EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedButton()) {
+		switch(EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedButtonFormat()) {
 
 		// A comment
 		case BUTTON_COMMENT:

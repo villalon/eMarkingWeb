@@ -9,11 +9,14 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.PathMark;
-import cl.uai.client.toolbar.buttons.MarkingButtons;
+import cl.uai.client.toolbar.buttons.ButtonFormat;
 
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 public class MarkingPageDrawHandler implements DrawHandler {
 	private MarkingPage parentPage = null;
@@ -31,7 +34,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 		this.lastY = 0;
 	}
 	private boolean isPenActive(){
-		return EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedButton() == MarkingButtons.Buttons.BUTTON_PEN;
+		return EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedButtonFormat() == ButtonFormat.BUTTON_PEN;
 		
 	}
 	
@@ -70,6 +73,26 @@ public class MarkingPageDrawHandler implements DrawHandler {
 			return;
 		}
 		
+		int newposx = event.getClientX();
+		int newposy = event.getClientY();
+		
+		final EditMarkDialog dialogquestion = new EditMarkDialog(
+				newposx, 
+				newposy,
+				0, // No level id for a text comment
+				0); // No regradeid either
+		
+		dialogquestion.addCloseHandler(new CloseHandler<PopupPanel>() {				
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				if(dialogquestion.isCancelled()) {
+					EMarkingWeb.markingInterface.getElement().focus();
+					return;
+				}
+			}
+		});
+		dialogquestion.show();			
+
 		drawingArea.remove(this.currentPath);
 		int pathX = this.currentPath.getX();
 		int pathY = this.currentPath.getY();
@@ -110,15 +133,14 @@ public class MarkingPageDrawHandler implements DrawHandler {
 				top,
 				pageno,
 				EMarkingConfiguration.getMarkerId(),
-				right-left,bottom-top, 
+				right-left,bottom-top,
+				dialogquestion.getTxtComment(),
 				this.currentPath.getElement().getAttribute("d"),
 				unixtime,
 				selectedCriterion,
 				MarkingInterface.submissionData.getMarkerfirstname());
 
 		EMarkingWeb.markingInterface.addMark(mark, this.parentPage);
-		//currentPath.setY(event.getClientY()-absolutePanel.getAbsoluteTop()+20);
-		
 	}
 
 }

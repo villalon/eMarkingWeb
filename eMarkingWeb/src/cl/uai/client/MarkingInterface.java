@@ -21,7 +21,6 @@
  */
 package cl.uai.client;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +42,9 @@ import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.data.SubmissionGradeData;
 import cl.uai.client.marks.CustomMark;
+import cl.uai.client.marks.HighlightMark;
 import cl.uai.client.marks.Mark;
+import cl.uai.client.marks.PathMark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.page.EditMarkDialog;
 import cl.uai.client.page.MarkingPage;
@@ -331,16 +332,24 @@ public class MarkingInterface extends EMarkingComposite {
 			}
 		}
 
+		String path = "";
+		if(mark instanceof PathMark) {
+			path = "&path=" + URL.encode(((PathMark) mark).getPath());
+		} else if(mark instanceof HighlightMark) {
+			HighlightMark hmark = (HighlightMark) mark;
+			path = "&path=" + URL.encode(hmark.getEnd().getX() + "," + hmark.getEnd().getY());			
+		}
 		// Invokes the ajax Moodle interface to save the mark
 		AjaxRequest.ajaxRequest("action=addcomment" +
 				"&comment=" + URL.encode(mark.getRawtext()) +
 				"&posx=" + mark.getPosx() +
 				"&posy=" + mark.getPosy() +
-				"&width=" + mark.getWidth() +
-				"&height=" + mark.getHeight() +
+				"&width=" + page.getWidth() +
+				"&height=" + page.getHeight() +
 				"&format=" + mark.getFormat() +
 				"&pageno=" + mark.getPageno() +
 				"&criterionid="+cid + 
+				path +
 				"&colour="+mark.getCriterionId() +
 				"&windowswidth=" + page.getWidth() +
 				"&windowsheight=" + page.getHeight()

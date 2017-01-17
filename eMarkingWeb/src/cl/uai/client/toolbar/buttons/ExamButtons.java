@@ -40,13 +40,28 @@ public class ExamButtons extends Buttons {
 	private static Logger logger = Logger.getLogger(ExamButtons.class.getName());
 	
 	private PushButton finishMarkingButton = null;
+	public PushButton getFinishMarkingButton() {
+		return finishMarkingButton;
+	}
+
+	public PushButton getSaveChangesButton() {
+		return saveChangesButton;
+	}
+
+	public PushButton getSaveAndJumpToNextButton() {
+		return saveAndJumpToNextButton;
+	}
+
 	private PushButton saveChangesButton = null;
 	private PushButton saveAndJumpToNextButton = null;
 	private ToggleButton selectAsAnswerKey = null;
+	private boolean includeTextInButtons = true;
 
 	
-	public ExamButtons() {
-		finishMarkingButton = new PushButton(IconType.CHECK, MarkingInterface.messages.FinishMarking());
+	public ExamButtons(boolean includeText) {
+		this.includeTextInButtons = includeText;
+		
+		finishMarkingButton = new PushButton(IconType.CHECK, includeTextInButtons ? MarkingInterface.messages.FinishMarking() : null);
 		finishMarkingButton.setVisible(false);
 		finishMarkingButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -120,7 +135,7 @@ public class ExamButtons extends Buttons {
 			}
 		});
 		
-		saveChangesButton = new PushButton(IconType.SAVE, MarkingInterface.messages.SaveChangesClose());
+		saveChangesButton = new PushButton(IconType.SAVE, includeTextInButtons ? MarkingInterface.messages.SaveChangesClose() : null);
 		saveChangesButton.setVisible(false);
 		saveChangesButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -133,8 +148,8 @@ public class ExamButtons extends Buttons {
 		selectAsAnswerKey = new ToggleButton();
 		selectAsAnswerKey.addStyleName(Resources.INSTANCE.css().rubricbutton());
 		Icon i = new Icon(IconType.TROPHY);
-		selectAsAnswerKey.setHTML(i.toString() + "<div class=\""+Resources.INSTANCE.css().rubricbuttontext()+"\">" +
-				MarkingInterface.messages.AnswerKey() + "</div>");
+		selectAsAnswerKey.setHTML(i.toString() + (includeTextInButtons ? ("<div class=\""+Resources.INSTANCE.css().rubricbuttontext()+"\">" +
+				MarkingInterface.messages.AnswerKey() + "</div>") : ""));
 		selectAsAnswerKey.setVisible(true);
 		selectAsAnswerKey.addClickHandler(new ClickHandler() {
 			@Override
@@ -165,7 +180,7 @@ public class ExamButtons extends Buttons {
 			}
 		});
 		
-		saveAndJumpToNextButton = new PushButton(IconType.EXTERNAL_LINK, MarkingInterface.messages.JumpToNextStudent());
+		saveAndJumpToNextButton = new PushButton(IconType.EXTERNAL_LINK, includeTextInButtons ?  MarkingInterface.messages.JumpToNextStudent() : null);
 		saveAndJumpToNextButton.setVisible(false);
 		saveAndJumpToNextButton.addClickHandler(new ClickHandler() {
 			
@@ -201,10 +216,16 @@ public class ExamButtons extends Buttons {
 			}
 		});
 
-		this.mainPanel.add(saveAndJumpToNextButton);
+		if(this.includeTextInButtons) {
+			this.mainPanel.add(saveAndJumpToNextButton);
+		}
 		this.mainPanel.add(saveChangesButton);
 		this.mainPanel.add(finishMarkingButton);
-		this.mainPanel.add(selectAsAnswerKey);
+		if(this.includeTextInButtons) {
+			this.mainPanel.add(selectAsAnswerKey);
+			saveChangesButton.removeStyleName(Resources.INSTANCE.css().rubricbutton());
+			finishMarkingButton.removeStyleName(Resources.INSTANCE.css().rubricbutton());
+		}
 	}
 	
 	public void loadSubmissionData() {

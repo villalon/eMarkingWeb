@@ -118,7 +118,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		markPopup.setVisible(false);
 	}
 	
-	public static void showIcons(Mark mark) {
+	public static void showIcons(Mark mark, int mouseLeft) {
 		// Gets the absolute panel which contains the mark to calculate its coordinates
 		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
 
@@ -131,7 +131,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		}
 		// Calculates basic left, top position for icons
 		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() + (topdiff);
-		int left = mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
+		int left = mouseLeft > 0 ? mouseLeft : mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
 
 		// Check if icons and popup are already added in the panel, if not adds them
 		if(abspanel.getWidgetIndex(Mark.editIcon) < 0)
@@ -475,7 +475,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 							|| rmark.getBonus() != previousBonus) {
 						rmark.setMarkername(MarkingInterface.submissionData.getMarkerfirstname() + " " + MarkingInterface.submissionData.getMarkerlastname());
 						rmark.setMarkerid(MarkingInterface.submissionData.getMarkerid());
-						Mark.showIcons(rmark);
+						Mark.showIcons(rmark, 0);
 					}
 					EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().addMarkToRubric(rmark);
 					EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().finishloadingRubricCriterion(newlevel);

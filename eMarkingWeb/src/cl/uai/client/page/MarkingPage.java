@@ -36,11 +36,15 @@ import cl.uai.client.marks.CheckMark;
 import cl.uai.client.marks.CommentMark;
 import cl.uai.client.marks.CrossMark;
 import cl.uai.client.marks.CustomMark;
+import cl.uai.client.marks.HighlightMark;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.PathMark;
 import cl.uai.client.marks.QuestionMark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.toolbar.buttons.ButtonFormat;
+import cl.uai.client.toolbar.buttons.MarkingButtons;
+import cl.uai.client.toolbar.buttons.MarkingButtons.EmarkingToggleButton;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.canvas.client.Canvas;
@@ -52,7 +56,6 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.ToggleButton;
 
 
 /**
@@ -114,29 +117,33 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		for(Map<String, String> markMap : pageMarks) {
 			
 			try {
-				int format = Integer.parseInt(markMap.get("format"));
+				int index = Integer.parseInt(markMap.get("format"));
+				ButtonFormat format = MarkingButtons.availableButtons.get(index).getType();
 				fixPositions(markMap, width, height);
 				Mark mark = null;
 			switch(format) {
-			case 1:
+			case BUTTON_COMMENT:
 				mark = CommentMark.createFromMap(markMap);
 				break;
-			case 2:
+			case BUTTON_RUBRIC:
 				mark = RubricMark.createFromMap(markMap);
 				break;
-			case 3:
+			case BUTTON_TICK:
 				mark = CheckMark.createFromMap(markMap);
 				break;
-			case 4:
+			case BUTTON_CROSS:
 				mark = CrossMark.createFromMap(markMap);
 				break;
-			case 5:
+			case BUTTON_PEN:
 				mark = PathMark.createFromMap(markMap);
 				break;
-			case 6:
+			case BUTTON_HIGHLIGHT:
+				mark = HighlightMark.createFromMap(markMap);
+				break;
+			case BUTTON_QUESTION:
 				mark = QuestionMark.createFromMap(markMap);
 				break;
-			case 1000:
+			case BUTTON_CUSTOM:
 				mark = CustomMark.createFromMap(markMap);
 				break;
 			default:
@@ -180,6 +187,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		//The drag handler listens to the draw controller
 		MarkingPageDrawHandler drawHandler = new MarkingPageDrawHandler(absolutePanel, drawingArea, this);
 		drawController.addListener(drawHandler);
+		MarkingPageHighlightHandler highlightHandler = new MarkingPageHighlightHandler(absolutePanel, drawingArea, this);
+		drawController.addListener(highlightHandler);
 		absolutePanel.add(drawingArea,0,0);		
 		absolutePanel.add(pageImage);
 		
@@ -222,10 +231,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	public Map<Integer, Integer> getMarkStatistics() {
 		Map<Integer, Integer> stats = new HashMap<Integer, Integer>();
 		
-		List<ToggleButton> buttons = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getButtons();
+		List<EmarkingToggleButton> buttons = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getButtons();
 		
-		for(int i=1;i<=buttons.size();i++) {
-			stats.put(i, 0);
+		for(EmarkingToggleButton btn : buttons) {
+			stats.put(btn.getFormat(), 0);
 		}
 		
 		if(this.marks == null)
@@ -247,11 +256,11 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 				}
 			}
 			
-			int newvalue = 0;
-			if(stats.containsKey(format)) {
-				newvalue = stats.get(format);
-				stats.remove(format);
-			}
+			if(!stats.containsKey(format))
+				continue;
+			
+			int newvalue = stats.get(format);
+			stats.remove(format);
 			
 			Criterion selectedCriterion = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 			if(selectedCriterion  == null){

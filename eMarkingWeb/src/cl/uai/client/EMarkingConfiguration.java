@@ -3,6 +3,7 @@
  */
 package cl.uai.client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -45,6 +46,17 @@ public class EMarkingConfiguration {
 	/** For messages including the admin's email **/
 	private static String administratorEmail = null;
 	
+	/** Site wide marking buttons enabled **/
+	private static List<Integer> markingButtonsEnabled = null;
+	
+	static {
+		markingButtonsEnabled = new ArrayList<Integer>();
+	}
+	
+	public static List<Integer> getMarkingButtonsEnabled() {
+		return markingButtonsEnabled;
+	}
+
 	/** Indicates if the marking interface will include student anonymous information **/
 	private static boolean studentAnonymous = true;
 
@@ -264,6 +276,17 @@ public class EMarkingConfiguration {
 		
 		// Obtain the keyword for the feedback
 		keywords = value.get("keywords");
+		
+		// Marking buttons enabled in the platform
+		String[] buttons = value.get("buttons").split(",");
+		for(int i=0;i<buttons.length;i++) {
+			try {
+				int buttonId = Integer.parseInt(buttons[i]);
+				markingButtonsEnabled.add(buttonId);
+			} catch (Exception e) {
+				logger.severe("Invalid button id");
+			}
+		}
 		
 		JSONObject obj = new JSONObject(JsonUtils.safeEval(value.get("motives")));
 		List<Map<String, String>> motives = AjaxRequest.getValuesFromResult(obj);

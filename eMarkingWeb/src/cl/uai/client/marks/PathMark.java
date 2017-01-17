@@ -22,6 +22,7 @@ package cl.uai.client.marks;
 
 import java.util.Map;
 
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
 
@@ -32,6 +33,12 @@ import cl.uai.client.utils.Color;
  */
 public class PathMark extends Mark{
 
+	public String getPath() {
+		return path;
+	}
+
+	protected String path;
+	
 	/**
 	 * Creates a relative PathMark object at a specific position in a page
 	 * @param posx X coordinate in the page
@@ -48,6 +55,7 @@ public class PathMark extends Mark{
 			int width,
 			int height,
 			String data,
+			String path,
 			long timecreated,
 			int criterionid,
 			String markername) {
@@ -55,8 +63,7 @@ public class PathMark extends Mark{
 		this.format = 5;
 		this.width = width;
 		this.height = height;
-		this.setWidth(width+"px");
-		this.setHeight(height+"px");
+		this.path = path;
 		this.setStylePrimaryName(Resources.INSTANCE.css().pathmark());
 
 	}
@@ -73,7 +80,33 @@ public class PathMark extends Mark{
 		PathMark pathobj = null;
 
 		try {
-			String pathData = markMap.get("rawtext");
+			String pathData = markMap.get("path");
+			String M = pathData.substring(1, pathData.indexOf("l", 0));
+			float startx = Float.parseFloat(M.split(" ")[0]);
+			float starty = Float.parseFloat(M.split(" ")[1]);
+			int winwidth = Integer.parseInt(markMap.get("width")); 
+			int winheight = Integer.parseInt(markMap.get("height"));
+			int currentwidth = EMarkingWeb.markingInterface.getMarkingPagesInterface().getOffsetWidth();
+			int currentheight = EMarkingWeb.markingInterface.getMarkingPagesInterface().getOffsetHeight();
+			float scalex = ((float) winwidth / (float) currentwidth);
+			float scaley = ((float) winheight / (float) currentheight);
+			startx = startx / scalex;
+			starty = starty / scaley;
+			String newpath = "M" + startx + " "  +starty;
+			int current = 0;
+			for(String ss : pathData.split("l")) {
+				if(current == 0) {
+					current++;
+					continue;
+				}
+				float prex = Float.parseFloat(ss.split(" ")[0]);
+				float prey = Float.parseFloat(ss.split(" ")[1]);
+				float x = prex / scalex;
+				float y = prey / scaley;
+				newpath += "l" + x + " " + y;
+				current++;
+			}
+			pathData = newpath;
 
 			pathobj = new PathMark(
 					Integer.parseInt(markMap.get("id")), 
@@ -82,7 +115,8 @@ public class PathMark extends Mark{
 					Integer.parseInt(markMap.get("pageno")),
 					Integer.parseInt(markMap.get("markerid")),
 					Integer.parseInt(markMap.get("width")), 
-					Integer.parseInt(markMap.get("height")), 
+					Integer.parseInt(markMap.get("height")),
+					markMap.get("rawtext"),
 					pathData,
 					Long.parseLong(markMap.get("timecreated")), 
 					Integer.parseInt(markMap.get("criterionid")),
@@ -98,15 +132,14 @@ public class PathMark extends Mark{
 
 	@Override
 	public void setMarkHTML() {
-
 		String color = "red";
 		if(this.criterionid > 0) {
 			color = Color.getCSSHueColor(criterionid);
 		}
 
 		String html = 
-				"<svg style=\"overflow:visible;\"><path title=\"" + this.markername + "\" style=\"stroke:" + color 
-				+ "\" stroke-width=\"2\" fill=\"none\" d=\"" + this.rawtext + "\"></path></svg>";
+				"<svg style=\"overflow:visible;width:10px;height:10px;\"><path title=\"" + this.rawtext + "" + this.markername + "\" style=\"stroke:" + color 
+				+ "\" stroke-width=\"2\" fill=\"none\" d=\"" + this.path + "\"></path></svg>";
 
 		this.setHTML(html);
 	}

@@ -52,20 +52,40 @@ import com.google.gwt.user.client.ui.ToggleButton;
  */
 public class MarkingButtons extends EMarkingComposite {
 
-	/** Logger **/
+	public static class EmarkingToggleButton extends ToggleButton {
+		private int format;
+		private ButtonFormat type;
+		public EmarkingToggleButton(int _format, ButtonFormat _type, IconType _icon, String title) {
+			this(_format, _type, (new Icon(_icon)).toString(), title);
+		}
+		public EmarkingToggleButton(int _format, ButtonFormat _type, String html, String title) {
+			super();
+			this.setTitle(title);
+			this.format= _format;
+			this.type = _type;
+			this.setHTML(html);
+			this.addStyleName(Resources.INSTANCE.css().rubricbutton());
+		}
+		public int getFormat() {
+			return this.format;
+		}
+		public ButtonFormat getType() {
+			return this.type;
+		}
+	}
 	private static Logger logger = Logger.getLogger(MarkingButtons.class.getName());
 
 	/** Main panel holding the buttons **/
 	private HorizontalPanel markingButtonsPanel = null;
 
 	/** The buttons **/
-	private List<ToggleButton> buttons = null;
+	private List<EmarkingToggleButton> buttons = null;
 
 	private Map<String, Integer> customButtonIndex = null;
 	/**
 	 * @return the buttons
 	 */
-	public List<ToggleButton> getButtons() {
+	public List<EmarkingToggleButton> getButtons() {
 		return buttons;
 	}
 
@@ -73,63 +93,24 @@ public class MarkingButtons extends EMarkingComposite {
 	private int selectedIndex = 0;
 	/** The criterion selection list box **/
 	private CriterionListBox criterionList = null;
-	
+
 	public void changeCriterionList(int index){
 		criterionList.setSelectedIndex(index);
 	}
 
 	private EmarkingToolBarValueChangeHandler handler = new EmarkingToolBarValueChangeHandler();
-	/**
-	 * Available buttons in marking interface
-	 * 
-	 * @author Jorge Villalón <villalon@gmail.com>
-	 *
-	 */
-	public enum Buttons {
-		BUTTON_RUBRIC,
-		BUTTON_COMMENT,
-		BUTTON_TICK,
-		BUTTON_CROSS,
-		BUTTON_PEN,
-		BUTTON_QUESTION,
-		BUTTON_CUSTOM,
+
+	public static Map<Integer, EmarkingToggleButton> availableButtons;
+	static {
+		availableButtons = new HashMap<Integer, EmarkingToggleButton>();
+		availableButtons.put(2, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, IconType.TH, MarkingInterface.messages.RubricTitle()));
+		availableButtons.put(1, new EmarkingToggleButton(1, ButtonFormat.BUTTON_COMMENT, IconType.COMMENT, MarkingInterface.messages.CommentTitle()));
+		availableButtons.put(3, new EmarkingToggleButton(3, ButtonFormat.BUTTON_TICK, IconType.OK, MarkingInterface.messages.CheckTitle()));
+		availableButtons.put(4, new EmarkingToggleButton(4, ButtonFormat.BUTTON_CROSS, IconType.REMOVE, MarkingInterface.messages.CrossTitle()));
+		availableButtons.put(5, new EmarkingToggleButton(5, ButtonFormat.BUTTON_PEN, IconType.PENCIL, MarkingInterface.messages.PenTitle()));
+		availableButtons.put(7, new EmarkingToggleButton(7, ButtonFormat.BUTTON_HIGHLIGHT, IconType.UNDERLINE, MarkingInterface.messages.MarkerTitle()));
+		availableButtons.put(6, new EmarkingToggleButton(6, ButtonFormat.BUTTON_QUESTION, IconType.QUESTION_SIGN, MarkingInterface.messages.QuestionTitle()));
 	}
-
-	/**
-	 * The icon for each button
-	 */
-	private static IconType[] iconTypes = {
-		IconType.TH,
-		IconType.COMMENT,
-		IconType.OK,
-		IconType.REMOVE,
-		IconType.PENCIL,
-		IconType.QUESTION_SIGN,
-	};
-	
-	/**
-	 * The format codes for each button
-	 */
-	private static int[] buttonFormats = {
-		2,
-		1,
-		3,
-		4,
-		5,
-		6
-	};
-
-	/**
-	 * Title for each button
-	 */
-	private static String[] buttonsTitles = {
-		MarkingInterface.messages.RubricTitle(),
-		MarkingInterface.messages.CommentTitle(),
-		MarkingInterface.messages.CheckTitle(),
-		MarkingInterface.messages.CrossTitle(),
-		MarkingInterface.messages.PenTitle(),
-		MarkingInterface.messages.QuestionTitle(),
-	};
 
 	/**
 	 * Stats like in Facebook jewels
@@ -140,64 +121,37 @@ public class MarkingButtons extends EMarkingComposite {
 	 * Creates the rubric buttons interface
 	 */
 	public MarkingButtons() {
-		
+
 		// main panel contains all buttons
 		markingButtonsPanel = new HorizontalPanel();
 		markingButtonsPanel.addStyleName(Resources.INSTANCE.css().toolbarbuttons());
 
 		// Initialize the array
-		buttons = new ArrayList<ToggleButton>();
+		buttons = new ArrayList<EmarkingToggleButton>();
 		buttonsStats = new HashMap<Integer, Label>();
-
-		// Creates all buttons and adds a general value change handler
-
-		// First creates all buttonstats as they have to be referenced by buttons
-		for(int i=0;i<iconTypes.length;i++) {
-
-			Label lblstat = new Label();
-			lblstat.addStyleName(Resources.INSTANCE.css().rubricbuttonjewel());
-			buttonsStats.put(buttonFormats[i], lblstat);
-		}
-
-		// Second we create all buttons and reference the to their stats
-		for(int i=0;i<iconTypes.length;i++) {
-
-			addToggleButton(
-					getButtonHtml(Buttons.values()[i]), 
-					buttonsTitles[i], 
-					Resources.INSTANCE.css().rubricbutton(),
-					buttonFormats[i]);
-		}
-
-		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
-			selectedIndex = 1;
-			buttons.get(0).setEnabled(false);
-		}
-		buttons.get(selectedIndex).setValue(true);
-		buttons.get(selectedIndex).setDown(true);
 
 		criterionList = new CriterionListBox();
 
 		this.initWidget(markingButtonsPanel);
 	}
-	
+
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		
+
 		this.markingButtonsPanel.setWidth("0px");
 	}
-	
+
 	public Criterion getSelectedCriterion(){
-		
+
 		int id = Integer.parseInt(criterionList.getValue(criterionList.getSelectedIndex()));
 		if(id==0){
 			return null;
 		}
-		
+
 		return MarkingInterface.submissionData.getRubricfillings().get(id);
 	}
-	
+
 	/**
 	 * Handles when a button was clicked, selecting it and deselecting others in the toolbar
 	 * 
@@ -216,7 +170,7 @@ public class MarkingButtons extends EMarkingComposite {
 	private void pushButton(int index, boolean fromEvent) {
 		if(index >= buttons.size())
 			return;
-		
+
 		ToggleButton tbutton = buttons.get(index);
 
 		if(tbutton == null) {
@@ -244,21 +198,8 @@ public class MarkingButtons extends EMarkingComposite {
 	 * 
 	 * @return the selected button in the toolbar
 	 */
-	public Buttons getSelectedButton() {
-		if(selectedIndex < iconTypes.length)
-			return Buttons.values()[selectedIndex];
-		else
-			return Buttons.BUTTON_CUSTOM;
-	}
-
-	/**
-	 * 
-	 * @param button
-	 * @return the HTML to draw the icon of a specific button
-	 */
-	public static String getButtonHtml(Buttons button) {
-		Icon icon = new Icon(iconTypes[button.ordinal()]);
-		return icon.toString();
+	public ButtonFormat getSelectedButtonFormat() {
+		return buttons.get(selectedIndex).type;
 	}
 
 	/**
@@ -283,31 +224,60 @@ public class MarkingButtons extends EMarkingComposite {
 				buttonsStats.get(format).setVisible(false);
 			}
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	public void loadSubmissionData() {
+
+		loadButtonsFromConfiguration();
 		
 		criterionList.loadSubmissionData();
 		criterionList.setVisible(EMarkingConfiguration.isColoredRubric());
 		changeColorButtons();
-		
+
 		this.loadCustomMarksButtons(MarkingInterface.submissionData.getCustommarks());
-		
+
 		markingButtonsPanel.add(criterionList);
 		markingButtonsPanel.setCellHorizontalAlignment(criterionList, HasHorizontalAlignment.ALIGN_LEFT);
 
-		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN
+				&& buttons.size() > 0) {
 			buttons.get(0).setVisible(false);
 		}
 	}
 	
+	private void loadButtonsFromConfiguration() {
+		// Initialize the array
+		buttons = new ArrayList<EmarkingToggleButton>();
+		buttonsStats = new HashMap<Integer, Label>();
+		// Creates all buttons and adds a general value change handler
+		// First creates all buttonstats as they have to be referenced by buttons
+		for(int format : availableButtons.keySet()) {
+			EmarkingToggleButton button = availableButtons.get(format);
+			if(EMarkingConfiguration.getMarkingButtonsEnabled().contains(format)) {
+				Label lblstat = new Label();
+				lblstat.addStyleName(Resources.INSTANCE.css().rubricbuttonjewel());
+				buttonsStats.put(format, lblstat);			
+				addToggleButton(button);
+			}
+		}
+
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
+			selectedIndex = 1;
+			buttons.get(0).setEnabled(false);
+		}
+		if(buttons.size() > selectedIndex) {
+			buttons.get(selectedIndex).setValue(true);
+			buttons.get(selectedIndex).setDown(true);
+		}		
+	}
+
 	public void changeColorButtons() {
 		Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 		int c = crit == null ? 0 : crit.getId();
-		
+
 		for (int i = 0; i < buttons.size(); i++) {
 			if(c > 0) {
 				Color.setWidgetFontHueColor(c, buttons.get(i));
@@ -320,10 +290,9 @@ public class MarkingButtons extends EMarkingComposite {
 
 	private void loadCustomMarksButtons(String customMarks) {
 		if(customMarks == null 
-				|| customMarks.trim().length() == 0 
-				|| buttons.size() >= Buttons.values().length)
+				|| customMarks.trim().length() == 0)
 			return;
-		
+
 		String[] lines = customMarks.replaceAll("\r\n", "\n").split("\n");
 		String customButtons = "";
 		String customButtonsTitles = "";
@@ -334,7 +303,7 @@ public class MarkingButtons extends EMarkingComposite {
 			customButtons += lineparts[0] + ",";
 			customButtonsTitles += lineparts[1] + ",";
 		}
-		
+
 		customButtonIndex = new HashMap<String, Integer>();
 
 		String[] partsButtonLabels = customButtons.split(",");
@@ -344,12 +313,12 @@ public class MarkingButtons extends EMarkingComposite {
 			logger.severe("Invalid parameters loading custom buttons");
 			return;
 		}
-		
+
 		for(int j=0;j<partsButtonLabels.length;j++) {
 			if(partsButtonLabels[j].trim().length()>0) {
-				
+
 				int currentButtonIndex = buttons.size() + 1;
-				
+
 				Label lblstat = buttonsStats.get(customButtonIndex);
 				if(lblstat == null) {
 					lblstat = new Label();
@@ -357,11 +326,8 @@ public class MarkingButtons extends EMarkingComposite {
 					buttonsStats.put(currentButtonIndex, lblstat);
 				}
 
-				addToggleButton(
-						partsButtonLabels[j], 
-						partsButtonTitles[j], 
-						Resources.INSTANCE.css().rubricbuttoncustom(),
-						currentButtonIndex);
+				EmarkingToggleButton btn = new EmarkingToggleButton(1000, ButtonFormat.BUTTON_CUSTOM, partsButtonLabels[j], partsButtonTitles[j]);
+				addToggleButton(btn);
 				customButtonIndex.put(partsButtonLabels[j]+": "+partsButtonTitles[j], currentButtonIndex);
 			}
 		}
@@ -382,16 +348,12 @@ public class MarkingButtons extends EMarkingComposite {
 	 * @param cssStyle
 	 * @param buttonIndex
 	 */
-	private void addToggleButton(String label, String title, String cssStyle, int buttonIndex) {
-		ToggleButton button = new ToggleButton();
-		button.addStyleName(cssStyle);
-		button.setHTML(label);			
+	private void addToggleButton(EmarkingToggleButton button) {
 		button.addValueChangeHandler(handler);
-		button.setTitle(title);
 		buttons.add(button);
 
-		Label lblstat = buttonsStats.get(buttonIndex);
-		
+		Label lblstat = buttonsStats.get(button.format);
+
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);
 		vpanel.add(lblstat, 23, 0);
@@ -416,7 +378,7 @@ public class MarkingButtons extends EMarkingComposite {
 		if(!EMarkingConfiguration.isColoredRubric()) {
 			return;
 		}
-		
+
 		for (int i = 0; i < criterionList.getItemCount(); i++) {
 			if(Integer.parseInt(criterionList.getValue(i)) == id){
 				criterionList.setSelectedIndex(i);

@@ -333,6 +333,7 @@ to {
 
 .pathmark {
 	overflow: visible;
+	z-index: 99;
 }
 
 .innercomment {

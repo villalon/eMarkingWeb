@@ -43,7 +43,7 @@ public class MarkOnMouseOverHandler implements MouseOverHandler {
 	public void onMouseOver(MouseOverEvent event) {
 		Mark mark = (Mark) event.getSource();
 		
-		Mark.showIcons(mark);
+		Mark.showIcons(mark, event.getClientX());
 		
 		// Highlight the rubric interface if the mark is a RubricMark
 			int criterionid = mark.getCriterionId();

@@ -71,9 +71,12 @@ public class PushButton extends Composite {
 	public void setPushed(boolean pushed) {
 		Icon i = (pushed && this.iconPushed != null) ?
 				new Icon(this.iconPushed) : new Icon(this.icon);
-		this.button.setHTML(i.toString() + 
-				"<div class=\""+Resources.INSTANCE.css().rubricbuttontext()+"\">" +
-				this.label + "</div>");
+		String html = i.toString();
+		if(this.label != null) {
+			html += "<div class=\""+Resources.INSTANCE.css().rubricbuttontext()+"\">" +
+					this.label + "</div>"; 
+		}
+		this.button.setHTML(html);
 	}
 	
 	public void setNotification(String notificationText) {
