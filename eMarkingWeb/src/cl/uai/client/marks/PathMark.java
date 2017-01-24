@@ -64,6 +64,7 @@ public class PathMark extends Mark{
 		this.width = width;
 		this.height = height;
 		this.path = path;
+		this.rawtext = data;
 		this.setStylePrimaryName(Resources.INSTANCE.css().pathmark());
 
 	}

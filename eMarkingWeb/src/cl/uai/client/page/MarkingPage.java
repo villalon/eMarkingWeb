@@ -43,8 +43,8 @@ import cl.uai.client.marks.QuestionMark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.toolbar.buttons.ButtonFormat;
+import cl.uai.client.toolbar.buttons.EmarkingToggleButton;
 import cl.uai.client.toolbar.buttons.MarkingButtons;
-import cl.uai.client.toolbar.buttons.MarkingButtons.EmarkingToggleButton;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.canvas.client.Canvas;
@@ -118,7 +118,7 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			
 			try {
 				int index = Integer.parseInt(markMap.get("format"));
-				ButtonFormat format = MarkingButtons.availableButtons.get(index).getType();
+				ButtonFormat format = index < 1000 ? MarkingButtons.availableButtons.get(index).getType() : ButtonFormat.BUTTON_CUSTOM;
 				fixPositions(markMap, width, height);
 				Mark mark = null;
 			switch(format) {
@@ -245,10 +245,10 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			
 			int format = mark.getFormat();
 			
-			if(format == 1000) {
+			if(format >= 1000) {
 				String label = mark.getRawtext();
 				Integer idx = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getCustomButtonIndex().get(label);
-				if(idx == null || idx < 6) {
+				if(idx == null) {
 					logger.severe("Custom mark " + label + " index not found");
 					continue;
 				} else {

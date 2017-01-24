@@ -153,13 +153,11 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		if(!EMarkingConfiguration.isReadonly()) {
 			
 			// Edit icon is only for comments and rubrics
-			if(mark instanceof CommentMark || mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.editIcon, left, top);
-				Mark.editIcon.setVisible(true);
-				Mark.editIcon.setMark(mark);
-				left -= 15;
-				top -= 1;
-			}
+			abspanel.setWidgetPosition(Mark.editIcon, left, top);
+			Mark.editIcon.setVisible(true);
+			Mark.editIcon.setMark(mark);
+			left -= 15;
+			top -= 1;
 
 			// Delete icon
 			abspanel.setWidgetPosition(Mark.deleteIcon, left, top);
@@ -185,6 +183,14 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			
 	}
 	
+	public void setPosx(int posx) {
+		this.posx = posx;
+	}
+
+	public void setPosy(int posy) {
+		this.posy = posy;
+	}
+
 	protected String getMarkPopupHTML() {
 		String html = "";
 		if(this.getRawtext() != null && this.getRawtext().length() > 0) {

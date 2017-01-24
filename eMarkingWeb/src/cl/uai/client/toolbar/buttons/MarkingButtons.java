@@ -35,7 +35,6 @@ import cl.uai.client.resources.Resources;
 import cl.uai.client.toolbar.CriterionListBox;
 import cl.uai.client.utils.Color;
 
-import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -52,27 +51,6 @@ import com.google.gwt.user.client.ui.ToggleButton;
  */
 public class MarkingButtons extends EMarkingComposite {
 
-	public static class EmarkingToggleButton extends ToggleButton {
-		private int format;
-		private ButtonFormat type;
-		public EmarkingToggleButton(int _format, ButtonFormat _type, IconType _icon, String title) {
-			this(_format, _type, (new Icon(_icon)).toString(), title);
-		}
-		public EmarkingToggleButton(int _format, ButtonFormat _type, String html, String title) {
-			super();
-			this.setTitle(title);
-			this.format= _format;
-			this.type = _type;
-			this.setHTML(html);
-			this.addStyleName(Resources.INSTANCE.css().rubricbutton());
-		}
-		public int getFormat() {
-			return this.format;
-		}
-		public ButtonFormat getType() {
-			return this.type;
-		}
-	}
 	private static Logger logger = Logger.getLogger(MarkingButtons.class.getName());
 
 	/** Main panel holding the buttons **/
@@ -110,6 +88,7 @@ public class MarkingButtons extends EMarkingComposite {
 		availableButtons.put(5, new EmarkingToggleButton(5, ButtonFormat.BUTTON_PEN, IconType.PENCIL, MarkingInterface.messages.PenTitle()));
 		availableButtons.put(7, new EmarkingToggleButton(7, ButtonFormat.BUTTON_HIGHLIGHT, IconType.UNDERLINE, MarkingInterface.messages.MarkerTitle()));
 		availableButtons.put(6, new EmarkingToggleButton(6, ButtonFormat.BUTTON_QUESTION, IconType.QUESTION_SIGN, MarkingInterface.messages.QuestionTitle()));
+		availableButtons.put(1000, new EmarkingToggleButton(1000, ButtonFormat.BUTTON_CUSTOM, IconType.QUESTION_SIGN, MarkingInterface.messages.QuestionTitle()));
 	}
 
 	/**
@@ -199,7 +178,7 @@ public class MarkingButtons extends EMarkingComposite {
 	 * @return the selected button in the toolbar
 	 */
 	public ButtonFormat getSelectedButtonFormat() {
-		return buttons.get(selectedIndex).type;
+		return buttons.get(selectedIndex).getType();
 	}
 
 	/**
@@ -288,15 +267,24 @@ public class MarkingButtons extends EMarkingComposite {
 		// EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().updateStats();
 	}
 
+	/**
+	 * Loads a set of custom buttoms based on a newline separated string
+	 * in which each line defines a button in another string which is also
+	 * separated by a hash #
+	 * @param customMarks
+	 */
 	private void loadCustomMarksButtons(String customMarks) {
+		// If no info just return
 		if(customMarks == null 
 				|| customMarks.trim().length() == 0)
 			return;
 
+		// Split by newline to get each button
 		String[] lines = customMarks.replaceAll("\r\n", "\n").split("\n");
 		String customButtons = "";
 		String customButtonsTitles = "";
 		for(int i=0;i<lines.length;i++) {
+			// Separate mark fro title by hash
 			String[] lineparts = lines[i].split("#");
 			if(lineparts.length != 2)
 				continue;
@@ -317,7 +305,7 @@ public class MarkingButtons extends EMarkingComposite {
 		for(int j=0;j<partsButtonLabels.length;j++) {
 			if(partsButtonLabels[j].trim().length()>0) {
 
-				int currentButtonIndex = buttons.size() + 1;
+				int currentButtonIndex = 1000 + j;
 
 				Label lblstat = buttonsStats.get(customButtonIndex);
 				if(lblstat == null) {
@@ -326,7 +314,7 @@ public class MarkingButtons extends EMarkingComposite {
 					buttonsStats.put(currentButtonIndex, lblstat);
 				}
 
-				EmarkingToggleButton btn = new EmarkingToggleButton(1000, ButtonFormat.BUTTON_CUSTOM, partsButtonLabels[j], partsButtonTitles[j]);
+				EmarkingToggleButton btn = new EmarkingToggleButton(currentButtonIndex, ButtonFormat.BUTTON_CUSTOM, partsButtonLabels[j], partsButtonTitles[j]);
 				addToggleButton(btn);
 				customButtonIndex.put(partsButtonLabels[j]+": "+partsButtonTitles[j], currentButtonIndex);
 			}
@@ -352,7 +340,7 @@ public class MarkingButtons extends EMarkingComposite {
 		button.addValueChangeHandler(handler);
 		buttons.add(button);
 
-		Label lblstat = buttonsStats.get(button.format);
+		Label lblstat = buttonsStats.get(button.getFormat());
 
 		AbsolutePanel vpanel = new AbsolutePanel();
 		vpanel.add(button);

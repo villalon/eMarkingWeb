@@ -233,8 +233,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 
 					CustomMark custommark = new CustomMark(
 							0,
-							EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
-							.getSelectedButtonLabel(),
+							dialogcustom.getTxtComment(),
 							newposx, 
 							newposy, 
 							pageno,
@@ -247,7 +246,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 							EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
 								.getSelectedButtonLabel() + ": "
 								+ EMarkingWeb.markingInterface.getToolbar().getMarkingButtons()
-								.getSelectedButtonTitle() + "\n" + dialogcustom.getTxtComment());
+								.getSelectedButtonTitle());
 					EMarkingWeb.markingInterface.addMark(custommark, parentPage);
 				}
 			});

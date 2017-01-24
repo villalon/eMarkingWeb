@@ -332,18 +332,25 @@ public class MarkingInterface extends EMarkingComposite {
 			}
 		}
 
+		int markposx = mark.getPosx();
+		int markposy = mark.getPosy();
+		
 		String path = "";
-		if(mark instanceof PathMark) {
-			path = "&path=" + URL.encode(((PathMark) mark).getPath());
-		} else if(mark instanceof HighlightMark) {
+		if(mark instanceof HighlightMark) {
 			HighlightMark hmark = (HighlightMark) mark;
-			path = "&path=" + URL.encode(hmark.getEnd().getX() + "," + hmark.getEnd().getY());			
-		}
+			markposx = hmark.getStart().getX();
+			markposy -= markposy  % HighlightMark.size;
+			int endposy = (hmark.getEnd().getY() + page.getAbsoluteTop() + page.getAbsoluteTop() % HighlightMark.size);
+			path = "&path=" + URL.encode(hmark.getEnd().getX() + "," + endposy);
+			logger.fine("sending " + markposx + "," + markposy + "-" + hmark.getStart().getX() + "," + hmark.getStart().getY() + path);
+		} else if(mark instanceof PathMark) {
+			path = "&path=" + URL.encode(((PathMark) mark).getPath());
+		} 
 		// Invokes the ajax Moodle interface to save the mark
 		AjaxRequest.ajaxRequest("action=addcomment" +
 				"&comment=" + URL.encode(mark.getRawtext()) +
-				"&posx=" + mark.getPosx() +
-				"&posy=" + mark.getPosy() +
+				"&posx=" + markposx +
+				"&posy=" + markposy +
 				"&width=" + page.getWidth() +
 				"&height=" + page.getHeight() +
 				"&format=" + mark.getFormat() +
@@ -387,6 +394,11 @@ public class MarkingInterface extends EMarkingComposite {
 					newgrade = Float.parseFloat(values.get("grade"));
 				} else {
 					newgrade = MarkingInterface.submissionData.getFinalgrade();
+				}
+				
+				// TODO: FIX!
+				if(mark instanceof HighlightMark) {
+					mark.setPosx(0);
 				}
 
 				// Sets the values for the new mark
