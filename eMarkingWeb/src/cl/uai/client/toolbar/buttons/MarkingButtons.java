@@ -33,8 +33,10 @@ import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.toolbar.CriterionListBox;
+import cl.uai.client.toolbar.buttons.icons.Highlighter;
 import cl.uai.client.utils.Color;
 
+import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -81,14 +83,14 @@ public class MarkingButtons extends EMarkingComposite {
 	public static Map<Integer, EmarkingToggleButton> availableButtons;
 	static {
 		availableButtons = new HashMap<Integer, EmarkingToggleButton>();
-		availableButtons.put(2, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, IconType.TH, MarkingInterface.messages.RubricTitle()));
-		availableButtons.put(1, new EmarkingToggleButton(1, ButtonFormat.BUTTON_COMMENT, IconType.COMMENT, MarkingInterface.messages.CommentTitle()));
-		availableButtons.put(3, new EmarkingToggleButton(3, ButtonFormat.BUTTON_TICK, IconType.OK, MarkingInterface.messages.CheckTitle()));
-		availableButtons.put(4, new EmarkingToggleButton(4, ButtonFormat.BUTTON_CROSS, IconType.REMOVE, MarkingInterface.messages.CrossTitle()));
-		availableButtons.put(5, new EmarkingToggleButton(5, ButtonFormat.BUTTON_PEN, IconType.PENCIL, MarkingInterface.messages.PenTitle()));
-		availableButtons.put(7, new EmarkingToggleButton(7, ButtonFormat.BUTTON_HIGHLIGHT, IconType.UNDERLINE, MarkingInterface.messages.MarkerTitle()));
-		availableButtons.put(6, new EmarkingToggleButton(6, ButtonFormat.BUTTON_QUESTION, IconType.QUESTION_SIGN, MarkingInterface.messages.QuestionTitle()));
-		availableButtons.put(1000, new EmarkingToggleButton(1000, ButtonFormat.BUTTON_CUSTOM, IconType.QUESTION_SIGN, MarkingInterface.messages.QuestionTitle()));
+		availableButtons.put(2, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, new Icon(IconType.TH), MarkingInterface.messages.RubricTitle()));
+		availableButtons.put(1, new EmarkingToggleButton(1, ButtonFormat.BUTTON_COMMENT, new Icon(IconType.COMMENT), MarkingInterface.messages.CommentTitle()));
+		availableButtons.put(3, new EmarkingToggleButton(3, ButtonFormat.BUTTON_TICK, new Icon(IconType.OK), MarkingInterface.messages.CheckTitle()));
+		availableButtons.put(4, new EmarkingToggleButton(4, ButtonFormat.BUTTON_CROSS, new Icon(IconType.REMOVE), MarkingInterface.messages.CrossTitle()));
+		availableButtons.put(5, new EmarkingToggleButton(5, ButtonFormat.BUTTON_PEN, new Icon(IconType.PENCIL), MarkingInterface.messages.PenTitle()));
+		availableButtons.put(7, new EmarkingToggleButton(7, ButtonFormat.BUTTON_HIGHLIGHT, new Highlighter(), MarkingInterface.messages.MarkerTitle()));
+		availableButtons.put(6, new EmarkingToggleButton(6, ButtonFormat.BUTTON_QUESTION, new Icon(IconType.QUESTION_SIGN), MarkingInterface.messages.QuestionTitle()));
+		availableButtons.put(1000, new EmarkingToggleButton(1000, ButtonFormat.BUTTON_CUSTOM, new Icon(IconType.QUESTION_SIGN), MarkingInterface.messages.QuestionTitle()));
 	}
 
 	/**
@@ -108,6 +110,7 @@ public class MarkingButtons extends EMarkingComposite {
 		// Initialize the array
 		buttons = new ArrayList<EmarkingToggleButton>();
 		buttonsStats = new HashMap<Integer, Label>();
+		customButtonIndex = new HashMap<String, Integer>();
 
 		criterionList = new CriterionListBox();
 
@@ -276,7 +279,8 @@ public class MarkingButtons extends EMarkingComposite {
 	private void loadCustomMarksButtons(String customMarks) {
 		// If no info just return
 		if(customMarks == null 
-				|| customMarks.trim().length() == 0)
+				|| customMarks.trim().length() == 0
+				|| customButtonIndex.keySet().size()>0)
 			return;
 
 		// Split by newline to get each button
@@ -292,8 +296,6 @@ public class MarkingButtons extends EMarkingComposite {
 			customButtonsTitles += lineparts[1] + ",";
 		}
 
-		customButtonIndex = new HashMap<String, Integer>();
-
 		String[] partsButtonLabels = customButtons.split(",");
 		String[] partsButtonTitles = customButtonsTitles.split(",");
 
@@ -307,7 +309,7 @@ public class MarkingButtons extends EMarkingComposite {
 
 				int currentButtonIndex = 1000 + j;
 
-				Label lblstat = buttonsStats.get(customButtonIndex);
+				Label lblstat = buttonsStats.get(currentButtonIndex);
 				if(lblstat == null) {
 					lblstat = new Label();
 					lblstat.addStyleName(Resources.INSTANCE.css().rubricbuttonjewel());

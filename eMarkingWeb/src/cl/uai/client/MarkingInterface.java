@@ -339,10 +339,9 @@ public class MarkingInterface extends EMarkingComposite {
 		if(mark instanceof HighlightMark) {
 			HighlightMark hmark = (HighlightMark) mark;
 			markposx = hmark.getStart().getX();
-			markposy -= markposy  % HighlightMark.size;
-			int endposy = (hmark.getEnd().getY() + page.getAbsoluteTop() + page.getAbsoluteTop() % HighlightMark.size);
+			int endposy = hmark.getEnd().getY() + markposy;
 			path = "&path=" + URL.encode(hmark.getEnd().getX() + "," + endposy);
-			logger.fine("sending " + markposx + "," + markposy + "-" + hmark.getStart().getX() + "," + hmark.getStart().getY() + path);
+			logger.fine("sending " + hmark.getEnd().getY() + "+" + hmark.getStart().getY() + ".." + markposx + "," + markposy + "-" + hmark.getStart().getX() + "," + hmark.getStart().getY() + path);
 		} else if(mark instanceof PathMark) {
 			path = "&path=" + URL.encode(((PathMark) mark).getPath());
 		} 

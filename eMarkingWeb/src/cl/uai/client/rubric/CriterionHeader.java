@@ -85,7 +85,7 @@ public class CriterionHeader extends EMarkingComposite {
 		//the square with the color
 		if(EMarkingConfiguration.isColoredRubric()){
 			Label lbl2 = new Label("");
-			Color.setWidgetBackgroundHueColor(cid, lbl2);
+			Color.setWidgetBackgroundHueColor(cid, mainPanel);
 			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());
 			lbl2.setTitle(String.valueOf(idx));
 			//lbl2.addStyleName(MarkingInterface.getMapCss().get("colorsquare"));

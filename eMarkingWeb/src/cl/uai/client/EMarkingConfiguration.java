@@ -90,8 +90,11 @@ public class EMarkingConfiguration {
 	/** String contains the keywords separated by comma **/
 	private static String keywords;
 
-	/** If is enabled linkrubric (Marcelo's thesis) **/
+	/** If colored rubric is enabled **/
 	private static boolean coloredRubric = false;
+
+	/** If colored rubric is forced **/
+	private static boolean coloredRubricForced = false;
 
 	/** The URL of the moodle installation with which EMarking is linked **/
 	private static String moodleUrl = null;
@@ -266,7 +269,13 @@ public class EMarkingConfiguration {
 		markingType = Integer.parseInt(value.get("markingtype"));
 
 		// Link rubric colors if configured as
-		coloredRubric = value.get("linkrubric").equals("1");
+		coloredRubric = value.get("coloredrubric").equals("1");
+
+		// Link rubric colors if configured as
+		coloredRubricForced = value.get("coloredrubricforced").equals("1");
+		if(coloredRubricForced) {
+			coloredRubric = true;
+		}
 
 		// Collaborative features (chat, wall) if configured as
 		chatEnabled = value.get("collaborativefeatures").equals("1");
@@ -366,4 +375,12 @@ public class EMarkingConfiguration {
 	public static void setMoodleUrl(String _moodleUrl) {
 		moodleUrl = _moodleUrl;
 	}
+	
+	public static boolean isColoredRubricForced() {
+		return coloredRubricForced;
+	}
+
+	public static void setColoredRubricForced(boolean coloredRubricForced) {
+		EMarkingConfiguration.coloredRubricForced = coloredRubricForced;
+	}	
 }

@@ -74,7 +74,7 @@ public class ViewButtons extends Buttons {
 		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			showColorsButton.setVisible(false);
 		}
-		if(EMarkingConfiguration.isReadonly()){
+		if(EMarkingConfiguration.isReadonly() || EMarkingConfiguration.isColoredRubricForced()){
 			mainPanel.remove(showColorsButton);
 			mainPanel.remove(minimizeAllRubricMarks);
 		}

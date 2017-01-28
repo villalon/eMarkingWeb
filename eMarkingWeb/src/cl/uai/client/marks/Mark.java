@@ -133,6 +133,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() + (topdiff);
 		int left = mouseLeft > 0 ? mouseLeft : mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
 
+		if(top < 0) {
+			top += mark.getOffsetHeight();
+		}
 		// Check if icons and popup are already added in the panel, if not adds them
 		if(abspanel.getWidgetIndex(Mark.editIcon) < 0)
 			abspanel.add(Mark.editIcon, left, top);

@@ -25,13 +25,19 @@
     .gwt-TabBarItem-wrapper-selected, .gwt-ToggleButton, .gwt-PushButton, .gwt-TabPanelBottom,
     .gwt-ToggleButton-down, .gwt-ToggleButton-up, .gwt-PushButton-up, .gwt-PushButton-down,
     .gwt-ToggleButton-down-hovering, .gwt-ToggleButton-up-hovering, .gwt-PushButton-up-hovering,
-    .gwt-PushButton-down-hovering;
+    .gwt-PushButton-down-hovering, .gwt-StackPanel .gwt-StackPanelItem;
 
 /** Main interfaces **/
 .interfaceMainPanel,.toolbar,.interfacepanel,.buttonspanel,.rubricrow,.rubrictable,
 .rubricpanel, .rubricinterface, .colorsquaretable
 	{
 	width: 100%;
+}
+
+.gwt-StackPanel .gwt-StackPanelItem {
+	font-weight: normal;
+	font-size: 12px;
+	background: none;
 }
 
 .rubricrow {
@@ -109,9 +115,16 @@
 }
 
 .previouscomments .gwt-TabBarItem-selected {
-	background-color: #2d5873;
-	color: #fff;
+	background-color: #fff;
+	color: #fa3c45;
 }
+
+.previouscomments .gwt-TabBarItem {
+	background-color: #fff;
+	color: #8e8e8e;
+}
+
+
 .buttonspanel{
 	margin-left: 0px;
 	border-bottom: 1px solid #ccc;	
@@ -204,9 +217,9 @@ to {
 
 .previousComment {
 	float: left;
-	background-color: #2d5873;
-	color: #fff;
-	font-weight: bold;
+	background-color: rgb(192, 214, 245);
+	color: #000;
+	border-radius: 5px;
 }
 
 .previouscomments .gwt-TabPanelBottom {
@@ -235,7 +248,8 @@ to {
 	padding: 2px;
 }
 .criterionDescription {
-	background-color: #ffffff;
+	background-color: #fff;
+	border-radius: 5px;
 }colorrionheader,.criterionheaderregrade,.criterionheaderregradeaccepted
 	{
 	font-weight: bold;
@@ -366,8 +380,8 @@ to {
 }
 
 .rubrictitle,.prevcommentstitle,.rubrictitlepanel {
-	background-color: #2d5873;
-	color: #fff;
+	background-color: #c0d6f5;
+	color: #000;
 }
 
 .rowCriterionSelected {
@@ -447,9 +461,9 @@ to {
 }
 
 .criterionrow {
-	background-color: #2d5873;
-/*	background-color: #067906; */
-	color: #fff;
+	background-color: #fff;
+  	font-weight: bold;
+  	border-radius: 5px;
     height: 120px;
     margin-left: 0px;
 }
@@ -540,25 +554,30 @@ to {
 	
 }
 
+.tabbuttons {
+	
+}
 
-.tabbuttons .gwt-TabPanelBottom {
+
+.buttonspanel .gwt-TabPanelBottom {
 	padding:0px;
 	max-height: 70px;
 }
 
-.tabbuttons .gwt-TabBarItem {
+.buttonspanel .gwt-TabBarItem {
 	padding:0px 8px;
-    border-radius: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
     background-color: #fff;
     color: #8e8e8e;
 }
 
-.tabbuttons .gwt-ToggleButton-up, .tabbuttons .gwt-PushButton-up  {
+.buttonspanel .gwt-ToggleButton-up, .buttonspanel .gwt-PushButton-up, .buttonspanel .gwt-PushButton  {
 	background-color: #fff;
-	background-image: none;
+	background: none;
 }
 
-.tabbuttons .gwt-PushButton, .tabbuttons .gwt-ToggleButton {
+.buttonspanel .gwt-PushButton, .buttonspanel .gwt-ToggleButton {
 	border: 0px;
 	border-radius: 0px;
 }
@@ -567,26 +586,26 @@ to {
 	width: inherit;
 }
 
-.tabbuttons .gwt-ToggleButton-down, .tabbuttons .gwt-PushButton-down,
-    .tabbuttons .gwt-ToggleButton-down-hovering, .tabbuttons .gwt-ToggleButton-up-hovering
-    , .tabbuttons .gwt-PushButton-up-hovering, .tabbuttons .gwt-PushButton-down-hovering {
+.buttonspanel .gwt-ToggleButton-down, .buttonspanel .gwt-PushButton-down,
+    .buttonspanel .gwt-ToggleButton-down-hovering, .buttonspanel .gwt-ToggleButton-up-hovering
+    , .buttonspanel .gwt-PushButton-up-hovering, .buttonspanel .gwt-PushButton-down-hovering {
     background-color: #ff6f6f;
-    background-image: none;
+    background: none;
 }
 
-.tabbuttons .gwt-TabBarItem-wrapper, .tabbuttons .gwt-TabBarFirst-wrapper, .tabbuttons .gwt-TabBarRest-wrapper {
+.buttonspanel .gwt-TabBarItem-wrapper, .buttonspanel .gwt-TabBarFirst-wrapper, .buttonspanel .gwt-TabBarRest-wrapper {
     border-bottom: 1px solid #8E8E8E;
 }
 
-.tabbuttons .gwt-TabBarItem {
+.buttonspanel .gwt-TabBarItem {
 	margin-left: 0px;
 	font-family: Tahoma;
 }
 
-.tabbuttons .gwt-TabPanelBottom {
+.buttonspanel .gwt-TabPanelBottom {
 	border: 0px;
 }
-.tabbuttons .gwt-TabBarItem-selected {
+.buttonspanel .gwt-TabBarItem-selected {
 	color: #fa3c45;
 	font-weight: normal;
     border-top: 1px solid #8E8E8E;
@@ -594,11 +613,11 @@ to {
     border-right: 1px solid #8E8E8E;    
 }
 
-.tabbuttons .gwt-TabBarItem-wrapper-selected, .tabbuttons .gwt-TabBarItem-selected {
+.buttonspanel .gwt-TabBarItem-wrapper-selected, .buttonspanel .gwt-TabBarItem-selected {
     border-bottom: 1px solid #fff;
 }
 
-.tabbuttons .gwt-PushButton, .tabbuttons .gwt-ToggleButton {
+.buttonspanel .gwt-PushButton, .buttonspanel .gwt-ToggleButton {
 	border: 0px;
 }
 
@@ -747,54 +766,6 @@ to {
 
 .cellListKeyboardSelectedItem {
 	background: white;
-}
-/*
-@sprite .cellListSelectedItem {
-  gwt-image: 'cellListSelectedBackground';
-  background-color: white;
-  color: white;
-  height: auto;
-  overflow: visible;
-}
-*/
-@sprite .marker0 {
-	gwt-image: "marker0";
-}
-
-@sprite .marker25 {
-	gwt-image: "marker25";
-}
-
-@sprite .marker50 {
-	gwt-image: "marker50";
-}
-
-@sprite .marker75 {
-	gwt-image: "marker75";
-}
-
-@sprite .marker100 {
-	gwt-image: "marker100";
-}
-
-@sprite .othermarker0 {
-	gwt-image: "othermarker0";
-}
-
-@sprite .othermarker25 {
-	gwt-image: "othermarker25";
-}
-
-@sprite .othermarker50 {
-	gwt-image: "othermarker50";
-}
-
-@sprite .othermarker75 {
-	gwt-image: "othermarker75";
-}
-
-@sprite .othermarker100 {
-	gwt-image: "othermarker100";
 }
 .colorsquare{
 	width:30px;

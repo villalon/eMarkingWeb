@@ -25,7 +25,6 @@ package cl.uai.client.resources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ImageResource;
 
 /**
  * @author Jorge Villalon
@@ -34,75 +33,6 @@ import com.google.gwt.resources.client.ImageResource;
 public interface Resources extends ClientBundle {
 	public static final Resources INSTANCE =  GWT.create(Resources.class);
 
-	@Source("larrow.png")
-	ImageResource leftarrow();
-	
-	@Source("rarrow.png")
-	ImageResource rightarrow();	
-	
-	@Source("marker0.png")
-	ImageResource marker0();	
-	
-	@Source("marker25.png")
-	ImageResource marker25();	
-							
-	@Source("marker50.png")
-	ImageResource marker50();	
-									
-	@Source("marker75.png")
-	ImageResource marker75();	
-	
-	@Source("marker100.png")
-	ImageResource marker100();
-	
-	@Source("othermarker0.png")
-	ImageResource othermarker0();	
-	
-	@Source("othermarker25.png")
-	ImageResource othermarker25();	
-	
-	@Source("othermarker50.png")
-	ImageResource othermarker50();	
-	
-	@Source("othermarker75.png")
-	ImageResource othermarker75();
-	
-	@Source("othermarker100.png")
-	ImageResource othermarker100();
-	
-	@Source("percentage0.png")
-	ImageResource percentage0();
-	
-	@Source("percentage10.png")
-	ImageResource percentage10();
-
-	@Source("percentage20.png")
-	ImageResource percentage20();
-
-	@Source("percentage30.png")
-	ImageResource percentage30();
-
-	@Source("percentage40.png")
-	ImageResource percentage40();
-
-	@Source("percentage50.png")
-	ImageResource percentage50();
-
-	@Source("percentage60.png")
-	ImageResource percentage60();
-
-	@Source("percentage70.png")
-	ImageResource percentage70();
-
-	@Source("percentage80.png")
-	ImageResource percentage80();
-
-	@Source("percentage90.png")
-	ImageResource percentage90();
-
-	@Source("percentage100.png")
-	ImageResource percentage100();
-	
 	@Source("EMarkingWeb.css")
 	EmarkingCss css();
 }

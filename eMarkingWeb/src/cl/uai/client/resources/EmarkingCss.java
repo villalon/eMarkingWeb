@@ -59,17 +59,7 @@ public interface EmarkingCss extends CssResource {
 	String mark();
 	String lastmark();
 	String othermark();
-	String othermarker0();
-	String othermarker100();
-	String othermarker25();
-	String othermarker50();
-	String othermarker75();
 	String markcrit();
-	String marker0();
-	String marker100();
-	String marker25();
-	String marker50();
-	String marker75();
 	String marklvl();
 	String markmarkername();
 	String markpopup();
