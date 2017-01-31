@@ -573,8 +573,7 @@ to {
 }
 
 .buttonspanel .gwt-ToggleButton-up, .buttonspanel .gwt-PushButton-up, .buttonspanel .gwt-PushButton  {
-	background-color: #fff;
-	background: none;
+	background: #fff;
 }
 
 .buttonspanel .gwt-PushButton, .buttonspanel .gwt-ToggleButton {
@@ -589,8 +588,7 @@ to {
 .buttonspanel .gwt-ToggleButton-down, .buttonspanel .gwt-PushButton-down,
     .buttonspanel .gwt-ToggleButton-down-hovering, .buttonspanel .gwt-ToggleButton-up-hovering
     , .buttonspanel .gwt-PushButton-up-hovering, .buttonspanel .gwt-PushButton-down-hovering {
-    background-color: #ff6f6f;
-    background: none;
+    background: #ff6f6f;
 }
 
 .buttonspanel .gwt-TabBarItem-wrapper, .buttonspanel .gwt-TabBarFirst-wrapper, .buttonspanel .gwt-TabBarRest-wrapper {
@@ -652,7 +650,7 @@ to {
 
 .rubricbutton i {
 	float: left;
-    margin-right: 10px;
+	margin-right: 10px;
 }
 
 .rubricbuttonjewel {

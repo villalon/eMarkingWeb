@@ -83,7 +83,7 @@ public class MarkingButtons extends EMarkingComposite {
 	public static Map<Integer, EmarkingToggleButton> availableButtons;
 	static {
 		availableButtons = new HashMap<Integer, EmarkingToggleButton>();
-		availableButtons.put(2, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, new Icon(IconType.TH), MarkingInterface.messages.RubricTitle()));
+		availableButtons.put(2, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, new Icon(IconType.MAP_MARKER), MarkingInterface.messages.RubricTitle()));
 		availableButtons.put(1, new EmarkingToggleButton(1, ButtonFormat.BUTTON_COMMENT, new Icon(IconType.COMMENT), MarkingInterface.messages.CommentTitle()));
 		availableButtons.put(3, new EmarkingToggleButton(3, ButtonFormat.BUTTON_TICK, new Icon(IconType.OK), MarkingInterface.messages.CheckTitle()));
 		availableButtons.put(4, new EmarkingToggleButton(4, ButtonFormat.BUTTON_CROSS, new Icon(IconType.REMOVE), MarkingInterface.messages.CrossTitle()));
