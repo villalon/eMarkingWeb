@@ -116,6 +116,10 @@ public class EMarkingConfiguration {
 	private static boolean chatServerError = false;
 
 	private static Map<Integer, String> regradeMotives = null;
+	
+	/** If only formative feedback should be shown **/
+	private static boolean formativeFeedbackOnly;
+	
 	/**
 	 * @return the eMarkingVersion
 	 */
@@ -271,6 +275,9 @@ public class EMarkingConfiguration {
 		// Link rubric colors if configured as
 		coloredRubric = value.get("coloredrubric").equals("1");
 
+		// If formative feedback is forced
+		formativeFeedbackOnly = value.get("formativeonly").equals("1");
+
 		// Link rubric colors if configured as
 		coloredRubricForced = value.get("coloredrubricforced").equals("1");
 		if(coloredRubricForced) {
@@ -316,7 +323,8 @@ public class EMarkingConfiguration {
 				"\nMarking type: " + markingType +
 				"\nMarker Id: " + markerId +
 				"\nSupervisor: " + supervisor +
-				"\nColored rubric: " + coloredRubric);
+				"\nColored rubric: " + coloredRubric +
+				"\nFormative feedback: " + formativeFeedbackOnly);
 	}
 
 	/**
@@ -382,5 +390,13 @@ public class EMarkingConfiguration {
 
 	public static void setColoredRubricForced(boolean coloredRubricForced) {
 		EMarkingConfiguration.coloredRubricForced = coloredRubricForced;
+	}
+
+	public static boolean isFormativeFeedbackOnly() {
+		return formativeFeedbackOnly;
+	}
+
+	public static void setFormativeFeedbackOnly(boolean formativeFeedbackOnly) {
+		EMarkingConfiguration.formativeFeedbackOnly = formativeFeedbackOnly;
 	}	
 }

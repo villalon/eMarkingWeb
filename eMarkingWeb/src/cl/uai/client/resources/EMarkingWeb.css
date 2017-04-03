@@ -410,10 +410,14 @@ to {
 }
 
 .bonuslist, .levelslist {
-	width: 200px;
+	width: 400px;
 	margin-bottom: 3px;
 	margin-left: 10px;
 	text-align: right;
+}
+
+.editmarksuggestbox {
+	width: 350px;
 }
 
 .levelslist {
@@ -698,7 +702,7 @@ to {
 }
 
 .editmarkdialog {
-	width: 300px;
+	width: 450px;
 }
 
 .sortpagesflextable {

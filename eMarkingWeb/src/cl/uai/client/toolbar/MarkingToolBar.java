@@ -84,14 +84,14 @@ public class MarkingToolBar extends EMarkingComposite {
 		markingButtons = new MarkingButtons();
 		markingButtons.setVisible(false);
 
-		examButtons = new ExamButtons(true);
-		examButtons.setVisible(false);
+		examButtons = new ExamButtons(false);
+		examButtons.setVisible(true);
 		
 		viewButtons = new ViewButtons();
 		viewButtons.setVisible(false);
 		
-		chatButtons = new ChatButtons();
-		chatButtons.setVisible(false);
+			chatButtons = new ChatButtons();
+			chatButtons.setVisible(false);
 		
 		helpButtons = new HelpButtons();
 		helpButtons.setVisible(false);
@@ -101,7 +101,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		tabButtonsPanel.add(examButtons, MarkingInterface.messages.Exam().toUpperCase());
 		tabButtonsPanel.add(markingButtons, MarkingInterface.messages.Mark().toUpperCase());
-		tabButtonsPanel.add(viewButtons, MarkingInterface.messages.View().toUpperCase());
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
 		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
 
@@ -134,7 +133,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.add(extraButtons);
 		buttonsPanel.setCellVerticalAlignment(extraButtons, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(extraButtons, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(extraButtons, "40%");
+		buttonsPanel.setCellWidth(extraButtons, "10%");
 		
 		this.initWidget(buttonsPanel);
 	}
@@ -154,11 +153,21 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setVisible(true);
 		
 		if(!EMarkingConfiguration.isReadonly()){
-			tabButtonsPanel.selectTab(1);
+			tabButtonsPanel.selectTab(0);
 		}else{
 			tabButtonsPanel.remove(markingButtons);
 			tabButtonsPanel.remove(examButtons);
 			tabButtonsPanel.remove(chatButtons);
+			tabButtonsPanel.selectTab(0);
+		}
+		
+		if(!EMarkingConfiguration.isChatEnabled()) {
+			tabButtonsPanel.remove(chatButtons);
+		}
+
+		if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
+			buttonsPanel.remove(grade);
+			tabButtonsPanel.remove(examButtons);
 			tabButtonsPanel.selectTab(0);
 		}
 

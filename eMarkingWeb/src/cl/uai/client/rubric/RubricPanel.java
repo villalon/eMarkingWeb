@@ -276,9 +276,10 @@ public class RubricPanel extends EMarkingComposite {
 
 			rubricIndices.put(criterion.getId(), index);
 			boolean criterionSelected = false;
+			int levelNumber = 1;
 			for(int levelid : criterion.getLevels().keySet()) {
 				Level level = criterion.getLevels().get(levelid);
-				LevelLabel levelLabel = new LevelLabel(level.getId());
+				LevelLabel levelLabel = new LevelLabel(level.getId(), levelNumber);
 				levelLabel.addStyleName(Resources.INSTANCE.css().criterionDescription());
 
 				if(criterion.getSelectedLevel() != null && criterion.getSelectedLevel().getId() == level.getId()) {
@@ -320,7 +321,7 @@ public class RubricPanel extends EMarkingComposite {
 					logger.severe(this.getParent().getParent().getParent().getClass().getName());
 				}
 				rowPanel.add(levelLabel);
-
+				levelNumber++;
 			}
 
 			if(criterionSelected) {
