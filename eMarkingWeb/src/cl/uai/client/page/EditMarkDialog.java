@@ -20,14 +20,20 @@
  */
 package cl.uai.client.page;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Level;
+import cl.uai.client.feedback.FeedbackInterface;
+import cl.uai.client.feedback.FeedbackObject;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -36,6 +42,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -121,11 +128,14 @@ public class EditMarkDialog extends DialogBox {
 	/** Indicates if the dialog was cancelled **/
 	private boolean cancelled = false;
 	
+	/** Variables for implementation new feedback, hans's thesis **/
+	private ArrayList<FeedbackObject> feedbackArray = null;	
+	private FeedbackInterface feedbackPanel = null;
+	private String keyWords = null;
 	private boolean simplePanel = false;
 	private ScrollPanel feedbackSummary;
 	private VerticalPanel feedbackForStudent;
 	private int count = 1;
-
 	
 	/**
 	 * Creates a comment dialog at a specific position
@@ -142,7 +152,15 @@ public class EditMarkDialog extends DialogBox {
 		this.levelId = level;
 		Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
 
-		simplePanel = true;
+		logger.severe("keywords!"+EMarkingConfiguration.getKeywords());
+		if(!EMarkingConfiguration.getKeywords().equals("") ){
+			keyWords = EMarkingConfiguration.getKeywords();
+			feedbackArray = new ArrayList<FeedbackObject>();
+			feedbackPanel = new FeedbackInterface(keyWords);
+			feedbackPanel.setParent(this);
+		}else{
+			simplePanel = true;
+		}
 		
 		superPanel = new HorizontalPanel();
 		superPanel.addStyleName(Resources.INSTANCE.css().feedbackdialog());
@@ -300,7 +318,7 @@ public class EditMarkDialog extends DialogBox {
 			mainPanel.add(feedbackSummary);
 		
 			superPanel.add(mainPanel);
-		
+			superPanel.add(feedbackPanel);
 			this.setWidget(superPanel);
 		}
 	}
@@ -309,6 +327,7 @@ public class EditMarkDialog extends DialogBox {
 	public void show() {
 		super.show();
 		logger.fine("Shown!");
+		this.txtComment.getValueBox().setFocus(true);
 	}
 
 	/**
@@ -422,27 +441,114 @@ public class EditMarkDialog extends DialogBox {
 		}		
 		return true;
 	}
-	
-	public void addFeedback(HTML name, HTML auxLink, String source) {
-		 HTML feedback = new HTML();
-		 if(source == "ocwmit"){
-			 source = "OCW MIT";
-		 }else if(source == "merlot"){
-			 source = "Merlot";
-		 }
-		 String html = "<p><b>" + count +". " + source + "</b> "+name.toString() + "</p><p><b>Link:<b> " + auxLink.toString() + "</p><hr>" ;
-		 feedback.setHTML(html);
-		 feedbackForStudent.add(feedback);	
-		 count = count + 1;
-	}
-	
+
 	public String getFeedback(){
+		int iterator = 0;
 		String outputFeedback = "";
-		feedbackForStudent.iterator();
-		for(int i = 0; i < feedbackForStudent.getWidgetCount(); i++){
-			outputFeedback = outputFeedback + feedbackForStudent.getWidget(i).toString().replaceAll("\\<.*?>","");
-			outputFeedback = outputFeedback +"__separador__";
+		while(iterator < feedbackArray.size()){
+			outputFeedback += feedbackArray.get(iterator).getNameOER().replaceAll("\\<.*?>","") + 
+					"@@separador@@" + feedbackArray.get(iterator).getName().replaceAll("\\<.*?>","") + 
+					"@@separador@@" + feedbackArray.get(iterator).getLink().replaceAll("\\<.*?>","");
+			if(iterator != (feedbackArray.size() - 1) ){
+				outputFeedback += "__separador__";
+			}
+			iterator += 1;
 		}
 		return outputFeedback;		
+	}
+
+	public boolean haveFeedback() {
+		if(!EMarkingConfiguration.getKeywords().equals("")){
+			if(feedbackArray.size() > 0){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void removeFeedback(String name) {
+		int iterator = 0;
+		while(iterator < feedbackArray.size()){
+			if(feedbackArray.get(iterator).getName() == name){
+				feedbackArray.remove(iterator);
+			}
+			iterator += 1;
+		}	
+	}
+	
+	public void loadFeedback() {
+		feedbackForStudent.clear();
+		count = 1;
+		int iterator = 0;
+		while(iterator < feedbackArray.size()){		
+			final Anchor link = new Anchor(feedbackArray.get(iterator).getLink(), false, feedbackArray.get(iterator).getLink(), "_blank");
+			link.addStyleName(Resources.INSTANCE.css().resourcelink());
+			addFeedback(
+					feedbackArray.get(iterator).getName(),
+					link.toString(),
+					feedbackArray.get(iterator).getNameOER(),
+					feedbackArray.get(iterator).getLink(),
+					-1);
+			iterator += 1;
+		}	
+	}
+	
+	public void setFeedbackArray(ArrayList<FeedbackObject> feedbackArray, int id) {
+		int iterator = 0;
+		while(iterator < feedbackArray.size()){		
+			final Anchor link = new Anchor(feedbackArray.get(iterator).getLink(), false, feedbackArray.get(iterator).getLink(), "_blank");
+			link.addStyleName(Resources.INSTANCE.css().resourcelink());
+			addFeedback(
+					feedbackArray.get(iterator).getName(),
+					link.toString(),
+					feedbackArray.get(iterator).getNameOER(),
+					feedbackArray.get(iterator).getLink(),
+					id);
+			iterator += 1;
+		}
+
+	}
+	
+	public void addFeedback(final String name, String auxLink, String source, String rawLink, int id) {
+
+		HorizontalPanel rowFeedback = new HorizontalPanel();
+		HTML feedback = new HTML();
+		Icon iconRemove = new Icon(IconType.TRASH);
+		String sourceName = "";
+		
+		HTML lessIcon = new HTML(iconRemove.toString());
+		lessIcon.addStyleName(Resources.INSTANCE.css().plusicon());
+		
+		if(source == "ocwmit"){
+			sourceName = "OCW MIT";
+		}else if(source == "merlot"){
+			sourceName = "Merlot";
+		}else{
+			sourceName = "Webcursos";
+		}
+		String html = "<p>" + count +". " + sourceName + " - " + name + "</p><p>Link " + auxLink + "</p><hr>" ;
+		count += 1;
+		feedback.setHTML(html);
+		rowFeedback.add(lessIcon);
+		rowFeedback.add(feedback);
+		feedbackForStudent.add(rowFeedback);
+		
+		if(id > 0){
+			feedbackArray.add(new FeedbackObject(id, name, rawLink, source));
+		}else if(id == 0){
+			feedbackArray.add(new FeedbackObject(name, rawLink, source));
+		}
+		lessIcon.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				removeFeedback(name);
+				loadFeedback();
+			}						
+		});
+	
+	}
+	
+	public ArrayList<FeedbackObject> getFeedbackArray() {
+		return feedbackArray;
 	}
 }

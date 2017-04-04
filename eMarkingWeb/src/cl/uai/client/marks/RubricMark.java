@@ -20,6 +20,7 @@
  */
 package cl.uai.client.marks;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.data.Level;
 import cl.uai.client.data.SubmissionGradeData;
+import cl.uai.client.feedback.FeedbackObject;
 import cl.uai.client.marks.collaborative.*;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
@@ -43,6 +45,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
@@ -109,6 +112,147 @@ public class RubricMark extends Mark {
 			String rawtext) {
 		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 
+		feedback = new ArrayList<FeedbackObject>();
+		
+		// Rubric marks have format 2
+		this.format = 2;
+		this.iconType = IconType.TH;
+		
+		this.addStyleName(Resources.INSTANCE.css().rubricmark());
+
+		this.setLevelId(lvlid);
+		
+		// Collaborative buttons
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_MARKER_TRAINING
+				&& EMarkingConfiguration.isChatEnabled()){
+			collaborativeMarks = new HorizontalPanel();
+			
+			like = new LikeMark();
+			like.setMark(this);
+			like.setValue(0);
+			collaborativeMarks.add(like);
+			
+			dislike = new DisLikeMark();
+			dislike.setMark(this);
+			dislike.setValue(0);
+			collaborativeMarks.add(dislike);
+			
+			quote = new QuoteMark();
+			quote.setMark(this);
+			quote.setValue(0);
+			collaborativeMarks.add(quote);
+			
+			discussion = new DiscussionMark();
+			discussion.setMark(this);
+			discussion.setValue(0);
+			collaborativeMarks.add(discussion);
+			//TODO
+			Date time = new Date (timecreated*1000L);	
+			discussion.addMessage(time.toString(), markername, rawtext,markerid);
+			
+			collaborativeMarks.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			collaborativeMarks.addStyleName(Resources.INSTANCE.css().tablecollaborativebuttons());
+			
+			// The mark dont belongs me
+			if(markerid != EMarkingConfiguration.getMarkerId()){
+				like.setCanClick(true);				
+				dislike.setCanClick(true);				
+				quote.setCanClick(true);
+				//discussion.setCanClick(true);
+			}else{
+				like.removeStyleName(Resources.INSTANCE.css().likeIcon());
+				like.addStyleName(Resources.INSTANCE.css().mycolloborativeicon());
+				
+				dislike.removeStyleName(Resources.INSTANCE.css().likeIcon());
+				dislike.addStyleName(Resources.INSTANCE.css().mycolloborativeicon());
+				
+				quote.removeStyleName(Resources.INSTANCE.css().likeIcon());
+				quote.addStyleName(Resources.INSTANCE.css().mycolloborativeicon());
+			}
+			
+			// get counter for collaborative buttons
+			String url = "ids="+MarkingInterface.getDraftId()+"&commentid="+this.getId();
+			AjaxRequest.ajaxRequest("action=getvaluescollaborativebuttons&"+url, new AsyncCallback<AjaxData>() {
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					logger.warning("Error values collaboratives buttons");
+					hideCollaborativeButtons();
+				}
+				
+				@Override
+				public void onSuccess(AjaxData result) {
+					List<Map<String, String>> valuesCollaborativesButtons = AjaxRequest.getValuesFromResult(result);
+
+					for(Map<String, String> value : valuesCollaborativesButtons) {
+						
+						int markerid = Integer.parseInt(value.get("markerid"));
+						int type = Integer.parseInt(value.get("type"));
+						String markername = value.get("markername");
+						String date = value.get("date");
+						String text = value.get("text");
+						
+						switch (type){
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_LIKE:
+								like.addValue(1);
+								like.setFormat(markerid,markername);
+								like.setMarkHTML();
+								break;
+								
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_DISLIKE:
+								dislike.addValue(1);
+								dislike.setFormat(markerid,markername);
+								dislike.setMarkHTML();
+								break;
+								
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_QUOTE:
+								quote.addValue(1);
+								quote.setMarkHTML();
+								quote.setFormat(markerid,markername);
+								quote.setMarkHTML();
+								break;
+								
+							case EMarkingConfiguration.EMARKING_COLLABORATIVE_BUTTON_DISCUSSION:
+								discussion.addValue(1);
+								discussion.setMarkHTML();
+								discussion.setFormat(markerid,markername);
+								discussion.setMarkHTML();
+								String[] parts = date.split(" ");
+								String[] hourMinute = parts[1].split(":");
+								String realDate = hourMinute[0]+":"+hourMinute[1]+" &nbsp &nbsp"+parts[0];
+								discussion.addMessage(realDate, markername, text, markerid);
+								break;
+						}				
+					}
+				}
+			});
+			like.setMarkHTML();
+			dislike.setMarkHTML();
+			quote.setMarkHTML();
+			if(getMarkername() != null){
+				discussion.instanceDialog();
+			}
+			discussion.setMarkHTML();
+		}
+
+	}
+	
+	public RubricMark(
+			int id,
+			int posx,
+			int posy,
+			int pageno,
+			int markerid,
+			int lvlid,
+			long timecreated,
+			int criterionid,
+			String markername,
+			String rawtext,
+			ArrayList<FeedbackObject> mapFeedback) {
+		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
+
+		feedback = mapFeedback;
+		
 		// Rubric marks have format 2
 		this.format = 2;
 		this.iconType = IconType.TH;
@@ -268,6 +412,36 @@ public class RubricMark extends Mark {
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + SafeHtmlUtils.htmlEscape(rmark.getLevel().getDescription()) 
 					+ "</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
+			// Show the feedback
+			if(!EMarkingConfiguration.getKeywords().equals("") && feedback.size() > 0){
+				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ "Feedback" + "</div>";
+				int count = 0;
+				while(count < feedback.size()){
+					Anchor resourceLink = new Anchor(
+							feedback.get(count).getName().replaceAll("\\<.*?>",""),
+							true, 
+							feedback.get(count).getLink(), 
+							"_blank"
+					);
+					resourceLink.addStyleName(Resources.INSTANCE.css().resourcelink());
+
+					String sourceName = "";
+					if(feedback.get(count).getNameOER() == "ocwmit"){
+						sourceName = "MIT OpenCourseWare ";
+					}else if(feedback.get(count).getNameOER() == "merlot"){
+						sourceName = "MERLOT";
+					}else{
+						sourceName = "Webcursos";
+					}
+					html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"
+							+ (count + 1) + ".-"
+							+ resourceLink
+							+ "<br>"
+							+ "Source: " + sourceName
+							+ "</div>";
+					count = count +1 ;
+				}
+			}
 			// Show the marker's name if the marking process is not anonymous
 			if(!EMarkingConfiguration.isMarkerAnonymous()) {
 				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
@@ -335,6 +509,21 @@ public class RubricMark extends Mark {
 	 * @return a RubricMark object
 	 */
 	public static RubricMark createFromMap(Map<String, String> mark) {
+		ArrayList<FeedbackObject> mapFeedback = new ArrayList<FeedbackObject>();
+		try{
+			List<Map<String, String>> allfeedback = AjaxRequest.getValuesFromResultString(mark.get("feedback"));
+			for(Map<String, String> feedbackDB : allfeedback) {
+				FeedbackObject obj = new FeedbackObject(
+						Integer.parseInt(feedbackDB.get("id")),
+						feedbackDB.get("name"),
+						feedbackDB.get("link"),
+						feedbackDB.get("oer")
+				);				
+				mapFeedback.add(obj);
+			}
+		} catch(Exception e) {
+			logger.severe("Exception creating feedback from DB. " + mark.toString());
+		}
 		RubricMark markobj = new RubricMark(
 				Integer.parseInt(mark.get("id")),
 				Integer.parseInt(mark.get("posx")), 
@@ -345,7 +534,8 @@ public class RubricMark extends Mark {
 				Long.parseLong(mark.get("timecreated")),
 				Integer.parseInt(mark.get("criterionid")),
 				mark.get("markername"),
-				URL.decode(mark.get("rawtext"))
+				URL.decode(mark.get("rawtext")),
+				mapFeedback
 				);
 
 		markobj.setRegradeid(Integer.parseInt(mark.get("regradeid")));

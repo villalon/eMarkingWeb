@@ -58,6 +58,7 @@ public class CommentMark extends Mark {
 		this.iconOnly = true;
 
 		this.addStyleName(Resources.INSTANCE.css().commentmark());
+		this.addStyleName(Resources.INSTANCE.css().markpopup());
 	}
 
 	/**
