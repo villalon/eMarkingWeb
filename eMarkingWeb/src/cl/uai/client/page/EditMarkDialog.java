@@ -252,6 +252,7 @@ public class EditMarkDialog extends DialogBox {
 		txtComment = new SuggestBox(EMarkingWeb.markingInterface.previousCommentsOracle,
 				txt);
 		txtComment.setAutoSelectEnabled(false);
+		txtComment.addStyleName(Resources.INSTANCE.css().editmarksuggestbox());
 
 		HorizontalPanel hpanelComment = new HorizontalPanel();
 		hpanelComment.setWidth("100%");
@@ -270,6 +271,9 @@ public class EditMarkDialog extends DialogBox {
 			hpanelBonus.add(new Label(MarkingInterface.messages.SetBonus()));
 			hpanelBonus.add(bonusTxt);
 			hpanelBonus.setCellHorizontalAlignment(bonusTxt, HasHorizontalAlignment.ALIGN_RIGHT);
+			if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
+				hpanelBonus.setVisible(false);
+			}
 			mainPanel.add(hpanelBonus);
 			mainPanel.setCellHorizontalAlignment(hpanelBonus, HasHorizontalAlignment.ALIGN_RIGHT);
 		}

@@ -62,6 +62,7 @@ public class ExamButtons extends Buttons {
 		this.includeTextInButtons = includeText;
 		
 		finishMarkingButton = new PushButton(IconType.CHECK, includeTextInButtons ? MarkingInterface.messages.FinishMarking() : null);
+		finishMarkingButton.setTitle(MarkingInterface.messages.FinishMarking());
 		finishMarkingButton.setVisible(false);
 		finishMarkingButton.addClickHandler(new ClickHandler() {
 			@Override

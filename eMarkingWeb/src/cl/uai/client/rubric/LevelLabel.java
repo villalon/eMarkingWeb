@@ -20,6 +20,7 @@
  */
 package cl.uai.client.rubric;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Level;
 import cl.uai.client.marks.RubricMark;
@@ -40,12 +41,14 @@ public class LevelLabel extends HTML {
 	private Level lvl;
 	private boolean regradeRequested = false;
 	private String regradeComment = null;
+	private int number = 0;
 	
 	/**
 	 * Creates a rubric level label
 	 */
-	public LevelLabel(int lvlid) {
+	public LevelLabel(int lvlid, int number) {
 		lvl = MarkingInterface.submissionData.getLevelById(lvlid);
+		this.number = number;
 		this.updateHtml();
 	}
 	
@@ -67,19 +70,24 @@ public class LevelLabel extends HTML {
 
 	public void updateHtml() {
 		if(lvl != null) {
-			String bonusHtml = "";
+			String levelScoreHtml = "";
 			if(lvl.getCriterion().getBonus() != 0
 					&& lvl.getCriterion().getSelectedLevel() != null
 					&& lvl.getCriterion().getSelectedLevel() == lvl) {
-				bonusHtml = " " + RubricMark.scoreFormat(lvl.getCriterion().getBonus(), true);
+				levelScoreHtml = " " + RubricMark.scoreFormat(lvl.getCriterion().getBonus(), true);
 			}
 
+			if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
+				levelScoreHtml = "Nivel " + this.number;
+			} else {
+				levelScoreHtml = RubricMark.scoreFormat(lvl.getScore(), false) + levelScoreHtml + " pts";
+			}
 			this.setHTML("<div class=\"" + Resources.INSTANCE.css().leveldesc() + "\">" 
-					+ lvl.getDescription() + "</div><div class=\""
+					+ lvl.getDescription() + "</div>"
+					+ "<div class=\""
 					+ Resources.INSTANCE.css().levelpts() + "\">" 
-					+ RubricMark.scoreFormat(lvl.getScore(), false)
-					+ bonusHtml
-					+ " pts</div>");
+					+ levelScoreHtml
+					+ "</div>");
 		}
 	}
 	/**
