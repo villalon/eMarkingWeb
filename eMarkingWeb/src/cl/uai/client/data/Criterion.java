@@ -20,8 +20,10 @@
  */
 package cl.uai.client.data;
 
-import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
+
+import cl.uai.client.EMarkingConfiguration;
 
 /**
  * @author Jorge Villalón <villalon@gmail.com>
@@ -163,8 +165,23 @@ public class Criterion {
 	/**
 	 * @return the levels
 	 */
-	public Map<Integer, Level> getLevels() {
-		return levels;
+	public SortedMap<Integer, Level> getLevels() {
+		if(EMarkingConfiguration.getRubricLevelsSorting() == EMarkingConfiguration.EMARKING_RUBRIC_SORT_LEVELS_ASCENDING) {
+			return levels;
+		}
+		SortedMap<Integer, Level> sorted = new TreeMap<Integer, Level>();
+		float maxscore = 0;
+		for(int id : levels.keySet()) {
+			Level lvl = levels.get(id);
+			if(lvl.getScore() > maxscore) {
+				maxscore = lvl.getScore();
+			}
+		}
+		for(int id : levels.keySet()) {
+			Level lvl = levels.get(id);
+			sorted.put(((int) (maxscore - lvl.getScore())), lvl);
+		}
+		return sorted;
 	}
 	
 	/**

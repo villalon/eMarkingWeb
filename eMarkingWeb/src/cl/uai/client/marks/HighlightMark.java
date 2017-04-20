@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.vaadin.gwtgraphics.client.shape.Path;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
@@ -89,7 +90,8 @@ public class HighlightMark extends PathMark{
 		this.setWidth("10px");
 		this.setHeight("10px");
 		this.setStylePrimaryName(Resources.INSTANCE.css().pathmark());
-
+		
+		HighlightMark.size = EMarkingConfiguration.getHighlighterSize();
 	}
 
 	/**
@@ -135,10 +137,15 @@ public class HighlightMark extends PathMark{
 		return pathobj;
 	}
 
-	public static Path createPath(Point start) {
+	public static Path createPath(Point start, int criterionid) {
+		String color = "yellow";
+		if(criterionid > 0) {
+			color = Color.getCSSHueColor(criterionid);
+		}
+
 		Path currentPath = new Path(start.getX(), start.getY());
 		currentPath.setFillOpacity(0);
-		currentPath.setFillColor("yellow");
+		currentPath.setFillColor(color);
 		currentPath.setStrokeWidth(size);
 		currentPath.setStrokeOpacity(0.25);
 		currentPath.setStrokeColor("yellow");
@@ -193,6 +200,9 @@ public class HighlightMark extends PathMark{
 		} else {
 			points.add(new Point(start.getX(), start.getY()));
 			points.add(new Point(width, start.getY()));
+		}
+		if(deltaY % size != 0) {
+			steps++;
 		}
 		for(int i=2; i<steps; i++) {
 			points.add(new Point(0, start.getY() - (deltaY / Math.abs(deltaY)) * size * (i-1)));

@@ -5,6 +5,8 @@ package cl.uai.client.utils;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import cl.uai.client.EMarkingConfiguration;
+
 /**
  * @author Jorge
  *
@@ -40,7 +42,10 @@ public class Color {
 		// We need the int version
 		int hue = (int) color;
 
-		return "hsl(" + hue + ",50%,85%)";
+		int saturation = EMarkingConfiguration.getRubricColorSaturation();
+		int lightness = EMarkingConfiguration.getRubricColorLightness();
+		
+		return "hsl(" + hue + "," + saturation + "%," + lightness + "%)";
 	}
 	
 	/**

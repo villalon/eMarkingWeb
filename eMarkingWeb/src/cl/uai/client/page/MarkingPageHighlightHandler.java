@@ -14,6 +14,7 @@ import cl.uai.client.marks.HighlightMark;
 import cl.uai.client.marks.Point;
 import cl.uai.client.toolbar.buttons.ButtonFormat;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -30,6 +31,7 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 	public Point start;
 	public Point end;
 	public int selectedCriterion;
+	private boolean cancelled = false;
 	private DrawingArea drawingArea = null;
 	private AbsolutePanel absolutePanel = null;
 	public MarkingPageHighlightHandler(AbsolutePanel panel,DrawingArea drawingArea, MarkingPage _parent) {
@@ -48,22 +50,30 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 		if(!isPenActive()){
 			return;
 		}
+		this.cancelled = false;
+		Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+		int c = crit == null ? 0 : crit.getId();
 		this.start = new Point(
 				event.getClientX()-absolutePanel.getAbsoluteLeft(),
-				(event.getClientY()-absolutePanel.getAbsoluteTop()) - (event.getClientY()-absolutePanel.getAbsoluteTop())%HighlightMark.size);
+				(event.getClientY()-absolutePanel.getAbsoluteTop()));
 		this.end = new Point(start.getX(), start.getY());
-		this.currentPath = HighlightMark.createPath(start);
+		this.currentPath = HighlightMark.createPath(start, c);
 		this.drawingArea.add(this.currentPath);
 	}
 	
 
 	@Override
 	public void drawMove(MouseMoveEvent event) {
-		if(!isPenActive()){
+		if(!isPenActive() || this.cancelled){
 			return;
 		}
-		int currentY = (event.getClientY()-absolutePanel.getAbsoluteTop()) - (event.getClientY()-absolutePanel.getAbsoluteTop()) % HighlightMark.size;
+
+		int currentY = start.getY();
 		int currentX = event.getClientX()-absolutePanel.getAbsoluteLeft();
+		NativeEvent ev = event.getNativeEvent();
+		if(ev.getCtrlKey()) {
+			currentY =  (event.getClientY()-absolutePanel.getAbsoluteTop());
+		}
 		
 		end.setX(currentX);
 		end.setY(currentY);
@@ -71,12 +81,18 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 		List<Point> newpath = HighlightMark.calculatePath(start, end, absolutePanel.getOffsetWidth());
 
 		drawingArea.remove(this.currentPath);
+		if(ev.getKeyCode() == com.google.gwt.event.dom.client.KeyCodes.KEY_ESCAPE) {
+			this.cancelled = true;
+			return;
+		}
 		for(int i=0; i<newpath.size(); i++) {
 			int x = newpath.get(i).getX();
 			int y = newpath.get(i).getY();
 			if(i%2==0) {
 				if(i==0) {
-					this.currentPath = HighlightMark.createPath(start);
+					Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
+					int c = crit == null ? 0 : crit.getId();
+					this.currentPath = HighlightMark.createPath(start, c);
 					drawingArea.add(this.currentPath);
 				} else {
 					this.currentPath.moveTo(x, y);
@@ -95,9 +111,15 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 			return;
 		}
 
+		int currentY = start.getY();
+		NativeEvent ev = event.getNativeEvent();
+		if(ev.getCtrlKey()) {
+			currentY = (event.getClientY()-absolutePanel.getAbsoluteTop()) - 
+					(event.getClientY()-absolutePanel.getAbsoluteTop()) % HighlightMark.size;
+		}		
+
 		final int newposx = event.getClientX();
-		final int newposy = (event.getClientY()-absolutePanel.getAbsoluteTop()) - 
-				(event.getClientY()-absolutePanel.getAbsoluteTop()) % HighlightMark.size;
+		final int newposy = currentY;
 		
 		end.setX(event.getClientX() - absolutePanel.getAbsoluteLeft());
 		end.setY(newposy);
@@ -112,6 +134,7 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
 				if(dialogquestion.isCancelled()) {
+					drawingArea.remove(currentPath);
 					EMarkingWeb.markingInterface.getElement().focus();
 					return;
 				}

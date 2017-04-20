@@ -122,11 +122,10 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		// Gets the absolute panel which contains the mark to calculate its coordinates
 		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
 
-		int topdiff = - 20;
+		int topdiff = - Mark.editIcon.getOffsetHeight();
 		int widthdiff = - 12;
 		
 		if(mark instanceof RubricMark) {
-			topdiff = - 20;
 			widthdiff = - 0;
 		}
 		// Calculates basic left, top position for icons
@@ -159,7 +158,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			abspanel.setWidgetPosition(Mark.editIcon, left, top);
 			Mark.editIcon.setVisible(true);
 			Mark.editIcon.setMark(mark);
-			left -= 15;
+			left -= Mark.editIcon.getOffsetWidth();
 			top -= 1;
 
 			// Delete icon
