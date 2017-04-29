@@ -782,7 +782,7 @@ public class MarkingInterface extends EMarkingComposite {
 					Window.alert(MarkingInterface.messages.InvalidSubmissionData());
 				}
 
-				Window.setTitle("e-marking " + submissionData.getCoursename() + " " + submissionData.getActivityname());
+				Window.setTitle("Emarking " + submissionData.getCoursename() + " " + submissionData.getActivityname());
 
 				if(EMarkingConfiguration.isChatEnabled()) {
 					activateChat();
