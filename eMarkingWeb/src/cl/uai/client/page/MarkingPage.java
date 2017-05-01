@@ -118,7 +118,9 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			
 			try {
 				int index = Integer.parseInt(markMap.get("format"));
-				ButtonFormat format = index < 1000 ? MarkingButtons.availableButtons.get(index).getType() : ButtonFormat.BUTTON_CUSTOM;
+				ButtonFormat format = index < 1000 ?
+						MarkingButtons.getButtonFormatFromCode(index) : 
+						ButtonFormat.BUTTON_CUSTOM;
 				fixPositions(markMap, width, height);
 				Mark mark = null;
 			switch(format) {
