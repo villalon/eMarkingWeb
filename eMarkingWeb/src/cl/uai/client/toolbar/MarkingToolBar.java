@@ -101,6 +101,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		tabButtonsPanel.add(examButtons, MarkingInterface.messages.Exam().toUpperCase());
 		tabButtonsPanel.add(markingButtons, MarkingInterface.messages.Mark().toUpperCase());
+		tabButtonsPanel.add(viewButtons, MarkingInterface.messages.View().toUpperCase());
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
 		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
 
@@ -126,6 +127,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellHorizontalAlignment(grade, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(grade, "10%");
 		
+		if(!EMarkingConfiguration.isReadonly()) {
 		ExamButtons extraButtons = new ExamButtons(false);
 		extraButtons.getFinishMarkingButton().setVisible(true);
 		extraButtons.getSaveAndJumpToNextButton().setVisible(true);
@@ -134,6 +136,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellVerticalAlignment(extraButtons, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(extraButtons, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(extraButtons, "10%");
+		}
 		
 		this.initWidget(buttonsPanel);
 	}

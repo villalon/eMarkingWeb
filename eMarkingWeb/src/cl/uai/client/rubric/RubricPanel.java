@@ -341,7 +341,9 @@ public class RubricPanel extends EMarkingComposite {
 			rubricTable.add(rowPanel);
 		}
 
-		rubricTable.add(generalFeedbackInterface);
+		if(!EMarkingConfiguration.isReadonly()) {
+			rubricTable.add(generalFeedbackInterface);
+		}
 	}
 
 	private String getCriterionVisibilityCss(Criterion criterion) {

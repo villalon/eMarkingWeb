@@ -107,9 +107,20 @@ public class HighlightMark extends PathMark{
 
 		try {
 			String pathData = markMap.get("path");
+			int posx = Integer.parseInt(markMap.get("posx"));
 			int posy = Integer.parseInt(markMap.get("posy"));
-			Point start = new Point(Integer.parseInt(markMap.get("posx")), 0);
-			Point end = new Point(Integer.parseInt(pathData.split(",")[0]), Integer.parseInt(pathData.split(",")[1]) - posy);
+			int endx = Integer.parseInt(pathData.split(",")[0]);
+			int endy = Integer.parseInt(pathData.split(",")[1]);
+			logger.fine("Adding from map. pos:"+markMap.get("posx")+","+markMap.get("posy")+" end:"+ endx + "," + endy);
+			// Singleline
+			if(posy == endy && posx > endx) {
+				logger.fine("Single line, swapping.");
+				int tmp = posx;
+				posx = endx;
+				endx = tmp;
+			}
+			Point start = new Point(posx, 0);
+			Point end = new Point(endx, endy - posy);
 
 			logger.fine("Adding from map: 0,"+markMap.get("posy")+" start:"+start+" end:"+ end);
 			pathobj = new HighlightMark(
@@ -157,7 +168,6 @@ public class HighlightMark extends PathMark{
 	public void setMarkHTML() {
 		
 		int width = EMarkingWeb.markingInterface.getMarkingPagesInterface().getOffsetWidth();
-		logger.fine("start:" + start + " end:"+ end);
 		List<Point> points = calculatePath(start, end, width);
 		Path path = null;
 		for(int i=0; i<points.size(); i++) {

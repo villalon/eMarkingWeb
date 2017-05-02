@@ -86,6 +86,8 @@ public class EMarkingConfiguration {
 	
 	/** Indicates if the marking interface will include student anonymous information **/
 	private static boolean studentAnonymous = true;
+	
+	private static boolean changeLogEnabled = false;
 
 	/** Indicates if the user can manage delphi process **/
 	private static boolean manageDelphi = false;
@@ -305,6 +307,9 @@ public class EMarkingConfiguration {
 		// If formative feedback is forced
 		formativeFeedbackOnly = value.get("formativeonly").equals("1");
 
+		// If formative feedback is forced
+		changeLogEnabled = value.get("changelog").equals("10");
+
 		// Link rubric colors if configured as
 		coloredRubricForced = value.get("coloredrubricforced").equals("1");
 		if(coloredRubricForced) {
@@ -444,5 +449,13 @@ public class EMarkingConfiguration {
 
 	public static void setHighlighterSize(int highlighterSize) {
 		EMarkingConfiguration.highlighterSize = highlighterSize;
+	}
+
+	public static boolean isChangeLogEnabled() {
+		return changeLogEnabled;
+	}
+
+	public static void setChangeLogEnabled(boolean changeLogEnabled) {
+		EMarkingConfiguration.changeLogEnabled = changeLogEnabled;
 	}	
 }

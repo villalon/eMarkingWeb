@@ -217,8 +217,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	 * @param height
 	 */
 	private void fixPositions(Map<String, String> map, int width, int height) {
-		int posx = (int) (Float.parseFloat(map.get("posx")) * (float) width);
-		int posy = (int) (Float.parseFloat(map.get("posy")) * (float) height);
+		int posx = (int) Math.round(Float.parseFloat(map.get("posx")) * (float) width);
+		int posy = (int) Math.round(Float.parseFloat(map.get("posy")) * (float) height);
 		map.remove("posx");
 		map.remove("posy");
 		map.put("posx", Integer.toString(posx));

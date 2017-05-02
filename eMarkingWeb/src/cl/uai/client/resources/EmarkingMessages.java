@@ -33,6 +33,8 @@ public interface EmarkingMessages extends Messages {
 	public String AnswerKey();
 	public String Cancel();
 	public String CantReachServerRetrying(int seconds);
+	public String ChangeLog();
+	public String ChangeLogInstructions();
 	public String CheckTitle();
 	public String ClosingConfirm();
 	public String Comment();
