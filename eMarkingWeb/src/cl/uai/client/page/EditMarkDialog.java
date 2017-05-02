@@ -41,6 +41,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -128,7 +132,7 @@ public class EditMarkDialog extends DialogBox {
 	/** Indicates if the dialog was cancelled **/
 	private boolean cancelled = false;
 	
-	/** Variables for implementation new feedback, hans's thesis **/
+	/** Variables for implementation enhanced feedback, hans's thesis **/
 	private ArrayList<FeedbackObject> feedbackArray = null;	
 	private FeedbackInterface feedbackPanel = null;
 	private String keyWords = null;
@@ -203,7 +207,12 @@ public class EditMarkDialog extends DialogBox {
 		}
 
 		// Position the dialog
-		this.setPopupPosition(posx, posy);
+		if (simplePanel) {
+			this.setPopupPosition(posx, posy);
+		} else {
+			// The Dialog is more big, so we need to fix the position
+			this.setPopupPosition( (int)(Window.getClientWidth() * 0.08), (int) (Window.getClientHeight() * 0.15));
+		}
 		
 		if(this.levelId > 0) {
 
@@ -317,7 +326,20 @@ public class EditMarkDialog extends DialogBox {
 			// No feedback
 			this.setWidget(mainPanel);
 		}else{
-			// add feedback panel
+			// Remove CSS Style
+			mainPanel.removeStyleName(Resources.INSTANCE.css().editmarkdialog());
+			mainPanel.addStyleName(Resources.INSTANCE.css().editmarkdialogWithFeedback());
+			
+			bonusTxt.removeStyleName(Resources.INSTANCE.css().bonuslist());
+			bonusTxt.addStyleName(Resources.INSTANCE.css().bonuslistWithFeedback());
+			
+			this.levelsList.removeStyleName(Resources.INSTANCE.css().levelslist());
+			this.levelsList.addStyleName(Resources.INSTANCE.css().levelslistWithFeedback());
+			
+			txtComment.removeStyleName(Resources.INSTANCE.css().editmarksuggestbox());
+			txtComment.addStyleName(Resources.INSTANCE.css().editmarksuggestboxWithFeedback());
+			
+			// Add feedback panel
 			mainPanel.add(new HTML("<h4>Feedback</h4>"));
 			mainPanel.add(feedbackSummary);
 		
@@ -447,18 +469,16 @@ public class EditMarkDialog extends DialogBox {
 	}
 
 	public String getFeedback(){
-		int iterator = 0;
-		String outputFeedback = "";
-		while(iterator < feedbackArray.size()){
-			outputFeedback += feedbackArray.get(iterator).getNameOER().replaceAll("\\<.*?>","") + 
-					"@@separador@@" + feedbackArray.get(iterator).getName().replaceAll("\\<.*?>","") + 
-					"@@separador@@" + feedbackArray.get(iterator).getLink().replaceAll("\\<.*?>","");
-			if(iterator != (feedbackArray.size() - 1) ){
-				outputFeedback += "__separador__";
-			}
-			iterator += 1;
+		JSONObject outputFeedback = new JSONObject();
+		for(int iterator = 0; iterator < feedbackArray.size() ; iterator ++){
+            JSONArray array = new JSONArray();
+            array.set(0, new JSONString(feedbackArray.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
+            array.set(1, new JSONString(feedbackArray.get(iterator).getName().replaceAll("\\<.*?>","")));
+            array.set(2, new JSONString(feedbackArray.get(iterator).getLink()));
+            
+            outputFeedback.put(Integer.toString(iterator),  array);
 		}
-		return outputFeedback;		
+		return outputFeedback.toString();
 	}
 
 	public boolean haveFeedback() {

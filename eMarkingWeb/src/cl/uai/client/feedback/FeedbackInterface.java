@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class FeedbackInterface extends VerticalPanel {
 	
-	/** Tab panel for resources Wikipedia, Youtube Edu, Merlot, OER Commons and Moodle resources **/
+	/** Tab panel for resources MIT, Merlot, CS50 and Moodle resources **/
 	private TabPanel resourcesPanel;
 	private HorizontalPanel keywordsPanel;
 	
@@ -78,7 +78,7 @@ public class FeedbackInterface extends VerticalPanel {
 				}
 			});
 			keywordsPanel.add(btnKeyword);
-			keywordsPanel.setCellVerticalAlignment(btnKeyword, HasVerticalAlignment.ALIGN_MIDDLE);
+			keywordsPanel.setCellVerticalAlignment(btnKeyword, HasVerticalAlignment.ALIGN_TOP);
 			counter++;
 		}
 		
@@ -115,14 +115,15 @@ public class FeedbackInterface extends VerticalPanel {
 				List<Map<String, String>> resources = AjaxRequest.getValuesFromResult(result);
 				for(Map<String, String> info : resources) {
 
-					final String[] data = info.get("resource").split("_separador_");
+					final String rawName = info.get("name");
+					final String rawLink = info.get("link");			
 					
-					final HTML name = new HTML(data[0].substring(10, data[0].length()-10));
+					final HTML name = new HTML(rawName);
 					name.addStyleName(Resources.INSTANCE.css().resourcetitle());
-					
-					//Anchor link = new Anchor(data[1].substring(0, 50)+"...", false, data[1], "_blank");
-					final Anchor link = new Anchor(data[1], false, data[1], "_blank");
+
+					final Anchor link = new Anchor(rawLink, false, rawLink, "_blank");
 					link.addStyleName(Resources.INSTANCE.css().resourcelink());
+					
 					final HTML auxLink = new HTML(link.toString());
 					auxLink.addStyleName(Resources.INSTANCE.css().resourcelink());
 					
@@ -135,7 +136,7 @@ public class FeedbackInterface extends VerticalPanel {
 					iconContainer.addClickHandler(new ClickHandler() {			
 						@Override
 						public void onClick(ClickEvent event) {		
-							parent.addFeedback(data[0].substring(10, data[0].length()-10), link.toString(), nameOER, data[1], 0);							
+							parent.addFeedback(rawName, link.toString(), nameOER, rawLink, 0);							
 						}						
 					});
 					
@@ -177,14 +178,15 @@ public class FeedbackInterface extends VerticalPanel {
 				List<Map<String, String>> resources = AjaxRequest.getValuesFromResult(result);
 				for(Map<String, String> info : resources) {
 
-					final String[] data = info.get("resource").split("_separador_");
+					final String rawName = info.get("name");
+					final String rawLink = info.get("link");
 					
-					final HTML name = new HTML(data[0]);
+					final HTML name = new HTML(rawName);
 					name.addStyleName(Resources.INSTANCE.css().resourcetitle());
-					
-					//Anchor link = new Anchor(data[1].substring(0, 50)+"...", false, data[1], "_blank");
-					final Anchor link = new Anchor(data[1], false, data[1], "_blank");
+
+					final Anchor link = new Anchor(rawLink, false, rawLink, "_blank");
 					link.addStyleName(Resources.INSTANCE.css().resourcelink());
+					
 					final HTML auxLink = new HTML(link.toString());
 					auxLink.addStyleName(Resources.INSTANCE.css().resourcelink());
 					
@@ -197,7 +199,7 @@ public class FeedbackInterface extends VerticalPanel {
 					iconContainer.addClickHandler(new ClickHandler() {			
 						@Override
 						public void onClick(ClickEvent event) {		
-							parent.addFeedback(data[0], link.toString(), "Webcursos", data[1], 0);							
+							parent.addFeedback(rawName, link.toString(), "Webcursos", rawLink, 0);							
 						}						
 					});
 					

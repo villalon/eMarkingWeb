@@ -458,7 +458,7 @@ public class MarkingInterface extends EMarkingComposite {
 					final int levelid = dialog.getLevelId();
 					final String feedbackToAjax;
 					if(dialog.haveFeedback()){
-						feedbackToAjax = URL.encode(dialog.getFeedback());
+						feedbackToAjax = dialog.getFeedback();
 					}else{
 						feedbackToAjax = "";
 					}
@@ -473,7 +473,7 @@ public class MarkingInterface extends EMarkingComposite {
 							"&comment="+URL.encode(comment) +
 							"&windowswidth=" + page.getWidth() +
 							"&windowsheight=" + page.getHeight() +
-							"&feedback=" + feedbackToAjax;
+							"&feedback=" + URL.encode(feedbackToAjax);
 
 					// Add loading icon
 					Mark.loadingIcon.removeFromParent();

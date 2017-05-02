@@ -21,6 +21,8 @@
 package cl.uai.client.marks;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -44,6 +46,7 @@ import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.google.gwt.dev.json.JsonArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -51,6 +54,10 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -450,7 +457,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		}else{
 			feedbackToAjax = "";
 		}
-
+		logger.severe(feedbackToAjax);
 		// Call the ajax request to update the data
 		AjaxRequest.ajaxRequest("action=updcomment&cid=" + this.id + 
 				"&posx=" + newposx + 
@@ -467,7 +474,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				"&comment=" + URL.encode(newcomment) +
 				"&windowswidth=" + widthPage +
 				"&windowsheight=" + heightPage + 
-				"&feedback=" + feedbackToAjax,
+				"&feedback=" + URL.encode(feedbackToAjax),
 				new AsyncCallback<AjaxData>() {
 
 			@Override
@@ -640,18 +647,16 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	}
 	
 	protected String getFeedbackToAjax() {
-		int iterator = 0;
-		String outputFeedback = "";
-		while(iterator < feedback.size()){
-			outputFeedback += feedback.get(iterator).getNameOER().replaceAll("\\<.*?>","") + 
-					"@@separador@@" + feedback.get(iterator).getName().replaceAll("\\<.*?>","") + 
-					"@@separador@@" + feedback.get(iterator).getLink();
-			if(iterator != (feedback.size() - 1) ){
-				outputFeedback += "__separador__";
-			}
-			iterator += 1;
+		JSONObject outputFeedback = new JSONObject();
+		for(int iterator = 0; iterator < feedback.size() ; iterator ++){
+            JSONArray array = new JSONArray();
+            array.set(0, new JSONString(feedback.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
+            array.set(1, new JSONString(feedback.get(iterator).getName().replaceAll("\\<.*?>","")));
+            array.set(2, new JSONString(feedback.get(iterator).getLink()));
+            
+            outputFeedback.put(Integer.toString(iterator),  array);
 		}
-		return (URL.encode(outputFeedback));
+		return outputFeedback.toString();
 	}
 
 }

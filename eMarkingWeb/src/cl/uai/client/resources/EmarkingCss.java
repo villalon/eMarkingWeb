@@ -188,4 +188,8 @@ public interface EmarkingCss extends CssResource {
 	String feedbacksummary();
 	String feedbackforstudent();
 	String editmarksuggestbox();
+	String editmarkdialogWithFeedback();
+	String bonuslistWithFeedback();
+	String levelslistWithFeedback();
+	String editmarksuggestboxWithFeedback();
 }
