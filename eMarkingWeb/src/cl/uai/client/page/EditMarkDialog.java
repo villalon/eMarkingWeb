@@ -471,12 +471,12 @@ public class EditMarkDialog extends DialogBox {
 	public String getFeedback(){
 		JSONObject outputFeedback = new JSONObject();
 		for(int iterator = 0; iterator < feedbackArray.size() ; iterator ++){
-            JSONArray array = new JSONArray();
-            array.set(0, new JSONString(feedbackArray.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
-            array.set(1, new JSONString(feedbackArray.get(iterator).getName().replaceAll("\\<.*?>","")));
-            array.set(2, new JSONString(feedbackArray.get(iterator).getLink()));
-            
-            outputFeedback.put(Integer.toString(iterator),  array);
+			JSONArray array = new JSONArray();
+			array.set(0, new JSONString(feedbackArray.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
+			array.set(1, new JSONString(feedbackArray.get(iterator).getName().replaceAll("\\<.*?>","")));
+			array.set(2, new JSONString(feedbackArray.get(iterator).getLink()));
+			
+			outputFeedback.put(Integer.toString(iterator),  array);
 		}
 		return outputFeedback.toString();
 	}

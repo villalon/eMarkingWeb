@@ -649,12 +649,12 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	protected String getFeedbackToAjax() {
 		JSONObject outputFeedback = new JSONObject();
 		for(int iterator = 0; iterator < feedback.size() ; iterator ++){
-            JSONArray array = new JSONArray();
-            array.set(0, new JSONString(feedback.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
-            array.set(1, new JSONString(feedback.get(iterator).getName().replaceAll("\\<.*?>","")));
-            array.set(2, new JSONString(feedback.get(iterator).getLink()));
-            
-            outputFeedback.put(Integer.toString(iterator),  array);
+			JSONArray array = new JSONArray();
+			array.set(0, new JSONString(feedback.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
+			array.set(1, new JSONString(feedback.get(iterator).getName().replaceAll("\\<.*?>","")));
+			array.set(2, new JSONString(feedback.get(iterator).getLink()));
+			
+			outputFeedback.put(Integer.toString(iterator),  array);
 		}
 		return outputFeedback.toString();
 	}
