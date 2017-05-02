@@ -65,6 +65,7 @@ public class SubmissionGradeData {
 	private String activityname;
 	private int coursemoduleid;
 	private String feedback;
+	private String changelog;
 
 	private String rubricname;
 
@@ -232,6 +233,7 @@ public class SubmissionGradeData {
 		submissionData.setMarkerid(Integer.parseInt(values.get("markerid")));
 		submissionData.setActivityname(values.get("activityname"));
 		submissionData.setFeedback(values.get("feedback"));
+		submissionData.setChangelog(values.get("changelog"));
 		submissionData.setCustommarks(values.get("custommarks"));
 		submissionData.setQualitycontrol(values.get("qualitycontrol").equals("1"));
 		submissionData.setCoursemoduleid(Integer.parseInt(values.get("coursemodule")));
@@ -461,5 +463,13 @@ public class SubmissionGradeData {
 
 	public void setAnswerkey(boolean answerkey) {
 		this.answerkey = answerkey;
+	}
+
+	public String getChangelog() {
+		return changelog;
+	}
+
+	public void setChangelog(String changelog) {
+		this.changelog = changelog;
 	}
 }

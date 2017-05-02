@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.vaadin.gwtgraphics.client.shape.Path;
 
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
@@ -89,7 +90,8 @@ public class HighlightMark extends PathMark{
 		this.setWidth("10px");
 		this.setHeight("10px");
 		this.setStylePrimaryName(Resources.INSTANCE.css().pathmark());
-
+		
+		HighlightMark.size = EMarkingConfiguration.getHighlighterSize();
 	}
 
 	/**
@@ -105,9 +107,20 @@ public class HighlightMark extends PathMark{
 
 		try {
 			String pathData = markMap.get("path");
+			int posx = Integer.parseInt(markMap.get("posx"));
 			int posy = Integer.parseInt(markMap.get("posy"));
-			Point start = new Point(Integer.parseInt(markMap.get("posx")), 0);
-			Point end = new Point(Integer.parseInt(pathData.split(",")[0]), Integer.parseInt(pathData.split(",")[1]) - posy);
+			int endx = Integer.parseInt(pathData.split(",")[0]);
+			int endy = Integer.parseInt(pathData.split(",")[1]);
+			logger.fine("Adding from map. pos:"+markMap.get("posx")+","+markMap.get("posy")+" end:"+ endx + "," + endy);
+			// Singleline
+			if(posy == endy && posx > endx) {
+				logger.fine("Single line, swapping.");
+				int tmp = posx;
+				posx = endx;
+				endx = tmp;
+			}
+			Point start = new Point(posx, 0);
+			Point end = new Point(endx, endy - posy);
 
 			logger.fine("Adding from map: 0,"+markMap.get("posy")+" start:"+start+" end:"+ end);
 			pathobj = new HighlightMark(
@@ -135,10 +148,15 @@ public class HighlightMark extends PathMark{
 		return pathobj;
 	}
 
-	public static Path createPath(Point start) {
+	public static Path createPath(Point start, int criterionid) {
+		String color = "yellow";
+		if(criterionid > 0) {
+			color = Color.getCSSHueColor(criterionid);
+		}
+
 		Path currentPath = new Path(start.getX(), start.getY());
 		currentPath.setFillOpacity(0);
-		currentPath.setFillColor("yellow");
+		currentPath.setFillColor(color);
 		currentPath.setStrokeWidth(size);
 		currentPath.setStrokeOpacity(0.25);
 		currentPath.setStrokeColor("yellow");
@@ -150,7 +168,6 @@ public class HighlightMark extends PathMark{
 	public void setMarkHTML() {
 		
 		int width = EMarkingWeb.markingInterface.getMarkingPagesInterface().getOffsetWidth();
-		logger.fine("start:" + start + " end:"+ end);
 		List<Point> points = calculatePath(start, end, width);
 		Path path = null;
 		for(int i=0; i<points.size(); i++) {
@@ -193,6 +210,9 @@ public class HighlightMark extends PathMark{
 		} else {
 			points.add(new Point(start.getX(), start.getY()));
 			points.add(new Point(width, start.getY()));
+		}
+		if(deltaY % size != 0) {
+			steps++;
 		}
 		for(int i=2; i<steps; i++) {
 			points.add(new Point(0, start.getY() - (deltaY / Math.abs(deltaY)) * size * (i-1)));

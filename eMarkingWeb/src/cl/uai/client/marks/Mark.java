@@ -135,11 +135,10 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		// Gets the absolute panel which contains the mark to calculate its coordinates
 		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
 
-		int topdiff = - 20;
+		int topdiff = - Mark.editIcon.getOffsetHeight();
 		int widthdiff = - 12;
 		
 		if(mark instanceof RubricMark) {
-			topdiff = - 20;
 			widthdiff = - 0;
 		}
 		// Calculates basic left, top position for icons
@@ -169,25 +168,15 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		Mark.hideIcons();
 
 		// If we are in grading mode, show delete and edit icons
-		if(!EMarkingConfiguration.isReadonly()) {		
-			
-			if(mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.minimizeIcon, left, top);
-				Mark.minimizeIcon.setVisible(true);
-				Mark.minimizeIcon.setMark(mark);
-				left -= 15;
-				
-			}
+		if(!EMarkingConfiguration.isReadonly()) {				
 			
 			// Edit icon is only for comments and rubrics
-			if(mark instanceof CommentMark || mark instanceof RubricMark) {
-				abspanel.setWidgetPosition(Mark.editIcon, left, top);
-				Mark.editIcon.setVisible(true);
-				Mark.editIcon.setMark(mark);
-				left -= 15;
-				top -= 1;
-			}
-			
+			abspanel.setWidgetPosition(Mark.editIcon, left, top);
+			Mark.editIcon.setVisible(true);
+			Mark.editIcon.setMark(mark);
+			left -= Mark.editIcon.getOffsetWidth();
+			top -= 1;
+
 			// Delete icon
 			abspanel.setWidgetPosition(Mark.deleteIcon, left, top);
 			Mark.deleteIcon.setVisible(true);

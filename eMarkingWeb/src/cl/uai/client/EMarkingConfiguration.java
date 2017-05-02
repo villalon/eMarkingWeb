@@ -36,10 +36,34 @@ public class EMarkingConfiguration {
 	public static final int EMARKING_COLLABORATIVE_BUTTON_QUOTE = 3;
 	public static final int EMARKING_COLLABORATIVE_BUTTON_DISCUSSION = 4;
 	public static final int EMARKING_COLLABORATIVE_BUTTON_CLICKED = 1 ;
+	
+	public static final int EMARKING_RUBRIC_SORT_LEVELS_ASCENDING = 1;
+	public static final int EMARKING_RUBRIC_SORT_LEVELS_DESCENDING = 2;
 
+	private static int rubricColorSaturation = 100;
+	private static int rubricColorLightness = 85;
+	
+	private static int highlighterSize = 18;
+		
 	/** For logging purposes **/
 	private static Logger logger = Logger.getLogger(EMarkingConfiguration.class.getName());
 	
+	public static int getRubricColorSaturation() {
+		return rubricColorSaturation;
+	}
+
+	public static void setRubricColorSaturation(int rubricColorSaturation) {
+		EMarkingConfiguration.rubricColorSaturation = rubricColorSaturation;
+	}
+
+	public static int getRubricColorLightness() {
+		return rubricColorLightness;
+	}
+
+	public static void setRubricColorLightness(int rubricColorLightness) {
+		EMarkingConfiguration.rubricColorLightness = rubricColorLightness;
+	}
+
 	/** eMarking version according to Moodle for debugging information **/
 	private static int eMarkingVersion = 0;
 
@@ -57,8 +81,13 @@ public class EMarkingConfiguration {
 		return markingButtonsEnabled;
 	}
 
+	/** Indicates if the levels in the rubric should be sorted by score ascending or descending **/
+	private static int rubricLevelsSorting = EMARKING_RUBRIC_SORT_LEVELS_ASCENDING;
+	
 	/** Indicates if the marking interface will include student anonymous information **/
 	private static boolean studentAnonymous = true;
+	
+	private static boolean changeLogEnabled = false;
 
 	/** Indicates if the user can manage delphi process **/
 	private static boolean manageDelphi = false;
@@ -278,11 +307,17 @@ public class EMarkingConfiguration {
 		// If formative feedback is forced
 		formativeFeedbackOnly = value.get("formativeonly").equals("1");
 
+		// If formative feedback is forced
+		changeLogEnabled = value.get("changelog").equals("10");
+
 		// Link rubric colors if configured as
 		coloredRubricForced = value.get("coloredrubricforced").equals("1");
 		if(coloredRubricForced) {
 			coloredRubric = true;
 		}
+		
+		// Rubric levels sort order.
+		rubricLevelsSorting = (value.get("rubriclevelsorting") != null && value.get("rubriclevelsorting").equals("2")) ? EMARKING_RUBRIC_SORT_LEVELS_DESCENDING : EMARKING_RUBRIC_SORT_LEVELS_ASCENDING;
 
 		// Collaborative features (chat, wall) if configured as
 		chatEnabled = value.get("collaborativefeatures").equals("1");
@@ -398,5 +433,29 @@ public class EMarkingConfiguration {
 
 	public static void setFormativeFeedbackOnly(boolean formativeFeedbackOnly) {
 		EMarkingConfiguration.formativeFeedbackOnly = formativeFeedbackOnly;
+	}
+
+	public static int getRubricLevelsSorting() {
+		return rubricLevelsSorting;
+	}
+
+	public static void setRubricLevelsSorting(int _rubricLevelsSorting) {
+		rubricLevelsSorting = _rubricLevelsSorting;
+	}
+
+	public static int getHighlighterSize() {
+		return highlighterSize;
+	}
+
+	public static void setHighlighterSize(int highlighterSize) {
+		EMarkingConfiguration.highlighterSize = highlighterSize;
+	}
+
+	public static boolean isChangeLogEnabled() {
+		return changeLogEnabled;
+	}
+
+	public static void setChangeLogEnabled(boolean changeLogEnabled) {
+		EMarkingConfiguration.changeLogEnabled = changeLogEnabled;
 	}	
 }

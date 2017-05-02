@@ -64,8 +64,10 @@ public class ViewButtons extends Buttons {
 		});
 		
 		this.mainPanel.add(showRubricButton);
-		this.mainPanel.add(showColorsButton);
-		this.mainPanel.add(minimizeAllRubricMarks);
+		if(!EMarkingConfiguration.isColoredRubricForced()) {
+			this.mainPanel.add(showColorsButton);
+		}
+		// this.mainPanel.add(minimizeAllRubricMarks);
 	}
 
 	@Override

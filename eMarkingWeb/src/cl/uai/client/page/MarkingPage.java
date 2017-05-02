@@ -118,7 +118,9 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 			
 			try {
 				int index = Integer.parseInt(markMap.get("format"));
-				ButtonFormat format = index < 1000 ? MarkingButtons.availableButtons.get(index).getType() : ButtonFormat.BUTTON_CUSTOM;
+				ButtonFormat format = index < 1000 ?
+						MarkingButtons.getButtonFormatFromCode(index) : 
+						ButtonFormat.BUTTON_CUSTOM;
 				fixPositions(markMap, width, height);
 				Mark mark = null;
 			switch(format) {
@@ -215,8 +217,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	 * @param height
 	 */
 	private void fixPositions(Map<String, String> map, int width, int height) {
-		int posx = (int) (Float.parseFloat(map.get("posx")) * (float) width);
-		int posy = (int) (Float.parseFloat(map.get("posy")) * (float) height);
+		int posx = (int) Math.round(Float.parseFloat(map.get("posx")) * (float) width);
+		int posy = (int) Math.round(Float.parseFloat(map.get("posy")) * (float) height);
 		map.remove("posx");
 		map.remove("posy");
 		map.put("posx", Integer.toString(posx));

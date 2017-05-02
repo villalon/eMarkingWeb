@@ -83,13 +83,13 @@ public class MarkingButtons extends EMarkingComposite {
 	public static Map<Integer, EmarkingToggleButton> availableButtons;
 	static {
 		availableButtons = new HashMap<Integer, EmarkingToggleButton>();
-		availableButtons.put(2, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, new Icon(IconType.MAP_MARKER), MarkingInterface.messages.RubricTitle()));
-		availableButtons.put(1, new EmarkingToggleButton(1, ButtonFormat.BUTTON_COMMENT, new Icon(IconType.COMMENT), MarkingInterface.messages.CommentTitle()));
+		availableButtons.put(1, new EmarkingToggleButton(2, ButtonFormat.BUTTON_RUBRIC, new Icon(IconType.MAP_MARKER), MarkingInterface.messages.RubricTitle()));
+		availableButtons.put(2, new EmarkingToggleButton(1, ButtonFormat.BUTTON_COMMENT, new Icon(IconType.COMMENT), MarkingInterface.messages.CommentTitle()));
 		availableButtons.put(3, new EmarkingToggleButton(3, ButtonFormat.BUTTON_TICK, new Icon(IconType.OK), MarkingInterface.messages.CheckTitle()));
 		availableButtons.put(4, new EmarkingToggleButton(4, ButtonFormat.BUTTON_CROSS, new Icon(IconType.REMOVE), MarkingInterface.messages.CrossTitle()));
 		availableButtons.put(5, new EmarkingToggleButton(5, ButtonFormat.BUTTON_PEN, new Icon(IconType.PENCIL), MarkingInterface.messages.PenTitle()));
-		availableButtons.put(7, new EmarkingToggleButton(7, ButtonFormat.BUTTON_HIGHLIGHT, new Highlighter(), MarkingInterface.messages.MarkerTitle()));
 		availableButtons.put(6, new EmarkingToggleButton(6, ButtonFormat.BUTTON_QUESTION, new Icon(IconType.QUESTION_SIGN), MarkingInterface.messages.QuestionTitle()));
+		availableButtons.put(7, new EmarkingToggleButton(7, ButtonFormat.BUTTON_HIGHLIGHT, new Highlighter(), MarkingInterface.messages.MarkerTitle()));
 		availableButtons.put(1000, new EmarkingToggleButton(1000, ButtonFormat.BUTTON_CUSTOM, new Icon(IconType.QUESTION_SIGN), MarkingInterface.messages.QuestionTitle()));
 	}
 
@@ -236,12 +236,11 @@ public class MarkingButtons extends EMarkingComposite {
 		buttonsStats = new HashMap<Integer, Label>();
 		// Creates all buttons and adds a general value change handler
 		// First creates all buttonstats as they have to be referenced by buttons
-		for(int format : availableButtons.keySet()) {
-			EmarkingToggleButton button = availableButtons.get(format);
-			if(EMarkingConfiguration.getMarkingButtonsEnabled().contains(format)) {
+		for(EmarkingToggleButton button : availableButtons.values()) {
+			if(EMarkingConfiguration.getMarkingButtonsEnabled().contains(button.getFormat())) {
 				Label lblstat = new Label();
 				lblstat.addStyleName(Resources.INSTANCE.css().rubricbuttonjewel());
-				buttonsStats.put(format, lblstat);			
+				buttonsStats.put(button.getFormat(), lblstat);			
 				addToggleButton(button);
 			}
 		}
@@ -256,6 +255,27 @@ public class MarkingButtons extends EMarkingComposite {
 		}		
 	}
 
+	public static ButtonFormat getButtonFormatFromCode(int format) {
+		switch(format) {
+		case 1:
+			return ButtonFormat.BUTTON_COMMENT;
+		case 2:
+			return ButtonFormat.BUTTON_RUBRIC;
+		case 3:
+			return ButtonFormat.BUTTON_TICK;
+		case 4:
+			return ButtonFormat.BUTTON_CROSS;
+		case 5:
+			return ButtonFormat.BUTTON_PEN;
+		case 6:
+			return ButtonFormat.BUTTON_QUESTION;
+		case 7:
+			return ButtonFormat.BUTTON_HIGHLIGHT;
+			default:
+				return ButtonFormat.BUTTON_CUSTOM;
+		}
+	}
+	
 	public void changeColorButtons() {
 		Criterion crit = EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().getSelectedCriterion();
 		int c = crit == null ? 0 : crit.getId();

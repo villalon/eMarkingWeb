@@ -28,6 +28,8 @@ public class ToolsPanel extends Composite {
 	
 	private MarksSummaryInterface marksSummary = null;
 	
+	private ChangeLogInterface changeLogInterface = null;
+	
 	/** Scroll panel for managing a large number of comments **/
 	private ScrollPanel scroll;
 
@@ -50,8 +52,14 @@ public class ToolsPanel extends Composite {
 		}
 
 		marksSummary = new MarksSummaryInterface();
-		if(EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
+		if(EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN
+				&& !EMarkingConfiguration.isFormativeFeedbackOnly()) {
 			toolsPanel.add(marksSummary, MarkingInterface.messages.Score());
+		}
+		
+		changeLogInterface = new ChangeLogInterface();
+		if(EMarkingConfiguration.isChangeLogEnabled()) {
+			toolsPanel.add(changeLogInterface, MarkingInterface.messages.ChangeLog());
 		}
 		
 		// Sorting pages

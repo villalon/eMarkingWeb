@@ -398,6 +398,7 @@ to {
 
 .trashicon,.editicon,.loadingicon,.regradeicon {
 	z-index: 200;
+	font-size: 1.2vw;
 }
 
 .trashicon:hover,.editicon:hover,.rubriclabelclickable:hover,.regradeicon:hover
@@ -681,7 +682,7 @@ to {
 }
 
 .generalfeedbacktxt {
-	width: 400px;
+	width: 480px;
 	height: 180px;
 }
 

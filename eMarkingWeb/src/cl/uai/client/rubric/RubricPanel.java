@@ -276,7 +276,7 @@ public class RubricPanel extends EMarkingComposite {
 
 			rubricIndices.put(criterion.getId(), index);
 			boolean criterionSelected = false;
-			int levelNumber = 1;
+			int levelNumber = EMarkingConfiguration.getRubricLevelsSorting() == EMarkingConfiguration.EMARKING_RUBRIC_SORT_LEVELS_ASCENDING ? 1 : criterion.getLevels().keySet().size();
 			for(int levelid : criterion.getLevels().keySet()) {
 				Level level = criterion.getLevels().get(levelid);
 				LevelLabel levelLabel = new LevelLabel(level.getId(), levelNumber);
@@ -321,7 +321,11 @@ public class RubricPanel extends EMarkingComposite {
 					logger.severe(this.getParent().getParent().getParent().getClass().getName());
 				}
 				rowPanel.add(levelLabel);
-				levelNumber++;
+				if(EMarkingConfiguration.getRubricLevelsSorting() == EMarkingConfiguration.EMARKING_RUBRIC_SORT_LEVELS_ASCENDING) {
+					levelNumber++;
+				} else {
+					levelNumber--;					
+				}
 			}
 
 			if(criterionSelected) {
@@ -337,7 +341,9 @@ public class RubricPanel extends EMarkingComposite {
 			rubricTable.add(rowPanel);
 		}
 
-		rubricTable.add(generalFeedbackInterface);
+		if(!EMarkingConfiguration.isReadonly()) {
+			rubricTable.add(generalFeedbackInterface);
+		}
 	}
 
 	private String getCriterionVisibilityCss(Criterion criterion) {
