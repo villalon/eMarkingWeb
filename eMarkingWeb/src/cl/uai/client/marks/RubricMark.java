@@ -20,6 +20,7 @@
  */
 package cl.uai.client.marks;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.data.Level;
 import cl.uai.client.data.SubmissionGradeData;
+import cl.uai.client.feedback.FeedbackObject;
 import cl.uai.client.marks.collaborative.*;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.utils.Color;
@@ -43,6 +45,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
@@ -109,6 +112,8 @@ public class RubricMark extends Mark {
 			String rawtext) {
 		super(id, posx, posy, pageno, markerid, timecreated, criterionid, markername, rawtext);
 
+		feedback = new ArrayList<FeedbackObject>();
+		
 		// Rubric marks have format 2
 		this.format = 2;
 		this.iconType = IconType.TH;
@@ -231,6 +236,7 @@ public class RubricMark extends Mark {
 		}
 
 	}
+	
 
 	@Override
 	public void setMarkHTML() {
@@ -268,6 +274,36 @@ public class RubricMark extends Mark {
 			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + SafeHtmlUtils.htmlEscape(rmark.getLevel().getDescription()) 
 					+ "</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
+			// Show the feedback
+			if(!EMarkingConfiguration.getKeywords().equals("") && feedback.size() > 0){
+				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ "Feedback" + "</div>";
+				int count = 0;
+				while(count < feedback.size()){
+					Anchor resourceLink = new Anchor(
+							feedback.get(count).getName().replaceAll("\\<.*?>",""),
+							true, 
+							feedback.get(count).getLink(), 
+							"_blank"
+					);
+					resourceLink.addStyleName(Resources.INSTANCE.css().resourcelink());
+
+					String sourceName = "";
+					if(feedback.get(count).getNameOER() == "ocwmit"){
+						sourceName = "MIT OpenCourseWare ";
+					}else if(feedback.get(count).getNameOER() == "merlot"){
+						sourceName = "MERLOT";
+					}else{
+						sourceName = "Webcursos";
+					}
+					html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"
+							+ (count + 1) + ".-"
+							+ resourceLink
+							+ "<br>"
+							+ "Source: " + sourceName
+							+ "</div>";
+					count = count +1 ;
+				}
+			}
 			// Show the marker's name if the marking process is not anonymous
 			if(!EMarkingConfiguration.isMarkerAnonymous()) {
 				html += "<div class=\""+Resources.INSTANCE.css().markmarkername()+"\">"+ MarkingInterface.messages.MarkerDetails(this.getMarkername()) + "</div>";
@@ -335,6 +371,21 @@ public class RubricMark extends Mark {
 	 * @return a RubricMark object
 	 */
 	public static RubricMark createFromMap(Map<String, String> mark) {
+		ArrayList<FeedbackObject> mapFeedback = new ArrayList<FeedbackObject>();
+		try{
+			List<Map<String, String>> allfeedback = AjaxRequest.getValuesFromResultString(mark.get("feedback"));
+			for(Map<String, String> feedbackDB : allfeedback) {
+				FeedbackObject obj = new FeedbackObject(
+						Integer.parseInt(feedbackDB.get("id")),
+						feedbackDB.get("name"),
+						feedbackDB.get("link"),
+						feedbackDB.get("oer")
+				);				
+				mapFeedback.add(obj);
+			}
+		} catch(Exception e) {
+			logger.severe("Exception creating feedback from DB. " + mark.toString());
+		}
 		RubricMark markobj = new RubricMark(
 				Integer.parseInt(mark.get("id")),
 				Integer.parseInt(mark.get("posx")), 
@@ -347,7 +398,9 @@ public class RubricMark extends Mark {
 				mark.get("markername"),
 				URL.decode(mark.get("rawtext"))
 				);
-
+		// The feedback id added to the mark
+		markobj.setFeedback(mapFeedback);
+		
 		markobj.setRegradeid(Integer.parseInt(mark.get("regradeid")));
 		markobj.setRegradecomment(mark.get("regradecomment"));
 		markobj.setRegrademotive(Integer.parseInt(mark.get("motive")));
@@ -481,10 +534,6 @@ public class RubricMark extends Mark {
 		
 		AbsolutePanel abspanel = (AbsolutePanel) this.getParent();		
 		abspanel.setWidgetPosition(collaborativeMarks,abspanel.getWidgetLeft(this),abspanel.getWidgetTop(this)+ this.height-10);
-	}
-	
-	public void updateValueCollaborativeButtons(){
-		
 	}
 	
 }

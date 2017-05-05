@@ -417,8 +417,19 @@ to {
 	text-align: right;
 }
 
+.bonuslistWithFeedback, .levelslistWithFeedback {
+	width: 300px;
+	margin-bottom: 3px;
+	margin-left: 10px;
+	text-align: right;
+}
+
 .editmarksuggestbox {
 	width: 350px;
+}
+
+.editmarksuggestboxWithFeedback {
+	width: 300px;
 }
 
 .levelslist {
@@ -704,6 +715,9 @@ to {
 
 .editmarkdialog {
 	width: 450px;
+}
+.editmarkdialogWithFeedback {
+	width: 350px;
 }
 
 .sortpagesflextable {
@@ -1087,7 +1101,7 @@ background-color: #c0c0c0;
 }
 
  .resourcelink{
- 	width: 215px;
+ 	width: 300px;
 	overflow-x:hidden;
 }
 
@@ -1106,12 +1120,12 @@ background-color: #c0c0c0;
 }
 
 .feedbacksummary{
-	width: 300px;
+	width: 350px;
 	max-height: 150px;
  	word-wrap: break-word;
 }
 
 .feedbackforstudent{
-	width: 290px;
+	width: 350px;
   	word-wrap: break-word;
  }

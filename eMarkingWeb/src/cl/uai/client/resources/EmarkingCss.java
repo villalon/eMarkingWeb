@@ -16,7 +16,7 @@
 /**
  * @package   eMarking
  * @copyright 2013 Jorge Villalón <villalon@gmail.com>
- * 				   Hans C. Jeria <hansj@live.cl>
+ * @copyright 2014-2017 Hans Jeria <hansjeria@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 package cl.uai.client.resources;
@@ -188,4 +188,8 @@ public interface EmarkingCss extends CssResource {
 	String feedbacksummary();
 	String feedbackforstudent();
 	String editmarksuggestbox();
+	String editmarkdialogWithFeedback();
+	String bonuslistWithFeedback();
+	String levelslistWithFeedback();
+	String editmarksuggestboxWithFeedback();
 }

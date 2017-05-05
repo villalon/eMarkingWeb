@@ -20,6 +20,7 @@
  */
 package cl.uai.client.marks;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -28,12 +29,14 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
+import cl.uai.client.feedback.FeedbackObject;
 import cl.uai.client.page.EditIcon;
 import cl.uai.client.page.EditMarkDialog;
 import cl.uai.client.page.EditMarkMenu;
 import cl.uai.client.page.LoadingIcon;
 import cl.uai.client.page.MarkPopup;
 import cl.uai.client.page.MarkingPage;
+import cl.uai.client.page.MinimizeIcon;
 import cl.uai.client.page.RegradeIcon;
 import cl.uai.client.page.TrashIcon;
 import cl.uai.client.resources.Resources;
@@ -48,6 +51,9 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,6 +79,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	/** Criterion to which this mark is associated (if any) **/
 	protected int criterionid = 0;
 	
+	protected ArrayList<FeedbackObject> feedback;
+	
 	static {
 		deleteIcon = new TrashIcon();
 	}
@@ -94,9 +102,16 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 
 	/** The edit icon **/
 	protected static EditIcon editIcon = null;
-
+	
 	static {
 		editIcon = new EditIcon();
+	}
+
+	/** The minimize icon **/
+	protected static MinimizeIcon minimizeIcon = null;
+
+	static {
+		minimizeIcon = new MinimizeIcon();
 	}
 	
 	public static LoadingIcon loadingIcon = null;
@@ -115,6 +130,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		deleteIcon.setVisible(false);
 		editIcon.setVisible(false);
 		regradeIcon.setVisible(false);
+		minimizeIcon.setVisible(false);
 		markPopup.setVisible(false);
 	}
 	
@@ -144,6 +160,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 
 		if(abspanel.getWidgetIndex(Mark.regradeIcon) < 0)
 			abspanel.add(Mark.regradeIcon, left, top);
+		
+		if(abspanel.getWidgetIndex(Mark.minimizeIcon) < 0)
+			abspanel.add(Mark.minimizeIcon, left, top);
 
 		if(abspanel.getWidgetIndex(Mark.markPopup) < 0)
 			abspanel.add(Mark.markPopup, left, top);
@@ -152,7 +171,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		Mark.hideIcons();
 
 		// If we are in grading mode, show delete and edit icons
-		if(!EMarkingConfiguration.isReadonly()) {
+		if(!EMarkingConfiguration.isReadonly()) {				
 			
 			// Edit icon is only for comments and rubrics
 			abspanel.setWidgetPosition(Mark.editIcon, left, top);
@@ -176,13 +195,14 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				Mark.regradeIcon.setMark(mark);
 			}			
 		}
-
+		
 		// Highlight the rubric interface if the mark is a RubricMark
+		if(mark instanceof RubricMark) {
 			Mark.markPopup.setHTML(mark.getMarkPopupHTML());
 			Mark.markPopup.setVisible(true);
 			top += 50;
 			abspanel.setWidgetPosition(Mark.markPopup, left, top);
-			
+		}	
 	}
 	
 	public void setPosx(int posx) {
@@ -266,6 +286,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		this.addStyleName(Resources.INSTANCE.css().mark());
 
 		this.addHandlers();
+		feedback = new ArrayList<FeedbackObject>();
 	}
 	
 	protected void addHandlers(){
@@ -348,7 +369,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			styleColor = "style=\"color:" + Color.getCSSHueColor(criterionid) + "\"";
 		}
 		
-		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" " + styleColor + ">" + iconhtml + "</div>";
+		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" title=\""+ markername +"\" " + styleColor + ">" + iconhtml + "</div>";
 		// If the mark is an icon
 		if(!this.iconOnly && this.getRawtext().trim().length() > 0) {
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
@@ -425,7 +446,14 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		EMarkingWeb.markingInterface.addLoading(true);
 		
 		this.setLoading();
-
+		
+		final String feedbackToAjax;
+		if(feedback.size() > 0){
+			feedbackToAjax = getFeedbackToAjax();
+		}else{
+			feedbackToAjax = "";
+		}
+		logger.severe(feedbackToAjax);
 		// Call the ajax request to update the data
 		AjaxRequest.ajaxRequest("action=updcomment&cid=" + this.id + 
 				"&posx=" + newposx + 
@@ -441,7 +469,8 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				"&height=" + this.height +
 				"&comment=" + URL.encode(newcomment) +
 				"&windowswidth=" + widthPage +
-				"&windowsheight=" + heightPage, 
+				"&windowsheight=" + heightPage + 
+				"&feedback=" + URL.encode(feedbackToAjax),
 				new AsyncCallback<AjaxData>() {
 
 			@Override
@@ -523,6 +552,11 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 				dialog.getTxtRegradeComment().setText(((RubricMark) mark).getRegrademarkercomment());
 			}
 			
+			if(feedback.size() > 0){
+				dialog.setFeedbackArray(feedback, id);
+				dialog.loadFeedback();
+			}
+			
 			// Set dialog's current values to the mark's
 			dialog.setTxtComment(mark.getRawtext());
 			
@@ -538,6 +572,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 					int heightPage = page.getHeight();
 					// If the dialog was not cancelled update the mark with the dialog values
 					if(!dialog.isCancelled()) {
+						mark.setFeedback(dialog.getFeedbackArray());
 							mark.update(
 								dialog.getTxtComment(),
 								mark.getPosx(),
@@ -598,4 +633,26 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	public void onClick(ClickEvent event) {
 		event.stopPropagation();
 	}
+	
+	public ArrayList<FeedbackObject> getFeedback() {
+		return feedback;
+	}
+	
+	public void setFeedback(ArrayList<FeedbackObject> newfeedback) {
+		feedback = newfeedback;
+	}
+	
+	protected String getFeedbackToAjax() {
+		JSONObject outputFeedback = new JSONObject();
+		for(int iterator = 0; iterator < feedback.size() ; iterator ++){
+			JSONArray array = new JSONArray();
+			array.set(0, new JSONString(feedback.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
+			array.set(1, new JSONString(feedback.get(iterator).getName().replaceAll("\\<.*?>","")));
+			array.set(2, new JSONString(feedback.get(iterator).getLink()));
+			
+			outputFeedback.put(Integer.toString(iterator),  array);
+		}
+		return outputFeedback.toString();
+	}
+
 }

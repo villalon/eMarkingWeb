@@ -15,7 +15,7 @@
 
 /**
  * @package   eMarking
- * @copyright 2013 Jorge VillalÃ³n <villalon@gmail.com>
+ * @copyright 2013 Jorge Villalón <villalon@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 package cl.uai.client.marks;
