@@ -33,6 +33,7 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -47,7 +48,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class CriterionHeader extends EMarkingComposite {
 
 	/** Header main panel **/
-	private VerticalPanel mainPanel = null;
+	private FlowPanel mainPanel = null;
 	private int criterionId;
 	private int index;
 	private String criterionDescription;
@@ -62,7 +63,7 @@ public class CriterionHeader extends EMarkingComposite {
 	private int regradeaccepted = 0;
 
 	public CriterionHeader(int idx, int cid, String cdesc, float b, int regrid, int regraccepted) {
-		this.mainPanel = new VerticalPanel();
+		this.mainPanel = new FlowPanel();
 		this.mainPanel.addStyleName(Resources.INSTANCE.css().criterionrow());
 		this.criterionId = cid;
 		this.criterionDescription = cdesc;
@@ -130,7 +131,7 @@ public class CriterionHeader extends EMarkingComposite {
 		loadingIcon.addStyleName("icon-spin");
 
 		mainPanel.add(loadingIcon);
-		mainPanel.setCellHorizontalAlignment(loadingIcon, HasHorizontalAlignment.ALIGN_CENTER);
+		// mainPanel.setCellHorizontalAlignment(loadingIcon, HasHorizontalAlignment.ALIGN_CENTER);
 		
 		initWidget(mainPanel);
 	}

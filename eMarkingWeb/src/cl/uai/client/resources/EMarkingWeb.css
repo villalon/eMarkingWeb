@@ -42,6 +42,7 @@
 
 .rubricrow {
 	background-color: #eee;
+	white-space: nowrap;
 }
 
 .markbuttons {
@@ -250,6 +251,8 @@ to {
 .criterionDescription {
 	background-color: #fff;
 	border-radius: 5px;
+	display: inline-block;
+	max-width: 150px;
 }colorrionheader,.criterionheaderregrade,.criterionheaderregradeaccepted
 	{
 	font-weight: bold;
@@ -269,10 +272,10 @@ to {
 
 .leveldesc {
 	min-height: 40px;
-    max-height: 100px;
-    overflow-y: auto;
     min-width: 50px;
-    height: 100px;
+    height: 100%;
+    display: inline-block;
+    white-space: normal;
 }
 
 .regradecomment {
@@ -480,8 +483,9 @@ to {
 	background-color: #fff;
   	font-weight: bold;
   	border-radius: 5px;
-    height: 120px;
+    height: 100%;
     margin-left: 0px;
+    float:left;
 }
 
 .btnsave,.btncancel {
