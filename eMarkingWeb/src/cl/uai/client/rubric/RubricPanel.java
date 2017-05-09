@@ -35,9 +35,8 @@ import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.page.AddMarkDialog;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -45,7 +44,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -77,12 +75,11 @@ public class RubricPanel extends EMarkingComposite {
 
 	private Map<Integer, FlowPanel> rubricRows = null;
 	private Map<Integer, Integer> rubricIndices = null;
-	private HTML closeButton = null;
 
 	/** Buttons for toolbar **/
 	private ListBox rubricFilter = null;
 	private HorizontalPanel hpanelTitle = null;
-	
+	private ScrollPanel scrollRubric = null;
 	private GeneralFeedbackInterface generalFeedbackInterface = null;
 
 	/** If the rubric must include headers for each criterion **/
@@ -122,7 +119,9 @@ public class RubricPanel extends EMarkingComposite {
 	/**
 	 * Creates the rubric panel
 	 */
-	public RubricPanel() {
+	public RubricPanel(boolean isPopup) {
+		this.popupInterface = isPopup;
+		
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricpanel());
 
@@ -150,15 +149,6 @@ public class RubricPanel extends EMarkingComposite {
 		}
 		rubricFilter.addChangeHandler(new RubricFilterListBoxValueChangeHandler());
 
-		closeButton = new HTML((new Icon(IconType.REMOVE)).toString());
-		closeButton.addStyleName(Resources.INSTANCE.css().closerubricbutton());
-		closeButton.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				EMarkingWeb.markingInterface.getRubricInterface().setVisible(false);
-			}
-		});
-		
 		// An horizontal panel holds title and checkbox
 		hpanelTitle = new HorizontalPanel();
 		hpanelTitle.addStyleName(Resources.INSTANCE.css().rubrictitlepanel());
@@ -167,9 +157,6 @@ public class RubricPanel extends EMarkingComposite {
 		hpanelTitle.add(rubricFilter);
 		hpanelTitle.setCellHorizontalAlignment(rubricFilter, HasHorizontalAlignment.ALIGN_RIGHT);
 		hpanelTitle.setCellVerticalAlignment(rubricFilter, HasVerticalAlignment.ALIGN_MIDDLE);
-		hpanelTitle.add(closeButton);
-		hpanelTitle.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		hpanelTitle.setCellVerticalAlignment(closeButton, HasVerticalAlignment.ALIGN_MIDDLE);
 		mainPanel.add(hpanelTitle);
 
 		generalFeedbackInterface = new GeneralFeedbackInterface();
@@ -177,7 +164,14 @@ public class RubricPanel extends EMarkingComposite {
 		// Adds the scroll panel containing the rubric table
 		rubricTable = new VerticalPanel();
 		rubricTable.addStyleName(Resources.INSTANCE.css().rubrictable());
-		mainPanel.add(rubricTable);
+		
+		scrollRubric = new ScrollPanel();
+		if(isPopupInterface()) {
+			scrollRubric.add(rubricTable);
+			mainPanel.add(scrollRubric);						
+		} else {
+			mainPanel.add(rubricTable);			
+		}
 		
 
 		initWidget(mainPanel);
@@ -230,15 +224,17 @@ public class RubricPanel extends EMarkingComposite {
 			return;
 		}
 		
-		// If we are in the popup interface we hide the close button
-		closeButton.setVisible(!popupInterface);
-
-		float height = Window.getClientHeight()
+		if(isPopupInterface()) {
+			float height = Window.getClientHeight()
 				- EMarkingWeb.markingInterface.getToolbar().getOffsetHeight()
-				- 40;
-		height = height / 2;
-		// scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");
-		// scrollPanel.setHeight(height + "px");
+				- 140;
+			if(scrollRubric != null) {
+				scrollRubric.getElement().getStyle().setProperty("MaxHeight", height+"px");
+				scrollRubric.setHeight(height + "px");
+			} else {
+				logger.severe("scrollRubric shouldn't be null when ");
+			}
+		}
 		
 		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
 			mainPanel.setVisible(false);
@@ -257,6 +253,7 @@ public class RubricPanel extends EMarkingComposite {
 			index++;
 			FlowPanel rowPanel = new FlowPanel();
 			rowPanel.addStyleName(Resources.INSTANCE.css().rubricrow());
+			Color.setWidgetBackgroundHueColor(criterion.getId(), rowPanel);
 
 			CriterionHeader header = new CriterionHeader(
 					index, 
@@ -335,7 +332,7 @@ public class RubricPanel extends EMarkingComposite {
 			rubricTable.add(rowPanel);
 		}
 
-		if(!EMarkingConfiguration.isReadonly()) {
+		if(!EMarkingConfiguration.isReadonly() && !isPopupInterface()) {
 			rubricTable.add(generalFeedbackInterface);
 		}
 	}

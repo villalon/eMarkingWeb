@@ -35,10 +35,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * 
@@ -89,10 +87,7 @@ public class CriterionHeader extends EMarkingComposite {
 			Color.setWidgetBackgroundHueColor(cid, mainPanel);
 			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());
 			lbl2.setTitle(String.valueOf(idx));
-			//lbl2.addStyleName(MarkingInterface.getMapCss().get("colorsquare"));
 
-			//HTML rectangle = new HTML();
-			//rectangle.setHTML("<div data-index='"+idx+"' style='width:20px;	height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) +" "+MarkingInterface.getMapCss().get("colorsquare") + "' ></div>");
 			lbl2.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -178,8 +173,12 @@ public class CriterionHeader extends EMarkingComposite {
 		if(criterion.getSelectedLevel() != null) {
 			score += criterion.getSelectedLevel().getScore() + criterion.getSelectedLevel().getBonus();
 		}
-		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">"+
-				RubricMark.scoreFormat(score, false) + " / " + RubricMark.scoreFormat(criterion.getMaxscore(), false);
+		String message = RubricMark.scoreFormat(score, false) + " / " + RubricMark.scoreFormat(criterion.getMaxscore(), false);
+		if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
+			message = criterion.getLevelFormativeIndex(criterion.getSelectedLevel().getId()) + " / " + criterion.getLevels().size();
+		}
+		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">"
+				+ message;
 		html += "</div>";
 		this.bonusHtml.setHTML(html);
 	}

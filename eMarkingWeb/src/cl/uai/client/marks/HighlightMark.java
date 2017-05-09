@@ -39,9 +39,13 @@ import cl.uai.client.utils.Color;
  */
 public class HighlightMark extends PathMark{
 	
-	/** **/
+	/** Size of the highlighter **/
 	public static int size = 18;
 
+	/**
+	 * Starting point of the highlighter
+	 * @return
+	 */
 	public Point getStart() {
 		return start;
 	}
@@ -87,8 +91,8 @@ public class HighlightMark extends PathMark{
 		this.height = height;
 		this.path = path;
 		this.rawtext = data;
-		this.setWidth("10px");
-		this.setHeight("10px");
+		this.setWidth("1px");
+		this.setHeight("1px");
 		this.setStylePrimaryName(Resources.INSTANCE.css().pathmark());
 		
 		HighlightMark.size = EMarkingConfiguration.getHighlighterSize();

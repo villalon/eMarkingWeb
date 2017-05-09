@@ -30,9 +30,9 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 
@@ -65,12 +65,10 @@ public class RubricInterface extends EMarkingComposite {
 	public RubricInterface() {
 		mainPanel = new SplitLayoutPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
-		// Set width of the rubric at 35% of the window
-		//mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 
-		rubricPanel = new RubricPanel();
+		rubricPanel = new RubricPanel(false);
 		scrollRubric = new ScrollPanel(rubricPanel);
-		mainPanel.addNorth(scrollRubric, 300);
+		mainPanel.addNorth(scrollRubric, (int) Window.getClientHeight() / 2);
 		
 		toolsPanel = new ToolsPanel();
 		scrollTools = new ScrollPanel(toolsPanel);
@@ -87,12 +85,6 @@ public class RubricInterface extends EMarkingComposite {
 		return scrollTools;
 	}
 
-	@Override
-	protected void onLoad() {
-		mainPanel.setHeight(getParent().getOffsetHeight() + "px");
-		super.onLoad();		
-	}
-	
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);

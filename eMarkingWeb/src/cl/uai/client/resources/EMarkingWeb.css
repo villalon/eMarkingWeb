@@ -41,7 +41,6 @@
 }
 
 .rubricrow {
-	background-color: #eee;
 	white-space: nowrap;
 }
 
@@ -253,6 +252,8 @@ to {
 	border-radius: 5px;
 	display: inline-block;
 	max-width: 150px;
+	vertical-align: top;
+	border: 1px solid #c0d6f5;
 }colorrionheader,.criterionheaderregrade,.criterionheaderregradeaccepted
 	{
 	font-weight: bold;
@@ -709,8 +710,12 @@ to {
 	margin-bottom: 6px;
 }
 
-.addmarkdialog,.requestregradedialog {
+.requestregradedialog {
 	width: 600px;
+}
+
+.addmarkdialog {
+	
 }
 
 .requestregradedialog table {

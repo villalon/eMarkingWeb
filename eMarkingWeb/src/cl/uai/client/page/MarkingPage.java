@@ -415,8 +415,24 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	}
 
 	public void resizePage(double centerWidth) {
+		float ratio = (float) this.width / (float) centerWidth;
+		
+		int newwidth = (int) centerWidth;
+		int newheight = Math.round((float) this.height / ratio);
+
 		for(Mark mark : marks.values()) {
-			// TODO: Reposition mark based on the new page width.
+			float constantx = (float) mark.getPosx() / (float) this.width;
+			float constanty = (float) mark.getPosy() / (float) this.height;
+			int newposx = Math.round((float) constantx * newwidth); 
+			int newposy = Math.round((float) constanty * newheight);
+			logger.fine("Moving x:" + mark.getPosx() + " y:" + mark.getPosy() + " to x:" + newposx + " y:" + newposy);
+			mark.setPosx(newposx); 
+			mark.setPosy(newposy);
+			absolutePanel.setWidgetPosition(mark, mark.getPosx(), mark.getPosy());
 		}
+		this.width = newwidth;
+		this.height = newheight;
+		this.pageImage.setWidth(this.width + "px");
+		this.pageImage.setHeight(this.height + "px");
 	}
 }

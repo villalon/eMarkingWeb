@@ -110,6 +110,23 @@ public class Criterion {
 		return this.getPercentForLevel(lvl);
 	}
 
+	/**
+	 * Calculates the index of a level within a criterion. When
+	 * formative feedback is more important, the level of
+	 * achievement is shown instead of scores.
+	 * @param levelid
+	 * @return
+	 */
+	public int getLevelFormativeIndex(int levelid) {
+		int index = 0;
+		for(Level lvl : levels.values()) {
+			index++;
+			if(lvl.getId() == levelid)
+				break;
+		}
+		return index;
+	}
+
 
 	/**
 	 * @param selectedLevel the selectedLevel to set
