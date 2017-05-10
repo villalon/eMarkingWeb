@@ -33,11 +33,10 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * 
@@ -47,7 +46,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class CriterionHeader extends EMarkingComposite {
 
 	/** Header main panel **/
-	private VerticalPanel mainPanel = null;
+	private FlowPanel mainPanel = null;
 	private int criterionId;
 	private int index;
 	private String criterionDescription;
@@ -62,7 +61,7 @@ public class CriterionHeader extends EMarkingComposite {
 	private int regradeaccepted = 0;
 
 	public CriterionHeader(int idx, int cid, String cdesc, float b, int regrid, int regraccepted) {
-		this.mainPanel = new VerticalPanel();
+		this.mainPanel = new FlowPanel();
 		this.mainPanel.addStyleName(Resources.INSTANCE.css().criterionrow());
 		this.criterionId = cid;
 		this.criterionDescription = cdesc;
@@ -88,10 +87,7 @@ public class CriterionHeader extends EMarkingComposite {
 			Color.setWidgetBackgroundHueColor(cid, mainPanel);
 			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());
 			lbl2.setTitle(String.valueOf(idx));
-			//lbl2.addStyleName(MarkingInterface.getMapCss().get("colorsquare"));
 
-			//HTML rectangle = new HTML();
-			//rectangle.setHTML("<div data-index='"+idx+"' style='width:20px;	height:20px;border:1px solid #000;' class='"+ MarkingInterface.getMapCss().get("color"+idx) +" "+MarkingInterface.getMapCss().get("colorsquare") + "' ></div>");
 			lbl2.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -130,7 +126,7 @@ public class CriterionHeader extends EMarkingComposite {
 		loadingIcon.addStyleName("icon-spin");
 
 		mainPanel.add(loadingIcon);
-		mainPanel.setCellHorizontalAlignment(loadingIcon, HasHorizontalAlignment.ALIGN_CENTER);
+		// mainPanel.setCellHorizontalAlignment(loadingIcon, HasHorizontalAlignment.ALIGN_CENTER);
 		
 		initWidget(mainPanel);
 	}
@@ -177,8 +173,12 @@ public class CriterionHeader extends EMarkingComposite {
 		if(criterion.getSelectedLevel() != null) {
 			score += criterion.getSelectedLevel().getScore() + criterion.getSelectedLevel().getBonus();
 		}
-		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">"+
-				RubricMark.scoreFormat(score, false) + " / " + RubricMark.scoreFormat(criterion.getMaxscore(), false);
+		String message = RubricMark.scoreFormat(score, false) + " / " + RubricMark.scoreFormat(criterion.getMaxscore(), false);
+		if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
+			message = criterion.getLevelFormativeIndex(criterion.getSelectedLevel().getId()) + " / " + criterion.getLevels().size();
+		}
+		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">"
+				+ message;
 		html += "</div>";
 		this.bonusHtml.setHTML(html);
 	}

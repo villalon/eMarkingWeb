@@ -35,16 +35,15 @@ import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.page.AddMarkDialog;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.utils.Color;
 
-import com.github.gwtbootstrap.client.ui.Icon;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -74,17 +73,13 @@ public class RubricPanel extends EMarkingComposite {
 	/** The rubric title **/
 	private Label rubricTitle = null;
 
-	private Map<Integer, HorizontalPanel> rubricRows = null;
+	private Map<Integer, FlowPanel> rubricRows = null;
 	private Map<Integer, Integer> rubricIndices = null;
-	private HTML closeButton = null;
 
 	/** Buttons for toolbar **/
 	private ListBox rubricFilter = null;
 	private HorizontalPanel hpanelTitle = null;
-	
-	/** Scroll panel for rubric table **/
-	private ScrollPanel scrollPanel = null;
-	
+	private ScrollPanel scrollRubric = null;
 	private GeneralFeedbackInterface generalFeedbackInterface = null;
 
 	/** If the rubric must include headers for each criterion **/
@@ -124,7 +119,9 @@ public class RubricPanel extends EMarkingComposite {
 	/**
 	 * Creates the rubric panel
 	 */
-	public RubricPanel() {
+	public RubricPanel(boolean isPopup) {
+		this.popupInterface = isPopup;
+		
 		mainPanel = new VerticalPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricpanel());
 
@@ -152,15 +149,6 @@ public class RubricPanel extends EMarkingComposite {
 		}
 		rubricFilter.addChangeHandler(new RubricFilterListBoxValueChangeHandler());
 
-		closeButton = new HTML((new Icon(IconType.REMOVE)).toString());
-		closeButton.addStyleName(Resources.INSTANCE.css().closerubricbutton());
-		closeButton.addClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				EMarkingWeb.markingInterface.getRubricInterface().setVisible(false);
-			}
-		});
-		
 		// An horizontal panel holds title and checkbox
 		hpanelTitle = new HorizontalPanel();
 		hpanelTitle.addStyleName(Resources.INSTANCE.css().rubrictitlepanel());
@@ -169,19 +157,21 @@ public class RubricPanel extends EMarkingComposite {
 		hpanelTitle.add(rubricFilter);
 		hpanelTitle.setCellHorizontalAlignment(rubricFilter, HasHorizontalAlignment.ALIGN_RIGHT);
 		hpanelTitle.setCellVerticalAlignment(rubricFilter, HasVerticalAlignment.ALIGN_MIDDLE);
-		hpanelTitle.add(closeButton);
-		hpanelTitle.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
-		hpanelTitle.setCellVerticalAlignment(closeButton, HasVerticalAlignment.ALIGN_MIDDLE);
 		mainPanel.add(hpanelTitle);
 
 		generalFeedbackInterface = new GeneralFeedbackInterface();
 
 		// Adds the scroll panel containing the rubric table
-		scrollPanel = new ScrollPanel();
 		rubricTable = new VerticalPanel();
 		rubricTable.addStyleName(Resources.INSTANCE.css().rubrictable());
-		scrollPanel.add(rubricTable);
-		mainPanel.add(scrollPanel);
+		
+		scrollRubric = new ScrollPanel();
+		if(isPopupInterface()) {
+			scrollRubric.add(rubricTable);
+			mainPanel.add(scrollRubric);						
+		} else {
+			mainPanel.add(rubricTable);			
+		}
 		
 
 		initWidget(mainPanel);
@@ -205,7 +195,7 @@ public class RubricPanel extends EMarkingComposite {
 			}
 			lblLabel.updateHtml();
 			lblLabel.addStyleName(Resources.INSTANCE.css().rubricLevelSelected());
-			HorizontalPanel hpanel = rubricRows.get(mark.getCriterionId());
+			FlowPanel hpanel = rubricRows.get(mark.getCriterionId());
 			if(hpanel != null) {
 				hpanel.removeStyleName(Resources.INSTANCE.css().rowCriterionNotSelected());
 				Criterion criterion = MarkingInterface.submissionData.getRubricfillings().get(mark.getCriterionId());
@@ -234,26 +224,26 @@ public class RubricPanel extends EMarkingComposite {
 			return;
 		}
 		
-		// If we are in the popup interface we hide the close button
-		closeButton.setVisible(!popupInterface);
-
-		scrollPanel.setStyleName("rubricscroll");
-		
-		float height = Window.getClientHeight()
+		if(isPopupInterface()) {
+			float height = Window.getClientHeight()
 				- EMarkingWeb.markingInterface.getToolbar().getOffsetHeight()
-				- 40;
-		height = height / 2;
-		scrollPanel.getElement().getStyle().setProperty("MaxHeight", height+"px");
-		scrollPanel.setHeight(height + "px");
+				- 140;
+			if(scrollRubric != null) {
+				scrollRubric.getElement().getStyle().setProperty("MaxHeight", height+"px");
+				scrollRubric.setHeight(height + "px");
+			} else {
+				logger.severe("scrollRubric shouldn't be null when ");
+			}
+		}
 		
 		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
-			scrollPanel.setVisible(false);
+			mainPanel.setVisible(false);
 			rubricFilter.setVisible(false);
 		}
 
 		rubricTable.clear();
 
-		rubricRows = new HashMap<Integer, HorizontalPanel>();
+		rubricRows = new HashMap<Integer, FlowPanel>();
 		rubricIndices = new HashMap<Integer, Integer>();
 		rubricTitle.setText(MarkingInterface.submissionData.getRubricname());
 
@@ -261,8 +251,9 @@ public class RubricPanel extends EMarkingComposite {
 		for(int criterionSortId : MarkingInterface.submissionData.getSortedRubricfillings().keySet()) {
 			Criterion criterion = MarkingInterface.submissionData.getSortedRubricfillings().get(criterionSortId);
 			index++;
-			HorizontalPanel rowPanel = new HorizontalPanel();
+			FlowPanel rowPanel = new FlowPanel();
 			rowPanel.addStyleName(Resources.INSTANCE.css().rubricrow());
+			Color.setWidgetBackgroundHueColor(criterion.getId(), rowPanel);
 
 			CriterionHeader header = new CriterionHeader(
 					index, 
@@ -337,11 +328,11 @@ public class RubricPanel extends EMarkingComposite {
 			}
 
 			rubricRows.put(criterion.getId(), rowPanel);
-			
+
 			rubricTable.add(rowPanel);
 		}
 
-		if(!EMarkingConfiguration.isReadonly()) {
+		if(!EMarkingConfiguration.isReadonly() && !isPopupInterface()) {
 			rubricTable.add(generalFeedbackInterface);
 		}
 	}
@@ -382,12 +373,12 @@ public class RubricPanel extends EMarkingComposite {
 			String value = filter.getValue(filter.getSelectedIndex());
 			
 			// Hide rubric when hide is selected
-			scrollPanel.setVisible(!value.equals("hide") && EMarkingConfiguration.getMarkingType() != 5);
+			mainPanel.setVisible(!value.equals("hide") && EMarkingConfiguration.getMarkingType() != 5);
 			
 			// We have to update visibility
 			for(int criterionId : rubricRows.keySet()) {
 				Criterion criterion = MarkingInterface.submissionData.getRubricfillings().get(criterionId);
-				HorizontalPanel hpanel = rubricRows.get(criterionId);
+				FlowPanel hpanel = rubricRows.get(criterionId);
 				hpanel.removeStyleName(Resources.INSTANCE.css().rowCriterionSelectedHidden());
 				hpanel.removeStyleName(Resources.INSTANCE.css().rowCriterionSelected());
 				hpanel.addStyleName(getCriterionVisibilityCss(criterion));
@@ -412,7 +403,7 @@ public class RubricPanel extends EMarkingComposite {
 		if(markLevelLabel == null) {
 			Window.alert(MarkingInterface.messages.ErrorInvalidLevelId());
 		} else {
-			HorizontalPanel hpanel = rubricRows.get(mark.getCriterionId());
+			FlowPanel hpanel = rubricRows.get(mark.getCriterionId());
 			if(hpanel != null) {
 				CriterionHeader cheader = (CriterionHeader) hpanel.getWidget(0);
 				cheader.setMarkerVisible(false);
@@ -426,7 +417,7 @@ public class RubricPanel extends EMarkingComposite {
 	private LevelLabel deselectMarkFromRubric(RubricMark mark) {
 		// Remove selected CSS styles from all levels in the criterion row
 		LevelLabel found = null;
-		HorizontalPanel hpanel = rubricRows.get(mark.getCriterionId());
+		FlowPanel hpanel = rubricRows.get(mark.getCriterionId());
 		for(int i=1; i < hpanel.getWidgetCount(); i++) {
 			LevelLabel lblLabel = (LevelLabel) hpanel.getWidget(i);
 			lblLabel.removeStyleName(Resources.INSTANCE.css().rubricLevelSelected());				
@@ -444,7 +435,7 @@ public class RubricPanel extends EMarkingComposite {
 	private LevelLabel getSelectedLevelLabel(int criterionid) {
 		// Remove selected CSS styles from all levels in the criterion row
 		LevelLabel found = null;
-		HorizontalPanel hpanel = rubricRows.get(criterionid);
+		FlowPanel hpanel = rubricRows.get(criterionid);
 		for(int i=1; i < hpanel.getWidgetCount(); i++) {
 			LevelLabel lblLabel = (LevelLabel) hpanel.getWidget(i);
 			Level lvl = MarkingInterface.submissionData.getLevelById(lblLabel.getLevelId());
@@ -465,7 +456,7 @@ public class RubricPanel extends EMarkingComposite {
 	 */
 	public void highlightRubricCriterion(int criterionid) {
 		// Find the row in the hash map
-		HorizontalPanel hpanel = rubricRows.get(criterionid);
+		FlowPanel hpanel = rubricRows.get(criterionid);
 		if(hpanel == null)
 			return;
 
@@ -477,6 +468,7 @@ public class RubricPanel extends EMarkingComposite {
 
 		// If the marked criteria is shown, scroll to it
 		if(isCriterionVisible(criterion)) {
+			ScrollPanel scrollPanel = (ScrollPanel) this.getParent();
 			int top = scrollPanel.getVerticalScrollPosition() + (hpanel.getAbsoluteTop() - scrollPanel.getAbsoluteTop());
 			scrollPanel.setVerticalScrollPosition(top);
 		}
@@ -490,7 +482,7 @@ public class RubricPanel extends EMarkingComposite {
 	 * @param percent the percent for coloring and background
 	 */
 	public void updateRubricCriterion(int criterionid, float bonus, int percent, int levelid, int regradeid, int regradeaccepted) {
-		HorizontalPanel hpanel = rubricRows.get(criterionid);
+		FlowPanel hpanel = rubricRows.get(criterionid);
 		if(hpanel == null)
 			return;
 
@@ -510,7 +502,7 @@ public class RubricPanel extends EMarkingComposite {
 	 */
 	public void dehighlightRubricCriterion(int criterionid) {
 		// Finds the row
-		HorizontalPanel hpanel = rubricRows.get(criterionid);
+		FlowPanel hpanel = rubricRows.get(criterionid);
 		if(hpanel == null)
 			return;
 
@@ -529,7 +521,7 @@ public class RubricPanel extends EMarkingComposite {
 		int criterionid = MarkingInterface.submissionData.getLevelById(levelid).getCriterion().getId();
 
 		// Find the criterion row in the hash map
-		HorizontalPanel hpanel = rubricRows.get(criterionid);
+		FlowPanel hpanel = rubricRows.get(criterionid);
 		if(hpanel == null)
 			return;
 
@@ -548,7 +540,7 @@ public class RubricPanel extends EMarkingComposite {
 		int criterionid = MarkingInterface.submissionData.getLevelById(levelid).getCriterion().getId();
 
 		// Find the criterion row in the hash map
-		HorizontalPanel hpanel = rubricRows.get(criterionid);
+		FlowPanel hpanel = rubricRows.get(criterionid);
 		if(hpanel == null)
 			return;
 

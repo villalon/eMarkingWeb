@@ -331,6 +331,14 @@ public class MarkingPagesInterface extends EMarkingComposite {
 					));				
 				}			
 			}
-		});	
+		});
+	}
+
+	public void resizePage(double centerWidth) {
+		for(int i=0; i<numPages; i++) {
+			MarkingPage page = getPageByIndex(i);
+			page.resizePage(centerWidth);
+		}
+		return;
 	}
 }

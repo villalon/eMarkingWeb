@@ -82,12 +82,17 @@ public class LevelLabel extends HTML {
 			} else {
 				levelScoreHtml = RubricMark.scoreFormat(lvl.getScore(), false) + levelScoreHtml + " pts";
 			}
-			this.setHTML("<div class=\"" + Resources.INSTANCE.css().leveldesc() + "\">" 
-					+ lvl.getDescription() + "</div>"
-					+ "<div class=\""
-					+ Resources.INSTANCE.css().levelpts() + "\">" 
+			String styleLevel = EMarkingConfiguration.isFormativeFeedbackOnly() ? "text-align:left;" : "";
+			String descriptionHTML = "<div class=\"" + Resources.INSTANCE.css().leveldesc() + "\">" 
+					+ lvl.getDescription() + "</div>";
+			String levelHTML = "<div class=\""
+					+ Resources.INSTANCE.css().levelpts() + "\" style=\""
+					+ styleLevel + "\">" 
 					+ levelScoreHtml
-					+ "</div>");
+					+ "</div>"; 
+			this.setHTML(EMarkingConfiguration.isFormativeFeedbackOnly() ?
+					levelHTML + descriptionHTML :
+					descriptionHTML + levelHTML);
 		}
 	}
 	/**

@@ -217,12 +217,16 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 	 * @param height
 	 */
 	private void fixPositions(Map<String, String> map, int width, int height) {
-		int posx = (int) Math.round(Float.parseFloat(map.get("posx")) * (float) width);
-		int posy = (int) Math.round(Float.parseFloat(map.get("posy")) * (float) height);
+		float originalx = Float.parseFloat(map.get("posx"));
+		float originaly = Float.parseFloat(map.get("posy"));
+		int posx = (int) Math.round(originalx * (float) width);
+		int posy = (int) Math.round(originaly * (float) height);
 		map.remove("posx");
 		map.remove("posy");
 		map.put("posx", Integer.toString(posx));
 		map.put("posy", Integer.toString(posy));
+		map.put("originalx", Float.toString(originalx));
+		map.put("originaly", Float.toString(originaly));
 	}
 	
 	/**
@@ -408,5 +412,27 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
         
         PopupPanel menu = new MarkingMenu(this, posx, posy);
         menu.show();
+	}
+
+	public void resizePage(double centerWidth) {
+		float ratio = (float) this.width / (float) centerWidth;
+		
+		int newwidth = (int) centerWidth;
+		int newheight = Math.round((float) this.height / ratio);
+
+		for(Mark mark : marks.values()) {
+			float constantx = (float) mark.getPosx() / (float) this.width;
+			float constanty = (float) mark.getPosy() / (float) this.height;
+			int newposx = Math.round((float) constantx * newwidth); 
+			int newposy = Math.round((float) constanty * newheight);
+			logger.fine("Moving x:" + mark.getPosx() + " y:" + mark.getPosy() + " to x:" + newposx + " y:" + newposy);
+			mark.setPosx(newposx); 
+			mark.setPosy(newposy);
+			absolutePanel.setWidgetPosition(mark, mark.getPosx(), mark.getPosy());
+		}
+		this.width = newwidth;
+		this.height = newheight;
+		this.pageImage.setWidth(this.width + "px");
+		this.pageImage.setHeight(this.height + "px");
 	}
 }

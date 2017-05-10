@@ -78,10 +78,10 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -140,7 +140,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private VerticalPanel mainPanel = null;
 
 	private AbsolutePanel markingPanel = null;
-	private HorizontalPanel interfacePanel = null;
+	private SplitLayoutPanel interfacePanel = null;
 
 	private FocusPanel focusPanel = null;
 	private HTML loadingMessage = null;
@@ -220,7 +220,13 @@ public class MarkingInterface extends EMarkingComposite {
 		mainPanel.add(toolbar);
 
 		// Marking panel containing the marking interface
-		interfacePanel = new HorizontalPanel();
+		interfacePanel = new SplitLayoutPanel() {
+			@Override
+			public void onResize() {
+				super.onResize();
+				markingPagesInterface.resizePage(this.getCenterWidth());
+			};
+		};
 		interfacePanel.addStyleName(Resources.INSTANCE.css().interfacepanel());
 
 		loadingMessage = new HTML(messages.Loading() + " " + EMarkingConfiguration.getMoodleUrl());
@@ -732,8 +738,8 @@ public class MarkingInterface extends EMarkingComposite {
 			b.setVisible(false);
 		}		
 
+		interfacePanel.addEast(rubricInterface, 500);
 		interfacePanel.add(markingPagesInterface);
-		interfacePanel.add(rubricInterface);
 		interfacePanel.setHeight((Window.getClientHeight() - toolbar.getOffsetHeight()) + "px");
 
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
@@ -745,11 +751,11 @@ public class MarkingInterface extends EMarkingComposite {
 	public void setShowRubricButtonVisible(boolean visible) {
 		bubbleButtons.get(0).setVisible(false);
 		if(visible) {
-			interfacePanel.setCellWidth(markingPagesInterface, "60%");
-			interfacePanel.setCellWidth(rubricInterface, "40%");
+//			interfacePanel.setCellWidth(markingPagesInterface, "60%");
+//			interfacePanel.setCellWidth(rubricInterface, "40%");
 		} else {
-			interfacePanel.setCellWidth(markingPagesInterface, "100%");
-			interfacePanel.setCellWidth(rubricInterface, "0%");
+//			interfacePanel.setCellWidth(markingPagesInterface, "100%");
+//			interfacePanel.setCellWidth(rubricInterface, "0%");
 		}
 	}
 

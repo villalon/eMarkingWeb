@@ -30,7 +30,9 @@ import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 
@@ -46,37 +48,43 @@ public class RubricInterface extends EMarkingComposite {
 	Logger logger = Logger.getLogger(RubricInterface.class.getName());
 
 	/** Main panel, which includes titles and interfaces for rubric and previous comments **/
-	private VerticalPanel mainPanel = null;
+	private SplitLayoutPanel mainPanel = null;
 	
 	/** The rubric panel **/
 	private RubricPanel rubricPanel = null;
 	/** Panel containing tools for marking and students **/
 	private ToolsPanel toolsPanel = null;
+
+	private ScrollPanel scrollRubric;
+
+	private ScrollPanel scrollTools;
 	
 	/**
 	 * Constructor
 	 */
 	public RubricInterface() {
-		mainPanel = new VerticalPanel();
+		mainPanel = new SplitLayoutPanel();
 		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
-		// Set width of the rubric at 35% of the window
-		//mainPanel.setWidth((Window.getClientWidth()*0.35)+"px");
 
-		rubricPanel = new RubricPanel();
-		mainPanel.add(rubricPanel);
+		rubricPanel = new RubricPanel(false);
+		scrollRubric = new ScrollPanel(rubricPanel);
+		mainPanel.addNorth(scrollRubric, (int) Window.getClientHeight() / 2);
 		
 		toolsPanel = new ToolsPanel();
-		mainPanel.add(toolsPanel);
+		scrollTools = new ScrollPanel(toolsPanel);
+		mainPanel.add(scrollTools);
 		
 		this.initWidget(mainPanel);
 	}
 
-	@Override
-	protected void onLoad() {
-		mainPanel.setHeight(getParent().getOffsetHeight() + "px");
-		super.onLoad();		
+	public ScrollPanel getScrollRubric() {
+		return scrollRubric;
 	}
-	
+
+	public ScrollPanel getScrollTools() {
+		return scrollTools;
+	}
+
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
