@@ -41,6 +41,10 @@
         	<fileset file="src/cl/uai/client/chat/server/server.js"></fileset>
         	<fileset file="src/cl/uai/client/chat/server/package.json"></fileset>
         </copy>
+    	
+    	<touch>
+    		<fileset dir="${moodle.dir}/mod/emarking/marking/emarkingweb/"/>
+    	</touch>
         
     	</target>
 	

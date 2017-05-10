@@ -42,6 +42,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -330,6 +331,8 @@ public class RubricPanel extends EMarkingComposite {
 			rubricRows.put(criterion.getId(), rowPanel);
 
 			rubricTable.add(rowPanel);
+			
+			Color.setElementBackgroundHueColor(criterion.getId(), DOM.getParent(rowPanel.getElement()));
 		}
 
 		if(!EMarkingConfiguration.isReadonly() && !isPopupInterface()) {

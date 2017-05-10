@@ -3,6 +3,7 @@
  */
 package cl.uai.client.utils;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 
 import cl.uai.client.EMarkingConfiguration;
@@ -20,6 +21,15 @@ public class Color {
 	 */
 	public static void setWidgetBackgroundHueColor(int sequence, Widget widget) {
 		setWidgetStyleHueColor(sequence, widget, "background-color");
+	}
+	
+	/**
+	 * Adds a CSS class with a specific color to a widget as background color
+	 * @param sequence sequence
+	 * @param widget the widget to be painted
+	 */
+	public static void setElementBackgroundHueColor(int sequence, Element element) {
+		setWidgetStyleHueColor(sequence, element, "background-color");
 	}
 	
 	/**
@@ -58,5 +68,16 @@ public class Color {
 		String style = widget.getElement().getAttribute("style");
 		style = style.replaceAll("color:hsl\\(\\d+,\\d+%,\\d+%\\);", "");
 		widget.getElement().setAttribute("style", style += styleAttribute + ":" + getCSSHueColor(sequence) + ";");
+	}
+	/**
+	 * Adds a CSS class with a specific color to a widget as background color
+	 * @param sequence sequence
+	 * @param widget the widget to be painted
+	 * @param styleAttribute the attribute which will be colored in the style
+	 */
+	private static void setWidgetStyleHueColor(int sequence, Element element, String styleAttribute) {
+		String style = element.getAttribute("style");
+		style = style.replaceAll("color:hsl\\(\\d+,\\d+%,\\d+%\\);", "");
+		element.setAttribute("style", style += styleAttribute + ":" + getCSSHueColor(sequence) + ";");
 	}
 }
