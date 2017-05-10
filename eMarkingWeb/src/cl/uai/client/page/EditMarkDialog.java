@@ -159,7 +159,7 @@ public class EditMarkDialog extends DialogBox {
 		if(!EMarkingConfiguration.getKeywords().equals("") ){
 			keyWords = EMarkingConfiguration.getKeywords();
 			feedbackArray = new ArrayList<FeedbackObject>();
-			feedbackPanel = new FeedbackInterface(keyWords);
+			feedbackPanel = new FeedbackInterface(keyWords, EMarkingWeb.markingInterface.getMarkingPagesInterface().getMoodleResources());
 			feedbackPanel.setParent(this);
 		}else{
 			simplePanel = true;
@@ -503,7 +503,7 @@ public class EditMarkDialog extends DialogBox {
 		feedbackForStudent.clear();
 		count = 1;
 		int iterator = 0;
-		while(iterator < feedbackArray.size()){		
+		while(iterator < feedbackArray.size()){	
 			final Anchor link = new Anchor(feedbackArray.get(iterator).getLink(), false, feedbackArray.get(iterator).getLink(), "_blank");
 			link.addStyleName(Resources.INSTANCE.css().resourcelink());
 			addFeedback(

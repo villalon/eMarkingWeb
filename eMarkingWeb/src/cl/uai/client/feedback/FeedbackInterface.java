@@ -1,5 +1,6 @@
 package cl.uai.client.feedback;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class FeedbackInterface extends VerticalPanel {
 	
 	private String[] keywords;
 
-	public FeedbackInterface(String keyword){
+	public FeedbackInterface(String keyword, final ArrayList<FeedbackObject> feedbackMoodleArray){
 		
 		if(keyword != null){
 	
@@ -74,7 +75,6 @@ public class FeedbackInterface extends VerticalPanel {
 				public void onClick(ClickEvent event) {
 					getResourcesByOER(keywords[key], "ocwmit", ocwMITPanel);
 					getResourcesByOER(keywords[key], "merlot", merlotPanel);
-					getResourcesMoodle(webcursosPanel);
 				}
 			});
 			keywordsPanel.add(btnKeyword);
@@ -82,13 +82,14 @@ public class FeedbackInterface extends VerticalPanel {
 			counter++;
 		}
 		
+		resourcesPanel.add(webcursosPanel, "Webcursos");
 		resourcesPanel.add(ocwMITPanel, "OCW MIT");
 		resourcesPanel.add(merlotPanel, "Merlot");
-		resourcesPanel.add(webcursosPanel, "Webcursos");
 		resourcesPanel.selectTab(0);
 
 		this.add(keywordsPanel);
 		this.add(resourcesPanel);
+		getResourcesMoodle(feedbackMoodleArray);
 		}
 	}
 			
@@ -154,8 +155,8 @@ public class FeedbackInterface extends VerticalPanel {
 		});
 		panelForResults.add(scrollResourcesPanel);
 	}
-
-	private void getResourcesMoodle(VerticalPanel webcursosPanel){
+	
+	private void getResourcesMoodle(final ArrayList<FeedbackObject> feedbackMoodleArray){
 		
 		webcursosPanel.clear();
 		
@@ -165,58 +166,49 @@ public class FeedbackInterface extends VerticalPanel {
 		ScrollPanel scrollResourcesPanel = new ScrollPanel(allresources);
 		scrollResourcesPanel.addStyleName(Resources.INSTANCE.css().scrollresources());
 		
-		String params = "action=moodleresources";
-		AjaxRequest.ajaxRequest(params, new AsyncCallback<AjaxData>() {			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
+		for( int iterator = 0; iterator < feedbackMoodleArray.size(); iterator++){
 			
-			@Override
-			public void onSuccess(AjaxData result) {
-				
-				List<Map<String, String>> resources = AjaxRequest.getValuesFromResult(result);
-				for(Map<String, String> info : resources) {
+			final String rawName = feedbackMoodleArray.get(iterator).getName();
+			final String rawLink = feedbackMoodleArray.get(iterator).getLink();
 
-					final String rawName = info.get("name");
-					final String rawLink = info.get("link");
-					
-					final HTML name = new HTML(rawName);
-					name.addStyleName(Resources.INSTANCE.css().resourcetitle());
+			final HTML name = new HTML(rawName);
+			name.addStyleName(Resources.INSTANCE.css().resourcetitle());
 
-					final Anchor link = new Anchor(rawLink, false, rawLink, "_blank");
-					link.addStyleName(Resources.INSTANCE.css().resourcelink());
-					
-					final HTML auxLink = new HTML(link.toString());
-					auxLink.addStyleName(Resources.INSTANCE.css().resourcelink());
-					
-					HTML hr = new HTML("<hr>");
-					hr.addStyleName(Resources.INSTANCE.css().hrsize());
-					
-					Icon iconAdd = new Icon(IconType.PLUS_SIGN);
-					HTML iconContainer = new HTML(iconAdd.toString());
-					iconContainer.addStyleName(Resources.INSTANCE.css().plusicon());
-					iconContainer.addClickHandler(new ClickHandler() {			
-						@Override
-						public void onClick(ClickEvent event) {		
-							parent.addFeedback(rawName, link.toString(), "Webcursos", rawLink, 0);							
-						}						
-					});
-					
-					HorizontalPanel resourcePanel = new HorizontalPanel();
-					resourcePanel.add(iconContainer);
-					resourcePanel.add(name);
-					resourcePanel.add(new HTML("<div style='width:10px'></div>"));
-					resourcePanel.add(auxLink);
-					
-					allresources.add(resourcePanel);
-					allresources.add(hr);
-				}
-				
-			}
-		});
-		webcursosPanel.add(scrollResourcesPanel);
-		
+			final Anchor link = new Anchor(rawLink, false, rawLink, "_blank");
+			link.addStyleName(Resources.INSTANCE.css().resourcelink());
+			
+			final HTML auxLink = new HTML(link.toString());
+			auxLink.addStyleName(Resources.INSTANCE.css().resourcelink());
+			
+			HTML hr = new HTML("<hr>");
+			hr.addStyleName(Resources.INSTANCE.css().hrsize());
+			
+			Icon iconAdd = new Icon(IconType.PLUS_SIGN);
+			HTML iconContainer = new HTML(iconAdd.toString());
+			iconContainer.addStyleName(Resources.INSTANCE.css().plusicon());
+			iconContainer.addClickHandler(new ClickHandler() {			
+				@Override
+				public void onClick(ClickEvent event) {		
+					parent.addFeedback(
+							rawName,
+							link.toString(),
+							"Webcursos",
+							rawLink,
+							0
+					);							
+				}						
+			});
+			
+			HorizontalPanel resourcePanel = new HorizontalPanel();
+			resourcePanel.add(iconContainer);
+			resourcePanel.add(name);
+			resourcePanel.add(new HTML("<div style='width:10px'></div>"));
+			resourcePanel.add(auxLink);
+			
+			allresources.add(resourcePanel);
+			allresources.add(hr);
+		}
+		webcursosPanel.add(scrollResourcesPanel);	
 	}
 	
 	public void setParent(EditMarkDialog widget){
