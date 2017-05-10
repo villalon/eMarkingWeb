@@ -174,7 +174,7 @@ public class CriterionHeader extends EMarkingComposite {
 			score += criterion.getSelectedLevel().getScore() + criterion.getSelectedLevel().getBonus();
 		}
 		String message = RubricMark.scoreFormat(score, false) + " / " + RubricMark.scoreFormat(criterion.getMaxscore(), false);
-		if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
+		if(criterion.getSelectedLevel() != null && EMarkingConfiguration.isFormativeFeedbackOnly()) {
 			message = criterion.getLevelFormativeIndex(criterion.getSelectedLevel().getId()) + " / " + criterion.getLevels().size();
 		}
 		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">"
