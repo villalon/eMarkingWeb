@@ -57,6 +57,8 @@ public class MarkingToolBar extends EMarkingComposite {
 
 	private ExamButtons examButtons = null;
 	
+	private ExamButtons extraButtons = null;
+	
 	private ViewButtons viewButtons = null;
 	
 	private ChatButtons chatButtons = null;
@@ -79,6 +81,8 @@ public class MarkingToolBar extends EMarkingComposite {
 	 */
 	public MarkingToolBar() {
 
+		logger.fine("Entering MarkingToolbar");
+
 		grade = new DraftGrade();
 
 		markingButtons = new MarkingButtons();
@@ -87,11 +91,14 @@ public class MarkingToolBar extends EMarkingComposite {
 		examButtons = new ExamButtons(false);
 		examButtons.setVisible(true);
 		
+		extraButtons = new ExamButtons(false);
+		extraButtons.setVisible(true);
+		
 		viewButtons = new ViewButtons();
 		viewButtons.setVisible(false);
 		
-			chatButtons = new ChatButtons();
-			chatButtons.setVisible(false);
+		chatButtons = new ChatButtons();
+		chatButtons.setVisible(false);
 		
 		helpButtons = new HelpButtons();
 		helpButtons.setVisible(false);
@@ -127,8 +134,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellHorizontalAlignment(grade, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(grade, "10%");
 		
-		if(!EMarkingConfiguration.isReadonly()) {
-		ExamButtons extraButtons = new ExamButtons(false);
+		extraButtons = new ExamButtons(false);
 		extraButtons.getFinishMarkingButton().setVisible(true);
 		extraButtons.getSaveAndJumpToNextButton().setVisible(true);
 		extraButtons.getSaveChangesButton().setVisible(true);
@@ -136,7 +142,6 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.setCellVerticalAlignment(extraButtons, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(extraButtons, HasHorizontalAlignment.ALIGN_RIGHT);
 		buttonsPanel.setCellWidth(extraButtons, "10%");
-		}
 		
 		this.initWidget(buttonsPanel);
 	}
@@ -162,6 +167,9 @@ public class MarkingToolBar extends EMarkingComposite {
 			tabButtonsPanel.remove(examButtons);
 			tabButtonsPanel.remove(chatButtons);
 			tabButtonsPanel.selectTab(0);
+			extraButtons.getFinishMarkingButton().setVisible(false);
+			extraButtons.getSaveAndJumpToNextButton().setVisible(false);
+			extraButtons.getSaveChangesButton().setVisible(false);
 		}
 		
 		if(!EMarkingConfiguration.isChatEnabled()) {

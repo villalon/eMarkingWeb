@@ -187,7 +187,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		}
 		
 		// If the user owns the submission and the dates are ok we show the regrade icon
-		if(EMarkingConfiguration.isOwnDraft() && MarkingInterface.submissionData.isRegradingAllowed()) {
+		if(EMarkingConfiguration.isOwnDraft()
+				&& MarkingInterface.submissionData.isRegradingAllowed()
+				&& !EMarkingConfiguration.isFormativeFeedbackOnly()) {
 			// Edit icon is only for comments and rubrics
 			if(mark instanceof RubricMark) {
 				abspanel.setWidgetPosition(Mark.regradeIcon, left, top);
