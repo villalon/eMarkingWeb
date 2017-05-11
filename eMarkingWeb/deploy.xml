@@ -12,7 +12,8 @@
             Deploy the Concept Map web based editor as a zip file to a Moodle server.
     </description>
 	
-	<property name="moodle.dir"     value="C:/vagrant/webclass/moodle/mt/webclass"/>
+	<!--<property name="moodle.dir"     value="C:/vagrant/webclass/moodle/mt/webclass"/>-->
+	<property name="moodle.dir"     value="C:/vagrant/webclass/moodle/mt/escribiendo"/>
 
     <!-- ================================= 
           target: deploy-local              
