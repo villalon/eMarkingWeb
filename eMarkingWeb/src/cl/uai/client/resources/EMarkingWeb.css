@@ -42,6 +42,11 @@
 
 .rubricrow {
 	white-space: nowrap;
+	border-bottom: 1px solid #999;
+}
+
+.rubricrowplain {
+	background-color: #eee;
 }
 
 .markbuttons {
@@ -334,10 +339,16 @@ to {
 	height: 34px;
 }
 
+.rubricmarkpopup {
+	max-width: 250px;
+	background-color: #fff;
+	border-radius: 5px;
+	border: 1px solid #999;
+}
+
 .checkmark,.crossmark, .rubricmark, .commentmark {
 	color: #fa3c45;
 	font-weight: 100;
-	text-shadow: 1px 1px #999;
 }
 
 .othermark {
@@ -495,6 +506,7 @@ to {
 
 .marklvl {
 	font-size: 8pt;
+	color: #000;
 }
 
 .marklvl hr {

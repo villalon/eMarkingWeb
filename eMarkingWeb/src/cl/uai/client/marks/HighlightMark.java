@@ -42,18 +42,6 @@ public class HighlightMark extends PathMark{
 	/** Size of the highlighter **/
 	public static int size = 18;
 
-	/**
-	 * Starting point of the highlighter
-	 * @return
-	 */
-	public Point getStart() {
-		return start;
-	}
-
-	public void setStart(Point start) {
-		this.start = start;
-	}
-
 	public Point getEnd() {
 		return end;
 	}
@@ -62,7 +50,6 @@ public class HighlightMark extends PathMark{
 		this.end = end;
 	}
 
-	private Point start;
 	private Point end;
 
 	/**
@@ -124,13 +111,13 @@ public class HighlightMark extends PathMark{
 				endx = tmp;
 			}
 			Point start = new Point(posx, 0);
-			Point end = new Point(endx, endy - posy);
+			Point end = new Point(endx, endy);
 
-			logger.fine("Adding from map: 0,"+markMap.get("posy")+" start:"+start+" end:"+ end);
+			logger.fine("Adding from map: "+markMap.get("posx")+","+markMap.get("posy")+" start:"+start+" end:"+ end);
 			pathobj = new HighlightMark(
 					Integer.parseInt(markMap.get("id")), 
-					0, 
-					Integer.parseInt(markMap.get("posy")), 
+					posx, 
+					posy, 
 					Integer.parseInt(markMap.get("pageno")),
 					Integer.parseInt(markMap.get("markerid")),
 					Integer.parseInt(markMap.get("width")), 
@@ -141,7 +128,6 @@ public class HighlightMark extends PathMark{
 					Integer.parseInt(markMap.get("criterionid")),
 					markMap.get("markername")
 					);
-			pathobj.setStart(start);
 			pathobj.setEnd(end);
 			pathobj.setMarkHTML();
 		} catch (Exception e) {
@@ -172,7 +158,8 @@ public class HighlightMark extends PathMark{
 	public void setMarkHTML() {
 		
 		int width = EMarkingWeb.markingInterface.getMarkingPagesInterface().getOffsetWidth();
-		List<Point> points = calculatePath(start, end, width);
+		Point newEnd = new Point(Math.abs(this.posx - end.getX()), Math.abs(this.posy - end.getY()));
+		List<Point> points = calculatePath(new Point(0, 0), newEnd, width, false);
 		Path path = null;
 		for(int i=0; i<points.size(); i++) {
 			int x = points.get(i).getX();
@@ -195,13 +182,22 @@ public class HighlightMark extends PathMark{
 
 		
 		String html = 
-				"<svg style=\"overflow:visible;opacity:0.25;\"><path title=\"" + this.rawtext + "" + this.markername + "\" style=\"stroke:" + color 
+				"<svg width=\"1\" height=\"" + size+ "\" style=\"overflow:visible;opacity:0.25;\"><path title=\"" + this.rawtext + "" + this.markername + "\" style=\"stroke:" + color 
 				+ "\" stroke-width=\"18\" fill=\"none\" d=\"" + path.getElement().getAttribute("d") + "\"></path></svg>";
 
 		this.setHTML(html);
 	}
 	
-	public static List<Point> calculatePath(Point start, Point end, int width) {
+	@Override
+	protected String getMarkPopupHTML() {
+		String html = super.getMarkPopupHTML();
+		if(EMarkingConfiguration.isDebugging()) {
+			html += "<br/>" + this.posx + "," + this.posy + " -> " + this.end;
+		}
+		return html;
+	}
+	
+	public static List<Point> calculatePath(Point start, Point end, int width, boolean fullpage) {
 		List<Point> points = new ArrayList<Point>();
 		int deltaY = start.getY() - end.getY();
 		int steps = (int) Math.abs(((float) deltaY / (float) size)) + 1;
@@ -210,25 +206,25 @@ public class HighlightMark extends PathMark{
 			points.add(new Point(end.getX(), end.getY()));
 		} else if(deltaY > 0){
 			points.add(new Point(start.getX(), start.getY()));
-			points.add(new Point(0, start.getY()));
+			points.add(new Point(fullpage ? 0 : end.getX(), start.getY()));
 		} else {
 			points.add(new Point(start.getX(), start.getY()));
-			points.add(new Point(width, start.getY()));
+			points.add(new Point(fullpage ? width : end.getX(), start.getY()));
 		}
 		if(deltaY % size != 0) {
 			steps++;
 		}
 		for(int i=2; i<steps; i++) {
-			points.add(new Point(0, start.getY() - (deltaY / Math.abs(deltaY)) * size * (i-1)));
-			points.add(new Point(width, start.getY() - (deltaY / Math.abs(deltaY)) * size * (i-1)));
+			points.add(new Point(fullpage ? 0 : start.getX(), start.getY() - (deltaY / Math.abs(deltaY)) * size * (i-1)));
+			points.add(new Point(fullpage ? width : end.getX(), start.getY() - (deltaY / Math.abs(deltaY)) * size * (i-1)));
 		}
 		if(steps > 1) {
 			if(deltaY <= 0) {
 				points.add(new Point(end.getX(), end.getY()));
-				points.add(new Point(0, end.getY()));				
+				points.add(new Point(fullpage ? 0 : end.getX(), end.getY()));				
 			} else {
 				points.add(new Point(end.getX(), end.getY()));
-				points.add(new Point(width, end.getY()));				
+				points.add(new Point(fullpage ? width : end.getX(), end.getY()));				
 			}
 		}
 		return points;

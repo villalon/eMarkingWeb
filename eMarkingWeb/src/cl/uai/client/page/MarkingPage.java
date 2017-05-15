@@ -39,6 +39,7 @@ import cl.uai.client.marks.CustomMark;
 import cl.uai.client.marks.HighlightMark;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.PathMark;
+import cl.uai.client.marks.Point;
 import cl.uai.client.marks.QuestionMark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
@@ -402,6 +403,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		
 		if(EMarkingConfiguration.isReadonly()) {
 			return;
+		} else {
+			logger.fine("Emarking is not read only so I can show the menu");
 		}
 		
 		event.getNativeEvent().stopPropagation();
@@ -421,18 +424,28 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		int newheight = Math.round((float) this.height / ratio);
 
 		for(Mark mark : marks.values()) {
-			float constantx = (float) mark.getPosx() / (float) this.width;
-			float constanty = (float) mark.getPosy() / (float) this.height;
-			int newposx = Math.round((float) constantx * newwidth); 
-			int newposy = Math.round((float) constanty * newheight);
-			logger.fine("Moving x:" + mark.getPosx() + " y:" + mark.getPosy() + " to x:" + newposx + " y:" + newposy);
-			mark.setPosx(newposx); 
-			mark.setPosy(newposy);
+			Point newPoint = resize(mark.getPosx(), mark.getPosy(), newwidth, newheight);
+			mark.setPosx(newPoint.getX()); 
+			mark.setPosy(newPoint.getY());
+			if(mark instanceof HighlightMark) {
+				HighlightMark hmark = (HighlightMark) mark;
+				newPoint = resize(hmark.getEnd().getX(), hmark.getEnd().getY(), newwidth, newheight);
+				hmark.setEnd(newPoint);
+				hmark.setMarkHTML();
+			}
 			absolutePanel.setWidgetPosition(mark, mark.getPosx(), mark.getPosy());
 		}
 		this.width = newwidth;
 		this.height = newheight;
 		this.pageImage.setWidth(this.width + "px");
 		this.pageImage.setHeight(this.height + "px");
+	}
+	
+	private Point resize(int x, int y, int newwidth, int newheight) {
+		float constantx = (float) x / (float) this.width;
+		float constanty = (float) y / (float) this.height;
+		int newposx = Math.round((float) constantx * newwidth); 
+		int newposy = Math.round((float) constanty * newheight);
+		return new Point(newposx, newposy);
 	}
 }

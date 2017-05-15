@@ -152,11 +152,7 @@ public class MarkingPagesInterface extends EMarkingComposite {
 			// If it's a page, remove the mark
 			MarkingPage currentPage = (MarkingPage) selectedWidget;
 			for(Mark m : currentPage.getMarkWidgets().values()) {
-				if(m instanceof RubricMark) {
-					RubricMark rmark = (RubricMark) m;
-					rmark.setHeaderOnly(true);
-					m.setMarkHTML();
-				}
+				m.setMarkHTML();
 			}
 		}				
 	}

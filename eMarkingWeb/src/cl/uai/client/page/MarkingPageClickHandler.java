@@ -111,6 +111,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					EMarkingWeb.markingInterface.addMark(mark, parentPage);
 				}
 			});
+			dialog.center();
 			dialog.show();
 			break;
 			// A cross

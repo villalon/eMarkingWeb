@@ -33,13 +33,15 @@ public class HelpButtons extends Buttons {
 		aboutButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				String message = MarkingInterface.messages.AboutEmarkingDetail(""+EMarkingConfiguration.geteMarkingVersion());
+				message += "<br/>You are logged in as:<br/><b>" + MarkingInterface.submissionData.getMarkerfirstname() + ", " + MarkingInterface.submissionData.getMarkerlastname() + "</b>"; 
 				DialogBox dbox = new DialogBox();
 				dbox.setModal(true);
 				dbox.setGlassEnabled(true);
 				dbox.setAutoHideEnabled(true);
 				dbox.setWidth("300px");
 				dbox.setHTML(MarkingInterface.messages.AboutEmarking());
-				dbox.setWidget(new HTML(MarkingInterface.messages.AboutEmarkingDetail(""+EMarkingConfiguration.geteMarkingVersion())));
+				dbox.setWidget(new HTML(message));
 				dbox.center();
 			}
 		});

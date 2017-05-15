@@ -81,8 +81,9 @@ public class RubricMark extends Mark {
 
 	public void setHeaderOnly(boolean headerOnly) {
 		this.headerOnly = headerOnly;
+		this.iconOnly = !headerOnly;
 	}
-
+	
 	public String getRegrademarkercomment() {
 		return regrademarkercomment;
 	}
@@ -245,7 +246,15 @@ public class RubricMark extends Mark {
 			Color.setWidgetFontHueColor(this.criterionid, this);
 		}
 
-		this.setHTML((new Icon(IconType.MAP_MARKER)).toString());		
+		this.removeStyleName(Resources.INSTANCE.css().rubricmark());
+		this.removeStyleName(Resources.INSTANCE.css().rubricmarkpopup());
+		if(EMarkingConfiguration.getRubricMarkType() == EMarkingConfiguration.EMARKING_RUBRICMARK_ICON) {
+			this.addStyleName(Resources.INSTANCE.css().rubricmark());
+			this.setHTML((new Icon(IconType.MAP_MARKER)).toString());
+		} else {
+			this.addStyleName(Resources.INSTANCE.css().rubricmarkpopup());
+			this.setHTML(getMarkPopupHTML());			
+		}
 	}
 	
 	@Override
@@ -372,6 +381,7 @@ public class RubricMark extends Mark {
 	 */
 	public static RubricMark createFromMap(Map<String, String> mark) {
 		ArrayList<FeedbackObject> mapFeedback = new ArrayList<FeedbackObject>();
+		if(mark.get("feedback") != null && mark.get("feedback").length() > 5) {
 		try{
 			List<Map<String, String>> allfeedback = AjaxRequest.getValuesFromResultString(mark.get("feedback"));
 			for(Map<String, String> feedbackDB : allfeedback) {
@@ -385,6 +395,7 @@ public class RubricMark extends Mark {
 			}
 		} catch(Exception e) {
 			logger.severe("Exception creating feedback from DB. " + mark.toString());
+		}
 		}
 		RubricMark markobj = new RubricMark(
 				Integer.parseInt(mark.get("id")),

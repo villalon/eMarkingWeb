@@ -39,8 +39,7 @@ public class ViewButtons extends Buttons {
 		showRubricButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				EMarkingWeb.markingInterface.getRubricInterface().setVisible(
-						!EMarkingWeb.markingInterface.getRubricInterface().isVisible());
+				EMarkingWeb.markingInterface.hideRubric();
 			}
 		});
 
@@ -54,10 +53,15 @@ public class ViewButtons extends Buttons {
 			}
 		});
 		
-		minimizeAllRubricMarks = new PushButton(IconType.MINUS, MarkingInterface.messages.MinimizeAllRubricMarks());
+		minimizeAllRubricMarks = new PushButton(IconType.MAP_MARKER, MarkingInterface.messages.MinimizeAllRubricMarks());
 		minimizeAllRubricMarks.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				if(EMarkingConfiguration.getRubricMarkType() == EMarkingConfiguration.EMARKING_RUBRICMARK_ICON) {
+					EMarkingConfiguration.setRubricMarkType(EMarkingConfiguration.EMARKING_RUBRICMARK_TEXTBOX);
+				} else {
+					EMarkingConfiguration.setRubricMarkType(EMarkingConfiguration.EMARKING_RUBRICMARK_ICON);					
+				}
 				EMarkingWeb.markingInterface.getMarkingPagesInterface().minimizeAllRubricMarks();
 				Mark.hideIcons();
 			}
@@ -67,18 +71,16 @@ public class ViewButtons extends Buttons {
 		if(!EMarkingConfiguration.isColoredRubricForced()) {
 			this.mainPanel.add(showColorsButton);
 		}
-		// this.mainPanel.add(minimizeAllRubricMarks);
+		this.mainPanel.add(minimizeAllRubricMarks);
 	}
 
 	@Override
 	public void loadSubmissionData() {
 		SubmissionGradeData sdata = MarkingInterface.submissionData;
-		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
-			showColorsButton.setVisible(false);
-		}
-		if(EMarkingConfiguration.isReadonly() || EMarkingConfiguration.isColoredRubricForced()){
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN
+				|| EMarkingConfiguration.isReadonly()
+				|| EMarkingConfiguration.isColoredRubricForced()){
 			mainPanel.remove(showColorsButton);
-			mainPanel.remove(minimizeAllRubricMarks);
 		}
 		if(sdata.getAnswerKeys().size() == 0) {
 			openAnswerKey = new MenuBar(true);

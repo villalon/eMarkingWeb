@@ -48,7 +48,7 @@ public class RubricInterface extends EMarkingComposite {
 	Logger logger = Logger.getLogger(RubricInterface.class.getName());
 
 	/** Main panel, which includes titles and interfaces for rubric and previous comments **/
-	private SplitLayoutPanel mainPanel = null;
+	private SplitLayoutPanel mainSplitLayoutPanel = null;
 	
 	/** The rubric panel **/
 	private RubricPanel rubricPanel = null;
@@ -63,18 +63,18 @@ public class RubricInterface extends EMarkingComposite {
 	 * Constructor
 	 */
 	public RubricInterface() {
-		mainPanel = new SplitLayoutPanel();
-		mainPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
+		mainSplitLayoutPanel = new SplitLayoutPanel();
+		mainSplitLayoutPanel.addStyleName(Resources.INSTANCE.css().rubricinterface());
 
 		rubricPanel = new RubricPanel(false);
 		scrollRubric = new ScrollPanel(rubricPanel);
-		mainPanel.addNorth(scrollRubric, (int) Window.getClientHeight() / 2);
+		mainSplitLayoutPanel.addNorth(scrollRubric, (int) (Window.getClientHeight() / 1.61803));
 		
 		toolsPanel = new ToolsPanel();
 		scrollTools = new ScrollPanel(toolsPanel);
-		mainPanel.add(scrollTools);
+		mainSplitLayoutPanel.add(scrollTools);
 		
-		this.initWidget(mainPanel);
+		this.initWidget(mainSplitLayoutPanel);
 	}
 
 	public ScrollPanel getScrollRubric() {
