@@ -155,7 +155,9 @@ public class EditMarkDialog extends DialogBox {
 		this.levelId = level;
 		Level lvl = MarkingInterface.submissionData.getLevelById(levelId);
 
-		logger.severe("keywords!"+EMarkingConfiguration.getKeywords());
+		if(EMarkingConfiguration.getKeywords() != null && EMarkingConfiguration.getKeywords().length() > 0) {
+			logger.fine("Keywords: " + EMarkingConfiguration.getKeywords());
+		}
 		if(!EMarkingConfiguration.getKeywords().equals("") ){
 			keyWords = EMarkingConfiguration.getKeywords();
 			feedbackArray = new ArrayList<FeedbackObject>();

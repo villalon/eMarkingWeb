@@ -27,7 +27,6 @@ import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.Criterion;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
-import cl.uai.client.utils.Color;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -35,7 +34,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 /**
@@ -78,35 +76,8 @@ public class CriterionHeader extends EMarkingComposite {
 		});
 		mainPanel.add(lbl);
 		
-		HorizontalPanel horizontal = new HorizontalPanel();
-		horizontal.addStyleName(Resources.INSTANCE.css().colorsquaretable());
-		
-		//the square with the color
-		if(EMarkingConfiguration.isColoredRubric()){
-			Label lbl2 = new Label("");
-			Color.setWidgetBackgroundHueColor(cid, mainPanel);
-			lbl2.addStyleName(Resources.INSTANCE.css().colorsquare());
-			lbl2.setTitle(String.valueOf(idx));
-
-			lbl2.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					Label rectangle = (Label) event.getSource();
-					int index = Integer.parseInt(rectangle.getTitle());
-					EMarkingWeb.markingInterface.getToolbar().getMarkingButtons().changeCriterionList(index);
-				}
-			});
-			horizontal.add(lbl2);
-		}
-		
-		HTML separation = new HTML();
-		separation.setHTML("<div style='width:20px;height:20px;'></div>");
-		horizontal.add(separation);
-		
-		mainPanel.add(horizontal);
-		
 		bonusHtml = new HTML();
+		bonusHtml.addStyleName(Resources.INSTANCE.css().criterionheaderbonus());
 		setBonus(b);
 		
 		mainPanel.add(bonusHtml);
@@ -177,10 +148,7 @@ public class CriterionHeader extends EMarkingComposite {
 		if(criterion.getSelectedLevel() != null && EMarkingConfiguration.isFormativeFeedbackOnly()) {
 			message = criterion.getLevelFormativeIndex(criterion.getSelectedLevel().getId()) + " / " + criterion.getLevels().size();
 		}
-		String html = "<div class=\""+Resources.INSTANCE.css().criterionheaderbonus()+"\">"
-				+ message;
-		html += "</div>";
-		this.bonusHtml.setHTML(html);
+		this.bonusHtml.setHTML(message);
 	}
 
 	public void setCommentId(int commentid) {

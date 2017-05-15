@@ -88,7 +88,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		markingButtons = new MarkingButtons();
 		markingButtons.setVisible(false);
 
-		examButtons = new ExamButtons(false);
+		examButtons = new ExamButtons(true);
 		examButtons.setVisible(true);
 		
 		extraButtons = new ExamButtons(false);
@@ -106,8 +106,8 @@ public class MarkingToolBar extends EMarkingComposite {
 		tabButtonsPanel = new TabPanel();
 		tabButtonsPanel.addStyleName(Resources.INSTANCE.css().tabbuttons());
 		
-		tabButtonsPanel.add(examButtons, MarkingInterface.messages.Exam().toUpperCase());
 		tabButtonsPanel.add(markingButtons, MarkingInterface.messages.Mark().toUpperCase());
+		tabButtonsPanel.add(examButtons, MarkingInterface.messages.Exam().toUpperCase());
 		tabButtonsPanel.add(viewButtons, MarkingInterface.messages.View().toUpperCase());
 		tabButtonsPanel.add(chatButtons, MarkingInterface.messages.Collaboration().toUpperCase());
 		tabButtonsPanel.add(helpButtons, MarkingInterface.messages.Help().toUpperCase());
@@ -141,7 +141,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		buttonsPanel.add(extraButtons);
 		buttonsPanel.setCellVerticalAlignment(extraButtons, HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsPanel.setCellHorizontalAlignment(extraButtons, HasHorizontalAlignment.ALIGN_RIGHT);
-		buttonsPanel.setCellWidth(extraButtons, "10%");
+		buttonsPanel.setCellWidth(extraButtons, "40%");
 		
 		this.initWidget(buttonsPanel);
 	}
@@ -153,6 +153,7 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		this.markingButtons.loadSubmissionData();
 		this.examButtons.loadSubmissionData();
+		this.extraButtons.loadSubmissionData();
 		this.chatButtons.loadSubmissionData();
 		this.viewButtons.loadSubmissionData();
 		this.helpButtons.loadSubmissionData();
@@ -160,16 +161,10 @@ public class MarkingToolBar extends EMarkingComposite {
 		
 		buttonsPanel.setVisible(true);
 		
-		if(!EMarkingConfiguration.isReadonly()){
-			tabButtonsPanel.selectTab(0);
-		}else{
+		if(EMarkingConfiguration.isReadonly()) {
 			tabButtonsPanel.remove(markingButtons);
 			tabButtonsPanel.remove(examButtons);
 			tabButtonsPanel.remove(chatButtons);
-			tabButtonsPanel.selectTab(0);
-			extraButtons.getFinishMarkingButton().setVisible(false);
-			extraButtons.getSaveAndJumpToNextButton().setVisible(false);
-			extraButtons.getSaveChangesButton().setVisible(false);
 		}
 		
 		if(!EMarkingConfiguration.isChatEnabled()) {
@@ -179,9 +174,8 @@ public class MarkingToolBar extends EMarkingComposite {
 		if(EMarkingConfiguration.isFormativeFeedbackOnly()) {
 			buttonsPanel.remove(grade);
 			tabButtonsPanel.remove(examButtons);
-			tabButtonsPanel.selectTab(0);
 		}
-
+		tabButtonsPanel.selectTab(0);
 	}
 
 	public void setButtonPressed(int index) {

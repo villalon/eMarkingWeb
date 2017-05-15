@@ -132,10 +132,10 @@ public class RubricPanel extends EMarkingComposite {
 
 		// Adds the checkbox
 		rubricFilter = new ListBox();
-		rubricFilter.addItem(MarkingInterface.messages.ShowRubric(), "all");
+		rubricFilter.addItem(MarkingInterface.messages.ShowAll(), "all");
 		rubricFilter.addItem(MarkingInterface.messages.ShowMarkingPending(), "unmarked");
 		rubricFilter.addItem(MarkingInterface.messages.ShowRegradePending(), "regrade");
-		rubricFilter.addItem(MarkingInterface.messages.HideRubric(), "hide");
+//		rubricFilter.addItem(MarkingInterface.messages.HideRubric(), "hide");
 		rubricFilter.addStyleName(Resources.INSTANCE.css().rubricfilterselect());
 		rubricFilter.setSelectedIndex(0);
 		String cookieFilter = Cookies.getCookie("emarking_rubricfilter");
@@ -144,8 +144,6 @@ public class RubricPanel extends EMarkingComposite {
 				rubricFilter.setSelectedIndex(1);
 			} else if(cookieFilter.equals("regrade")) {
 				rubricFilter.setSelectedIndex(2);
-			} else if(cookieFilter.equals("hide")) {
-				rubricFilter.setSelectedIndex(3);
 			}
 		}
 		rubricFilter.addChangeHandler(new RubricFilterListBoxValueChangeHandler());
@@ -231,7 +229,7 @@ public class RubricPanel extends EMarkingComposite {
 				- 140;
 			if(scrollRubric != null) {
 				scrollRubric.getElement().getStyle().setProperty("MaxHeight", height+"px");
-				scrollRubric.setHeight(height + "px");
+				// scrollRubric.setHeight(height + "px");
 			} else {
 				logger.severe("scrollRubric shouldn't be null when ");
 			}
@@ -254,7 +252,9 @@ public class RubricPanel extends EMarkingComposite {
 			index++;
 			FlowPanel rowPanel = new FlowPanel();
 			rowPanel.addStyleName(Resources.INSTANCE.css().rubricrow());
-			Color.setWidgetBackgroundHueColor(criterion.getId(), rowPanel);
+			if(EMarkingConfiguration.isFormativeFeedbackOnly() || EMarkingConfiguration.isColoredRubric()) {
+				Color.setWidgetBackgroundHueColor(criterion.getId(), rowPanel);
+			}
 
 			CriterionHeader header = new CriterionHeader(
 					index, 
@@ -329,10 +329,14 @@ public class RubricPanel extends EMarkingComposite {
 			}
 
 			rubricRows.put(criterion.getId(), rowPanel);
-
 			rubricTable.add(rowPanel);
 			
-			Color.setElementBackgroundHueColor(criterion.getId(), DOM.getParent(rowPanel.getElement()));
+			// If we have a colored rubric or formative feedback is forced, then paint the whole row.
+			if(EMarkingConfiguration.isFormativeFeedbackOnly() || EMarkingConfiguration.isColoredRubric()) {
+				Color.setElementBackgroundHueColor(criterion.getId(), DOM.getParent(rowPanel.getElement()));
+			} else {
+				rowPanel.addStyleName(Resources.INSTANCE.css().rubricrowplain());
+			}
 		}
 
 		if(!EMarkingConfiguration.isReadonly() && !isPopupInterface()) {

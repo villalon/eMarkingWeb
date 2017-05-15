@@ -95,6 +95,7 @@ public interface EmarkingMessages extends Messages {
 	public String Select();
 	public String SetBonus();
 	public String SetLevel();
+	public String ShowAll();
 	public String ShowMarked();
 	public String ShowMarkingPending();
 	public String ShowRegradePending();

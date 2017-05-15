@@ -26,6 +26,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -217,27 +218,27 @@ public class ExamButtons extends Buttons {
 			}
 		});
 
-		if(this.includeTextInButtons) {
-			this.mainPanel.add(saveAndJumpToNextButton);
+		if(!this.includeTextInButtons) {
+			Label shim = new Label();
+			this.mainPanel.add(shim);			
+			this.mainPanel.setCellWidth(shim, "90%");			
 		}
+		this.mainPanel.add(saveAndJumpToNextButton);
 		this.mainPanel.add(saveChangesButton);
 		this.mainPanel.add(finishMarkingButton);
-		if(this.includeTextInButtons) {
-			this.mainPanel.add(selectAsAnswerKey);
-			saveChangesButton.removeStyleName(Resources.INSTANCE.css().rubricbutton());
-			finishMarkingButton.removeStyleName(Resources.INSTANCE.css().rubricbutton());
-		}
+		this.mainPanel.add(selectAsAnswerKey);
 	}
 	
 	public void loadSubmissionData() {
-		saveChangesButton.setVisible(true);
-		finishMarkingButton.setVisible(false);
-		saveAndJumpToNextButton.setVisible(true);
+		boolean usercangrade = !EMarkingConfiguration.isReadonly();
+		boolean usercanfinish = EMarkingConfiguration.isSupervisor()
+				&& !MarkingInterface.submissionData.isQualitycontrol()
+				&& EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN;
 		
-		if(EMarkingConfiguration.isSupervisor() && !MarkingInterface.submissionData.isQualitycontrol()
-				&& EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
-			finishMarkingButton.setVisible(true);
-		}
+		saveChangesButton.setVisible(usercangrade);
+		finishMarkingButton.setVisible(usercanfinish);
+		saveAndJumpToNextButton.setVisible(usercangrade);
+		selectAsAnswerKey.setVisible(usercanfinish && includeTextInButtons);
 		
 		boolean isAnswerKey = MarkingInterface.submissionData.isAnswerkey();
 		selectAsAnswerKey.setDown(isAnswerKey);

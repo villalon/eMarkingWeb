@@ -402,6 +402,8 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		
 		if(EMarkingConfiguration.isReadonly()) {
 			return;
+		} else {
+			logger.fine("Emarking is not read only so I can show the menu");
 		}
 		
 		event.getNativeEvent().stopPropagation();

@@ -149,6 +149,7 @@ public class MarkingInterface extends EMarkingComposite {
 	private MarkingToolBar toolbar = null;
 	private MarkingPagesInterface markingPagesInterface = null;
 
+	private int rubricMinSize = 100;
 	private RubricInterface rubricInterface = null;
 
 	/** Drag and Drop controler for marking interface **/
@@ -227,6 +228,7 @@ public class MarkingInterface extends EMarkingComposite {
 				markingPagesInterface.resizePage(this.getCenterWidth());
 			};
 		};
+		interfacePanel.animate(180);
 		interfacePanel.addStyleName(Resources.INSTANCE.css().interfacepanel());
 
 		loadingMessage = new HTML(messages.Loading() + " " + EMarkingConfiguration.getMoodleUrl());
@@ -401,10 +403,11 @@ public class MarkingInterface extends EMarkingComposite {
 					newgrade = MarkingInterface.submissionData.getFinalgrade();
 				}
 				
-				// TODO: FIX!
+/*				// TODO: FIX!
 				if(mark instanceof HighlightMark) {
 					mark.setPosx(0);
 				}
+				*/
 
 				// Sets the values for the new mark
 				mark.setId(id);
@@ -738,25 +741,25 @@ public class MarkingInterface extends EMarkingComposite {
 			b.setVisible(false);
 		}		
 
-		interfacePanel.addEast(rubricInterface, 500);
+		
+		int rubricWidth = (int) (Window.getClientWidth() - (Window.getClientWidth() / 1.61803));
+		rubricMinSize = (int) Math.max(rubricWidth, 300);
+		if(EMarkingConfiguration.getMarkingType() == EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN) {
+			rubricWidth = rubricMinSize - 10;
+		}
+		interfacePanel.addEast(rubricInterface, rubricWidth);
+		interfacePanel.setWidgetMinSize(rubricInterface, 10);
 		interfacePanel.add(markingPagesInterface);
+		interfacePanel.setWidgetMinSize(markingPagesInterface, rubricMinSize);
 		interfacePanel.setHeight((Window.getClientHeight() - toolbar.getOffsetHeight()) + "px");
 
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
-		rubricInterface.setVisible(EMarkingConfiguration.isShowRubricOnLoad());
-
-		/** FIN **/
+		rubricInterface.setVisible(EMarkingConfiguration.isShowRubricOnLoad() &&
+				EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN);
 	}
 
 	public void setShowRubricButtonVisible(boolean visible) {
 		bubbleButtons.get(0).setVisible(false);
-		if(visible) {
-//			interfacePanel.setCellWidth(markingPagesInterface, "60%");
-//			interfacePanel.setCellWidth(rubricInterface, "40%");
-		} else {
-//			interfacePanel.setCellWidth(markingPagesInterface, "100%");
-//			interfacePanel.setCellWidth(rubricInterface, "0%");
-		}
 	}
 
 	/**
@@ -1053,5 +1056,17 @@ public class MarkingInterface extends EMarkingComposite {
 			}
 		}
 		this.toolbar.getChatButtons().loadSubmissionData();
+	}
+	
+	public void hideRubric() {
+		Mark.hideIcons();
+		Mark.markPopup.setVisible(false);
+		if(interfacePanel.getWidgetSize(rubricInterface) < 10) {
+			interfacePanel.setWidgetSize(rubricInterface, rubricMinSize);			
+			markingPagesInterface.resizePage(interfacePanel.getOffsetWidth() - rubricMinSize);
+		} else {
+			interfacePanel.setWidgetSize(rubricInterface, 0);
+			markingPagesInterface.resizePage(interfacePanel.getOffsetWidth());
+		}
 	}
 }

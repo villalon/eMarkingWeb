@@ -139,14 +139,10 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		AbsolutePanel abspanel = (AbsolutePanel) mark.getParent();
 
 		int topdiff = - Mark.editIcon.getOffsetHeight();
-		int widthdiff = - 12;
 		
-		if(mark instanceof RubricMark) {
-			widthdiff = - 0;
-		}
 		// Calculates basic left, top position for icons
 		int top = mark.getAbsoluteTop() - abspanel.getAbsoluteTop() + (topdiff);
-		int left = mouseLeft > 0 ? mouseLeft : mark.getAbsoluteLeft() + mark.getOffsetWidth() + (widthdiff);
+		int left = mouseLeft > 0 && mark instanceof HighlightMark ? mouseLeft : mark.getAbsoluteLeft();
 
 		if(top < 0) {
 			top += mark.getOffsetHeight();
@@ -177,7 +173,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			abspanel.setWidgetPosition(Mark.editIcon, left, top);
 			Mark.editIcon.setVisible(true);
 			Mark.editIcon.setMark(mark);
-			left -= Mark.editIcon.getOffsetWidth();
+			left += Mark.editIcon.getOffsetWidth() + 5;
 			top -= 1;
 
 			// Delete icon
@@ -199,7 +195,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		}
 		
 		// Highlight the rubric interface if the mark is a RubricMark
-		if(mark instanceof RubricMark) {
+		if(EMarkingConfiguration.getRubricMarkType() != EMarkingConfiguration.EMARKING_RUBRICMARK_TEXTBOX) {
 			Mark.markPopup.setHTML(mark.getMarkPopupHTML());
 			Mark.markPopup.setVisible(true);
 			top += 50;
@@ -373,7 +369,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		
 		html += "<div class=\"" + Resources.INSTANCE.css().markicon() + "\" title=\""+ markername +"\" " + styleColor + ">" + iconhtml + "</div>";
 		// If the mark is an icon
-		if(!this.iconOnly && this.getRawtext().trim().length() > 0) {
+		if((!this.iconOnly || EMarkingConfiguration.getRubricMarkType() == EMarkingConfiguration.EMARKING_RUBRICMARK_TEXTBOX) && this.getRawtext().trim().length() > 0) {
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
 			// Show the marker's name if the marking process is not anonymous
 			if(!EMarkingConfiguration.isMarkerAnonymous()) {
@@ -381,6 +377,10 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			}
 		}
 
+		this.removeStyleName(Resources.INSTANCE.css().rubricmarkpopup());
+		if(EMarkingConfiguration.getRubricMarkType() == EMarkingConfiguration.EMARKING_RUBRICMARK_TEXTBOX) {
+			this.addStyleName(Resources.INSTANCE.css().rubricmarkpopup());			
+		}
 		this.setHTML(html);		
 	}
 
@@ -536,62 +536,61 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	
 	public void updateMark(int posx, int posy) {
 		// Edit works for both comment and rubric marks only
-		if(this instanceof RubricMark || this instanceof CommentMark) {
-			final Mark mark = (Mark) this;
-			
-			// If the mark is a rubric get its level
-			int level = 0;
-			int regradeid = 0;
-			if(mark instanceof RubricMark) {
-				regradeid = ((RubricMark) mark).getRegradeid();
-				level = ((RubricMark) mark).getLevelId();
-			}
-			
-			// Create the comment dialog with the corresponding rubric level
-			EditMarkDialog dialog = new EditMarkDialog(posx, posy, level, regradeid);
-			
-			if(mark instanceof RubricMark && regradeid > 0) {
-				dialog.getTxtRegradeComment().setText(((RubricMark) mark).getRegrademarkercomment());
-			}
-			
-			if(feedback.size() > 0){
-				dialog.setFeedbackArray(feedback, id);
-				dialog.loadFeedback();
-			}
-			
-			// Set dialog's current values to the mark's
-			dialog.setTxtComment(mark.getRawtext());
-			
-			// Update when closing
-			dialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					EditMarkDialog dialog = (EditMarkDialog) event.getSource();
-					
-					MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().
-							getPageByIndex(pageno-1);
-					int widthPage = page.getWidth();
-					int heightPage = page.getHeight();
-					// If the dialog was not cancelled update the mark with the dialog values
-					if(!dialog.isCancelled()) {
-						mark.setFeedback(dialog.getFeedbackArray());
-							mark.update(
-								dialog.getTxtComment(),
-								mark.getPosx(),
-								mark.getPosy(),
-								dialog.getLevelId(),
-								dialog.getBonus(), 
-								dialog.getRegradeComment(), 
-								dialog.getRegradeAccepted(),
-								widthPage,
-								heightPage);
-					}
+		final Mark mark = (Mark) this;
+
+		// If the mark is a rubric get its level
+		int level = 0;
+		int regradeid = 0;
+		if(mark instanceof RubricMark) {
+			regradeid = ((RubricMark) mark).getRegradeid();
+			level = ((RubricMark) mark).getLevelId();
+		}
+
+		// Create the comment dialog with the corresponding rubric level
+		EditMarkDialog dialog = new EditMarkDialog(posx, posy, level, regradeid);
+
+		if(mark instanceof RubricMark && regradeid > 0) {
+			dialog.getTxtRegradeComment().setText(((RubricMark) mark).getRegrademarkercomment());
+		}
+
+		if(feedback.size() > 0){
+			dialog.setFeedbackArray(feedback, id);
+			dialog.loadFeedback();
+		}
+
+		// Set dialog's current values to the mark's
+		dialog.setTxtComment(mark.getRawtext());
+
+		// Update when closing
+		dialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				EditMarkDialog dialog = (EditMarkDialog) event.getSource();
+
+				MarkingPage page = EMarkingWeb.markingInterface.getMarkingPagesInterface().
+						getPageByIndex(pageno-1);
+				int widthPage = page.getWidth();
+				int heightPage = page.getHeight();
+				// If the dialog was not cancelled update the mark with the dialog values
+				if(!dialog.isCancelled()) {
+					// mark.setFeedback(dialog.getFeedbackArray());
+					mark.update(
+							dialog.getTxtComment(),
+							mark.getPosx(),
+							mark.getPosy(),
+							dialog.getLevelId(),
+							dialog.getBonus(), 
+							dialog.getRegradeComment(), 
+							dialog.getRegradeAccepted(),
+							widthPage,
+							heightPage);
 				}
-			});
-			
-			// Show the dialog
-			dialog.show();
-		}		
+			}
+		});
+
+		// Show the dialog
+		dialog.center();
+		dialog.show();
 	}
 	
 	protected void setPreviousText(String text) {
@@ -622,6 +621,9 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 	
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
+		if(EMarkingConfiguration.isReadonly()) {
+			return;
+		}
 		event.getNativeEvent().stopPropagation();
 		event.getNativeEvent().preventDefault();
 
