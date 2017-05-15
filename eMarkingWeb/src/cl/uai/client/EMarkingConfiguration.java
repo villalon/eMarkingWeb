@@ -47,7 +47,10 @@ public class EMarkingConfiguration {
 	private static int rubricColorLightness = 85;
 	
 	private static int highlighterSize = 18;
-		
+	
+	/** In case we need to show more messages **/
+	private static boolean debugging = false;
+	
 	/** For logging purposes **/
 	private static Logger logger = Logger.getLogger(EMarkingConfiguration.class.getName());
 	
@@ -369,6 +372,9 @@ public class EMarkingConfiguration {
 		// What type of rubric marks to use.
 		rubricMarkType = value.get("rubricmarktype") != null ? Integer.parseInt(value.get("rubricmarktype")) : EMARKING_RUBRICMARK_ICON;
 		
+		// If Moodle has debugging turned on.
+		debugging = value.get("debugging") != null ? value.get("debugging").equals("1") : false;
+		
 		// Marking buttons enabled in the platform
 		String[] buttons = value.get("buttons").split(",");
 		for(int i=0;i<buttons.length;i++) {
@@ -478,5 +484,13 @@ public class EMarkingConfiguration {
 	 */
 	public static void setRubricMarkType(int rubricMarkType) {
 		EMarkingConfiguration.rubricMarkType = rubricMarkType;
+	}
+
+	public static boolean isDebugging() {
+		return debugging;
+	}
+
+	public static void setDebugging(boolean debugging) {
+		EMarkingConfiguration.debugging = debugging;
 	}	
 }

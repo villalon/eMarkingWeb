@@ -21,9 +21,15 @@
 package cl.uai.client.rubric;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
+import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.resources.Resources;
 
+import java.util.logging.Logger;
+
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,6 +40,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class GeneralFeedbackInterface extends EMarkingComposite {
 
+	private static Logger logger = Logger.getLogger(GeneralFeedbackInterface.class.getName());
+	
 	private VerticalPanel mainPanel = null;
 	
 	private Label title = null;
@@ -47,6 +55,16 @@ public class GeneralFeedbackInterface extends EMarkingComposite {
 		
 		this.feedbackText = new TextArea();
 		this.feedbackText.addStyleName(Resources.INSTANCE.css().generalfeedbacktxt());
+		this.feedbackText.addChangeHandler(new ChangeHandler() {			
+			@Override
+			public void onChange(ChangeEvent event) {
+				TextArea txt = (TextArea) event.getSource();
+				if(EMarkingConfiguration.isDebugging()) {
+					logger.fine("General feedback changed! ");
+				}
+				EMarkingWeb.markingInterface.updateGeneralFeedback(txt.getValue());
+			}
+		});
 		
 		mainPanel.add(title);
 		mainPanel.add(feedbackText);

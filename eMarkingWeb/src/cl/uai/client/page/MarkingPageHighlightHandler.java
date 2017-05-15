@@ -78,7 +78,7 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 		end.setX(currentX);
 		end.setY(currentY);
 		
-		List<Point> newpath = HighlightMark.calculatePath(start, end, absolutePanel.getOffsetWidth());
+		List<Point> newpath = HighlightMark.calculatePath(start, end, absolutePanel.getOffsetWidth(), false);
 
 		drawingArea.remove(this.currentPath);
 		if(ev.getKeyCode() == com.google.gwt.event.dom.client.KeyCodes.KEY_ESCAPE) {
@@ -118,15 +118,18 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 					(event.getClientY()-absolutePanel.getAbsoluteTop()) % HighlightMark.size;
 		}		
 
-		final int newposx = event.getClientX();
-		final int newposy = currentY;
-		
 		end.setX(event.getClientX() - absolutePanel.getAbsoluteLeft());
-		end.setY(newposy);
+		end.setY(currentY);
+		
+		if(start.getX() > end.getX()) {
+			Point tmp = new Point(end.getX(), end.getY());
+			end = start;
+			start = tmp;
+		}
 		
 		final EditMarkDialog dialogquestion = new EditMarkDialog(
-				newposx, 
-				newposy,
+				event.getClientX(), 
+				start.getY(),
 				0, // No level id for a text comment
 				0); // No regradeid either
 		
@@ -153,26 +156,19 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 				drawingArea.remove(currentPath);
 				
 				logger.fine("adding " + start + " " + end);
-				int newy = start.getY();
-				Point newstart = new Point(start.getX(), 0);
-				Point newend = new Point(end.getX(), end.getY()-start.getY());
-				start = newstart;
-				end = newend;
-				logger.fine("adding II " + start + " " + end);
 				HighlightMark mark = new HighlightMark(
 						0,
-						0,
-						newy,
+						start.getX(),
+						start.getY(),
 						pageno,
 						EMarkingConfiguration.getMarkerId(),
 						parentPage.getWidth(),
 						parentPage.getHeight(),
 						dialogquestion.getTxtComment(),
-						end.getX() + "," + newend.getY(),
+						end.getX() + "," + end.getY(),
 						unixtime,
 						selectedCriterion,
 						MarkingInterface.submissionData.getMarkerfirstname());
-				mark.setStart(start);
 				mark.setEnd(end);
 				mark.setMarkHTML();
 				EMarkingWeb.markingInterface.addMark(mark, parentPage);

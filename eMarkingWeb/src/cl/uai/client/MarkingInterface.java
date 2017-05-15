@@ -318,6 +318,33 @@ public class MarkingInterface extends EMarkingComposite {
 		}
 	}
 
+	public void updateGeneralFeedback(final String generalFeedback) {
+		addLoading(true);
+		// Invokes the ajax Moodle interface to save the mark
+				AjaxRequest.ajaxRequest("action=updgeneralfeedback"
+						+ "&feedback=" + URL.encode(generalFeedback), 
+						new AsyncCallback<AjaxData>() {					
+					@Override
+					public void onSuccess(AjaxData result) {
+						// Parse json results and check if there was an error
+						if(!result.getError().equals("")) {
+							logger.severe(result.getError());
+							Window.alert(result.getError());
+							return;
+						}
+						
+						finishLoading();
+					}					
+					@Override
+					public void onFailure(Throwable caught) {
+						if(EMarkingConfiguration.isDebugging()) {
+							caught.printStackTrace();
+							logger.severe(caught.getMessage());
+						}
+						finishLoading();
+					}
+				});
+	}
 	/**
 	 * Add a mark to both the page and update the rubric interface
 	 * 
@@ -346,10 +373,8 @@ public class MarkingInterface extends EMarkingComposite {
 		String path = "";
 		if(mark instanceof HighlightMark) {
 			HighlightMark hmark = (HighlightMark) mark;
-			markposx = hmark.getStart().getX();
-			int endposy = hmark.getEnd().getY() + markposy;
-			path = "&path=" + URL.encode(hmark.getEnd().getX() + "," + endposy);
-			logger.fine("sending " + hmark.getEnd().getY() + "+" + hmark.getStart().getY() + ".." + markposx + "," + markposy + "-" + hmark.getStart().getX() + "," + hmark.getStart().getY() + path);
+			path = "&path=" + URL.encode(hmark.getEnd().getX() + "," + hmark.getEnd().getY());
+			logger.fine("sending " + markposx + "," + markposy + " -> " + hmark.getEnd().getX() + "," + hmark.getEnd().getY() + " path:" + path);
 		} else if(mark instanceof PathMark) {
 			path = "&path=" + URL.encode(((PathMark) mark).getPath());
 		} 
