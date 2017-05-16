@@ -158,7 +158,7 @@ public class EditMarkDialog extends DialogBox {
 		if(EMarkingConfiguration.getKeywords() != null && EMarkingConfiguration.getKeywords().length() > 0) {
 			logger.fine("Keywords: " + EMarkingConfiguration.getKeywords());
 		}
-		if(!EMarkingConfiguration.getKeywords().equals("") && level > 0 && regradeid > 0){
+		if(!EMarkingConfiguration.getKeywords().equals("") && (level > 0 || regradeid > 0)){
 			keyWords = EMarkingConfiguration.getKeywords();
 			feedbackArray = new ArrayList<FeedbackObject>();
 			feedbackPanel = new FeedbackInterface(keyWords, EMarkingWeb.markingInterface.getMarkingPagesInterface().getMoodleResources());
