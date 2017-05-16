@@ -21,16 +21,20 @@
  */
 package cl.uai.client.page;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
+import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.MarkingInterface;
 import cl.uai.client.data.AjaxData;
 import cl.uai.client.data.AjaxRequest;
+import cl.uai.client.feedback.FeedbackObject;
 import cl.uai.client.marks.Mark;
 import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
@@ -59,6 +63,23 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	private VerticalPanel pagesPanel = null;
 	private ScrollPanel scrollContainerForPages = null;
 	
+	/** **/
+	private ArrayList<FeedbackObject> feedbackMoodleArray = null;
+	private ArrayList<FeedbackObject> feedbackCS50Array = null;
+	
+	/**
+	 * @return the feedbackMoodleArray
+	 */
+	public ArrayList<FeedbackObject> getMoodleResources() {
+		return feedbackMoodleArray;
+	}
+	
+	/**
+	 * @return the feedbackCS50Array
+	 */
+	public ArrayList<FeedbackObject> getCS50Resources() {
+		return feedbackCS50Array;
+	}
 
 	/** Number of pages **/
 	private int numPages = -1;
@@ -173,6 +194,13 @@ public class MarkingPagesInterface extends EMarkingComposite {
 		// Clear tabs and load the first one
 		pagesPanel.clear();
 		loadAllTabs();
+		if(! EMarkingConfiguration.getKeywords().equals("") ) {
+			loadMoodleResources();
+			// Check if cs50 is allow
+			if( Arrays.asList(EMarkingConfiguration.getOERsources().split(",")).contains("cs50") ) {
+				loadCS50Resources();
+			}
+		}
 	}
 
 	// Loads a tab according to its index
@@ -289,6 +317,54 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	
 	public VerticalPanel getPagesPanel(){
 		return pagesPanel;
+	}
+	
+	private void loadMoodleResources() {
+		// Get resources from LMS moodle one time
+		feedbackMoodleArray = new ArrayList<FeedbackObject>();
+		AjaxRequest.ajaxRequest("action=moodleresources", 
+				new AsyncCallback<AjaxData>() {			
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe("FAIL ajax request action: moodleresources");
+			}
+			
+			@Override
+			public void onSuccess(AjaxData result) {					
+				List<Map<String, String>> resources = AjaxRequest.getValuesFromResult(result);
+				for(Map<String, String> info : resources) {
+					feedbackMoodleArray.add(new FeedbackObject(
+							info.get("name"),
+							info.get("link"),
+							"Webcursos"
+					));				
+				}			
+			}
+		});
+	}
+	
+	private void loadCS50Resources() {
+		// Get resources from LMS moodle one time
+		feedbackCS50Array = new ArrayList<FeedbackObject>();
+		AjaxRequest.ajaxRequest("action=cs", 
+				new AsyncCallback<AjaxData>() {			
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe("FAIL ajax request action: cs to get CS50 resources");
+			}
+			
+			@Override
+			public void onSuccess(AjaxData result) {					
+				List<Map<String, String>> resources = AjaxRequest.getValuesFromResult(result);
+				for(Map<String, String> info : resources) {
+					feedbackCS50Array.add(new FeedbackObject(
+							info.get("name"),
+							info.get("link"),
+							"CS50"
+					));				
+				}			
+			}
+		});
 	}
 
 	public void resizePage(double centerWidth) {

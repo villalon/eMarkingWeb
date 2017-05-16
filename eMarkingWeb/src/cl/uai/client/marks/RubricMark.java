@@ -297,12 +297,18 @@ public class RubricMark extends Mark {
 					resourceLink.addStyleName(Resources.INSTANCE.css().resourcelink());
 
 					String sourceName = "";
-					if(feedback.get(count).getNameOER() == "ocwmit"){
-						sourceName = "MIT OpenCourseWare ";
-					}else if(feedback.get(count).getNameOER() == "merlot"){
-						sourceName = "MERLOT";
-					}else{
-						sourceName = "Webcursos";
+					switch (feedback.get(count).getNameOER()) {
+						case "ocwmit" :
+							sourceName = "OCW MIT";
+							break;
+						case "merlot" :
+							sourceName = "Merlot";
+							break;
+						case "CS50" :
+							sourceName = "CS50 Harvard";
+							break;
+						default :
+							sourceName = "Webcursos";
 					}
 					html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"
 							+ (count + 1) + ".-"

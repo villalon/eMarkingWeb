@@ -40,6 +40,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -134,7 +135,6 @@ public class EditMarkDialog extends DialogBox {
 	/** Variables for implementation enhanced feedback, hans's thesis **/
 	private ArrayList<FeedbackObject> feedbackArray = null;	
 	private FeedbackInterface feedbackPanel = null;
-	private String keyWords = null;
 	private boolean simplePanel = false;
 	private ScrollPanel feedbackSummary;
 	private VerticalPanel feedbackForStudent;
@@ -158,10 +158,9 @@ public class EditMarkDialog extends DialogBox {
 		if(EMarkingConfiguration.getKeywords() != null && EMarkingConfiguration.getKeywords().length() > 0) {
 			logger.fine("Keywords: " + EMarkingConfiguration.getKeywords());
 		}
-		if(!EMarkingConfiguration.getKeywords().equals("") ){
-			keyWords = EMarkingConfiguration.getKeywords();
+		if(!EMarkingConfiguration.getKeywords().equals("") && (level > 0 || regradeid > 0)){
 			feedbackArray = new ArrayList<FeedbackObject>();
-			feedbackPanel = new FeedbackInterface(keyWords);
+			feedbackPanel = new FeedbackInterface();
 			feedbackPanel.setParent(this);
 		}else{
 			simplePanel = true;
@@ -473,9 +472,13 @@ public class EditMarkDialog extends DialogBox {
 		JSONObject outputFeedback = new JSONObject();
 		for(int iterator = 0; iterator < feedbackArray.size() ; iterator ++){
 			JSONArray array = new JSONArray();
-			array.set(0, new JSONString(feedbackArray.get(iterator).getNameOER().replaceAll("\\<.*?>","")));
-			array.set(1, new JSONString(feedbackArray.get(iterator).getName().replaceAll("\\<.*?>","")));
-			array.set(2, new JSONString(feedbackArray.get(iterator).getLink()));
+			array.set(0, new JSONString(feedbackArray.get(iterator).getNameOER()));
+			array.set(1, new JSONString(feedbackArray.get(iterator).getName()));
+			if (feedbackArray.get(iterator).getNameOER().equals("CS50")) {
+				array.set(2, new JSONString(feedbackArray.get(iterator).getNameOER()));
+			}else {
+				array.set(2, new JSONString(feedbackArray.get(iterator).getLink()));
+			}
 			
 			outputFeedback.put(Integer.toString(iterator),  array);
 		}
@@ -505,7 +508,7 @@ public class EditMarkDialog extends DialogBox {
 		feedbackForStudent.clear();
 		count = 1;
 		int iterator = 0;
-		while(iterator < feedbackArray.size()){		
+		while(iterator < feedbackArray.size()){	
 			final Anchor link = new Anchor(feedbackArray.get(iterator).getLink(), false, feedbackArray.get(iterator).getLink(), "_blank");
 			link.addStyleName(Resources.INSTANCE.css().resourcelink());
 			addFeedback(
@@ -544,13 +547,20 @@ public class EditMarkDialog extends DialogBox {
 		HTML lessIcon = new HTML(iconRemove.toString());
 		lessIcon.addStyleName(Resources.INSTANCE.css().plusicon());
 		
-		if(source == "ocwmit"){
-			sourceName = "OCW MIT";
-		}else if(source == "merlot"){
-			sourceName = "Merlot";
-		}else{
-			sourceName = "Webcursos";
+		switch (source) {
+			case "ocwmit" :
+				sourceName = "OCW MIT";
+				break;
+			case "merlot" :
+				sourceName = "Merlot";
+				break;
+			case "CS50" :
+				sourceName = "CS50 Harvard";
+				break;
+			default :
+				sourceName = "Webcursos";
 		}
+		
 		String html = "<p>" + count +". " + sourceName + " - " + name + "</p><p>Link " + auxLink + "</p><hr>" ;
 		count += 1;
 		feedback.setHTML(html);
