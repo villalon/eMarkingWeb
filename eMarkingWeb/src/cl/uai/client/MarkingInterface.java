@@ -507,7 +507,7 @@ public class MarkingInterface extends EMarkingComposite {
 							"&comment="+URL.encode(comment) +
 							"&windowswidth=" + page.getWidth() +
 							"&windowsheight=" + page.getHeight() +
-							"&feedback=" + URL.encode(feedbackToAjax);
+							"&feedback=" + feedbackToAjax;
 
 					// Add loading icon
 					Mark.loadingIcon.removeFromParent();

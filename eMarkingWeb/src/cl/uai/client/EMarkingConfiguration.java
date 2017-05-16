@@ -104,6 +104,9 @@ public class EMarkingConfiguration {
 
 	/** String contains the keywords separated by comma **/
 	private static String keywords;
+	
+	/** String contains the OER sources separated by comma **/
+	private static String OERsources;
 
 	/** If colored rubric is enabled **/
 	private static boolean coloredRubric = false;
@@ -152,6 +155,12 @@ public class EMarkingConfiguration {
 	 */
 	public static String getKeywords() {
 		return keywords;
+	}
+	/**
+	 * @return the OERsources
+	 */
+	public static String getOERsources() {
+		return OERsources;
 	}
 
 	/**
@@ -366,8 +375,11 @@ public class EMarkingConfiguration {
 		// Obtain the nodejs path from Moodle configuration
 		nodeJsPath = value.get("nodejspath");
 		
-		// Obtain the keyword for the feedback
+		// Obtain the keyword for the enhanced feedback
 		keywords = value.get("keywords");
+		
+		// Obtain the OER sources for the enhances feedback
+		OERsources = value.get("oersources");
 		
 		// What type of rubric marks to use.
 		rubricMarkType = value.get("rubricmarktype") != null ? Integer.parseInt(value.get("rubricmarktype")) : EMARKING_RUBRICMARK_ICON;

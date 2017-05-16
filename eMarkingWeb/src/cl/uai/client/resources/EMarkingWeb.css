@@ -1081,21 +1081,21 @@ background-color: #c0c0c0;
 }
 
 .feedbackdialog{
-	width: 900px;
+	max-width: 900px;
 }
 
 .feedbackpanel{
-	width: 600px;
+	max-width: 700px
 }
 
 .resorucespanel{
- 	width: 600px;
+ 	max-width: 700px
 }
 
 .keywordspanel{
 	border-spacing: 5px;
     border-collapse: separate;
-	max-width: 600px;
+	max-width: 700px;
 	font-size: 2em;
 }
  
@@ -1107,22 +1107,22 @@ background-color: #c0c0c0;
 
 .scrollresources {
 	max-height: 300px;
-	max-width: 600px;
+	max-width: 700px;
 	overflow-x:hidden;
 }
  
 .panelscrollresources{
-	width: 580px;
+	max-width: 700px;
 	overflow-x:hidden;
 }
 
 .resourcetitle{
-	width: 330px;
+	max-width: 400px;
 	overflow-x:hidden;
 }
 
  .resourcelink{
- 	width: 300px;
+ 	max-width: 400px;
 	overflow-x:hidden;
 }
 
@@ -1135,18 +1135,18 @@ background-color: #c0c0c0;
 }
  
 .feedbacktext{
-	width: 290px;
+	max-width: 400px;
 	word-wrap: break-word;
 	overflow-x:hidden;
 }
 
 .feedbacksummary{
-	width: 350px;
+	max-width: 450px;
 	max-height: 150px;
  	word-wrap: break-word;
 }
 
 .feedbackforstudent{
-	width: 350px;
+	max-width: 400px;
   	word-wrap: break-word;
  }
