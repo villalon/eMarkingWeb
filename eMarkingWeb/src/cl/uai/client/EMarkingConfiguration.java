@@ -84,6 +84,9 @@ public class EMarkingConfiguration {
 	/** Indicates if the marking interface is in read only mode **/
 	private static boolean readonly = true;
 	
+	/** If marks should be hidden (usually to preview the uploaded pages) **/
+	private static boolean hidemarks = false; 
+	
 	/** Indicates if the user is a supervisor (editingteacher) **/
 	private static boolean supervisor = false;
 	
@@ -504,5 +507,13 @@ public class EMarkingConfiguration {
 
 	public static void setDebugging(boolean debugging) {
 		EMarkingConfiguration.debugging = debugging;
+	}
+
+	public static boolean isHidemarks() {
+		return hidemarks;
+	}
+
+	public static void setHidemarks(boolean hidemarks) {
+		EMarkingConfiguration.hidemarks = hidemarks;
 	}	
 }
