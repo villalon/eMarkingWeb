@@ -66,7 +66,7 @@ public class GhostscriptExtract {
 				gsArgs[5] = "-r" + resolution;
 				gsArgs[6] = "-dFirstPage=" + first;
 				gsArgs[7] = "-dLastPage=" + last;
-				gsArgs[8] = "-sOutputFile=" + dir.toAbsolutePath() + "/tmpfigure%d" + Moodle.imageExtension;
+				gsArgs[8] = "-sOutputFile=" + dir.toAbsolutePath() + "/page%06d" + Moodle.imageExtension;
 				gsArgs[9] = dir.toAbsolutePath() + "/input.pdf";
 
 				//execute and exit interpreter

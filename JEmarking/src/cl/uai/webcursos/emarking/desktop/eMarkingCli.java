@@ -135,10 +135,16 @@ public class eMarkingCli {
 	        System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
 	        System.exit(1);
 	    }
+	    
 	    if(line.hasOption("help")) {
 	    	HelpFormatter formatter = new HelpFormatter();
 	    	formatter.printHelp("java -jar emarking.jar", options);
 	    	System.exit(0);
+	    }
+
+	    if(!line.hasOption("log4j")) {
+			System.err.println("Fatal error, log4j parameter is required. It must be a path to the log4j properties file.");
+			System.exit(1);
 	    }
 
 	    File log4jproperties = new File(line.getOptionValue("log4j"));
@@ -311,6 +317,7 @@ public class eMarkingCli {
 			if(!file.getName().endsWith(Moodle.imageExtension)) {
 				continue;
 			}
+			file.getName().replaceFirst(Moodle.imageExtension, "").replaceFirst("tmpfigure", "");
 			String filename = tmpdir.getAbsolutePath() + "/" + userid + "-" + courseid + "-" + pagenumber + Moodle.imageExtension;
 			logger.debug("Rename " + file.getAbsolutePath() + " to " + filename);
 			file.renameTo(new File(filename));
