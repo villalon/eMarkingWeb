@@ -228,6 +228,18 @@ public class MarkingPage extends EMarkingComposite implements ContextMenuHandler
 		map.put("posy", Integer.toString(posy));
 		map.put("originalx", Float.toString(originalx));
 		map.put("originaly", Float.toString(originaly));
+		try {
+			String pathData = map.get("path");
+			float originalwidth = Float.parseFloat(map.get("width"));
+			float originalheight = Float.parseFloat(map.get("height"));
+			int endx = Integer.parseInt(pathData.split(",")[0]);
+			int endy = Integer.parseInt(pathData.split(",")[1]);
+			endx = (int) ((float) endx / (float) originalwidth * (float) width);
+			endy = (int) ((float) endy / (float) originalheight * (float) height);
+			map.remove("path");
+			map.put("path", endx + "," + endy);
+		} catch (Exception e) {			
+		}
 	}
 	
 	/**

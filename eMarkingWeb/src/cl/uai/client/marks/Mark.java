@@ -200,7 +200,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			Mark.markPopup.setVisible(true);
 			top += 50;
 			abspanel.setWidgetPosition(Mark.markPopup, left, top);
-		}	
+		}
 	}
 	
 	public void setPosx(int posx) {
@@ -590,7 +590,6 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 
 		// Show the dialog
 		dialog.center();
-		dialog.show();
 	}
 	
 	protected void setPreviousText(String text) {
@@ -658,5 +657,4 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 		}
 		return outputFeedback.toString();
 	}
-
 }

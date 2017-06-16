@@ -104,7 +104,6 @@ public class RegradeIcon extends HTML {
 		});
 		
 		dialog.center();
-		dialog.show();
 	}
 	
 	private int getMotiveIndex(int motive) {

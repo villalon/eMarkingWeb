@@ -40,7 +40,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -349,13 +348,6 @@ public class EditMarkDialog extends DialogBox {
 		}
 	}
 	
-	@Override
-	public void show() {
-		super.show();
-		logger.fine("Shown!");
-		this.txtComment.getValueBox().setFocus(true);
-	}
-
 	/**
 	 * Sets the text in the text box
 	 * @param txt
