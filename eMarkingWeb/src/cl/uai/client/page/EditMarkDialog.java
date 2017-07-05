@@ -401,9 +401,12 @@ public class EditMarkDialog extends DialogBox {
 
 		int index=0;
 		for(Level level : lvl.getCriterion().getLevels().values()) {
-
+			int levelnumber = EMarkingConfiguration.getRubricLevelsSorting() == EMarkingConfiguration.EMARKING_RUBRIC_SORT_LEVELS_ASCENDING ?
+					index + 1 : lvl.getCriterion().getLevels().size() - index;
+			String description = MarkingInterface.messages.Level() + " " + levelnumber;
+			String score = EMarkingConfiguration.isFormativeFeedbackOnly() ? "" : " (" + RubricMark.scoreFormat(level.getScore(), false) + " pts)";
 			this.levelsList.addItem(
-					level.getDescription() + " (" + RubricMark.scoreFormat(level.getScore(), false) + " pts)",
+					description + score,
 					Integer.toString(level.getId()));
 
 			if(this.levelId == level.getId()) {
