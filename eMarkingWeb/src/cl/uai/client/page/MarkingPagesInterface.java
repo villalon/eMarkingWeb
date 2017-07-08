@@ -206,7 +206,7 @@ public class MarkingPagesInterface extends EMarkingComposite {
 	// Loads a tab according to its index
 	public void loadAllTabs() {
 		// Check if submission data is invalid
-		if(MarkingInterface.submissionData.getId() <= 0) {
+		if(MarkingInterface.submissionData.getId() <= 0 || MarkingInterface.submissionData.isHidemarks()) {
 			return;
 		}
 

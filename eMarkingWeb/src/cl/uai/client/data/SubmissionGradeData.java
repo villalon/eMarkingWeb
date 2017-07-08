@@ -79,6 +79,7 @@ public class SubmissionGradeData {
 	private Date regradeopendate;
 	private Date regradeclosedate;
 	private boolean answerkey;
+	private boolean hidemarks;
 	private SortedMap<Integer, Submission> answerKeys;
 
 	/** A list of drafts related to the one being marked, usually parallels within a markers training **/
@@ -243,6 +244,7 @@ public class SubmissionGradeData {
 		submissionData.setRegradeclosedate(new Date(Long.parseLong(values.get("regradesclosedate")) * 1000));					
 		submissionData.setFinalgrade(Float.parseFloat(values.get("finalgrade")));
 		submissionData.setDatemodified(Long.parseLong(values.get("timemodified")));
+		submissionData.setHidemarks(values.get("hidemarks").equals("1"));
 		
 		String drafts = values.get("drafts");
 		if(drafts != null) {
@@ -471,5 +473,13 @@ public class SubmissionGradeData {
 
 	public void setChangelog(String changelog) {
 		this.changelog = changelog;
+	}
+
+	public boolean isHidemarks() {
+		return hidemarks;
+	}
+
+	public void setHidemarks(boolean hidemarks) {
+		this.hidemarks = hidemarks;
 	}
 }
