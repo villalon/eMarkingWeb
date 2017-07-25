@@ -62,6 +62,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 
 	/** The panels containing the comments **/
 	private FlowPanel previousCommentsAll = null;
+	private FlowPanel previousCommentsFavorites = null;
 	private FlowPanel previousCommentsMine = null;
 	private FlowPanel previousCommentsRecent = null;
 	private FlowPanel previousCommentsMostUsed = null;
@@ -93,13 +94,17 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 
 		// Add comments table
 		previousCommentsAll = new FlowPanel();
+		previousCommentsFavorites = new FlowPanel();
 		previousCommentsMine = new FlowPanel();
 		previousCommentsRecent = new FlowPanel();
 		previousCommentsMostUsed = new FlowPanel();
 		previousCommentsCriteria = new HashMap<Integer, FlowPanel>();
 
-		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
+		commentsTabs.add(previousCommentsFavorites, MarkingInterface.messages.Favorites());
+		commentsTabs.add(previousCommentsRecent, MarkingInterface.messages.Recent());
+		commentsTabs.add(previousCommentsMostUsed, MarkingInterface.messages.MostUsed());
 		commentsTabs.add(previousCommentsMine, MarkingInterface.messages.MyComments());
+		commentsTabs.add(previousCommentsAll, MarkingInterface.messages.All());
 
 		for(Criterion criterion : MarkingInterface.submissionData.getRubricfillings().values()) {
 			FlowPanel criterionPanel = new FlowPanel();
@@ -115,10 +120,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 				commentsTabs.add(draftPanel, MarkingInterface.messages.Exam() + " " + draftid);
 			}
 		}
-
-		commentsTabs.add(previousCommentsRecent, MarkingInterface.messages.Recent());
-		commentsTabs.add(previousCommentsMostUsed, MarkingInterface.messages.MostUsed());
-
+		
 		mainPanel.add(commentsTabs);
 
 		this.initWidget(mainPanel);

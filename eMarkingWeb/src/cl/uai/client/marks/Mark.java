@@ -200,6 +200,7 @@ public abstract class Mark extends HTML implements ContextMenuHandler, ClickHand
 			Mark.markPopup.setVisible(true);
 			top += 50;
 			abspanel.setWidgetPosition(Mark.markPopup, left, top);
+			EMarkingWeb.reloadMathJax();
 		}
 	}
 	

@@ -1077,4 +1077,15 @@ public class MarkingInterface extends EMarkingComposite {
 			markingPagesInterface.resizePage(interfacePanel.getOffsetWidth());
 		}
 	}
+	public AbsolutePanel getMarkingPanel() {
+		return this.markingPanel;
+	}
+	/**
+	 * 
+	 * @param html
+	 * @param b
+	 */
+	public void addPreviousComment(String html, boolean b) {
+		
+	}
 }

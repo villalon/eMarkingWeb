@@ -157,4 +157,5 @@ public interface EmarkingMessages extends Messages {
 	public String ChatServerError(String adminemail);
 	public String MinimizeAllRubricMarks();
 	public String MarkerTitle();
+	public String Favorites();
 }
