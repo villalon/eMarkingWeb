@@ -225,6 +225,8 @@ to {
 	background-color: rgb(192, 214, 245);
 	color: #000;
 	border-radius: 5px;
+	margin: 3px 30px 3px 3px;
+	padding: 2px;
 }
 
 .previouscomments .gwt-TabPanelBottom {
@@ -248,7 +250,7 @@ to {
 	font-size: 3em;
 }
 
-.criterionDescription,.previousComment, .criterionrow {
+.criterionDescription, .criterionrow {
 	margin: 3px;
 	padding: 2px;
 }
@@ -411,12 +413,20 @@ to {
 	
 }
 
-.trashicon,.editicon,.loadingicon,.regradeicon {
+.trashicon,.editicon,.loadingicon,.regradeicon,.staricon {
 	z-index: 200;
 	font-size: 1.2vw;
 }
 
-.trashicon:hover,.editicon:hover,.rubriclabelclickable:hover,.regradeicon:hover
+.staricon {
+	z-index: 300;
+}
+
+.staricon:hover {
+	color:red;
+}
+
+.trashicon:hover,.editicon:hover,.rubriclabelclickable:hover,.regradeicon:hover,.staricon:hover
 	{
 	cursor: pointer;
 }

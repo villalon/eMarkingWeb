@@ -91,7 +91,7 @@ public class MarkingPageDrawHandler implements DrawHandler {
 				}
 			}
 		});
-		dialogquestion.show();			
+		dialogquestion.center();			
 
 		drawingArea.remove(this.currentPath);
 		int pathX = this.currentPath.getX();

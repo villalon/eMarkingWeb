@@ -32,7 +32,6 @@ import cl.uai.client.EMarkingConfiguration;
 
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * This class contains all data pertaining to a draft, including its grade and marker
@@ -294,7 +293,8 @@ public class SubmissionGradeData {
 				Level levelData = new Level(
 						criteriondata,
 						Integer.parseInt(level.get("id").toString()), 
-						SafeHtmlUtils.htmlEscape(level.get("description").toString()),
+						level.get("description").toString(),
+						// SafeHtmlUtils.htmlEscape(level.get("description").toString()),
 						Float.parseFloat(level.get("score").toString()));
 				float bonus=Float.parseFloat(criterion.get("bonus").toString());
 				int commentpage = Integer.parseInt(level.get("commentpage").toString());

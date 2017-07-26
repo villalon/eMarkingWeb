@@ -23,6 +23,9 @@
     <!-- If you add any GWT meta tags, they must   -->
     <!-- be added before this line.                -->
     <!--                                           -->
+<script type="text/javascript"
+   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML">
+</script>
     <script type="text/javascript" language="javascript" src="emarkingweb/emarkingweb.nocache.js"></script>
   </head>
 
@@ -32,12 +35,15 @@
   <!-- to create a completely dynamic UI.        -->
   <!--                                           -->
   <body style="padding-top: 0px;">
-
+  <script>
+  window.onload = function() {
+	  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  }
+  </script>
 	<div id="emarking"
 		style="width:100%;" 
 		imagewidth="827"
-		moodleurl="http://localhost/mod/emarking/ajax/a.php">
+		moodleurl="http://dev.escribiendo.online/mod/emarking/ajax/a.php">
 	</div>
-
   </body>
 </html>

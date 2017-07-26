@@ -194,4 +194,5 @@ public interface EmarkingCss extends CssResource {
 	String editmarksuggestboxWithFeedback();
 	String rubricrowplain();
 	String rubricmarkpopup();
+	String staricon();
 }

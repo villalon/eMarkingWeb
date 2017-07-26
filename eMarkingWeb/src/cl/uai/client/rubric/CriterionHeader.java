@@ -97,7 +97,6 @@ public class CriterionHeader extends EMarkingComposite {
 		loadingIcon.addStyleName("icon-spin");
 
 		mainPanel.add(loadingIcon);
-		// mainPanel.setCellHorizontalAlignment(loadingIcon, HasHorizontalAlignment.ALIGN_CENTER);
 		
 		initWidget(mainPanel);
 	}

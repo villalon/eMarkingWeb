@@ -61,8 +61,6 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -199,16 +197,6 @@ public class MarkingInterface extends EMarkingComposite {
 
 		// Focus panel to catch key events
 		focusPanel = new FocusPanel();
-		focusPanel.addKeyDownHandler(new KeyDownHandler() {
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if(event.getNativeKeyCode() >= 49 && event.getNativeKeyCode() <= 57) {
-					toolbar.getMarkingButtons().setButtonPressed(event.getNativeKeyCode() - 49, false);
-				} else if(event.getNativeKeyCode() == 48) {
-					toolbar.getMarkingButtons().setButtonPressed(91, false);
-				}
-			}
-		});
 
 		// Main panel has two rows: Toolbar and Marking panel
 		mainPanel = new VerticalPanel();
@@ -220,6 +208,8 @@ public class MarkingInterface extends EMarkingComposite {
 		toolbar = new MarkingToolBar();
 		mainPanel.add(toolbar);
 
+		focusPanel.addKeyDownHandler(new MarkingInterfaceKeyDownHandler(toolbar));
+		
 		// Marking panel containing the marking interface
 		interfacePanel = new SplitLayoutPanel() {
 			@Override
@@ -291,7 +281,6 @@ public class MarkingInterface extends EMarkingComposite {
 		};
 		// Drag and Drop controller attached to marking panel
 		dragController = new PickupDragController(markingPanel, false);
-		dragController.addDragHandler(new MarkingInterfaceDragHandler());
 
 		waitDialog = new DialogBox(false, true);
 		waitDialog.setGlassEnabled(true);
@@ -428,12 +417,6 @@ public class MarkingInterface extends EMarkingComposite {
 					newgrade = MarkingInterface.submissionData.getFinalgrade();
 				}
 				
-/*				// TODO: FIX!
-				if(mark instanceof HighlightMark) {
-					mark.setPosx(0);
-				}
-				*/
-
 				// Sets the values for the new mark
 				mark.setId(id);
 				mark.setMarkerid(markerid);
@@ -1093,5 +1076,16 @@ public class MarkingInterface extends EMarkingComposite {
 			interfacePanel.setWidgetSize(rubricInterface, 0);
 			markingPagesInterface.resizePage(interfacePanel.getOffsetWidth());
 		}
+	}
+	public AbsolutePanel getMarkingPanel() {
+		return this.markingPanel;
+	}
+	/**
+	 * 
+	 * @param html
+	 * @param b
+	 */
+	public void addPreviousComment(String html, boolean b) {
+		
 	}
 }

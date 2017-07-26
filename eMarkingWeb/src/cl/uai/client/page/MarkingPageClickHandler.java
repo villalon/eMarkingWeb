@@ -112,7 +112,6 @@ public class MarkingPageClickHandler implements ClickHandler {
 				}
 			});
 			dialog.center();
-			dialog.show();
 			break;
 			// A cross
 		case BUTTON_CROSS:
@@ -143,7 +142,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					EMarkingWeb.markingInterface.addMark(crmark, parentPage);
 				}
 			});
-			dialogcross.show();			
+			dialogcross.center();			
 			break;
 			// A pen
 		case BUTTON_PEN:
@@ -184,7 +183,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					EMarkingWeb.markingInterface.addMark(cmark, parentPage);
 				}
 			});
-			dialogtick.show();			
+			dialogtick.center();			
 			break;
 			// A check mark
 		case BUTTON_QUESTION:
@@ -215,7 +214,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					EMarkingWeb.markingInterface.addMark(qmark, parentPage);
 				}
 			});
-			dialogquestion.show();			
+			dialogquestion.center();
 			break;
 		case BUTTON_CUSTOM:
 			final EditMarkDialog dialogcustom = new EditMarkDialog(
@@ -251,7 +250,7 @@ public class MarkingPageClickHandler implements ClickHandler {
 					EMarkingWeb.markingInterface.addMark(custommark, parentPage);
 				}
 			});
-			dialogcustom.show();			
+			dialogcustom.center();
 			break;
 		default:
 		}

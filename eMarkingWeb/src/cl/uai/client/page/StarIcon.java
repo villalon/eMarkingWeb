@@ -23,42 +23,43 @@ package cl.uai.client.page;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
-import cl.uai.client.marks.Mark;
-import cl.uai.client.marks.RubricMark;
 import cl.uai.client.resources.Resources;
+import cl.uai.client.rubric.PreviousCommentLabel;
 
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * @author Jorge Villalón <villalon@gmail.com>
  *
  */
-public class RegradeIcon extends HTML {
+public class StarIcon extends HTML {
 
 	@SuppressWarnings("unused")
-	private Logger logger = Logger.getLogger(RegradeIcon.class.getName());
+	private Logger logger = Logger.getLogger(StarIcon.class.getName());
+	
 	/**The mark related to the icon **/
-	protected Mark mark = null;
+	protected PreviousCommentLabel lbl = null;
 	
 	/**
 	 * Creates a trash icon
 	 */
-	public RegradeIcon() {
-		Icon icon = new Icon(IconType.COMMENTS);
+	public StarIcon() {
+		Icon icon = new Icon(IconType.STAR);
 		this.setHTML(icon.toString());
-		this.addStyleName(Resources.INSTANCE.css().regradeicon());
+		this.addStyleName(Resources.INSTANCE.css().staricon());
 		
 		this.addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {				
+			public void onClick(ClickEvent event) {
 				event.stopPropagation();
 				processCommand(event);
 			}
@@ -70,47 +71,20 @@ public class RegradeIcon extends HTML {
 	 * 
 	 * @param sourcemark current mark
 	 */
-	public void setMark(Mark sourcemark) {
-		this.mark = sourcemark;
+	public void setLabel(PreviousCommentLabel _lbl) {
+		this.lbl = _lbl;
 	}
 	
+	public PreviousCommentLabel getLabel() {
+		return this.lbl;
+	}
 	/**
 	 * Processes its command when icon was clicked
 	 * 
 	 * @param event
 	 */
 	protected void processCommand(ClickEvent event) {
-		Mark.hideIcons();
-		
-		final RubricMark rmark = (RubricMark) mark;
-
-		final RequestRegradeDialog dialog = new RequestRegradeDialog();
-		
-		dialog.getComment().setText(rmark.getRegradecomment());
-		dialog.getMotive().setSelectedIndex(getMotiveIndex(rmark.getRegrademotive()));
-		
-		dialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-			
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				if(dialog.isCancelled())
-					return;
-				
-				String comment = dialog.getComment().getText();
-				int motive = Integer.parseInt(dialog.getMotive().getValue(dialog.getMotive().getSelectedIndex()));
-				
-				EMarkingWeb.markingInterface.regradeMark(rmark, comment, motive);
-			}
-		});
-		
-		dialog.center();
-	}
-	
-	private int getMotiveIndex(int motive) {
-		if(motive <= 4)
-			return motive;
-		if(motive==10)
-			return 5;
-		return 0;
+		logger.info("Making comment " + this.lbl.getText() + " favorite");
+		EMarkingWeb.markingInterface.addPreviousComment(this.lbl.getHTML(), true);
 	}
 }

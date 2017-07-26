@@ -174,8 +174,7 @@ public class MarkingPageHighlightHandler implements DrawHandler {
 				EMarkingWeb.markingInterface.addMark(mark, parentPage);
 			}
 		});
-		dialogquestion.show();
-		
+		dialogquestion.center();
 	}
 
 }

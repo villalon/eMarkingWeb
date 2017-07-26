@@ -88,6 +88,12 @@ public class EMarkingWeb implements EntryPoint {
 	      return screen.availHeight;
 	}-*/; 
 	
+	/** JSNI function to reload MathJax **/
+	public static native boolean reloadMathJax() /*-{
+		var MathJax = $wnd.MathJax;
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+	}-*/;
+	
 	/**
 	 * This is the entry point method.
 	 */

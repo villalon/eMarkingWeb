@@ -268,19 +268,23 @@ public class RubricMark extends Mark {
 
 		String criterionindex = "" + EMarkingWeb.markingInterface.getRubricInterface().getRubricPanel().getCriterionIndex(rmark.getCriterionId());
 		String leveldesc = headerOnly ? criterionindex : " " + SafeHtmlUtils.htmlEscape(rmark.getLevel().getCriterion().getDescription());
-		
+		String score = EMarkingConfiguration.isFormativeFeedbackOnly() ?
+				// Level information only
+				rmark.getLevel().getCriterion().getLevelFormativeIndex(rmark.getLevel().getCriterion().getSelectedLevel().getId())
+				+ " / " + rmark.getLevel().getCriterion().getLevels().size() :
+				// Score and bonus information
+				RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
+				+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false);
 		Icon icon = new Icon(this.iconType);
 
 		html += "<table class=\"markrubricheader\" style=\"background-color:hsl("+rmark.getLevel().getCriterion().getHue()+",100%,75%);\" width=\"100%\">"
 				+"<tr><td style=\"text-align: left;\"><div class=\""+Resources.INSTANCE.css().markicon()+"\">" 
 				+ icon.toString() + "</div></td><td><div class=\""+Resources.INSTANCE.css().markcrit()+"\">" + leveldesc + "</div></td>";
 		html += "<td style=\"text-align: right;\" nowrap><div class=\""+Resources.INSTANCE.css().markpts()+"\">"
-				+ RubricMark.scoreFormat(rmark.getLevel().getScore() + rmark.getLevel().getBonus(), false) 
-				+ " / " + RubricMark.scoreFormat(rmark.getLevel().getCriterion().getMaxscore(), false)
-				+"</div></td></tr></table>";
+				+ score +"</div></td></tr></table>";
 		if(!headerOnly) {
 			// Show the level description
-			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + SafeHtmlUtils.htmlEscape(rmark.getLevel().getDescription()) 
+			html += "<div class=\""+Resources.INSTANCE.css().marklvl()+"\">" + rmark.getLevel().getDescription() 
 					+ "</div>";
 			html += "<div class=\""+Resources.INSTANCE.css().markrawtext()+"\">"+ SafeHtmlUtils.htmlEscape(this.getRawtext()) + "</div>";
 			// Show the feedback
