@@ -23,6 +23,8 @@ package cl.uai.client.page;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingWeb;
+import cl.uai.client.data.AjaxData;
+import cl.uai.client.data.AjaxRequest;
 import cl.uai.client.resources.Resources;
 import cl.uai.client.rubric.PreviousCommentLabel;
 
@@ -30,10 +32,9 @@ import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 
 /**
@@ -42,7 +43,6 @@ import com.google.gwt.user.client.ui.HTML;
  */
 public class StarIcon extends HTML {
 
-	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(StarIcon.class.getName());
 	
 	/**The mark related to the icon **/
@@ -85,6 +85,26 @@ public class StarIcon extends HTML {
 	 */
 	protected void processCommand(ClickEvent event) {
 		logger.info("Making comment " + this.lbl.getText() + " favorite");
+		EMarkingWeb.markingInterface.addLoading(true);
+		this.setVisible(false);
+		AjaxRequest.ajaxRequest("action=addprevcomment&comment=" + URL.encode(this.lbl.getText()) + "&favorite=1", new AsyncCallback<AjaxData>() {
+			
+			@Override
+			public void onSuccess(AjaxData result) {
+				if(!result.getError().equals("")) {
+					Window.alert("Error saving comment as favorite");
+				} else {
+					EMarkingWeb.markingInterface.getRubricInterface().getToolsPanel().getPreviousComments().setCommentAsFavorite(lbl.getText());
+				}
+				EMarkingWeb.markingInterface.finishLoading();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error making comment favorite");
+				EMarkingWeb.markingInterface.finishLoading();
+			}
+		});
 		EMarkingWeb.markingInterface.addPreviousComment(this.lbl.getHTML(), true);
 	}
 }

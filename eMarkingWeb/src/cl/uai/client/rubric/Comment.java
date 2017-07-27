@@ -50,6 +50,7 @@ public class Comment {
 			int timesUsed = Integer.parseInt(values.get("used"));
 			long lastUsed = Long.parseLong(values.get("lastused"));
 			int owncomment = Integer.parseInt(values.get("owncomment"));
+			int favorites = Integer.parseInt(values.get("favorites"));
 			boolean isown = owncomment > 0;
 
 			String markersids = values.get("markerids");
@@ -83,7 +84,7 @@ public class Comment {
 				}
 			}
 
-			comment = new Comment(id, text, format, markerId, timesUsed, lastUsed, pagesIds, isown, criteriaIds, draftIds);
+			comment = new Comment(id, text, format, markerId, timesUsed, lastUsed, pagesIds, isown, criteriaIds, draftIds, favorites > 0);
 		} catch (Exception e) {
 			return null;
 		}
@@ -98,6 +99,14 @@ public class Comment {
 	private int timesUsed;
 	private int markid;
 	private boolean ownComment;
+	private boolean favorite;
+
+	/**
+	 * @param favorite the favorite to set
+	 */
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
+	}
 
 	private List<Integer> markerIds;
 	private List<Integer> pages;
@@ -106,7 +115,7 @@ public class Comment {
 
 	public Comment(int id, String text, int format, List<Integer> markerid, 
 			int used, long lastused, List<Integer> pages, boolean ownComment, 
-			List<Integer> criteriaIds, List<Integer> draftsIds) {
+			List<Integer> criteriaIds, List<Integer> draftsIds, boolean _favorite) {
 		this.id = id;
 		this.text = text;
 		this.format = format;
@@ -117,6 +126,7 @@ public class Comment {
 		this.ownComment = ownComment;
 		this.criteria = criteriaIds;
 		this.drafts = draftsIds;
+		this.favorite = _favorite;
 	}
 
 	/**
@@ -279,5 +289,12 @@ public class Comment {
 		if(!this.drafts.contains(draftId)) {
 			this.drafts.add(draftId);
 		}
-	}	
+	}
+	
+	/**
+	 * @return if the comment is favorite
+	 */
+	public boolean isFavorite() {
+		return favorite;
+	}
 }
