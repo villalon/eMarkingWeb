@@ -165,6 +165,7 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		previousCommentsMine.clear();
 		previousCommentsRecent.clear();
 		previousCommentsMostUsed.clear();
+		previousCommentsFavorites.clear();
 		for(FlowPanel f : previousCommentsCriteria.values()) {
 			f.clear();
 		}
@@ -173,6 +174,9 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		for(Comment c : previousComments) {
 			if(c.isOwnComment()) {
 				addCommentLabelToInterface(c, previousCommentsMine);
+			}
+			if(c.isFavorite()) {
+				addCommentLabelToInterface(c, previousCommentsFavorites);
 			}
 			addCommentLabelToInterface(c, previousCommentsAll);
 			for(int cid : c.getCriteriaIds()) {
@@ -261,7 +265,8 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 					pages,
 					true,
 					criteria,
-					drafts);
+					drafts,
+					false);
 
 			previousComments.add(newComment);
 
@@ -285,6 +290,14 @@ public class PreviousCommentsInterface extends EMarkingComposite {
 		updateAllCommentsInInterfaces();
 	}
 
+	public void setCommentAsFavorite(String text) {
+		Comment prevComment = findPreviousComment(text);
+		if(prevComment != null) {
+			prevComment.setFavorite(true);
+			updateAllCommentsInInterfaces();
+		}
+		commentsTabs.showStack(0);
+	}
 	private Comment findPreviousComment(String text) {
 		Comment previousComment = null;
 
