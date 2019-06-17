@@ -172,7 +172,6 @@ public class RubricPanel extends EMarkingComposite {
 			mainPanel.add(rubricTable);			
 		}
 		
-
 		initWidget(mainPanel);
 	}
 	/**
@@ -339,7 +338,7 @@ public class RubricPanel extends EMarkingComposite {
 			}
 		}
 
-		if(!EMarkingConfiguration.isReadonly() && !isPopupInterface()) {
+		if(!isPopupInterface()) {
 			rubricTable.add(generalFeedbackInterface);
 		}
 		

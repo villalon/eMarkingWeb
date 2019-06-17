@@ -12,7 +12,7 @@
             Deploy the EmarkingWeb compiled version to the Moodle local installation.
     </description>
 	
-	<property name="moodle.dir"     value="C:/vagrant/webclass/moodle/mt/webclass"/>
+	<property name="moodle.dir"     value="C:/vagrant/emarking/moodle/moodle"/>
 	<!--<property name="moodle.dir"     value="C:/vagrant/webclass/moodle/mt/escribiendo"/>-->
 
     <!-- ================================= 

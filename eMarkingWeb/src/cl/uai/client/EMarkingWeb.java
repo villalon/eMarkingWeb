@@ -101,7 +101,7 @@ public class EMarkingWeb implements EntryPoint {
 		// Pointer to CSS manager. It has to go first!
 		GWT.<Resources>create(Resources.class).css().ensureInjected();
 		// Log messages
-		String msg = "\nInitializing EMarking 3.0\n" +
+		String msg = "\nInitializing EMarking 3.1\n" +
 		"Platform: " + Navigator.getPlatform() + "\n" +
 		"User agent: " + Navigator.getUserAgent() + "\n" +
 		"App name: " + Navigator.getAppName() + "\n" +
@@ -164,6 +164,7 @@ public class EMarkingWeb implements EntryPoint {
 			String cookie_showrubric = Cookies.getCookie("emarking_showrubric");
 			
 			if(cookie_showrubric != null) {
+				logger.info("Cookie defines showRubric:" + Integer.parseInt(cookie_showrubric));
 				showRubric = Integer.parseInt(cookie_showrubric) == 1;
 			}
 			

@@ -89,10 +89,6 @@ public class RubricInterface extends EMarkingComposite {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		
-		Date oneyear = new Date();
-		CalendarUtil.addMonthsToDate(oneyear, 12);
-				
-		Cookies.setCookie("emarking_showrubric", visible ? "1" : "0", oneyear);
 		EMarkingConfiguration.setShowRubricOnLoad(visible);
 		
 		EMarkingWeb.markingInterface.getMarkingPagesInterface().loadInterface();

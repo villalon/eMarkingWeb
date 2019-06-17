@@ -762,8 +762,12 @@ public class MarkingInterface extends EMarkingComposite {
 		interfacePanel.setHeight((Window.getClientHeight() - toolbar.getOffsetHeight()) + "px");
 
 		// When we set the rubric visibility we call the loadinterface in the markinginterface object
-		rubricInterface.setVisible(EMarkingConfiguration.isShowRubricOnLoad() &&
+		rubricInterface.setVisible(
+				EMarkingConfiguration.isShowRubricOnLoad() &&
 				EMarkingConfiguration.getMarkingType() != EMarkingConfiguration.EMARKING_TYPE_PRINT_SCAN);
+		logger.info("Rubric interface visibility: \n"
+				+ "isShowRubricOnLoad: " + (EMarkingConfiguration.isShowRubricOnLoad() ? "SI" : "NO")
+				+ "EmarkingType: " + EMarkingConfiguration.getMarkingType());
 	}
 
 	public void setShowRubricButtonVisible(boolean visible) {
