@@ -21,7 +21,6 @@
  */
 package cl.uai.client.rubric;
 
-import java.util.Date;
 import java.util.logging.Logger;
 
 import cl.uai.client.EMarkingComposite;
@@ -29,11 +28,9 @@ import cl.uai.client.EMarkingConfiguration;
 import cl.uai.client.EMarkingWeb;
 import cl.uai.client.resources.Resources;
 
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 
 /**

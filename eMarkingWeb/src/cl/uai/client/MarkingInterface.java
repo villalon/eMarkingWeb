@@ -21,6 +21,8 @@
  */
 package cl.uai.client;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -854,8 +856,9 @@ public class MarkingInterface extends EMarkingComposite {
 					try {
 						EMarkingConfiguration.loadConfiguration(value);
 					} catch (Exception e) {
-						e.printStackTrace();
-						Window.alert(MarkingInterface.messages.ErrorLoadingSubmission());
+						e.printStackTrace(System.out);
+						logger.severe(MarkingInterface.messages.ErrorLoadingSubmission() + e.toString());
+						Window.alert(MarkingInterface.messages.ErrorLoadingSubmission() + e.toString());
 						return;
 					}
 

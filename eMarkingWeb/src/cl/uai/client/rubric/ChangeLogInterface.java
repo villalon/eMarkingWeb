@@ -102,6 +102,7 @@ public class ChangeLogInterface extends EMarkingComposite {
 		if(MarkingInterface.submissionData == null)
 			return;
 		
+		// TODO: Check why this F*ck is not working
 		String changelog = "";
 		if(!MarkingInterface.submissionData.getChangelog().equals("null")) {
 			changelog = MarkingInterface.submissionData.getChangelog();

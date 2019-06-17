@@ -325,16 +325,16 @@ public class EMarkingConfiguration {
 		sessKey = value.get("sesskey");
 
 		// Assign if the user can manage delphi process
-		manageDelphi = value.get("managedelphi").equals("true");
+		manageDelphi = value.get("managedelphi") != null && value.get("managedelphi").equals("true");
 		
 		// Assign Moodle session key
 		administratorEmail = value.get("adminemail");
 
 		// Assign if the student is anonymous
-		studentAnonymous = value.get("studentanonymous").equals("true");
+		studentAnonymous = value.get("studentanonymous") != null && value.get("studentanonymous").equals("true");
 
 		// Assign if the marker is anonymous
-		markerAnonymous =  value.get("markeranonymous").equals("true");
+		markerAnonymous =  value.get("markeranonymous") != null && value.get("markeranonymous").equals("true");
 
 		// Assign if the marking is readonly
 		readonly = (value.get("readonly") != null && value.get("readonly").equals("true"));
